@@ -9,6 +9,7 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+// keisuke 
 // rooms の作成画面（ビュー確認用）
 
 // User

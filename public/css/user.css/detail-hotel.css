@@ -1,0 +1,40 @@
+.hotel-images {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+}
+
+.hotel-images img {
+  width: 300px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 16px;
+  scroll-snap-align: start;
+}
+
+.star-rating {
+    color: #FFD700;
+    font-size: 1.3rem;
+}
+
+.hotel-address {
+    font-size: 1.3rem;
+}
+
+.room-images {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+}
+
+.room-images img {
+  width: 300px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 16px;
+  scroll-snap-align: start;
+}
+
+

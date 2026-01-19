@@ -44,11 +44,16 @@ Route::get('/restaurants', [RestaurantController::class, 'index']);
 
 // User
 // User_Sign up for Company
-Route::get('User page/SignUpforCompany', function () {
-    return view('User page.SignUpforCompany');
-})->name('User page.SignUpforCompany');
+Route::get('userpage/mypage/SignUpforCompany', function () {
+    return view('userpage.mypage.SignUpforCompany');
+})->name('userpage.mypage.SignUpforCompany');
 
 // User_HotelSerchResult.blade.php
-Route::get('User page/HotelSerchResult', function () {
-    return view('User page.HotelSerchResult');
-})->name('User page.HotelSerchResult');
+Route::get('userpage/mypage/HotelSerchResult', function () {
+    return view('userpage.mypage.HotelSerchResult');
+})->name('userpage.mypage.HotelSerchResult');
+
+//Staff addforhotel
+Route::get('addforhotel', function () {
+    return view('addforhotel');
+})->name('addforhotel');

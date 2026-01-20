@@ -72,6 +72,6 @@ Route::get('userpage/mypage/HotelSerchResult', function () {
 })->name('userpage.mypage.HotelSerchResult');
 
 //Staff addforhotel
-Route::get('addforhotel', function () {
-    return view('addforhotel');
-})->name('addforhotel');
+Route::get('add-for-hotel', function () {
+    return view('add-for-hotel');
+})->name('add-for-hotel');

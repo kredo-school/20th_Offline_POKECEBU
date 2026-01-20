@@ -1,37 +1,8 @@
-@extends('layouts.app')
+@extends('layouts.user')
 
 @section('content')
-<style>
-  body {
-    background-color: #f4f7fa;
-    font-family: 'Segoe UI', sans-serif;
-  }
-  .card {
-    border-radius: 12px;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
-  }
-  .card-header {
-    font-weight: 600;
-    font-size: 1.1rem;
-  }
-.btn-custom {
-    background-color: #3b82f6;
-    color: #fff;
-    border: none;
-    padding: 12px 24px;
-    font-size: 1rem;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(59,130,246,0.3);
-  }
-  .btn-custom:hover {
-    background-color: #2563eb;
-  }
-  .form-label {
-    font-weight: 600;
-  }
-</style>
 
-
+{{-- フォーム --}}
 <div class="container py-5">
     <h2 class="text-center mb-3">
         <i class="fa-solid fa-clipboard-list me-2"></i>Register Your Business

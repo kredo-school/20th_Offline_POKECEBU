@@ -3,6 +3,8 @@
 @push('styles')
 <link rel="stylesheet" href="{{ asset('css/user.css/user.css') }}">
 <link rel="stylesheet" href="{{ asset('css/user.css/signup-for-company.css') }}">
+<link rel="stylesheet" href="{{ asset('css/user.css/detail-hotel.css') }}">
+<link rel="stylesheet" href="{{ asset('css/user.css/detail-restaurant.css') }}">
 @endpush
 
 @section('navbar')

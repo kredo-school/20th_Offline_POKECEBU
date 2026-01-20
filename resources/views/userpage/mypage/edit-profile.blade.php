@@ -1,16 +1,20 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Title</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+@extends('layouts.app')
 
-</head>
-<body>
-   <!-- Content Here --> 
-    <div class="container mt-5">
+@push('styles')
+<style>
+.menu-item { transition: background-color 0.2s ease, color 0.2s ease; }
+.menu-item:hover { background-color: #f0f4ff; color: #0d6efd; }
+</style>
+@endpush
+@section('navbar')
+<nav class="navbar navbar-expand-md shadow-sm" style="background-color:#6FA9DE; height:80px;">
+    <div class="container">
+        <span class="navbar-brand fw-bold">My Account</span>
+    </div>
+</nav>
+@endsection
+@section('content')
+<div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-12 col-md-8 col-lg-6">
 
@@ -73,8 +77,4 @@
         </div>
     </div>
 </div>
-
-    
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-</body>
-</html>
+@endsection

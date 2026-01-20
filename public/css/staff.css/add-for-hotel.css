@@ -1,0 +1,15 @@
+ .form-card {
+    max-width: 600px;
+    margin: 60px auto;
+    background: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+  }
+  .btn-add {
+    background-color: #6FA9DE  !important;
+    color: #fff  !important;
+  }
+  .btn-add:hover {
+    background-color: #2563eb  !important;
+  }

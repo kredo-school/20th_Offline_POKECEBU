@@ -43,12 +43,12 @@ Route::get('/restaurants', [RestaurantController::class, 'index']);
 // rooms の作成画面（ビュー確認用）
 
 // User
-// User_Sign up for Company
-Route::get('userpage/mypage/SignUpforCompany', function () {
-    return view('userpage.mypage.SignUpforCompany');
-})->name('userpage.mypage.SignUpforCompany');
+// User_signup-for-company.blade
+Route::get('userpage/mypage/signup-for-company', function () {
+    return view('userpage.mypage.signup-for-company');
+})->name('userpage.mypage.signup-for-company');
 
-// User_HotelSerchResult.blade.php
+// User_HotelSerchResult.blade.php 
 Route::get('userpage/mypage/HotelSerchResult', function () {
     return view('userpage.mypage.HotelSerchResult');
 })->name('userpage.mypage.HotelSerchResult');

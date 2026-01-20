@@ -1,0 +1,29 @@
+/* body {
+    background-color: #f4f7fa;
+    font-family: 'Segoe UI', sans-serif;
+  } */
+
+  .card {
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.06)!important;
+  }
+  .card-header {
+    font-weight: 600;
+    font-size: 1.1rem;
+  }
+  
+.btn-custom {
+    background-color: #3b82f6 !important;
+    color: #fff;
+    border: none;
+    padding: 12px 24px;
+    font-size: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(59,130,246,0.3) !important;
+  }
+  .btn-custom:hover {
+    background-color: #2563eb !important;
+  }
+  .form-label {
+    font-weight: 600 !important;
+  }

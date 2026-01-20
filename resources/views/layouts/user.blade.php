@@ -2,6 +2,7 @@
 
 @push('styles')
 <link rel="stylesheet" href="{{ asset('css/user.css/user.css') }}">
+<link rel="stylesheet" href="{{ asset('css/user.css/signup-for-company.css') }}">
 @endpush
 
 @section('navbar')

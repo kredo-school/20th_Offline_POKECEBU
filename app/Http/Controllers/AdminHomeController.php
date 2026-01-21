@@ -15,4 +15,16 @@ class AdminHomeController extends Controller
 
         return view('adminpage.home', compact('totalUsers', 'pageViews'));
     }
+
+    public function analysisHotel()
+    {
+        // 解析ページのロジックをここに追加
+        return view('adminpage.analysis-hotel');
+    }
+
+    public function analysisRestaurant()
+    {
+        // 解析ページのロジックをここに追加
+        return view('adminpage.analysis-restaurant');
+    }
 }

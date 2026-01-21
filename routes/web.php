@@ -75,3 +75,8 @@ Route::get('userpage/mypage/HotelSerchResult', function () {
 Route::get('add-for-hotel', function () {
     return view('add-for-hotel');
 })->name('add-for-hotel');
+
+//staffpage\add-for-restaurant.blade.php
+Route::get('staffpage/add-for-restaurant', function () {
+    return view('staffpage.add-for-restaurant');
+})->name('staffpage.add-for-restaurant');

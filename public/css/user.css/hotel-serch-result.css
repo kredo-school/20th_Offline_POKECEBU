@@ -1,0 +1,71 @@
+    body {
+            background-color: #f5f7fa !important;
+            font-family: 'Segoe UI', sans-serif !important;
+        }
+
+        .search-bar {
+            background-color: #fff !important;
+            padding: 16px !important;
+            border-radius: 8px !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06) !important;
+            margin-bottom: 24px !important;
+        }
+
+        .filter-sidebar {
+            background-color: #fff !important;
+            padding: 16px !important;
+            border-radius: 8px !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06) !important;
+        }
+
+        .hotel-card {
+            border-radius: 12px !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06)!important;
+            margin-bottom: 24px !important;
+            background-color: #fff !important;
+            overflow: hidden !important;
+        }
+
+        .hotel-image {
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: cover !important;
+        }
+
+        .hotel-info {
+            padding: 16px !important;
+        }
+
+        .hotel-title {
+            font-size: 1.25rem !important;
+            font-weight: 600 !important;
+            color: #1f2937 !important;
+        }
+
+        .hotel-location {
+            color: #6b7280 !important;
+            font-size: 0.95rem !important;
+        }
+
+        .hotel-rating {
+            color: #f59e0b !important;
+            font-weight: 600 !important;
+        }
+
+        .hotel-price {
+            font-size: 1.1rem;
+            font-weight: bold !important;
+            color: #2563eb !important;
+        }
+
+        .btn-book {
+            background-color: #3b82f6 !important;
+            color: #fff !important;
+            border: none !important;
+            padding: 8px 16px !important;
+            border-radius: 6px !important;
+        }
+
+        .btn-book:hover {
+            background-color: #2563eb !important;
+        }

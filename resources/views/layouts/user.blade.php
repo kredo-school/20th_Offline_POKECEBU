@@ -5,6 +5,7 @@
 <link rel="stylesheet" href="{{ asset('css/user.css/signup-for-company.css') }}">
 <link rel="stylesheet" href="{{ asset('css/user.css/detail-hotel.css') }}">
 <link rel="stylesheet" href="{{ asset('css/user.css/detail-restaurant.css') }}">
+<link rel="stylesheet" href="{{ asset('css/user.css/hotel-serch-result.css') }}">
 @endpush
 
 @section('navbar')

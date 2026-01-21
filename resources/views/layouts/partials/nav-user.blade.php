@@ -1,6 +1,6 @@
 <div class="container">
     <a class="navbar-brand" href="/">
-        <img src="{{ asset('images/Icon.png') }}" style="height:270px;">
+        <img src="{{ asset('images/Icon.png') }}" style="height:80px;">
     </a>
 
     <ul class="navbar-nav ms-auto">

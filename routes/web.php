@@ -107,18 +107,18 @@ Route::get('userpage/mypage/hotel-serch-result', function () {
     return view('userpage.mypage.hotel-serch-result');
 })->name('userpage.mypage.hotel-serch-result');
 
-//Staff addforhotel
-Route::get('add-for-hotel', function () {
-    return view('add-for-hotel');
-})->name('add-for-hotel');
+//Staff
+//Staff add-for-hotel
+Route::get('staffpage/add-for-hotel', function () {
+    return view('staffpage.add-for-hotel');
+})->name('staffpage.add-for-hotel');
 
-//staff
-//staffpage\add-for-restaurant.blade.php
+//Staff add-for-restaurant
 Route::get('staffpage/add-for-restaurant', function () {
     return view('staffpage.add-for-restaurant');
 })->name('staffpage.add-for-restaurant');
 
-//resources\views\staffpage\table-type.blade.php
+//Staff table-type
 Route::get('staffpage/table-type', function () {
     return view('staffpage.table-type');
 })->name('staffpage.table-type');

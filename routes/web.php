@@ -116,3 +116,7 @@ Route::get('add-for-hotel', function () {
 Route::get('staffpage/add-for-restaurant', function () {
     return view('staffpage.add-for-restaurant');
 })->name('staffpage.add-for-restaurant');
+
+Route::get('admin/categories', function () {
+    return view('adminpage.category.index');
+})->name('adminpage.category.index');

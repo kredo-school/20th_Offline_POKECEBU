@@ -43,16 +43,13 @@ class AdminController extends Controller
     public function addRestaurant(){
         return view('adminpage.restaurant.add');
     }
-public function admins()
-{
-    // 管理者一覧ページのビュー
-    return view('adminpage.admin.admin'); 
-}
 
-<<<<<<< HEAD
-    public function admins() {
-        return view('adminpage.admin');
+    public function admins()
+    {
+        // 管理者一覧ページのビュー
+        return view('adminpage.admin.admin'); 
     }
+
 
     public function analysisHotel()
     {
@@ -64,16 +61,17 @@ public function admins()
     {
         // 解析ページのロジックをここに追加
         return view('adminpage.analysis-restaurant');
-=======
-    public function addAdmin()
-{
-    return view('adminpage.admin.add');
-}
+    }
 
-public function editAdmin()
-{
-    return view('adminpage.admin.edit');
-}
+    public function addAdmin()
+    {   
+        return view('adminpage.admin.add');
+    }
+
+    public function editAdmin()
+    {
+        return view('adminpage.admin.edit');
+    }
 
     // AdminController.php
     public function editCustomer()
@@ -83,6 +81,5 @@ public function editAdmin()
     public function addCustomer()
     {
         return view('adminpage.customer.add-customers');
->>>>>>> main
     }
 }

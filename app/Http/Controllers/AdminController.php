@@ -6,9 +6,11 @@ use Illuminate\Http\Request;
 
 class AdminController extends Controller
 {
-    public function index()
-    {
-        return view('adminpage.admin.admin-home'); // 初期ページ
+    public function index() {
+        $totalUsers = 3;
+        $pageViews  = 12430;
+
+        return view('adminpage.home', compact('totalUsers', 'pageViews'));
     }
 
     public function customers()
@@ -41,21 +43,35 @@ class AdminController extends Controller
     public function addRestaurant(){
         return view('adminpage.restaurant.add');
     }
-public function admins()
-{
-    // 管理者一覧ページのビュー
-    return view('adminpage.admin.admin'); 
-}
+
+    public function admins()
+    {
+        // 管理者一覧ページのビュー
+        return view('adminpage.admin.admin'); 
+    }
+
+
+    public function analysisHotel()
+    {
+        // 解析ページのロジックをここに追加
+        return view('adminpage.analysis-hotel');
+    }
+
+    public function analysisRestaurant()
+    {
+        // 解析ページのロジックをここに追加
+        return view('adminpage.analysis-restaurant');
+    }
 
     public function addAdmin()
-{
-    return view('adminpage.admin.add');
-}
+    {   
+        return view('adminpage.admin.add');
+    }
 
-public function editAdmin()
-{
-    return view('adminpage.admin.edit');
-}
+    public function editAdmin()
+    {
+        return view('adminpage.admin.edit');
+    }
 
     // AdminController.php
     public function editCustomer()

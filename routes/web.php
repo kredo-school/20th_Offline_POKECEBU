@@ -118,6 +118,9 @@ Route::get('staffpage/add-for-restaurant', function () {
     return view('staffpage.add-for-restaurant');
 })->name('staffpage.add-for-restaurant');
 
+Route::get('admin/categories', function () {
+    return view('adminpage.category.index');
+})->name('adminpage.category.index');
 //Staff table-type
 Route::get('staffpage/table-type', function () {
     return view('staffpage.table-type');

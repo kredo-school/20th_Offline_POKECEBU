@@ -7,22 +7,37 @@ use Illuminate\Http\Request;
 class AdminController extends Controller
 {
     public function index() {
-        return view('adminpage.admin-home'); // 初期ページ
+        $totalUsers = 3;
+        $pageViews  = 12430;
+
+        return view('adminpage.home', compact('totalUsers', 'pageViews'));
     }
 
     public function customers() {
-        return view('adminpage.customers'); // Customer表用
+        return view('adminpage.customers');
     }
 
     public function hotels() {
-        return view('adminpage.hotels'); // Hotel表用
+        return view('adminpage.hotels');
     }
 
     public function restaurants() {
-        return view('adminpage.restaurants'); // Restaurant表用
+        return view('adminpage.restaurants');
     }
 
     public function admins() {
-        return view('adminpage.admin'); // Admin表用
+        return view('adminpage.admin');
+    }
+
+    public function analysisHotel()
+    {
+        // 解析ページのロジックをここに追加
+        return view('adminpage.analysis-hotel');
+    }
+
+    public function analysisRestaurant()
+    {
+        // 解析ページのロジックをここに追加
+        return view('adminpage.analysis-restaurant');
     }
 }

@@ -102,17 +102,18 @@ Route::get('userpage/mypage/signup-for-company', function () {
     return view('userpage.mypage.signup-for-company');
 })->name('userpage.mypage.signup-for-company');
 
-// User_HotelSerchResult.blade.php 
-Route::get('userpage/mypage/HotelSerchResult', function () {
-    return view('userpage.mypage.HotelSerchResult');
-})->name('userpage.mypage.HotelSerchResult');
+// User_userpage\mypage\hotel-serch-result.blade.php
+Route::get('userpage/mypage/hotel-serch-result', function () {
+    return view('userpage.mypage.hotel-serch-result');
+})->name('userpage.mypage.hotel-serch-result');
 
-//Staff addforhotel
-Route::get('add-for-hotel', function () {
-    return view('add-for-hotel');
-})->name('add-for-hotel');
+//Staff
+//Staff add-for-hotel
+Route::get('staffpage/add-for-hotel', function () {
+    return view('staffpage.add-for-hotel');
+})->name('staffpage.add-for-hotel');
 
-//staffpage\add-for-restaurant.blade.php
+//Staff add-for-restaurant
 Route::get('staffpage/add-for-restaurant', function () {
     return view('staffpage.add-for-restaurant');
 })->name('staffpage.add-for-restaurant');
@@ -120,3 +121,7 @@ Route::get('staffpage/add-for-restaurant', function () {
 Route::get('admin/categories', function () {
     return view('adminpage.category.index');
 })->name('adminpage.category.index');
+//Staff table-type
+Route::get('staffpage/table-type', function () {
+    return view('staffpage.table-type');
+})->name('staffpage.table-type');

@@ -18,13 +18,6 @@
 
             <div class="row mb-3">
                 <div class="col-12">
-                    <label class="form-label">Room Category <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" placeholder="e.g. Non-smoking">
-                </div>
-            </div>
-
-            <div class="row mb-3">
-                <div class="col-12">
                     <label class="form-label">Total Rooms <span class="text-danger">*</span></label>
                     <input type="number" class="form-control" placeholder="e.g. 10">
                 </div>

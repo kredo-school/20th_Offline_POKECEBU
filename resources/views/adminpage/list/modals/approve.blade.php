@@ -16,11 +16,12 @@
             </div>
 
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
 
                 <form method="POST" action="">
                     @csrf
-                    <button type="submit" class="btn btn-primary">Approve</button>
+                    @method('PATCH')
+                    <button type="submit" class="btn btn-primary ms-2">Approve</button>
                 </form>
             </div>
         </div>

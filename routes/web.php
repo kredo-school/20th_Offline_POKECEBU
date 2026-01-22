@@ -43,13 +43,50 @@ Route::prefix('staff')->middleware('auth')->group(function () {
         ->name('staff.homerestaurant');
 });
 
-Route::prefix('admin')->middleware('auth')->group(function () {
-    Route::get('/', [AdminController::class, 'index'])->name('admin.home');
-    Route::get('/customers', [AdminController::class, 'customers'])->name('admin.customers');
-    Route::get('/hotels', [AdminController::class, 'hotels'])->name('admin.hotels');
-    Route::get('/restaurants', [AdminController::class, 'restaurants'])->name('admin.restaurants');
-    Route::get('/admins', [AdminController::class, 'admins'])->name('admin.admins');
-});
+Route::get('/admin/customers', [AdminController::class, 'customers'])->name('admin.customers');
+Route::get('/admin/customers/edit', [AdminController::class, 'editCustomer'])->name('customers.edit');
+Route::get('/admin/customers/add', [AdminController::class, 'addCustomer'])->name('customers.add');
+
+Route::get('/admin/hotels', [AdminController::class, 'hotels'])->name('admin.hotels');
+Route::get('/admin/hotel/edit', [AdminController::class, 'editHotel'])->name('hotels.edit');
+Route::get('/admin/hotel/add', [AdminController::class, 'addHotel'])->name('hotel.add');
+
+Route::get('/admin/restaurants', [AdminController::class, 'restaurants'])->name('admin.restaurants');
+Route::get('/admin/restaurant/edit', [AdminController::class, 'editRestaurant'])->name('restaurant.edit');
+Route::get('/admin/restaurant/add', [AdminController::class, 'addRestaurant'])->name('restaurant.add');
+
+Route::get('/admin/admins', [AdminController::class, 'admins'])->name('admin.admins');
+Route::get('/admin/admin/edit', [AdminController::class, 'editAdmin'])->name('admin.edit');
+Route::get('/admin/admin/add', [AdminController::class, 'addAdmin'])->name('admin.add');
+
+//     Route::prefix('admin')->group(function () {
+//         Route::get(
+//             '/customers/add',
+//             [AdminController::class, 'addCustomer']
+//         )->name('customers.add');
+//     });
+
+//     Route::prefix('admin')->group(function () {
+//         Route::get(
+//             '/hotel/add',
+//             [AdminController::class, 'addHotel']
+//         )->name('hotel.add');
+//     });
+
+//     Route::prefix('admin')->group(function () {
+//         Route::get(
+//             '/restaurant/add',
+//             [AdminController::class, 'addRestaurant']
+//         )->name('restaurant.add');
+//     });
+
+//     Route::prefix('admin')->group(function () {
+//         Route::get(
+//             '/admin/add',
+//             [AdminController::class, 'addAdmin']
+//         )->name('admin.add');
+//     });
+// });
 
 
 
@@ -73,3 +110,8 @@ Route::get('userpage/mypage/HotelSerchResult', function () {
 Route::get('add-for-hotel', function () {
     return view('add-for-hotel');
 })->name('add-for-hotel');
+
+//staffpage\add-for-restaurant.blade.php
+Route::get('staffpage/add-for-restaurant', function () {
+    return view('staffpage.add-for-restaurant');
+})->name('staffpage.add-for-restaurant');

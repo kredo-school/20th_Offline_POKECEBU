@@ -13,18 +13,43 @@ class AdminController extends Controller
         return view('adminpage.home', compact('totalUsers', 'pageViews'));
     }
 
-    public function customers() {
-        return view('adminpage.customers');
+    public function customers()
+    {
+        return view('adminpage.customer.customers'); // Customer表用
     }
 
-    public function hotels() {
-        return view('adminpage.hotels');
+    public function hotels()
+    {
+        return view('adminpage.hotel.hotels'); // Hotel表用
+    }
+    
+    public function addHotel()
+    {
+        return view('adminpage.hotel.add');
+    }
+      public function editHotel()
+    {
+        return view('adminpage.hotel.edit');
     }
 
-    public function restaurants() {
-        return view('adminpage.restaurants');
+    public function restaurants()
+    {
+        return view('adminpage.restaurant.restaurants'); // Restaurant表用
     }
+    public function editRestaurant()
+    {
+        return view('adminpage.restaurant.edit');
+    }
+    public function addRestaurant(){
+        return view('adminpage.restaurant.add');
+    }
+public function admins()
+{
+    // 管理者一覧ページのビュー
+    return view('adminpage.admin.admin'); 
+}
 
+<<<<<<< HEAD
     public function admins() {
         return view('adminpage.admin');
     }
@@ -39,5 +64,25 @@ class AdminController extends Controller
     {
         // 解析ページのロジックをここに追加
         return view('adminpage.analysis-restaurant');
+=======
+    public function addAdmin()
+{
+    return view('adminpage.admin.add');
+}
+
+public function editAdmin()
+{
+    return view('adminpage.admin.edit');
+}
+
+    // AdminController.php
+    public function editCustomer()
+    {
+        return view('adminpage.customer.edit-customers');
+    }
+    public function addCustomer()
+    {
+        return view('adminpage.customer.add-customers');
+>>>>>>> main
     }
 }

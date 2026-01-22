@@ -54,13 +54,13 @@ class AdminController extends Controller
     public function analysisHotel()
     {
         // 解析ページのロジックをここに追加
-        return view('adminpage.analysis-hotel');
+        return view('adminpage.hotel.analysis-hotel');
     }
 
     public function analysisRestaurant()
     {
         // 解析ページのロジックをここに追加
-        return view('adminpage.analysis-restaurant');
+        return view('adminpage.restaurant.analysis-restaurant');
     }
 
     public function addAdmin()

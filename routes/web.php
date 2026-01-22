@@ -43,6 +43,7 @@ Route::prefix('staff')->middleware('auth')->group(function () {
         ->name('staff.homerestaurant');
 });
 
+Route::get('/admin', [AdminController::class, 'index'])->name('admin.home');
 Route::get('/admin/customers', [AdminController::class, 'customers'])->name('admin.customers');
 Route::get('/admin/customers/edit', [AdminController::class, 'editCustomer'])->name('customers.edit');
 Route::get('/admin/customers/add', [AdminController::class, 'addCustomer'])->name('customers.add');

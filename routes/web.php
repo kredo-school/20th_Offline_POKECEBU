@@ -51,6 +51,10 @@ Route::get('/admin/customers/add', [AdminController::class, 'addCustomer'])->nam
 Route::get('/admin/hotels', [AdminController::class, 'hotels'])->name('admin.hotels');
 Route::get('/admin/hotel/edit', [AdminController::class, 'editHotel'])->name('hotels.edit');
 Route::get('/admin/hotel/add', [AdminController::class, 'addHotel'])->name('hotel.add');
+Route::get('/admin/hotel/approval',  function () {
+    return view('adminpage.hotel.pending-approval');
+})->name('hotel.approval');
+
 
 Route::get('/admin/restaurants', [AdminController::class, 'restaurants'])->name('admin.restaurants');
 Route::get('/admin/restaurant/edit', [AdminController::class, 'editRestaurant'])->name('restaurant.edit');

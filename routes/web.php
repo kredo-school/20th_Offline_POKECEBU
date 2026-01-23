@@ -6,6 +6,7 @@ use App\Http\Controllers\HotelController;
 use App\Http\Controllers\RestaurantController;
 use App\Http\Controllers\HotelStaffController;
 use App\Http\Controllers\RestaurantStaffController;
+use App\Http\Controllers\StaffMypageContoroller;
 use App\Http\Controllers\AdminController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
@@ -38,6 +39,22 @@ Route::prefix('staff')->middleware('auth')->group(function () {
     Route::get('/hotel', [HotelStaffController::class, 'index'])
         ->name('staff.homehotel');
 
+
+    Route::get('/mypage/hotel', [StaffMypageContoroller::class, 'index'])
+        ->name('staff.mypage');
+
+    Route::get('/staff/edit/hotel', [StaffMypageContoroller::class, 'editStaffMypage'])
+        ->name('staff.edit');
+    
+    Route::get('/mypage/restaurant',[StaffMypageContoroller::class,'indexRestaurant'])
+    ->name('staff.mypage.restaurant');
+
+    Route::get('edit.restaurant',[StaffMypageContoroller::class,'editStaffMypagerestaurant'])
+    ->name('staff.edit-restaurant');
+    
+
+
+
     // restaurant
     Route::get('/restaurant', [RestaurantStaffController::class, 'index'])
         ->name('staff.homerestaurant');
@@ -60,34 +77,7 @@ Route::get('/admin/admins', [AdminController::class, 'admins'])->name('admin.adm
 Route::get('/admin/admin/edit', [AdminController::class, 'editAdmin'])->name('admin.edit');
 Route::get('/admin/admin/add', [AdminController::class, 'addAdmin'])->name('admin.add');
 
-//     Route::prefix('admin')->group(function () {
-//         Route::get(
-//             '/customers/add',
-//             [AdminController::class, 'addCustomer']
-//         )->name('customers.add');
-//     });
 
-//     Route::prefix('admin')->group(function () {
-//         Route::get(
-//             '/hotel/add',
-//             [AdminController::class, 'addHotel']
-//         )->name('hotel.add');
-//     });
-
-//     Route::prefix('admin')->group(function () {
-//         Route::get(
-//             '/restaurant/add',
-//             [AdminController::class, 'addRestaurant']
-//         )->name('restaurant.add');
-//     });
-
-//     Route::prefix('admin')->group(function () {
-//         Route::get(
-//             '/admin/add',
-//             [AdminController::class, 'addAdmin']
-//         )->name('admin.add');
-//     });
-// });
 
 
 

@@ -101,6 +101,33 @@ Route::get('userpage/mypage/hotel-serch-result', function () {
     return view('userpage.mypage.hotel-serch-result');
 })->name('userpage.mypage.hotel-serch-result');
 
+// User_ 投稿関係
+// User_ resources\views\userpage\mypage\post . blade . php
+Route::get('userpage/posts/post-list', function () {
+    $all_posts = [
+        ['title' => 'テスト投稿1', 'content' => 'これはダミーの投稿です'],
+        ['title' => 'テスト投稿2', 'content' => 'ビュー確認用の投稿です'],
+    ];
+    return view('userpage.posts.post-list', compact('all_posts'));
+})->name('userpage.posts.post-list');
+
+// 作成
+// {{-- resources\views\userpage\posts\create.blade.php --}}
+Route::get('userpage/posts/create', function () {
+    return view('userpage.posts.create');
+})->name('userpage.posts.create');
+
+// 表示
+Route::get('userpage/posts/show', function () {
+    return view('userpage.posts.show');
+})->name('userpage.posts.show');
+
+// 編集
+Route::get('userpage/posts/edit', function () {
+    return view('userpage.posts.edit');
+})->name('userpage.posts.edit');
+
+
 //Staff
 //Staff add-for-hotel
 Route::get('staffpage/add-for-hotel', function () {

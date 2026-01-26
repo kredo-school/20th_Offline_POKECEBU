@@ -1,12 +1,12 @@
 @extends('layouts.user')
 
 @section('content')
-    <div class="main-caod mt-4">
+    <div class="main-caod justify-content-center mt-4">
 
         {{-- --------------- 
             menu 
         --------------- --}}
-        <div class="d-flex justify-content-around p-3">
+        <div class="d-flex justify-content-center p-3">
 
             <a href="#" class="menu-btn menu-restaurant text-decoration-none">
                 <i class="fa-solid fa-utensils"></i>
@@ -35,7 +35,7 @@
         <div class="section-title">Hotel Ranking</div>
 
         <div class="px-3">
-            <div class="row g-2 mb-3 d-flex">
+            <div class="row g-2 mb-3 d-flex justify-content-center">
                 {{-- @foreach ($hotelRankings as $index => $hotel)
                 <div class="col-4">
                     <div class="card ramk-card text-center me-3" style="width: 250px;">
@@ -54,8 +54,8 @@
 
                 {{-- あとで消す-ここから --}}
                 <div class="card me-3" style="width: 250px;">
-                    <div class="rank-badge">1</div>
-                    <img src="#" alt="" class="card-img-top" height="150px" width="10px">
+                    <div class="rank-badge rank-1">1</div>
+                    <img src="{{ asset('images/hotel-img1.jpg') }}" alt="" class="card-img-top" height="150px" width="10px">
 
                     <div class="card-body">
                         <a href="" class="card-link text-decoration-none text-dark">
@@ -66,8 +66,8 @@
                     </div>
                 </div>
                 <div class="card me-3" style="width: 250px;">
-                    <div class="rank-badge">2</div>
-                    <img src="#" alt="" class="card-img-top" height="150px" width="100px">
+                    <div class="rank-badge rank-2">2</div>
+                    <img src="{{ asset('images/hotel-img2.jpg') }}" alt="" class="card-img-top" height="150px" width="100px">
 
                     <div class="card-body">
                         <a href="" class="card-link text-decoration-none text-dark">
@@ -78,8 +78,8 @@
                     </div>
                 </div>
                 <div class="card" style="width: 250px;">
-                    <div class="rank-badge">3</div>
-                    <img src="#" alt="" class="card-img-top" height="150px" width="100px">
+                    <div class="rank-badge rank-3">3</div>
+                    <img src="{{ asset('images/hotel-img3.jpg') }}" alt="" class="card-img-top" height="150px" width="100px">
 
                     <div class="card-body">
                         <a href="" class="card-link text-decoration-none text-dark">
@@ -102,7 +102,7 @@
                 --------------- --}}
             <div class="section-title">Restrant Ranking</div>
 
-            <div class="row g-2 d-flex">
+            <div class="row g-2 d-flex justify-content-center">
                 {{-- @foreach ($restrantRankings as $index => $restrant)
                 <div class="col-4">
                     <div class="card ramk-card text-center" style="width: 250px;">
@@ -118,9 +118,9 @@
                 @endforeach --}}
 
                 {{-- あとで消す-ここから --}}
-                <div class="card ramk-card text-center me-3" style="width: 250px;">
-                    <div class="rank-badge">1</div>
-                    <img src="#" alt="" class="card-img-top" height="150px" width="10px">
+                <div class="card ramk-card me-3" style="width: 250px;">
+                    <div class="rank-badge rank-1">1</div>
+                    <img src="{{ asset('images/food-img1.jpg') }}" alt="" class="card-img-top" height="150px" width="10px">
 
                     <div class="card-body">
                         <a href="" class="card-link text-decoration-none text-dark">
@@ -130,9 +130,9 @@
                     </div>
                 </div>
 
-                <div class="card ramk-card text-center me-3" style="width: 250px;">
-                    <div class="rank-badge">2</div>
-                    <img src="#" alt="" class="card-img-top" height="150px" width="100px">
+                <div class="card ramk-card me-3" style="width: 250px;">
+                    <div class="rank-badge rank-2">2</div>
+                    <img src="{{ asset('images/food-img2.jpg') }}" alt="" class="card-img-top" height="150px" width="100px">
 
                     <div class="card-body">
                         <a href="" class="card-link text-decoration-none text-dark">
@@ -142,9 +142,9 @@
                     </div>
                 </div>
 
-                <div class="card ramk-card text-center me-3" style="width: 250px;">
-                    <div class="rank-badge">3</div>
-                    <img src="#" alt="" class="card-img-top" height="150px" width="100px">
+                <div class="card ramk-card me-3" style="width: 250px;">
+                    <div class="rank-badge rank-3">3</div>
+                    <img src="{{ asset('images/food-img3.jpg') }}" alt="" class="card-img-top" height="150px" width="100px">
 
                     <div class="card-body">
                         <a href="" class="card-link text-decoration-none text-dark">
@@ -197,7 +197,9 @@
                 margin: auto;
                 background: #f5fbff;
                 border-radius: 25px;
+                padding-bottom: 20px;
                 overflow: hidden;
+               
             }
 
             /* Menu */
@@ -213,6 +215,8 @@
                 color: #fff;
                 font-weight: bold;
                 box-shadow: 0 3px rgba(0, 0, 0, 0.1);
+                margin: 10px;
+
             }
 
             .menu-restaurant {
@@ -236,8 +240,21 @@
                 text-align: center;
                 color: #4fa3d1;
                 font-weight: bold;
-                font-size: 30px;
-                margin: 15px 0 10px;
+                font-size: 28px;
+                margin: 40px 0 20px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 15px;
+            }
+
+            .section-title::before,
+            .section-title::after {
+            content: "";
+            flex: 1;
+            height: 2px;
+            background: #b5dbf0;
+            max-width: 80px;
             }
 
             /* Ranking */
@@ -246,19 +263,39 @@
                 border-radius: 15px;
                 padding: 8px;
                 position: relative;
+                box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+                transition: transform 0.2s ease;
+            }
+
+            .rank-card:hover {
+                transform: translateY(-5px);
             }
 
             .rank-badge {
                 position: absolute;
-                top: -8px;
-                left: -8px;
-                background: #ffd36b;
+                top: -10px;
+                left: -10px;
                 border-radius: 50%;
-                width: 28px;
-                height: 28px;
+                width: 36px;
+                height: 36px;
                 display: flex;
                 align-items: center;
                 font-weight: bold;
+                color: #fff;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+                border: 1px solid white;
+            }
+
+            .rank-1 {
+            background: linear-gradient(135deg, #FFD700, #FFB700);
+            }
+
+            .rank-2 {
+            background: linear-gradient(135deg, #C0C0C0, #AFAFAF);
+            }
+
+            .rank-3 {
+            background: linear-gradient(135deg, #CD7F32, #B87333);
             }
 
             /* POST */

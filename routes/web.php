@@ -119,3 +119,9 @@ Route::get('admin/categories', function () {
 Route::get('staffpage/table-type', function () {
     return view('staffpage.table-type');
 })->name('staffpage.table-type');
+
+// MAEDA DA・YO⭐︎
+// Reservation infomation detel の作成画面（view確認画面）
+Route::get('/staffpage/resavation-hotel-info', function() {
+    return view('staffpage.resavation-hotel-info');
+})->name('staffpage.resavation-hotel-info');

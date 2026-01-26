@@ -112,3 +112,12 @@ Route::get('userpage/mypage/HotelSerchResult', function () {
 Route::get('add-for-hotel', function () {
     return view('add-for-hotel');
 })->name('add-for-hotel');
+
+
+// MAEDA DA・YO⭐︎
+// Reservation infomation detel の作成画面（view確認画面）
+Route::get('/staffpage/resavation-hotel-info', function() {
+    return view('staffpage.resavation-hotel-info');
+})->name('staffpage.resavation-hotel-info');
+       
+          

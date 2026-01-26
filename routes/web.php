@@ -8,6 +8,7 @@ use App\Http\Controllers\HotelStaffController;
 use App\Http\Controllers\RestaurantStaffController;
 use App\Http\Controllers\StaffMypageContoroller;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\MockReservationController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
@@ -80,6 +81,19 @@ Route::get('/admin/restaurant/add', [AdminController::class, 'addRestaurant'])->
 Route::get('/admin/admins', [AdminController::class, 'admins'])->name('admin.admins');
 Route::get('/admin/admin/edit', [AdminController::class, 'editAdmin'])->name('admin.edit');
 Route::get('/admin/admin/add', [AdminController::class, 'addAdmin'])->name('admin.add');
+
+
+
+// カレンダー
+// routes/web.php
+Route::get('/mock/calendar', [MockReservationController::class, 'calendar'])->name('mock.calendar');
+Route::get('/mock/day/{day}', [MockReservationController::class, 'dayStatus'])->name('mock.day');
+Route::get('/mock/detail/{day}/{type}', [MockReservationController::class, 'detail'])->name('mock.detail');
+
+
+
+
+
 
 
 

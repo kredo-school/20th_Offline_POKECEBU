@@ -6,15 +6,14 @@ use App\Http\Controllers\HotelController;
 use App\Http\Controllers\RestaurantController;
 use App\Http\Controllers\HotelStaffController;
 use App\Http\Controllers\RestaurantStaffController;
+use App\Http\Controllers\StaffMypageContoroller;
 use App\Http\Controllers\AdminController;
-
-
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('auth.login');
 });
 
 Auth::routes();
@@ -40,11 +39,28 @@ Route::prefix('staff')->middleware('auth')->group(function () {
     Route::get('/hotel', [HotelStaffController::class, 'index'])
         ->name('staff.homehotel');
 
+
+    Route::get('/mypage/hotel', [StaffMypageContoroller::class, 'index'])
+        ->name('staff.mypage');
+
+    Route::get('/staff/edit/hotel', [StaffMypageContoroller::class, 'editStaffMypage'])
+        ->name('staff.edit');
+    
+    Route::get('/mypage/restaurant',[StaffMypageContoroller::class,'indexRestaurant'])
+    ->name('staff.mypage.restaurant');
+
+    Route::get('edit.restaurant',[StaffMypageContoroller::class,'editStaffMypagerestaurant'])
+    ->name('staff.edit-restaurant');
+    
+
+
+
     // restaurant
     Route::get('/restaurant', [RestaurantStaffController::class, 'index'])
         ->name('staff.homerestaurant');
 });
 
+Route::get('/admin', [AdminController::class, 'index'])->name('admin.home');
 Route::get('/admin/customers', [AdminController::class, 'customers'])->name('admin.customers');
 Route::get('/admin/customers/edit', [AdminController::class, 'editCustomer'])->name('customers.edit');
 Route::get('/admin/customers/add', [AdminController::class, 'addCustomer'])->name('customers.add');
@@ -52,6 +68,10 @@ Route::get('/admin/customers/add', [AdminController::class, 'addCustomer'])->nam
 Route::get('/admin/hotels', [AdminController::class, 'hotels'])->name('admin.hotels');
 Route::get('/admin/hotel/edit', [AdminController::class, 'editHotel'])->name('hotels.edit');
 Route::get('/admin/hotel/add', [AdminController::class, 'addHotel'])->name('hotel.add');
+Route::get('/admin/hotel/approval',  function () {
+    return view('adminpage.hotel.pending-approval');
+})->name('hotel.approval');
+
 
 Route::get('/admin/restaurants', [AdminController::class, 'restaurants'])->name('admin.restaurants');
 Route::get('/admin/restaurant/edit', [AdminController::class, 'editRestaurant'])->name('restaurant.edit');
@@ -61,34 +81,7 @@ Route::get('/admin/admins', [AdminController::class, 'admins'])->name('admin.adm
 Route::get('/admin/admin/edit', [AdminController::class, 'editAdmin'])->name('admin.edit');
 Route::get('/admin/admin/add', [AdminController::class, 'addAdmin'])->name('admin.add');
 
-//     Route::prefix('admin')->group(function () {
-//         Route::get(
-//             '/customers/add',
-//             [AdminController::class, 'addCustomer']
-//         )->name('customers.add');
-//     });
 
-//     Route::prefix('admin')->group(function () {
-//         Route::get(
-//             '/hotel/add',
-//             [AdminController::class, 'addHotel']
-//         )->name('hotel.add');
-//     });
-
-//     Route::prefix('admin')->group(function () {
-//         Route::get(
-//             '/restaurant/add',
-//             [AdminController::class, 'addRestaurant']
-//         )->name('restaurant.add');
-//     });
-
-//     Route::prefix('admin')->group(function () {
-//         Route::get(
-//             '/admin/add',
-//             [AdminController::class, 'addAdmin']
-//         )->name('admin.add');
-//     });
-// });
 
 
 
@@ -103,21 +96,32 @@ Route::get('userpage/mypage/signup-for-company', function () {
     return view('userpage.mypage.signup-for-company');
 })->name('userpage.mypage.signup-for-company');
 
-// User_HotelSerchResult.blade.php 
-Route::get('userpage/mypage/HotelSerchResult', function () {
-    return view('userpage.mypage.HotelSerchResult');
-})->name('userpage.mypage.HotelSerchResult');
+// User_userpage\mypage\hotel-serch-result.blade.php
+Route::get('userpage/mypage/hotel-serch-result', function () {
+    return view('userpage.mypage.hotel-serch-result');
+})->name('userpage.mypage.hotel-serch-result');
 
-//Staff addforhotel
-Route::get('add-for-hotel', function () {
-    return view('add-for-hotel');
-})->name('add-for-hotel');
+//Staff
+//Staff add-for-hotel
+Route::get('staffpage/add-for-hotel', function () {
+    return view('staffpage.add-for-hotel');
+})->name('staffpage.add-for-hotel');
 
+//Staff add-for-restaurant
+Route::get('staffpage/add-for-restaurant', function () {
+    return view('staffpage.add-for-restaurant');
+})->name('staffpage.add-for-restaurant');
+
+Route::get('admin/categories', function () {
+    return view('adminpage.category.index');
+})->name('adminpage.category.index');
+//Staff table-type
+Route::get('staffpage/table-type', function () {
+    return view('staffpage.table-type');
+})->name('staffpage.table-type');
 
 // MAEDA DA・YO⭐︎
 // Reservation infomation detel の作成画面（view確認画面）
 Route::get('/staffpage/resavation-hotel-info', function() {
     return view('staffpage.resavation-hotel-info');
 })->name('staffpage.resavation-hotel-info');
-       
-          

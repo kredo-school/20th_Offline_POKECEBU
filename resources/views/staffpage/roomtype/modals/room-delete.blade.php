@@ -1,4 +1,4 @@
-<div class="modal fade" id="rejectModal-" tabindex="-1">
+<div class="modal fade" id="deleteRoomModal-" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
 
@@ -9,10 +9,13 @@
 
             <div class="modal-body">
                 <p>
-                    Are you sure you want to reject<br>
-                    <strong>Hotel's name</strong>?
+                    <p><strong>Are you sure you want to delete?</strong></p>
+                    
+                    Room Number:<br>
+                    Room Type:<br>
+                    Floor Number:<br>
+                    Max Guests:<br>
                 </p>
-                <a href="">View details</a>
             </div>
 
             <div class="modal-footer">
@@ -20,8 +23,8 @@
 
                 <form method="POST" action="">
                     @csrf
-                    @method('PATCH')
-                    <button type="submit" class="btn btn-danger ms-2">Reject</button>
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger ms-2">Delete</button>
                 </form>
             </div>
         </div>

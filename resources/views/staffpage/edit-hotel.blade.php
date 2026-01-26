@@ -12,7 +12,6 @@
 
                 <div class="card shadow-sm">
                     <div class="card-body p-4">
-
                         <form action="#" method="post">
                             @csrf
                             @method('PATCH')
@@ -42,11 +41,8 @@
                                 Cancel
                             </a>
                         </form>
-
-
                     </div>
                 </div>
-
             </div>
         </div>
     </div>

@@ -19,7 +19,14 @@
         <div class="row mb-3">
             <div class="col-12">
                 <label class="form-label">Cuisine Type <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" placeholder="e.g. Japanese, Italian">
+                <select name="cuisine_type" id="cuisine_type" class="form-select">
+                    <option value="" hidden>Select Cuisine Type</option>
+                    <option value="japanese">Japanese</option>
+                    <option value="italian">Italian</option>
+                    <option value="filipino">Filipino</option>
+                    <option value="chinese">Chinese</option>
+                    <option value="mexican">Mexican</option>
+                </select>
             </div>
         </div>
 

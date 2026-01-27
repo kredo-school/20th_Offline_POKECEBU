@@ -1,6 +1,6 @@
 <?php
 namespace App\Http\Controllers;
-
+use App\Models\Reservation;
 use App\Http\Controllers\Controller;
 
 class HotelStaffController extends Controller
@@ -10,11 +10,20 @@ class HotelStaffController extends Controller
         return view('staffpage.home-hotel');
     }
 
-    public function showhotel(){
+    public function reservations()
+    {
+        $reservations = Reservation::with('guest', 'room')->get();
+        return view('staff.reservations.index', compact('reservations'));
+    }
+
+
+    public function showhotel()
+    {
         return view('staffpage.edit-hotel');
     }
 
-    public function showrestaurant(){
+    public function showrestaurant()
+    {
         return view('staffpage.edit-restaurant');
     }
 }

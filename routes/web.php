@@ -102,10 +102,10 @@ Route::get('userpage/mypage/signup-for-company', function () {
     return view('userpage.mypage.signup-for-company');
 })->name('userpage.mypage.signup-for-company');
 
-// User_userpage\mypage\hotel-serch-result.blade.php
-Route::get('userpage/mypage/hotel-serch-result', function () {
-    return view('userpage.mypage.hotel-serch-result');
-})->name('userpage.mypage.hotel-serch-result');
+// User_userpage\mypage\hotel-search-result.blade.php
+Route::get('userpage/mypage/hotel-search-result', function () {
+    return view('userpage.mypage.hotel-search-result');
+})->name('userpage.mypage.hotel-search-result');
 
 //Staff addforhotel
 Route::get('add-for-hotel', function () {

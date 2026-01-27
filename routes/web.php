@@ -38,6 +38,8 @@ Route::get('/restaurants', [RestaurantController::class, 'index']);
 Route::prefix('staff')->middleware('auth')->group(function () {
     Route::get('/hotel', [HotelStaffController::class, 'index'])
         ->name('staff.homehotel');
+    
+    Route::get('/staff/reservations', [HotelStaffController::class, 'reservations'])->name('staff.reservations');
 
 
     Route::get('/mypage/hotel', [StaffMypageContoroller::class, 'index'])
@@ -58,6 +60,8 @@ Route::prefix('staff')->middleware('auth')->group(function () {
     // restaurant
     Route::get('/restaurant', [RestaurantStaffController::class, 'index'])
         ->name('staff.homerestaurant');
+
+    Route::get('/staff/reservations/restaurant', [RestaurantStaffController::class, 'reservations']) ->name('staff.reservations.restaurant');
 });
 
 Route::get('/admin', [AdminController::class, 'index'])->name('admin.home');
@@ -119,3 +123,5 @@ Route::get('admin/categories', function () {
 Route::get('staffpage/table-type', function () {
     return view('staffpage.table-type');
 })->name('staffpage.table-type');
+//jeepney
+Route::get('/jeepney', function () { return view('jeepney'); })->name('jeepney');

@@ -18,7 +18,7 @@
                 <div>Hotel</div>
             </a>
 
-            <a href="#" class="menu-btn menu-jeepney text-decoration-none">
+            <a href="{{ route('jeepney') }}" class="menu-btn menu-jeepney text-decoration-none">
                 <i class="fa-solid fa-van-shuttle"></i>
                 <div>Jeepney</div>
             </a>

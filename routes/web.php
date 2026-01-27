@@ -83,11 +83,6 @@ Route::get('/admin/admin/add', [AdminController::class, 'addAdmin'])->name('admi
 
 
 
-
-
-
-
-// keisuke 
 // rooms の作成画面（ビュー確認用）
 
 // User
@@ -125,3 +120,30 @@ Route::get('staffpage/table-type', function () {
 Route::get('/staffpage/resavation-hotel-info', function() {
     return view('staffpage.resavation-hotel-info');
 })->name('staffpage.resavation-hotel-info');
+
+
+
+
+
+Route::group(['middleware' => 'auth'], function(){
+
+    # Admin
+    Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'admin'], function() {
+        
+    });
+    
+    # Staff
+    Route::group(['prefix' => 'staff', 'as' => 'staff.', 'middleware' => 'staff'], function() {
+        
+    });
+
+    # User　　これより下はuserが見れるところ　下にある感じで機能ごとにグループを分けてください
+    # User Home
+
+
+    # User MyPage
+
+
+    # User Booking
+
+});

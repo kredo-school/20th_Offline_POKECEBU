@@ -21,7 +21,12 @@
                                 <label class="form-label">
                                     Table type <span class="text-danger">*</span>
                                 </label>
-                                <input type="text" class="form-control">
+                                <select name="table_type" id="table_type" class="form-select">
+                                    <option value="" hidden>Select Table Type</option>
+                                    <option value="indoor">Indoor</option>
+                                    <option value="outdoor">Outdoor</option>
+                                    <option value="private">Private</option>
+                                </select>
                             </div>
 
                             <!-- Total tables -->

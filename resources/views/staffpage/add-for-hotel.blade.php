@@ -12,7 +12,12 @@
             <div class="row mb-3">
                 <div class="col-12">
                     <label class="form-label">Room Type <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" placeholder="e.g. Standard Twin">
+                    <select name="room_type" id="room_type" class="form-select">
+                        <option value="" hidden>Select Room Type</option>
+                        <option value="vip">VIP</option>
+                        <option value="single">Single</option>
+                        <option value="double">Double</option>
+                    </select>
                 </div>
             </div>
 

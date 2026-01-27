@@ -21,7 +21,12 @@
                                 <label class="form-label">
                                     Room type <span class="text-danger">*</span>
                                 </label>
-                                <input type="text" class="form-control">
+                                <select name="room_type" id="room_type" class="form-select">
+                                    <option value="" hidden>Select Room Type</option>
+                                    <option value="vip">VIP</option>
+                                    <option value="single">Single</option>
+                                    <option value="double">Double</option>
+                                </select>
                             </div>
 
                             <!-- Total rooms -->

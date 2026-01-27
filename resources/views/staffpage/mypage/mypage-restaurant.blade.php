@@ -40,11 +40,16 @@
                 </div>
 
                 <div class="card-body">
-                    <div class="d-flex align-items-center mb-4">
-                        <img src="https://via.placeholder.com/120"
-                             class="rounded me-3"
-                             alt="Restaurant Image">
-                        <div>
+                   <div class="d-flex align-items-center mb-4">
+    <img src="https://via.placeholder.com/120"
+         class="rounded me-3"
+         alt="Restaurant Image">
+    <div>
+        <h5 class="mb-1">Sample Restaurant</h5>
+        <p class="mb-0 text-muted">Casual dining with local cuisine</p>
+    </div>
+</div>
+
                             <h5 class="mb-1">Sample Restaurant</h5>
                             <p class="mb-0 text-muted">Casual dining with local cuisine</p>
                         </div>

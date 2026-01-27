@@ -8,6 +8,7 @@ use App\Http\Controllers\HotelStaffController;
 use App\Http\Controllers\RestaurantStaffController;
 use App\Http\Controllers\StaffMypageContoroller;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\MockReservationController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
@@ -87,6 +88,19 @@ Route::get('/admin/admin/add', [AdminController::class, 'addAdmin'])->name('admi
 
 
 
+// カレンダー
+// routes/web.php
+Route::get('/mock/calendar', [MockReservationController::class, 'calendar'])->name('mock.calendar');
+Route::get('/mock/day/{day}', [MockReservationController::class, 'dayStatus'])->name('mock.day');
+Route::get('/mock/detail/{day}/{type}', [MockReservationController::class, 'detail'])->name('mock.detail');
+
+
+
+
+
+
+
+
 
 
 
@@ -104,6 +118,33 @@ Route::get('userpage/mypage/signup-for-company', function () {
 Route::get('userpage/mypage/hotel-serch-result', function () {
     return view('userpage.mypage.hotel-serch-result');
 })->name('userpage.mypage.hotel-serch-result');
+
+// User_ 投稿関係
+// User_ resources\views\userpage\mypage\post . blade . php
+Route::get('userpage/posts/post-list', function () {
+    $all_posts = [
+        ['title' => 'テスト投稿1', 'content' => 'これはダミーの投稿です'],
+        ['title' => 'テスト投稿2', 'content' => 'ビュー確認用の投稿です'],
+    ];
+    return view('userpage.posts.post-list', compact('all_posts'));
+})->name('userpage.posts.post-list');
+
+// 作成
+// {{-- resources\views\userpage\posts\create.blade.php --}}
+Route::get('userpage/posts/create', function () {
+    return view('userpage.posts.create');
+})->name('userpage.posts.create');
+
+// 表示
+Route::get('userpage/posts/show', function () {
+    return view('userpage.posts.show');
+})->name('userpage.posts.show');
+
+// 編集
+Route::get('userpage/posts/edit', function () {
+    return view('userpage.posts.edit');
+})->name('userpage.posts.edit');
+
 
 //Staff
 //Staff add-for-hotel
@@ -125,3 +166,9 @@ Route::get('staffpage/table-type', function () {
 })->name('staffpage.table-type');
 //jeepney
 Route::get('/jeepney', function () { return view('jeepney'); })->name('jeepney');
+
+// MAEDA DA・YO⭐︎
+// Reservation infomation detel の作成画面（view確認画面）
+Route::get('/staffpage/resavation-hotel-info', function() {
+    return view('staffpage.resavation-hotel-info');
+})->name('staffpage.resavation-hotel-info');

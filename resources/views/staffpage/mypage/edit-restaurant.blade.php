@@ -94,7 +94,7 @@
 
                     {{-- ボタン --}}
                     <div class="d-flex justify-content-end gap-2">
-                        <a href="{{ route('staff.mypage.mypage-restaurant') }}"
+                        <a href="{{ route('staff.edit-restaurant') }}"
                            class="btn btn-outline-secondary">
                             Cancel
                         </a>

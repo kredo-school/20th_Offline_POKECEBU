@@ -8,18 +8,40 @@ use App\Http\Controllers\HotelStaffController;
 use App\Http\Controllers\RestaurantStaffController;
 use App\Http\Controllers\StaffMypageContoroller;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MockReservationController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
-
-Route::get('/', function () {
-    return view('auth.login');
-});
-
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::group(['middleware' => 'auth'], function(){
+
+    # Admin
+    Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'admin'], function() {
+        
+    });
+    
+    # Staff
+    Route::group(['prefix' => 'staff', 'as' => 'staff.', 'middleware' => 'staff'], function() {
+        
+    });
+    
+    # User
+    Route::group(['prefix'=>'user','as'=>'user'],function(){
+        # User Home
+        Route::get('/', [HomeController::class, 'index'])->name('home');
+
+
+        # User MyPage
+
+
+        # User Booking
+
+
+    });
+});
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/mypage', [MyPageController::class, 'index'])->name('mypage');
@@ -105,7 +127,6 @@ Route::get('/mock/detail/{day}/{type}', [MockReservationController::class, 'deta
 
 
 
-// keisuke 
 // rooms の作成画面（ビュー確認用）
 
 // User
@@ -172,30 +193,3 @@ Route::get('/jeepney', function () { return view('jeepney'); })->name('jeepney')
 Route::get('/staffpage/resavation-hotel-info', function() {
     return view('staffpage.resavation-hotel-info');
 })->name('staffpage.resavation-hotel-info');
-
-
-
-
-
-Route::group(['middleware' => 'auth'], function(){
-
-    # Admin
-    Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'admin'], function() {
-        
-    });
-    
-    # Staff
-    Route::group(['prefix' => 'staff', 'as' => 'staff.', 'middleware' => 'staff'], function() {
-        
-    });
-
-    # User　　これより下はuserが見れるところ　下にある感じで機能ごとにグループを分けてください
-    # User Home
-
-
-    # User MyPage
-
-
-    # User Booking
-
-});

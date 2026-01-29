@@ -2,25 +2,29 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Hotel;
+use Illuminate\Http\Request;
+
 
 
 class HotelController extends Controller
 {
-    // public function index()
-    // {
-    //     $hotel = [
-    //         'name' => 'Ocean View Hotel',
-    //         'location' => 'Cebu City',
-    //         'price' => 12000,
-    //         'image' => 'https://via.placeholder.com/800x400'
-    //     ];
 
-    //     return view('userpage.booking.hotel', compact('hotel'));
-    // }
+    private $hotel;
 
-    
+    public function __construct(Hotel $hotel)
+    {
+        $this->hotel = $hotel;
+    }
+
+
+    public function showDetailHotel($id)
+    {
+        $hotel = $this->hotel->findOrFail($id);
+
+        return view('userpage.booking.hotel-details', compact('hotel'));
+    }
+
     // 上のコードを残す（バックアップ）
     public function sample()
     {
@@ -57,5 +61,4 @@ class HotelController extends Controller
 
         return view('userpage.booking.hotel', compact('hotel'));
     }
-    
-}
+};

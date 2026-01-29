@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class AdminController extends Controller
 {
     public function index() {
-        $totalUsers = 3;
-        $pageViews  = 12430;
+        $totalUsers = User::where('role_id', 3)->count();
 
-        return view('adminpage.home', compact('totalUsers', 'pageViews'));
+        return view('adminpage.home', compact('totalUsers'));
     }
 
     public function customers()

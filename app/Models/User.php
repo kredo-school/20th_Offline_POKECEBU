@@ -7,10 +7,15 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
+
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
+    
+    const ADMIN_ROLE_ID = 1;
+    const STAFF_ROLE_ID = 2;
+    const USER_ROLE_ID = 3;
 
     /**
      * The attributes that are mass assignable.

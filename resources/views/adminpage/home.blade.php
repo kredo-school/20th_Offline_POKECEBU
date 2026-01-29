@@ -9,17 +9,8 @@
             <div class="col-md-5 mb-5">
                 <div class="card text-center">
                     <div class="card-body">
-                        {{-- <h3><a href="" class="text-decoration-none text-dark">{{ number_format($totalUsers) }}</a></h3> --}}
+                        <h3><a href="" class="text-decoration-none text-dark">{{ number_format($totalUsers) }}</a></h3>
                         <p>all users</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-5 mb-5">
-                <div class="card text-center">
-                    <div class="card-body">
-                        {{-- <h3><a href="" class="text-decoration-none text-dark">{{ number_format($pageViews) }}</a></h3> --}}
-                        <p>page views</p>
                     </div>
                 </div>
             </div>

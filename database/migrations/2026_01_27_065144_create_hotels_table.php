@@ -21,7 +21,10 @@ return new class extends Migration {
             $table->decimal('star_rating', 2, 1)->nullable();
             $table->string('phone')->nullable();
             $table->string('website')->nullable();
-            $table->foreignId('updated_user')->nullable()->constrained('users');
+            // $table->foreignId('updated_user')->nullable()->constrained('users');
+
+            // - updated_user は外部キー制約を付けていますが、onDelete('set null') を追加すると、ユーザー削除時にホテルレコードが壊れず残せます。
+            $table->foreignId('updated_user')->nullable()->constrained('users')->nullOnDelete();;
             $table->timestamps();
         });
     }

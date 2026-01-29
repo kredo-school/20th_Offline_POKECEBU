@@ -14,8 +14,9 @@ class User extends Authenticatable
     use HasFactory, Notifiable;
     
     const ADMIN_ROLE_ID = 1;
-    const STAFF_ROLE_ID = 2;
-    const USER_ROLE_ID = 3;
+    const HOTEL_ROLE_ID = 2;
+    const RESTAURANT_ROLE_ID = 3;
+    const USER_ROLE_ID = 4;
 
     /**
      * The attributes that are mass assignable.

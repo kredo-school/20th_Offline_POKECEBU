@@ -2,10 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Hotel;
 use Illuminate\Http\Request;
 
 class HotelController extends Controller
 {
+
+    private $hotel;
+
+    public function __construct(Hotel $hotel)
+    {
+        $this->hotel = $hotel;
+    }
+
   public function index()
 {
     $hotel = [
@@ -17,4 +26,11 @@ class HotelController extends Controller
 
     return view('userpage.booking.hotel', compact('hotel'));
 }
-}
+
+public function showDetailHotel($id)
+    {
+        $hotel = $this->hotel->findOrFail($id);
+
+        return view('userpage.booking.hotel-details', compact('hotel'));
+    }
+};

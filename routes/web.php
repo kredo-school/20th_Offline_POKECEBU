@@ -16,9 +16,11 @@ use Illuminate\Support\Facades\Auth;
 Auth::routes();
 
 Route::group(['middleware' => 'auth'], function(){
+    Route::get('/', [HomeController::class, 'index'])->name('home');
 
     # Admin
     Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'admin'], function() {
+        Route::get('/admin', [AdminController::class, 'index'])->name('home');
         
     });
     
@@ -28,9 +30,8 @@ Route::group(['middleware' => 'auth'], function(){
     });
     
     # User
-    Route::group(['prefix'=>'user','as'=>'user'],function(){
+    Route::group(['prefix'=>'user','as'=>'user.'],function(){
         # User Home
-        Route::get('/', [HomeController::class, 'index'])->name('home');
 
 
         # User MyPage

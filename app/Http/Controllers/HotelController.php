@@ -3,8 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Hotel;
-use Illuminate\Http\Request;
-
 class HotelController extends Controller
 {
 
@@ -31,6 +29,6 @@ public function showDetailHotel($id)
     {
         $hotel = $this->hotel->findOrFail($id);
 
-        return view('userpage.booking.hotel-details', compact('hotel'));
+        return view('userpage.booking.detail-hotel', compact('hotel'));
     }
 };

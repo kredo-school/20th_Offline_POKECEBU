@@ -8,6 +8,7 @@ use App\Http\Controllers\HotelStaffController;
 use App\Http\Controllers\RestaurantStaffController;
 use App\Http\Controllers\StaffMypageContoroller;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\FaqController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MockReservationController;
@@ -18,16 +19,53 @@ Auth::routes();
 
 Route::group(['middleware' => 'auth'], function(){
     Route::get('/', [HomeController::class, 'index'])->name('home');
+    Route::get('/faq', [FaqController::class, 'index'])->name('faq.index');
 
     # Admin
     Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'admin'], function() {
         Route::get('/', [AdminController::class, 'index'])->name('home');
+        # For Customer
+        Route::get('/customer', [AdminController::class, 'customer'])->name('customer');
+        Route::get('/customer/add', [AdminController::class, 'addCustomer'])->name('customer.add');
+        Route::post('/customer/add', [AdminController::class, 'storeCustomer'])->name('customers.store');
+        Route::get('/customer/edit/{id}', [AdminController::class, 'editCustomer'])->name('customer.edit');
+        Route::put('/customer/update/{id}', [AdminController::class, 'updateCustomer'])->name('customer.update');
+        Route::delete('/customer/delete/{id}', [AdminController::class, 'deleteCustomer'])->name('customer.delete');
+        # For Hotel
+        Route::get('/hotels', [AdminController::class, 'hotels'])->name('hotels');
+        Route::get('/hotel/add', [AdminController::class, 'addHotel'])->name('hotel.add');
+        Route::post('/hotel/add', [AdminController::class, 'storeHotel'])->name('hotel.store');
+        Route::get('/hotel/edit/{id}', [AdminController::class, 'editHotel'])->name('hotel.edit');
+        Route::put('/hotel/update/{id}', [AdminController::class, 'updateHotel'])->name('hotel.update');
+        Route::delete('/hotel/delete/{id}', [AdminController::class, 'deleteHotel'])->name('hotel.delete');
+        # For Restaurant
+        Route::get('/restaurants', [AdminController::class, 'restaurants'])->name('restaurants');
+        Route::get('/restaurant/add', [AdminController::class, 'addRestaurant'])->name('restaurant.add');
+        Route::post('/restaurant/add', [AdminController::class, 'storeRestaurant'])->name('restaurant.store');
+        Route::get('/restaurant/edit/{id}', [AdminController::class, 'editRestaurant'])->name('restaurant.edit');
+        Route::put('/restaurant/update/{id}', [AdminController::class, 'updateRestaurant'])->name('restaurant.update');
+        Route::delete('/restaurant/delete/{id}', [AdminController::class, 'deleteRestaurant'])->name('restaurant.delete');
+        # For Admin
+        Route::get('/admins', [AdminController::class, 'admins'])->name('admins');
+        Route::get('/admin/add', [AdminController::class, 'addAdmin'])->name('admin.add');
+        Route::post('/admin/add', [AdminController::class, 'storeAdmin'])->name('admin.store');
+        Route::get('/admin/edit/{id}', [AdminController::class, 'editAdmin'])->name('admin.edit');
+        Route::put('/admin/update/{id}', [AdminController::class, 'updateAdmin'])->name('admin.update');
+        Route::delete('/admin/delete/{id}', [AdminController::class, 'deleteAdmin'])->name('admin.delete');
         
+        # FAQ    
+        Route::get('/faq/list', [FaqController::class, 'displayList'])->name('faq.displayList');
+        Route::post('/faq/store', [FaqController::class, 'store'])->name('faq.store');
+        Route::patch('/faq/{id}/update', [FaqController::class, 'update'])->name('faq.update');
+        Route::delete('/faq/{id}/destroy', [FaqController::class, 'destroy'])->name('faq.destroy');
+        Route::delete('/faq/{id}/hidden', [FaqController::class, 'hidden'])->name('faq.hidden');
+        Route::patch('/faq/{id}/visible', [FaqController::class, 'visible'])->name('faq.visible');
+        Route::post('/faq/storeCategory', [FaqController::class, 'storeCategory'])->name('faq.storeCategory');
     });
     
     # Staff
-        # Hotel
     Route::group(['prefix' => 'hotel', 'as' => 'hotel.', 'middleware' => 'hotel'], function() {
+        # Hotel
         Route::get('/', [HotelStaffController::class, 'index'])->name('home');
         Route::get('/reservations', [HotelStaffController::class, 'reservations'])->name('reservations');
         Route::get('/mypage', [StaffMypageContoroller::class, 'index'])->name('mypage');
@@ -35,8 +73,8 @@ Route::group(['middleware' => 'auth'], function(){
         Route::post('/mypage/store', [StaffMypageContoroller::class, 'storeHotel'])->name('mypage.store');
     });
 
-        # Restaurant
     Route::group(['prefix' => 'restaurant', 'as' => 'restaurant.', 'middleware' => 'restaurant'], function() {
+        # Restaurant
         Route::get('/', [RestaurantStaffController::class, 'index'])->name('home');
         Route::get('/reservations', [RestaurantStaffController::class, 'reservations'])->name('reservations');
         Route::get('/mypage', [StaffMypageContoroller::class, 'indexRestaurant'])->name('mypage');
@@ -62,9 +100,15 @@ Route::group(['middleware' => 'auth'], function(){
     
         # User Booking
         Route::get('/hotels', [HotelController::class, 'index'])->name('hotels.index');
+        Route::get('/hotels/{id}', [HotelController::class, 'showDetailHotel'])->name('hotels.detail');
         Route::get('/restaurants', [RestaurantController::class, 'index'])->name('restaurants.index');
     });
 });
+
+
+Route::get('/userhotel', function(){
+    return view('userpage.booking.hotel');
+})->name('user.hotel');
 
 // staff page home for staff 
 // hotel

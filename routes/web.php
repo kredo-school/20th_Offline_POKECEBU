@@ -8,6 +8,7 @@ use App\Http\Controllers\HotelStaffController;
 use App\Http\Controllers\RestaurantStaffController;
 use App\Http\Controllers\StaffMypageContoroller;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MockReservationController;
 use Illuminate\Support\Facades\Route;
@@ -20,48 +21,55 @@ Route::group(['middleware' => 'auth'], function(){
 
     # Admin
     Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'admin'], function() {
-        Route::get('/admin', [AdminController::class, 'index'])->name('home');
+        Route::get('/', [AdminController::class, 'index'])->name('home');
         
     });
     
     # Staff
-    Route::group(['prefix' => 'staff', 'as' => 'staff.', 'middleware' => 'staff'], function() {
-        
+        # Hotel
+    Route::group(['prefix' => 'hotel', 'as' => 'hotel.', 'middleware' => 'hotel'], function() {
+        Route::get('/', [HotelStaffController::class, 'index'])->name('home');
+        Route::get('/reservations', [HotelStaffController::class, 'reservations'])->name('reservations');
+        Route::get('/mypage', [StaffMypageContoroller::class, 'index'])->name('mypage');
+        Route::get('/mypage/edit', [StaffMypageContoroller::class, 'editStaffMypage'])->name('mypage.edit');
+        Route::post('/mypage/store', [StaffMypageContoroller::class, 'storeHotel'])->name('mypage.store');
     });
-    
+
+        # Restaurant
+    Route::group(['prefix' => 'restaurant', 'as' => 'restaurant.', 'middleware' => 'restaurant'], function() {
+        Route::get('/', [RestaurantStaffController::class, 'index'])->name('home');
+        Route::get('/reservations', [RestaurantStaffController::class, 'reservations'])->name('reservations');
+        Route::get('/mypage', [StaffMypageContoroller::class, 'indexRestaurant'])->name('mypage');
+        Route::get('/mypage/edit', [StaffMypageContoroller::class, 'editStaffMypagerestaurant'])->name('edit');
+        Route::put('/mypage/update', [StaffMypageContoroller::class, 'updateStaffMypagerestaurant'])->name('update');
+    });
+
     # User
     Route::group(['prefix'=>'user','as'=>'user.'],function(){
         # User Home
 
 
         # User MyPage
-
-
+        Route::get('/mypage', [MyPageController::class, 'index'])->name('mypage');
+        Route::get('/mypage/edit', [MyPageController::class, 'editPersonal'])->name('mypage.edit');
+        Route::post('/mypage/updateProfile', [MyPageController::class, 'updatePersonal'])->name('mypage.updateProfile');
+        Route::get('/mypage/edit/adress', [MyPageController::class, 'editAdress'])->name('edit.adress');
+        Route::post('/mypage/edit/updateAdress', [MyPageController::class, 'updateAdress'])->name('update.adress');
+        Route::get('/mypage/edit/profile', [MyPageController::class, 'editProfile'])->name('edit.profile');
+        Route::post('/mypage/edit/updateProfile', [MyPageController::class, 'updateProfile'])->name('update.profile');
+        Route::get('/mypage/booking', [BookingController::class, 'index'])->name('booking');
+        Route::get('/mypage/favorite', [FavoriteController::class, 'index'])->name('favorite');
+    
         # User Booking
-
-
+        Route::get('/hotels', [HotelController::class, 'index'])->name('hotels.index');
+        Route::get('/restaurants', [RestaurantController::class, 'index'])->name('restaurants.index');
     });
 });
-
-
-Route::middleware('auth')->group(function () {
-    Route::get('/mypage', [MyPageController::class, 'index'])->name('mypage');
-    Route::get('/bookings', [BookingController::class, 'index'])->name('bookings');
-    Route::get('/favorites', [MyPageController::class, 'favorite'])->name('favorites');
-    Route::get('/mypage/edit', [MyPageController::class, 'editPersonal'])->name('mypage.edit');
-    Route::get('/mypage/editadress', [MyPageController::class, 'editAddress'])->name('mypage.editadress');
-    Route::get('/mypage/editprofile', [MyPageController::class, 'editProfile'])->name('mypage.editprofile');
-});
-
-// booking page
-Route::get('/hotels', [HotelController::class, 'index'])->name('hotels.index');
-Route::get('/restaurants', [RestaurantController::class, 'index']);
 
 // staff page home for staff 
 // hotel
 Route::prefix('staff')->middleware('auth')->group(function () {
-    Route::get('/hotel', [HotelStaffController::class, 'index'])
-        ->name('staff.homehotel');
+  
     
     Route::get('/staff/reservations', [HotelStaffController::class, 'reservations'])->name('staff.reservations');
 
@@ -87,8 +95,6 @@ Route::prefix('staff')->middleware('auth')->group(function () {
 
     Route::get('/staff/reservations/restaurant', [RestaurantStaffController::class, 'reservations']) ->name('staff.reservations.restaurant');
 });
-
-Route::get('/admin', [AdminController::class, 'index'])->name('admin.home');
 Route::get('/admin/customers', [AdminController::class, 'customers'])->name('admin.customers');
 Route::get('/admin/customers/edit', [AdminController::class, 'editCustomer'])->name('customers.edit');
 Route::get('/admin/customers/add', [AdminController::class, 'addCustomer'])->name('customers.add');

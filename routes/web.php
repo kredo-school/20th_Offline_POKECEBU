@@ -186,10 +186,10 @@ Route::get('userpage/mypage/signup-for-company', function () {
     return view('userpage.mypage.signup-for-company');
 })->name('userpage.mypage.signup-for-company');
 
-// User_userpage\mypage\hotel-serch-result.blade.php
-Route::get('userpage/mypage/hotel-serch-result', function () {
-    return view('userpage.mypage.hotel-serch-result');
-})->name('userpage.mypage.hotel-serch-result');
+// User_userpage\mypage\hotel-search-result.blade.php
+Route::get('userpage/mypage/hotel-search-result', function () {
+    return view('userpage.mypage.hotel-search-result');
+})->name('userpage.mypage.hotel-search-result');
 
 // User_ 投稿関係
 // User_ resources\views\userpage\mypage\post . blade . php

@@ -1,6 +1,6 @@
   @extends('layouts.staff')
 
-  @section('title', 'resevation.hotel.info')
+  @section('title', 'resavation.info')
 
   @section('content')
 
@@ -11,11 +11,7 @@
                   <h3 class="page-title"><i class="fa-regular fa-calendar-check"></i>  Gest Details</h3>
               </div>
               <div class="d-flex gap-2">
-                  <span class="badge date-badge">2030-5-13
-                    {{-- {{ $reservetion->start_at->format('Y-m-d') }} --}}
-                     to 2030-5-14
-                     {{-- {{ $reservation->end_at->format('Y-m-d') }} --}}
-                    </span>
+                  <span class="badge date-badge">2030-10-28</span>
                   <button class="but btn-cancel">Cancel Reservation</button>
               </div>
           </div>
@@ -43,51 +39,39 @@
                                   {{-- detail --}}
                                   <td><i class="table-icon fa-solid fa-user-tie"></i> Guest Name</td>
                                   {{-- 内容を入れる　メモ２ --}}
-                                  <td>Mark Zuckerberg
-                                    {{-- {{ $reservation->user->username }} --}}
-                                </td>
+                                  <td>Bill Gates</td>
                               </tr>
                               <tr>
                                   <td><i class="table-icon fa-regular fa-envelope"></i> Email</td>
-                                  <td>Meta-love.gmail.com
-                                    {{-- {{ $reservation->user->email }} --}}
-                                </td>
+                                  <td>Micro.gmail.com</td>
                               </tr>
                               <tr>
                                   <td><i class="table-icon fa-solid fa-phone"></i> Phone Number</td>
-                                  <td>123-456-7890
-                                    {{-- {{ $reservation->user->detail->phone }} --}}
-                                </td>
+                                  <td>098-765-4321</td>
                               </tr>
                               <tr>
                                   <td><i class="table-icon fa-solid fa-clipboard-list"></i> Reservation ID</td>
-                                  <td>19840514
-                                    {{-- {{ $reservation->reservation_id }} --}}
-                                </td>
+                                  <td>19551028</td>
                               </tr>
                               <tr>
-                                  <td><i class="table-icon fa-solid fa-calendar-days"></i> Stay Period</td>
-                                  <td>2030-5-13
-                                    {{-- {{ $reservetion->start_at ->format('Y-m-d') }} --}}
-                                     to 2030-5-14
-                                     {{-- {{ $reservetion->end_at->format('Y-m-d') }} --}}
-                                    </td>
+                                  <td><i class="table-icon fa-solid fa-calendar-days"></i> Day</td>
+                                  <td>2030-10-28</td>
+                              </tr>
+                               <tr>
+                                  <td><i class="table-icon fa-solid fa-calendar-days"></i> Start Time</td>
+                                  <td>18:00</td>
+                              </tr>
+                               <tr>
+                                  <td><i class="table-icon fa-solid fa-calendar-days"></i> End Time</td>
+                                  <td>21:00</td>
                               </tr>
                               <tr>
-                                  <td><i class="table-icon fa-solid fa-bed"></i> Room & Guests</td>
-                                  <td>tottemo sugoi room
-                                    {{-- {{ $reservation->room_id }} --}}
-                                </td>
+                                  <td><i class="table-icon fa-solid fa-bed"></i> Number of Guests</td>
+                                  <td>4</td>
                               </tr>
                               <tr>
-                                  <td><i class="table-icon fa-solid fa-users"></i> Number of Gest</td>
-                                  <td>2
-                                    {{-- {{ $reservation->gests }} --}}
-                                </td>
-                              </tr>
-                              <tr>
-                                  <td><i class="table-icon fa-solid fa-money-check-dollar"></i> Total Price</td>
-                                  <td>$999,999,999</td>
+                                  <td><i class="table-icon fa-solid fa-users"></i> Status</td>
+                                  <td>Confirmed</td>
                               </tr>
 
                               {{-- phpの閉じタグを入れる　メモ3 --}}
@@ -159,7 +143,6 @@
     color: #fff;
     border-radius: 12px;
     border: none;
-    outline: none;
   }
 
   .btn-print {

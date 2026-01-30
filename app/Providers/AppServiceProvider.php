@@ -26,11 +26,11 @@ class AppServiceProvider extends ServiceProvider
             //function($user) - a closure, automatically passed by Larvale, represents authenticated user
             return $user->role_id === User::ADMIN_ROLE_ID;
         });
-        Gate::define('staff', function($user) {
+        Gate::define('hotel', function($user) {
             //function($user) - a closure, automatically passed by Larvale, represents authenticated user
             return $user->role_id === User::HOTEL_ROLE_ID;
         });
-        Gate::define('staff', function($user) {
+        Gate::define('restaurant', function($user) {
             //function($user) - a closure, automatically passed by Larvale, represents authenticated user
             return $user->role_id === User::RESTAURANT_ROLE_ID;
         });

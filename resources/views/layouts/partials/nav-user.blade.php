@@ -12,13 +12,32 @@
                     {{ Auth::user()->name }}
                 </a>
                 <div class="dropdown-menu dropdown-menu-end">
-                    <a class="dropdown-item" href="{{ route('logout') }}"
-                        onclick="event.preventDefault();document.getElementById('logout-form').submit();">
-                        Logout
-                    </a>
-                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                        @csrf
-                    </form>
+                    <div id="user-menu" class="create-menu" style="right: 0;">
+                        @can('admin')
+                            <a href="{{ route('admin.home') }}" class="create-item">
+                                <i class="fa-solid fa-user-gear me-2"></i>Admin
+                            </a>
+                        @endcan
+                        @can('hotel')
+                            <a href="{{ route('hotel.home') }}" class="create-item">
+                                <i class="fa-solid fa-user-gear me-2"></i>Hotel
+                            </a>
+                        @endcan
+                        @can('restaurant')
+                            <a href="{{ route('restaurant.home') }}" class="create-item">
+                                <i class="fa-solid fa-user-gear me-2"></i>Restaurant
+                            </a>
+                        @endcan
+
+                        <a href="{{ route('logout') }}" class="create-item"
+                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                            <i class="fa-solid fa-right-from-bracket me-2"></i>{{ __('Logout') }}
+                        </a>
+
+                        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                            @csrf
+                        </form>
+                    </div>
                 </div>
             </li>
         @endguest

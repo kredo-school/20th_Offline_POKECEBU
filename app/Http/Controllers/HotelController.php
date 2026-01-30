@@ -22,7 +22,7 @@ class HotelController extends Controller
     {
         $hotel = $this->hotel->findOrFail($id);
 
-        return view('userpage.booking.hotel-details', compact('hotel'));
+        return view('userpage.booking.detail-hotel', compact('hotel'));
     }
 
     // 上のコードを残す（バックアップ）

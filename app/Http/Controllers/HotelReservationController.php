@@ -9,5 +9,13 @@ class HotelReservationController extends Controller
     public function index()
     {
         return view('reservations.hotel');
+    public function __construct() {
+       
+    }
+    public function show($id) {
+        //仮データ（あとからDBから取得する形にする）
+        return view('staff.reservation.info',[
+            'reservationId' => $id
+        ]);
     }
 }

@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
-class StaffMiddleware
+class HotelMiddleware
 {
     /**
      * Handle an incoming request.
@@ -17,11 +17,9 @@ class StaffMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        //handle() - handles an incoming request
-        //closure - $next is a function and calling it means continue to the next middleware/controller 
-        if(Auth::check() && Auth::user()->role_id == User::STAFF_ROLE_ID) {
+        if(Auth::check() && Auth::user()->role_id == User::HOTEL_ROLE_ID) {
             return $next($request);
         } 
-        return redirect()->route('index');
+        return redirect()->route('home');
     }
 }

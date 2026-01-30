@@ -166,27 +166,20 @@
             --------------- --}}
             <div class="section-title">Recent Posts</div>
 
-            {{-- <div class="px-3 pb-4">
-                @if ($user->posts->isNotEmpty())
-                    <div class="row">
-                        @foreach ($posts as $post)
-                            <div class="post-card mb-2">
-                                <div class="d-flex align-items-center mb-2">
-                                    <img src="{{ $post->user->avater }}" alt="" class="rounded-circle me-2" width="35" height="35">
-                                    <div>
-                                        <div class="fw-bold small">{{ $post->user->name }}</div>
-                                        <div class="text-muted small">{{ $post->created_at->diffForHumans() }}</div>
-                                    </div>
-                                </div>
-                                <img src="{{ $post->image }}" alt="" class="imag-fluid rounded mb-2">
-                                <div class="small">{{ $post->sontent }}</div>
+            <div class="px-3 pb-4">
+                {{-- @foreach ($posts as $post)
+                    <div class="post-card mb-2">
+                        <div class="d-flex align-items-center mb-2">
+                            <img src="{{ $post->user->avater }}" alt="" class="rounded-circle me-2" width="35" height="35">
+                            <div>
+                                <div class="fw-bold small">{{ $post->user->name }}</div>
+                                <div class="text-muted small">{{ $post->created_at->diffForHumans() }}</div>
                             </div>
-                        @endforeach
-                    </div>
-                @else
-                    <h3 class="text-muted text-center">No Posts Yet</h3>
-
-                @endif --}}
+                     </div>
+                    <img src="{{ $post->image }}" alt="" class="imag-fluid rounded mb-2">
+                    <div class="small">{{ $post->sontent }}</div>
+                </div>
+                @endforeach --}}
             </div>
 
         </div>

@@ -13,22 +13,11 @@
                 </a>
                 <div class="dropdown-menu dropdown-menu-end">
                     <div id="user-menu" class="create-menu" style="right: 0;">
-                        @can('admin')
-                            <a href="{{ route('admin.home') }}" class="create-item">
-                                <i class="fa-solid fa-user-gear me-2"></i>Admin
-                            </a>
-                        @endcan
-                        @can('hotel')
-                            <a href="{{ route('hotel.home') }}" class="create-item">
-                                <i class="fa-solid fa-user-gear me-2"></i>Hotel
-                            </a>
-                        @endcan
-                        @can('restaurant')
-                            <a href="{{ route('restaurant.home') }}" class="create-item">
-                                <i class="fa-solid fa-user-gear me-2"></i>Restaurant
-                            </a>
-                        @endcan
 
+                            <a href="{{ route('home') }}" class="create-item">
+                                <i class="fa-solid fa-user-gear me-2"></i>User Home
+                            </a>
+                    
                         <a href="{{ route('logout') }}" class="create-item"
                             onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                             <i class="fa-solid fa-right-from-bracket me-2"></i>{{ __('Logout') }}

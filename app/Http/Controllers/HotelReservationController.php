@@ -6,5 +6,8 @@ use Illuminate\Http\Request;
 
 class HotelReservationController extends Controller
 {
-    //
+    public function index()
+    {
+        return view('reservations.hotel');
+    }
 }

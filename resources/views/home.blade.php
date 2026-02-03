@@ -166,8 +166,8 @@
             --------------- --}}
             <div class="section-title">Recent Posts</div>
 
-            {{-- <div class="px-3 pb-4">
-                @if ($user->posts->isNotEmpty())
+            <div class="px-3 pb-4">
+                @if ($posts->isNotEmpty())
                     <div class="row">
                         @foreach ($posts as $post)
                             <div class="post-card mb-2">
@@ -186,7 +186,7 @@
                 @else
                     <h3 class="text-muted text-center">No Posts Yet</h3>
 
-                @endif --}}
+                @endif
             </div>
 
         </div>

@@ -1,6 +1,6 @@
   @extends('layouts.staff')
 
-  @section('title', 'resavation.info')
+  @section('title', 'reservations.resraurant.detail')
 
   @section('content')
 
@@ -8,7 +8,7 @@
           {{-- Header --}}
           <div class="d-flex justify-content-between align-items-center mb-4">
               <div class="d-flex align-items-center gap-3">
-                  <h3 class="page-title"><i class="fa-regular fa-calendar-check"></i>  Gest Details</h3>
+                  <h3 class="page-title"><i class="fa-regular fa-calendar-check"></i>  Restaurant Gest Details</h3>
               </div>
               <div class="d-flex gap-2">
                   <span class="badge date-badge">2030-10-28</span>
@@ -22,7 +22,7 @@
                       <div class="card-header d-flex justify-content-between align-items-center">
                           <div>
                               <strong>Reservation ID:</strong>19840514
-                              <span class="text-muted ms-2">| Chack-in 1 days</span>
+                              <span class="text-muted ms-2">| Start Time 18:00</span>
                           </div>
                           
                       </div>
@@ -42,10 +42,6 @@
                                   <td>Bill Gates</td>
                               </tr>
                               <tr>
-                                  <td><i class="table-icon fa-regular fa-envelope"></i> Email</td>
-                                  <td>Micro.gmail.com</td>
-                              </tr>
-                              <tr>
                                   <td><i class="table-icon fa-solid fa-phone"></i> Phone Number</td>
                                   <td>098-765-4321</td>
                               </tr>
@@ -54,23 +50,15 @@
                                   <td>19551028</td>
                               </tr>
                               <tr>
-                                  <td><i class="table-icon fa-solid fa-calendar-days"></i> Day</td>
+                                  <td><i class="table-icon fa-solid fa-calendar-days"></i> Day & Time</td>
                                   <td>2030-10-28</td>
                               </tr>
-                               <tr>
-                                  <td><i class="table-icon fa-solid fa-calendar-days"></i> Start Time</td>
-                                  <td>18:00</td>
-                              </tr>
-                               <tr>
-                                  <td><i class="table-icon fa-solid fa-calendar-days"></i> End Time</td>
-                                  <td>21:00</td>
-                              </tr>
                               <tr>
-                                  <td><i class="table-icon fa-solid fa-bed"></i> Number of Guests</td>
+                                  <td><i class="table-icon fa-solid fa-users"></i></i> Number of Guests</td>
                                   <td>4</td>
                               </tr>
                               <tr>
-                                  <td><i class="table-icon fa-solid fa-users"></i> Status</td>
+                                  <td><i class="table-icon fa-solid fa-file-pen"></i></i> Status</td>
                                   <td>Confirmed</td>
                               </tr>
 
@@ -94,9 +82,9 @@
                           <h5 class="mb-0">Notes</h5>
                       </div>
                       <ul class="list-group list-group-flush">
-                          <li class="list-group-item">Guest is VIP, provide welcome basket</li>
-                          <li class="list-group-item">Late check-out requested at 1 PM</li>
-                          <li class="list-group-item">Arrange airport transfer</li>
+                          <li class="list-group-item">2 Adults, 2Children</li>
+                          <li class="list-group-item">Two high chairs required</li>
+                          <li class="list-group-item">Birthday cake required</li>
                       </ul>
                       <div class="card-footer d-flex justify-content-between">
                           <button class="btn btn-add">+ Add Note</button>

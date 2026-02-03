@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\MyPageController;
 use App\Http\Controllers\HotelController;
@@ -11,6 +12,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\FaqController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\HotelReservationController;
 use App\Http\Controllers\MockReservationController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
@@ -24,6 +26,12 @@ Route::group(['middleware' => 'auth'], function(){
     # Admin
     Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'admin'], function() {
         Route::get('/', [AdminController::class, 'index'])->name('home');
+        # For Category
+        Route::get('/category', [CategoryController::class, 'index'])->name('category.index'); 
+        Route::post('/category/store', [CategoryController::class, 'store'])->name('category.store');
+        Route::put('/category/update/{id}', [CategoryController::class, 'update'])->name('category.update');
+        Route::delete('/category/delete/{id}', [CategoryController::class, 'destroy'])->name('category.destroy');
+
         # For Customer
         Route::get('/customer', [AdminController::class, 'customer'])->name('customer');
         Route::get('/customer/add', [AdminController::class, 'addCustomer'])->name('customer.add');
@@ -62,24 +70,29 @@ Route::group(['middleware' => 'auth'], function(){
         Route::patch('/faq/{id}/visible', [FaqController::class, 'visible'])->name('faq.visible');
         Route::post('/faq/storeCategory', [FaqController::class, 'storeCategory'])->name('faq.storeCategory');
     });
-    
+        
     # Staff
     Route::group(['prefix' => 'hotel', 'as' => 'hotel.', 'middleware' => 'hotel'], function() {
-        # Hotel
-        Route::get('/', [HotelStaffController::class, 'index'])->name('home');
-        Route::get('/reservations', [HotelStaffController::class, 'reservations'])->name('reservations');
-        Route::get('/mypage', [StaffMypageContoroller::class, 'index'])->name('mypage');
-        Route::get('/mypage/edit', [StaffMypageContoroller::class, 'editStaffMypage'])->name('mypage.edit');
-        Route::post('/mypage/store', [StaffMypageContoroller::class, 'storeHotel'])->name('mypage.store');
+            # Hotel
+            Route::get('/', [HotelStaffController::class, 'index'])->name('home');
+            Route::get('/mypage', [StaffMypageContoroller::class, 'index'])->name('mypage');
+            Route::get('/mypage/edit', [StaffMypageContoroller::class, 'editStaffMypage'])->name('mypage.edit');
+            Route::post('/mypage/store', [StaffMypageContoroller::class, 'storeHotel'])->name('mypage.store');
+            
+            Route::get('/reservations', [HotelReservationController::class, 'hotel'])->name('reservations');
+            // Route::get('/reservations/{id}', [HotelReservationController::class, 'show'])->name('reservations.show');
     });
 
     Route::group(['prefix' => 'restaurant', 'as' => 'restaurant.', 'middleware' => 'restaurant'], function() {
         # Restaurant
         Route::get('/', [RestaurantStaffController::class, 'index'])->name('home');
-        Route::get('/reservations', [RestaurantStaffController::class, 'reservations'])->name('reservations');
         Route::get('/mypage', [StaffMypageContoroller::class, 'indexRestaurant'])->name('mypage');
         Route::get('/mypage/edit', [StaffMypageContoroller::class, 'editStaffMypagerestaurant'])->name('edit');
         Route::put('/mypage/update', [StaffMypageContoroller::class, 'updateStaffMypagerestaurant'])->name('update');
+        
+        Route::get('/reservations', [RestaurantStaffController::class, 'reservations'])->name('reservations');
+        // Route::get('/reservations/{id}', [RestaurantReservationController::class, 'show'])->name('reservations.show');
+
     });
 
     # User
@@ -229,9 +242,6 @@ Route::get('staffpage/add-for-restaurant', function () {
     return view('staffpage.add-for-restaurant');
 })->name('staffpage.add-for-restaurant');
 
-Route::get('admin/categories', function () {
-    return view('adminpage.category.index');
-})->name('adminpage.category.index');
 //Staff table-type
 Route::get('staffpage/table-type', function () {
     return view('staffpage.table-type');
@@ -241,6 +251,11 @@ Route::get('/jeepney', function () { return view('jeepney'); })->name('jeepney')
 
 // MAEDA DA・YO⭐︎
 // Reservation infomation detel の作成画面（view確認画面）
-Route::get('/staffpage/resavation-hotel-info', function() {
-    return view('staffpage.resavation-hotel-info');
-})->name('staffpage.resavation-hotel-info');
+Route::get('/staffpage/reservations/hotel-detail', function() {
+return view('staffpage.reservations.hotel-detail');
+})->name('staffpage.reservation/hotel-detail');
+
+Route::get('/staffpage/reservations/restaurant-detail', function() {
+    return view('staffpage.reservations.restaurant-detail');
+})->name('staffpage.reservations.restaurant-detail');
+

@@ -19,6 +19,8 @@
     <!-- Scripts -->
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 </head>
+{{-- JavaScript使用のためのコード --}}
+@stack('scripts')
 <body>
 <div id="app">
     @yield('navbar')

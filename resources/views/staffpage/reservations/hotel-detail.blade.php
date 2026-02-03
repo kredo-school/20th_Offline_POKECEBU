@@ -1,6 +1,10 @@
   @extends('layouts.staff')
 
+<<<<<<< HEAD:resources/views/staffpage/resavation-hotel-info.blade.php
   @section('title', 'resavation.info')
+=======
+  @section('title', 'reservations.hotel.detail')
+>>>>>>> main:resources/views/staffpage/reservations/hotel-detail.blade.php
 
   @section('content')
 

@@ -11,6 +11,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MockReservationController;
+use App\Http\Controllers\TmpHotelController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
@@ -127,6 +128,16 @@ Route::get('/mock/detail/{day}/{type}', [MockReservationController::class, 'deta
 
 
 
+
+// フォーム表示（GET）signup-for-company
+Route::get('signup-for-company', [TmpHotelController::class, 'create'])
+    ->name('company.signup');
+
+
+
+// フォーム送信（POST）は既にある想定
+Route::post('/user/mypage/signup-for-company', [TmpHotelController::class, 'store'])
+    ->name('user.mypage.signup-for-company.store');
 
 
 

@@ -1,6 +1,6 @@
   @extends('layouts.staff')
 
-  @section('title', 'resavation.info')
+  @section('title', 'reservations.hotel.detail')
 
   @section('content')
 

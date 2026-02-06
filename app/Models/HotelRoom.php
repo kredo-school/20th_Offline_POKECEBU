@@ -16,6 +16,25 @@ class HotelRoom extends Model
         'status_id'
     ];
 
+    public function type()
+{
+    return $this->belongsTo(Type::class);
+}
+
+public function status()
+{
+    return $this->belongsTo(Status::class);
+}
+
+public function images()
+{
+    return $this->hasMany(RoomImage::class, 'room_id');
+}
+
+    public function hotel()
+    {
+        return $this->belongsTo(Hotel::class);
+    }
 
     // 部屋タイプとの関係（必要なら）
     public function roomType()

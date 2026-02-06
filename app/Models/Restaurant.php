@@ -10,6 +10,7 @@ class Restaurant extends Model
     use HasFactory;
 
     // 複数代入可能なカラム
+    //
     protected $fillable = [
         'name',
         'description',
@@ -25,4 +26,18 @@ class Restaurant extends Model
         'email',
         'updated_user',
     ];
+        
+    
+
+    // restaurant_images
+    public function restaurantImages()
+    {
+        return $this->hasMany(RestaurantImage::class);
+    }
+
+    // restaurant_tables
+    public function tables()
+    {
+        return $this->hasMany(RestaurantTable::class);
+    }
 }

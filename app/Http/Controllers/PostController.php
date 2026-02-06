@@ -8,93 +8,123 @@ use App\Models\Post;
 
 class PostController extends Controller
 {
-    private $post;
-    // private $category;
 
-    public function __construct(Post $post) {
-       $this->post = $post;
-    //    $this->category = $category;
-    }
+    // 一覧
+    public function index() {
+        $posts = Post::with('images', 'user')
+            ->latest()
+            ->paginate(10);
 
-    public function index()
-    {
+        return view('userpage.posts.post-list')->with('posts',$posts);
         
     }
 
-    
-    public function create()
-    {
-        // $all_categories = $this->category->all();
-        return view ('users.posts.create');
-    }
+    // public function show() {
+    //     $posts = Post::with('user')
+    //         ->latest()
+    //         ->paginate(10);
+
+    //     return view('userpage.posts.show')->with('posts',$posts);
+        
+    // }
 
     
+    // POST作成
+    public function create()
+    {
+        return view ('userpage.posts.create');
+    }
+
+    // POST保存
     public function store(Request $request)
     {
         $request->validate([
-            'description' => 'required|min:1|max:1000',
-            'image'       => 'required|mimes:jpeg,jpg,png,gif|max:1048'
+            'title'     => 'required|max:255',
+            'body'      => 'required|min:1|max:1000',
+            'image'     => 'required|mimes:jpeg,jpg,png,gif|max:1048'
         ]);
 
-        // post保存
-        $this->post->user_id        = Auth::user()->id;
-        $this->post->image          = 'data:image/' .$request->image->extension() . ';base64,' . base64_encode(file_get_contents($request->image));
-        $this->post->description    = $request->description;
-        $this->post->save();
+        $post = new Post();
+        $post->user_id     = Auth::user()->id;
+        $post->title       =$request->title;
+        $post->body        = $request->body;
+        $post->save();
 
-        // foreach($request->category as $category_id){
-        //     $category_post[] = ['category_id' => $category_id];
-        // }
-        // $this->post->categoryPost()->createMany($category_post);
+        if($request->hasFile('image')) {
+            $imageData = 'data:image/' 
+            . $request->image->extension() 
+            . ';base64,' 
+            . base64_encode(file_get_contents($request->image));
 
-        return redirect()->route('index');
+            $post->images()->create([
+                'image' =>$imageData
+            ]);
+        }
+        
+        return redirect()
+            ->route('userpage.posts.index')
+            ->with('success','投稿しました✈️');
     }
 
-    
-    public function show($id)
+    // 詳細
+    public function show(Post $post)
     {
-        $post = $this->post->findOrFail(intval($id));
-        return view('users.posts.show')->with('post',$post);
+        return view('userpage.posts.show')->with('post',$post);
     }
 
-    
-    public function edit($id)
+    // 編集
+    public function edit(Post $post)
     {
-        $post = $this->post->findOrFail($id);
 
         // 認証ユーザーが投稿の所有者ではない場合
         if(Auth::user()->id != $post->user->id) {
-            return redirect()->route('index');
+            return redirect()->route('userpage.posts.index');
         }
-        return view('users.posts.edit')->with('post',$post);
+        return view('userpage.posts.edit')->with('post',$post);
     }
 
-    
-    public function update(Request $request, $id)
+    // 更新
+    public function update(Request $request, Post $post)
     {
         $request->validate([
-            'description'   =>'required|min:1|max:1000',
-            'image'         =>'mimes:jped,jpg,png,gif|max:1084'
+            'body'      =>'required|min:1|max:1000',
+            'image'     =>'mimes:jpeg,jpg,png,gif|max:1084'
 
         ]);
         // postの更新
-        $post = $this->post->findOrFail($id);
-        $post->description = $request->description;
-
-        // 新しい画像に変更したとき
-        if($request->image) {
-            $post->image = 'data:image/' . $request->image->extension() . ';base64,' . base64_encode(file_get_contents($request->image));
-        }
-
+        $post->body = $request->body;
         $post->save();
 
-        return redirect()->route('post.show',$id);
+        // 新しい画像に変更したとき
+        if($request->hasFile('image')) {
+            $imageData = 'data:image/' 
+            . $request->image->extension() 
+            . ';base64,' 
+            . base64_encode(file_get_contents($request->image));
+
+            $post->images()->create([
+                'image' =>$imageData
+            ]);
+        }
+
+        
+
+        return redirect()
+            ->route('user.posts.show',$post)
+            ->with('success','更新しました✏️');
     }
 
-   
-    public function destroy($id)
+    //削除    
+    public function destroy(Post $post)
     {
-        $this->post->destroy($id);
-        return redirect()->route('index');
+        if (Auth::user()->id !== $post->user_id) {
+            return redirect()->route('userpage.posts.index');
+        }
+
+        $post->delete();
+
+        return redirect()
+            ->route('user.posts.index')
+            ->with('success', '削除しました🗑️');
     }
 }

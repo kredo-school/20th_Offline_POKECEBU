@@ -22,8 +22,13 @@ class HotelStaffController extends Controller
         return view('staffpage.edit-hotel');
     }
 
+    public function editHotel(){
+        
+    }
+
     public function showrestaurant()
     {
         return view('staffpage.edit-restaurant');
     }
+    
 }

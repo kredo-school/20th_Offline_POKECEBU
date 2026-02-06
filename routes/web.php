@@ -14,7 +14,9 @@ use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\HotelReservationController;
 use App\Http\Controllers\MockReservationController;
+use App\Http\Controllers\PostController;
 use App\Http\Controllers\TmpHotelController;
+use App\Http\Controllers\UserDetailController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
@@ -61,6 +63,20 @@ Route::group(['middleware' => 'auth'], function(){
         Route::get('/admin/edit/{id}', [AdminController::class, 'editAdmin'])->name('admin.edit');
         Route::put('/admin/update/{id}', [AdminController::class, 'updateAdmin'])->name('admin.update');
         Route::delete('/admin/delete/{id}', [AdminController::class, 'deleteAdmin'])->name('admin.delete');
+
+        // ホテル予約
+        Route::get('/hotels', [HotelController::class, 'roomInfo'])->name('hotels.index');
+        Route::get('reservation/confirmation', [HotelReservationController::class, 'confirmation'])->name('reservation.confirmation');
+        Route::post('reservation/confirm', [HotelReservationController::class, 'confirmReservation'])->name('reservation.confirm');
+        Route::post('reservation/payment-form', [HotelReservationController::class, 'payment'])->name('reservation.payment.form');
+        Route::post('reservation/payment', [HotelReservationController::class, 'pay'])->name('reservation.pay');
+        Route::get('reservation/payment/success',[HotelReservationController::class,'reservationSuccess'])->name('reservation.success');
+        Route::get('reservation/payment', function() {return view('userpage.booking.hotel.payment');})->name('reservation.payment.form');
+        Route::post('reservation/payment', [HotelReservationController::class, 'pay'])->name('reservation.pay');
+
+        // ホテル予約ユーザー詳細
+        Route::get('/mypage/user', [UserDetailController::class, 'show'])->name('mypage.show');
+        Route::post('/mypage/userupdate', [UserDetailController::class, 'update'])->name('mypage.update');
         
         # FAQ    
         Route::get('/faq/list', [FaqController::class, 'displayList'])->name('faq.displayList');
@@ -74,14 +90,14 @@ Route::group(['middleware' => 'auth'], function(){
         
     # Staff
     Route::group(['prefix' => 'hotel', 'as' => 'hotel.', 'middleware' => 'hotel'], function() {
-            # Hotel
-            Route::get('/', [HotelStaffController::class, 'index'])->name('home');
-            Route::get('/mypage', [StaffMypageContoroller::class, 'index'])->name('mypage');
-            Route::get('/mypage/edit', [StaffMypageContoroller::class, 'editStaffMypage'])->name('mypage.edit');
-            Route::post('/mypage/store', [StaffMypageContoroller::class, 'storeHotel'])->name('mypage.store');
+        # Hotel
+        Route::get('/', [HotelStaffController::class, 'index'])->name('home');
+        Route::get('/mypage', [StaffMypageContoroller::class, 'index'])->name('mypage');
+        Route::get('/mypage/edit', [StaffMypageContoroller::class, 'editStaffMypage'])->name('mypage.edit');            
+        Route::post('/mypage/store', [StaffMypageContoroller::class, 'storeHotel'])->name('mypage.store');
             
-            Route::get('/reservations', [HotelReservationController::class, 'hotel'])->name('reservations');
-            // Route::get('/reservations/{id}', [HotelReservationController::class, 'show'])->name('reservations.show');
+        Route::get('/reservations', [HotelReservationController::class, 'hotel'])->name('reservations');
+        // Route::get('/reservations/{id}', [HotelReservationController::class, 'show'])->name('reservations.show');
     });
 
     Route::group(['prefix' => 'restaurant', 'as' => 'restaurant.', 'middleware' => 'restaurant'], function() {
@@ -99,6 +115,14 @@ Route::group(['middleware' => 'auth'], function(){
     # User
     Route::group(['prefix'=>'user','as'=>'user.'],function(){
         # User Home
+        // POST関係
+        Route::get('/posts', [PostController::class, 'index'])->name('posts.index');
+        Route::get('/posts/create', [PostController::class, 'create'])->name('posts.create');
+        Route::post('/posts', [PostController::class, 'store'])->name('posts.store');
+        Route::get('/posts/{post}', [PostController::class, 'show'])->name('posts.show');
+        Route::get('/posts/{post}/edit', [PostController::class, 'edit'])->name('posts.edit');
+        Route::put('/posts/{post}', [PostController::class, 'update'])->name('posts.update');
+        Route::delete('/posts/{post}', [PostController::class, 'destroy'])->name('posts.destroy');
 
 
         # User MyPage
@@ -115,6 +139,7 @@ Route::group(['middleware' => 'auth'], function(){
         # User Booking
         Route::get('/hotels', [HotelController::class, 'index'])->name('hotels.index');
         Route::get('/hotels/{id}', [HotelController::class, 'showDetailHotel'])->name('hotels.detail');
+        Route::get('/restaurants/{id}', [RestaurantController::class, 'showDetailRestaurant'])->name('restaurants.detail');
         Route::get('/restaurants', [RestaurantController::class, 'index'])->name('restaurants.index');
     });
 });
@@ -215,31 +240,7 @@ Route::get('userpage/mypage/hotel-serch-result', function () {
     return view('userpage.mypage.hotel-serch-result');
 })->name('userpage.mypage.hotel-serch-result');
 
-// User_ 投稿関係
-// User_ resources\views\userpage\mypage\post . blade . php
-Route::get('userpage/posts/post-list', function () {
-    $all_posts = [
-        ['title' => 'テスト投稿1', 'content' => 'これはダミーの投稿です'],
-        ['title' => 'テスト投稿2', 'content' => 'ビュー確認用の投稿です'],
-    ];
-    return view('userpage.posts.post-list', compact('all_posts'));
-})->name('userpage.posts.post-list');
 
-// 作成
-// {{-- resources\views\userpage\posts\create.blade.php --}}
-Route::get('userpage/posts/create', function () {
-    return view('userpage.posts.create');
-})->name('userpage.posts.create');
-
-// 表示
-Route::get('userpage/posts/show', function () {
-    return view('userpage.posts.show');
-})->name('userpage.posts.show');
-
-// 編集
-Route::get('userpage/posts/edit', function () {
-    return view('userpage.posts.edit');
-})->name('userpage.posts.edit');
 
 
 //Staff

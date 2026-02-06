@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use App\Models\TmpHotel;
 use App\Models\TmpHotelImage;
-use App\Models\Hotel;
+    
 use App\Models\HotelImage;
 
 

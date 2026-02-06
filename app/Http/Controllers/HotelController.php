@@ -61,4 +61,18 @@ class HotelController extends Controller
 
         return view('userpage.booking.hotel', compact('hotel'));
     }
+     public function roomInfo()
+{
+    // 仮のホテルIDを固定
+    $id = 3; // たぬきホテルなど、DBに存在するID
+$hotel = Hotel::with('roomTypes.roomType')->findOrFail($id);
+
+
+    return view('userpage.booking.hotel.hotel', compact('hotel'));
+}
 };
+   
+
+
+
+

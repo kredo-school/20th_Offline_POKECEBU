@@ -1,10 +1,7 @@
 @extends('layouts.app')
 
 @push('styles')
-<style>
-.menu-item { transition: background-color 0.2s ease, color 0.2s ease; }
-.menu-item:hover { background-color: #f0f4ff; color: #0d6efd; }
-</style>
+<link rel="stylesheet" href="{{ asset('css/staff.css/mypage/edit-hotel.css') }}">
 @endpush
 
 @section('navbar')
@@ -21,9 +18,10 @@
 
         {{-- 左メニュー --}}
         <div class="col-3 d-flex flex-column mb-4">
-            <span class="px-3 py-2 fw-bold text-muted">Menu</span>
-            <span class="px-3 py-2 rounded menu-item mb-1">Hotel Profile</span>
-            <span class="px-3 py-2 rounded menu-item mb-1">Edit Profile</span>
+            <a href="{{ route('staff.mypage.hotel') }}"
+               class="text-decoration-none text-dark px-3 py-2 rounded menu-item mb-1">
+               Hotel Profile
+            </a>
         </div>
 
         {{-- 右コンテンツ --}}
@@ -33,69 +31,102 @@
                 <div class="card-header">Edit Hotel Information</div>
                 <div class="card-body">
 
-                    {{-- ホテル画像 --}}
-                    <div class="mb-4">
-                        <label class="form-label text-muted">Hotel Image</label>
-                        <div class="d-flex align-items-center">
-                            <img src="https://via.placeholder.com/120"
-                                 class="rounded me-3"
-                                 alt="Hotel Image">
-                            <input type="file" class="form-control">
+                    <form method="POST"
+                          action="{{ route('staff.mypage.hotel.store') }}"
+                          enctype="multipart/form-data">
+                        @csrf
+
+                        {{-- ホテル画像 --}}
+                        <div class="mb-4">
+                            <label class="form-label text-muted">Hotel Image</label>
+                            <div class="d-flex align-items-center">
+                                <img
+                                    src="{{ $hotel && $hotel->image_path
+                                        ? asset('storage/' . $hotel->image_path)
+                                        : 'https://via.placeholder.com/120' }}"
+                                    class="rounded me-3"
+                                    width="120"
+                                    alt="Hotel Image">
+
+                                <input type="file" name="image_path" class="form-control">
+                            </div>
                         </div>
-                    </div>
 
-                    {{-- ホテル名 --}}
-                    <div class="mb-3">
-                        <label class="form-label text-muted">Hotel Name</label>
-                        <input type="text" class="form-control" value="Sample Hotel">
-                    </div>
-
-                    {{-- 代表者名 --}}
-                    <div class="mb-3">
-                        <label class="form-label text-muted">Representative</label>
-                        <input type="text" class="form-control" value="Taro Yamada">
-                    </div>
-
-                    {{-- メール・電話 --}}
-                    <div class="row mb-3">
-                        <div class="col-6">
-                            <label class="form-label text-muted">Email</label>
-                            <input type="email" class="form-control" value="hotel@example.com">
+                        {{-- ホテル名 --}}
+                        <div class="mb-3">
+                            <label class="form-label text-muted">Hotel Name</label>
+                            <input type="text"
+                                   name="name"
+                                   class="form-control"
+                                   value="{{ old('name', $hotel->name ?? '') }}"
+                                   required>
                         </div>
-                        <div class="col-6">
-                            <label class="form-label text-muted">Phone</label>
-                            <input type="text" class="form-control" value="090-0000-0000">
+
+                        {{-- 代表者名 --}}
+                        <div class="mb-3">
+                            <label class="form-label text-muted">Representative</label>
+                            <input type="text"
+                                   name="representative_name"
+                                   class="form-control"
+                                   value="{{ old('representative_name', $hotel->representative_name ?? '') }}">
                         </div>
-                    </div>
 
-                    {{-- Webサイト --}}
-                    <div class="mb-3">
-                        <label class="form-label text-muted">Website</label>
-                        <input type="text" class="form-control" value="https://samplehotel.com">
-                    </div>
+                        {{-- メール・電話 --}}
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <label class="form-label text-muted">Email</label>
+                                <input type="email"
+                                       name="email"
+                                       class="form-control"
+                                       value="{{ old('email', $hotel->email ?? '') }}">
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label text-muted">Phone</label>
+                                <input type="text"
+                                       name="phone"
+                                       class="form-control"
+                                       value="{{ old('phone', $hotel->phone ?? '') }}">
+                            </div>
+                        </div>
 
-                    {{-- 住所 --}}
-                    <div class="mb-3">
-                        <label class="form-label text-muted">Address</label>
-                        <input type="text" class="form-control"
-                               value="1-2-3 Shibuya, Tokyo, Japan">
-                    </div>
+                        {{-- Webサイト --}}
+                        <div class="mb-3">
+                            <label class="form-label text-muted">Website</label>
+                            <input type="text"
+                                   name="website"
+                                   class="form-control"
+                                   value="{{ old('website', $hotel->website ?? '') }}">
+                        </div>
 
-                    {{-- 説明文 --}}
-                    <div class="mb-4">
-                        <label class="form-label text-muted">Description</label>
-                        <textarea class="form-control" rows="4">This hotel offers comfortable rooms and friendly service for all guests.</textarea>
-                    </div>
+                        {{-- 住所 --}}
+                        <div class="mb-3">
+                            <label class="form-label text-muted">Address</label>
+                            <input type="text"
+                                   name="address"
+                                   class="form-control"
+                                   value="{{ old('address', $hotel->address ?? '') }}">
+                        </div>
 
-                    {{-- ボタン --}}
-                    <div class="d-flex justify-content-end gap-2">
-                        <a href="{{ route('staff.mypage') }}" class="btn btn-outline-secondary">
-                            Cancel
-                        </a>
-                        <button class="btn btn-primary" disabled>
-                            Save (Demo)
-                        </button>
-                    </div>
+                        {{-- 説明文 --}}
+                        <div class="mb-4">
+                            <label class="form-label text-muted">Description</label>
+                            <textarea name="description"
+                                      class="form-control"
+                                      rows="4">{{ old('description', $hotel->description ?? '') }}</textarea>
+                        </div>
+
+                        {{-- ボタン --}}
+                        <div class="d-flex justify-content-end gap-2">
+                            <a href="{{ route('staff.mypage.hotel') }}"
+                               class="btn btn-outline-secondary">
+                                Cancel
+                            </a>
+                            <button class="btn btn-primary">
+                                Save
+                            </button>
+                        </div>
+
+                    </form>
 
                 </div>
             </div>

@@ -11,6 +11,7 @@ class HotelImage extends Model
         'hotel_id',
         'image'
     ];
+    protected $table = 'hotel_images';
 
     public function hotel()
     {

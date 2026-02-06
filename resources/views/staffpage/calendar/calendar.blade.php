@@ -1,3 +1,9 @@
+@extends('layouts.app')
+
+@push('styles')
+<link rel="stylesheet" href="{{ asset('css/staff.css/calendar/calendar.css') }}">
+@endpush
+
 @section('content')
 
 {{-- 右上のAll reservations リンク --}}

@@ -23,6 +23,9 @@ return new class extends Migration
             $table->string('phone')->nullable();
             $table->string('website')->nullable();
             $table->foreignId('updated_user')->nullable()->constrained('users');
+            $table->string('image_path')->nullable();        // ← 追加
+            $table->string('owner_name', 100)->nullable();  // ← 追加
+            $table->string('email', 100)->nullable();       // ← 追加
             $table->timestamps();
         });
     }

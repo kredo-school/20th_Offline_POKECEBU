@@ -37,7 +37,7 @@
      <div class="col-md-10 p-4">
             <h2 class="mt-3">Hotels</h2>
 
-            <a href="{{ route('admin.hotel.add') }}" class="btn btn-primary mb-3">Add Hotel</a>
+            <a href="{{ route('hotel.add') }}" class="btn btn-primary mb-3">Add Hotel</a>
 
             @if(session('success'))
                 <div class="alert alert-success">{{ session('success') }}</div>

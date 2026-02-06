@@ -160,9 +160,17 @@ Route::get('/admin/customers/add', [AdminController::class, 'addCustomer'])->nam
 Route::get('/admin/hotels', [AdminController::class, 'hotels'])->name('admin.hotels');
 Route::get('/admin/hotel/edit', [AdminController::class, 'editHotel'])->name('hotels.edit');
 Route::get('/admin/hotel/add', [AdminController::class, 'addHotel'])->name('hotel.add');
-Route::get('/admin/hotel/approval',  function () {
-    return view('adminpage.hotel.pending-approval');
-})->name('hotel.approval');
+
+// 申請の承認処理 ホテル 2/4 emi
+Route::get('admin/hotel/approval', [App\Http\Controllers\AdminController::class, 'hotelApproval'])
+    ->name('hotel.approval');
+
+Route::get('admin/hotel/approval/{id}', [App\Http\Controllers\AdminController::class, 'showPending'])
+    ->name('hotel.approval.show');
+
+Route::post('admin/hotel/approve/{id}', [App\Http\Controllers\AdminController::class, 'approveHotel'])
+    ->name('admin.hotel.approve');
+
 
 
 Route::get('/admin/restaurants', [AdminController::class, 'restaurants'])->name('admin.restaurants');
@@ -190,6 +198,7 @@ Route::get('/mock/detail/{day}/{type}', [MockReservationController::class, 'deta
 Route::get('signup-for-company', [TmpHotelController::class, 'create'])
     ->name('company.signup');
 
+Route::get('/hotels/search', [App\Http\Controllers\HotelController::class, 'index'])->name('hotels.search');
 
 
 // フォーム送信（POST）は既にある想定

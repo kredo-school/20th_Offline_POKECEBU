@@ -1,85 +1,119 @@
 @extends('layouts.user')
- 
-@section('title', 'detail restaurant')
- 
+
+@section('title', 'Detail Restaurant')
+
 @section('content')
 
-{{-- Restaurant Info --}}
-<div class="card mb-4">
-    <div class="card-body">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md">
 
-        <div class="d-flex justify-content-between align-items-center">
-            <h1 class="fw-bold">{{ $restaurant->name }}</h1>
+                {{-- Restaurant Info --}}
+                <div class="card bg-white">
+                    <div class="card-body">
 
-            {{-- Rating --}}
-            <div class="star-rating">
-                @for ($i = 1; $i <= 5; $i++)
-                    @if ($i <= $restaurant->rating)
-                        <i class="fa-solid fa-star text-warning"></i>
-                    @else
-                        <i class="fa-regular fa-star text-secondary"></i>
-                    @endif
-                @endfor
-            </div>
-        </div>
+                        <div class="row header">
+                            <div class="col-6">
+                                <h1>{{ $restaurant->name }}</h1>
+                            </div>
 
-        <p class="text-muted mt-2 restaurant-address">
-            <i class="fa-solid fa-location-dot"></i>
-            {{ $restaurant->address }}
-        </p>
+                            <div class="col-6 text-end">
+                                <div class="star-rating">
+                                    @for ($i = 1; $i <= 5; $i++)
+                                        @if ($i <= $restaurant->star_rating)
+                                            <i class="fa-solid fa-star text-warning"></i>
+                                        @else
+                                            <i class="fa-regular fa-star text-secondary"></i>
+                                        @endif
+                                    @endfor
+                                </div>
+                            </div>
 
-        <div class="restaurant-images my-3">
-            <img src="{{ asset('images/pokecebuicon.png') }}">
-            <img src="{{ asset('images/pokecebuname.png') }}">
-            <img src="{{ asset('images/hotel3.jpg') }}">
-        </div>
+                            <div class="col">
+                                <p class="restaurant-address">
+                                    <strong>
+                                        <i class="fa-solid fa-location-dot"></i>
+                                        Address
+                                    </strong>
+                                    {{ $restaurant->address }}
+                                </p>
+                            </div>
+                        </div>
 
-        <p>
-            <strong>Description:</strong><br>
-            {{ $restaurant->description }}
-        </p>
-    </div>
-</div>
+                        <div class="row body">
+                            <div class="restaurant-images">
+                                @foreach ($restaurant->restaurantImages as $image)
+                                    <img src="{{ asset('storage/restaurants/' . $image->image) }}" alt="restaurant image">
+                                @endforeach
+                            </div>
 
-{{-- テーブルの種類だけループ --}}
-{{-- Table list --}}
-<h3 class="fw-bold mb-3">Available Seats</h3>
+                            <p>
+                                <strong>Description:</strong>
+                                {{ $restaurant->description }}
+                            </p>
+                        </div>
 
-<div class="row">
-    @forelse ($tables as $table)
-        <div class="col-md-4 mb-3">
-            <div class="card h-100 shadow-sm">
-
-                <div class="card-body d-flex flex-column">
-                    <h5 class="fw-bold">
-                        Table #{{ $table->table_number }}
-                    </h5>
-
-                    <ul class="list-unstyled text-muted small mb-3">
-                        <li>Capacity: {{ $table->capacity }} people</li>
-                        <li>Location: {{ ucfirst($table->location) }}</li>
-                    </ul>
-
-                    <div class="mt-auto">
-                        @if ($table->is_available)
-                            <a href="{{ route('tables.reserve', $table->id) }}"
-                               class="btn btn-primary w-100">
-                                Reserve
-                            </a>
-                        @else
-                            <button class="btn btn-secondary w-100" disabled>
-                                Unavailable
-                            </button>
-                        @endif
                     </div>
                 </div>
 
+                {{-- Table list --}}
+                <h3 class="fw-bold mb-3 mt-4">Available Seats</h3>
+
+                @foreach ($tables as $table)
+                    <div class="col">
+                        <div class="card mb-3 shadow-sm" style="max-width: 1000px; overflow: hidden;">
+                            <div class="row g-0">
+
+                                <!-- left -->
+                                <div class="col-md-4">
+
+                                    <div class="table-images">
+                                        @foreach ($table->images as $image)
+                                            <img src="{{ asset('storage/tables/' . $image->image) }}" alt="table image">
+                                        @endforeach
+                                    </div>
+
+                                    <div class="p-3">
+                                        <h5 class="fw-bold mb-2">
+                                            {{ $table->type->name ?? 'No Type' }}
+                                        </h5>
+
+                                        <ul class="list-unstyled text-secondary small">
+                                            <li class="mb-1">Max Guests: {{ $table->max_guests }}</li>
+                                            <li class="mb-1">Status: {{ $table->status->name ?? 'Unknown' }}</li>
+                                        </ul>
+                                    </div>
+
+                                </div>
+
+                                <!-- right -->
+                                <div class="col-md-8 border-start">
+                                    <div class="p-3">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <h6 class="fw-bold">Reservation Info</h6>
+                                                <ul class="list-unstyled small mb-0">
+                                                    <li>Seats depend on table type</li>
+                                                </ul>
+                                            </div>
+
+                                            <div class="text-end">
+                                               <a href="#"
+                                                    class="btn btn-primary px-4 stretched-link">
+                                                    Book Now
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+
             </div>
         </div>
-    @empty
-        <p class="text-muted">No tables available.</p>
-    @endforelse
-</div>
-    
+    </div>
+
 @endsection
- 

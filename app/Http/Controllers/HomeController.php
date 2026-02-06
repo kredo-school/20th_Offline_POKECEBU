@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Post;
+
 
 class HomeController extends Controller
 {
@@ -13,9 +14,13 @@ class HomeController extends Controller
      *
      * @return void
      */
-    public function __construct()
+    private $post;
+
+    public function __construct(Post $post)
     {
         // $this->middleware('auth');
+        $this->post = $post;
+       
     }
 
     /**
@@ -23,9 +28,19 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
+
+    // Homeにポストを表示させる
     public function index()
     {
-        $posts = Post::with('user')->latest()->get();
-        return view('home')->with('posts', $posts);
+        $home_posts = $this->getHomePosts();
+        return view('home')
+        ->with('home_posts',$home_posts);
+        
     }
+
+    public function getHomePosts() {
+       return $this->post->latest()->take(3)->get();
+      
+    }
+    
 }

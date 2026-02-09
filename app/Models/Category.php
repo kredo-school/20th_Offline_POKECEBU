@@ -43,4 +43,13 @@ class Category extends Model
         );
     }
     
+    public function hotelRooms()
+    {
+        return $this->belongsToMany(
+            HotelRoom::class,
+            'category_room',
+            'category_id',
+            'room_id'
+        );
+    }
 }

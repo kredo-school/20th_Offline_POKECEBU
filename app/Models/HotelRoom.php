@@ -23,7 +23,7 @@ class HotelRoom extends Model
 
 public function status()
 {
-    return $this->belongsTo(Status::class);
+    return $this->belongsTo(Status::class, 'type_id');
 }
 
 public function images()
@@ -33,7 +33,7 @@ public function images()
 
     public function hotel()
     {
-        return $this->belongsTo(Hotel::class);
+        return $this->belongsTo(Hotel::class, 'status_id');
     }
 
     // 部屋タイプとの関係（必要なら）

@@ -9,7 +9,7 @@
   <div class="header-text">
     新しい旅を見つける
   </div>
-  <a href="{{ route('userpage.posts.create') }}" class="add-post-btn">
+  <a href="{{ route('user.posts.create') }}" class="add-post-btn">
     + Add new post
   </a>
   
@@ -20,7 +20,7 @@
   <div class="row">
     @foreach ($posts as $post)
       <div class="col-md-6 col-lg-4 mb-4">
-        <a href="{{ route('userpage.posts.show',$post->id) }}" class="post-link">
+        <a href="{{ route('user.posts.show',$post->id) }}" class="post-link">
         <div class="card post-card h-100">
           <img src="{{ $post->images->first()->image }}" alt="Post Image" class="card-img-top img-fluid">
           <div class="card-body">

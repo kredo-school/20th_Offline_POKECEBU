@@ -8,7 +8,7 @@
         <div class="create-post-card">
             <h3 class="mb-4"><i class="fa-solid fa-pen-to-square me-2"></i>Create New Post</h3>
 
-            <form action="{{ route('userpage.posts.store') }}" method="post" enctype="multipart/form-data">
+            <form action="{{ route('user.posts.store') }}" method="post" enctype="multipart/form-data">
                 @csrf
 
                 {{-- categories --}}
@@ -44,21 +44,21 @@
 
                 {{-- title --}}
                 <div class="form-group">
-                    <label class="form-label fw-bold">title</label>
-                    <input type="text" name="title" id="title" class="form-control" placeholder="Enter title"
+                    <label for="titel" class="form-label fw-bold">title</label>
+                    <input type="text" name="title" id="title" class="form-control soft-input" placeholder="Enter title"
                         value="{{ old('title') }}">
                 </div>
 
                 {{-- body --}}
                 <div class="form-group">
                     <label class="form-label fw-bold">Description</label>
-                    <textarea name="body" id="body" rows="3" class="form-control" placeholder="What's on your mind?"></textarea>
+                    <textarea name="body" id="body" rows="3" class="form-control soft-input" placeholder="What's on your mind?">{{ old('body') }}</textarea>
                 </div>
 
                 {{-- image --}}
                 <div class="form-group">
                     <label class="form-label fw-bold">Image</label>
-                    <input type="file" name="image" id="image" class="form-control" aria-describedby="image-info">
+                    <input type="file" name="images[]" id="image" class="form-control soft-file" multiple aria-describedby="image-info" accept="image/jpeg,image/png,image/gif">
                     <div class="form-text" id="image-info">
                         The acceptable formats are jpeg, jpg, png and gif only. <br>
                         Max file is 1048Kb.
@@ -78,7 +78,7 @@
 <style>
   /* ページ全体 */
   .create-post-page {
-    min-height: calc(100vh -64px);
+    min-height: calc(100vh - 64px);
     background: linear-gradient(
       180deg,
             #f0f8fb 0%,

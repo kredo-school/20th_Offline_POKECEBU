@@ -7,6 +7,11 @@
         @guest
             <li class="nav-item"><a class="nav-link" href="{{ route('login') }}">Login</a></li>
         @else
+            <li class="nav-item">
+                <a href="{{ route('hotel.overview', Auth::user()->id) }}" class="nav-link">
+                    <i class="fa-solid fa-table"></i>
+                </a>
+            </li>
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
                     {{ Auth::user()->name }}

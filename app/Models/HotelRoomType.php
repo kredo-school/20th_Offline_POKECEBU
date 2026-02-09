@@ -24,4 +24,13 @@ class HotelRoomType extends Model
     {
         return $this->belongsTo(Type::class, 'type_id');
     }
+
+    public function rooms()
+    {
+        return $this->hasMany(
+            HotelRoom::class,
+            'type_id',        // hotel_rooms 側のカラム
+            'type_id'         // hotel_room_types 側のカラム
+        );
+    }
 }

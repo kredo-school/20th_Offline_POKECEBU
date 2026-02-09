@@ -3,10 +3,10 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class HotelRoom extends Model
 {
-    //
     protected $fillable = [
         'hotel_id',
         'type_id',
@@ -23,7 +23,7 @@ class HotelRoom extends Model
 
 public function status()
 {
-    return $this->belongsTo(Status::class);
+    return $this->belongsTo(Status::class, 'type_id');
 }
 
 public function images()
@@ -33,7 +33,7 @@ public function images()
 
     public function hotel()
     {
-        return $this->belongsTo(Hotel::class);
+        return $this->belongsTo(Hotel::class, 'status_id');
     }
 
     // 部屋タイプとの関係（必要なら）
@@ -55,5 +55,27 @@ public function images()
             'room_id',
             'category_id'
         );
+    }
+
+    // テーブル名が自動判定（hotel_rooms）と違う場合は以下を追記
+    // protected $table = 'hotel_rooms';
+
+    /**
+     * この部屋が属する「部屋タイプ」を取得
+     */
+    public function hotelRoomType(): BelongsTo
+    {
+        // hotel_room_typesテーブルのtype_idと紐付け
+        return $this->belongsTo(HotelRoomType::class, 'type_id', 'type_id');
+    }
+
+ 
+
+    /**
+     * 「シングル」「ダブル」などのマスター名を取得したい場合
+     */
+    public function typeMaster(): BelongsTo
+    {
+        return $this->belongsTo(Type::class, 'type_id');
     }
 }

@@ -21,4 +21,8 @@ class Status extends Model
     {
         return $this->hasMany(RestaurantTable::class);
     }
+
+    public function hotelRoomStatuses() {
+        return $this->hasMany(HotelRoom::class, 'status_id');
+    }
 }

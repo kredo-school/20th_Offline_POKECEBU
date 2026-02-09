@@ -123,4 +123,7 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    'target_type_hotel' => 'hotel',
+    'target_type_restaurant' => 'restaurant',
+
 ];

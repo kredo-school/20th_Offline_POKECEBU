@@ -1,16 +1,10 @@
 @extends('layouts.app')
 
 @push('styles')
-<style>
-.menu-item {
-    transition: background-color 0.2s ease, color 0.2s ease;
-}
-.menu-item:hover {
-    background-color: #f0f4ff; /* 薄い青 */
-    color: #0d6efd; /* Bootstrapのprimary色 */
-}
-</style>
+<link rel="stylesheet" href="{{ asset('css/user.css/mypage/booking.css') }}">
 @endpush
+
+
 
 @section('navbar')
 <nav class="navbar navbar-expand-md shadow-sm" style="background-color:#6FA9DE; height:80px;">
@@ -27,8 +21,8 @@
         {{-- 左メニュー --}}
         <div class="col-3 d-flex flex-column mb-4">
             <a href="{{ route('mypage') }}" class="text-decoration-none text-dark px-3 py-2 rounded menu-item mb-1">Profile</a>
-            <a href="{{ route('bookings') }}" class="text-decoration-none text-dark px-3 py-2 rounded menu-item mb-1">My Booking</a>
-            <a href="{{ route('favorites') }}" class="text-decoration-none text-dark px-3 py-2 rounded menu-item mb-1">Favorite</a>
+            <a href="{{ route('booking') }}" class="text-decoration-none text-dark px-3 py-2 rounded menu-item mb-1">My Booking</a>
+            <a href="{{ route('favorite') }}" class="text-decoration-none text-dark px-3 py-2 rounded menu-item mb-1">Favorite</a>
         </div>
 
         {{-- 右コンテンツ --}}

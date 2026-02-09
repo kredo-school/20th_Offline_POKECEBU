@@ -61,7 +61,7 @@
 
                 @foreach ($tables as $table)
                     <div class="col">
-                        <div class="card mb-3 shadow-sm" style="max-width: 1000px; overflow: hidden;">
+                        <div class="card mb-3 shadow-sm" style="overflow: hidden;">
                             <div class="row g-0">
 
                                 <!-- left -->
@@ -87,7 +87,7 @@
                                 </div>
 
                                 <!-- right -->
-                                <div class="col-md-8 border-start">
+                                <div class="col-md-8 border-start  position-relative">
                                     <div class="p-3">
                                         <div class="d-flex justify-content-between align-items-center">
                                             <div>

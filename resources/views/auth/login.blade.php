@@ -497,7 +497,7 @@
                             </div>
 
                             <button class="btn btn-primary" type="submit">Get started</button>
-                            <button class="btn btn-soft" type="button" onclick="location.href='#'">For
+                            <button class="btn btn-soft" type="button" onclick="location.href='{{ route('company.signup')}}'">For
                                 Companies</button>
 
                             <div class="divider">or</div>

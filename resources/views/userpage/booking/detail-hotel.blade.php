@@ -30,79 +30,79 @@
                             </div>
                         </div>
                         <div class="row body">
-                            <div class="hotel-images">
-                                <img src="{{ asset('images/pokecebuicon.png') }}">
-                                <img src="{{ asset('images/pokecebuname.png') }}">
-                                <img src="{{ asset('images/hotel3.jpg') }}">
-                            </div>
-                            <p><strong>Description:</strong> {{ $hotel->description }}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+                            <div class="row body">
 
-                {{-- Hotel list --}}
-                    <h3 class="fw-bold mb-3">Available room</h3>
-
-            {{-- roomのでループさせる⬇️ --}}
-            @foreach ($rooms as $room)
-                <div class="col">
-                    <div class="card mb-3 shadow-sm" style="max-width: 1000px; overflow: hidden;">
-                        <div class="row g-0">
-
-                            <!-- left: info -->
-                            <div class="col-md-4">
-                                <div class="room-images">
-                                    @foreach ($room->images as $image)
-                                        <img src="{{ asset('storage/' . $image->path) }}">
+                                <div class="hotel-images">
+                                    @foreach ($hotel->hotelImages as $image)
+                                        <img src="{{ asset('storage/hotels/' . $image->image) }}" alt="hotel image">
                                     @endforeach
                                 </div>
 
-                                <div class="p-3">
-                                    <h5 class="fw-bold mb-3">{{ $room->name }}</h5>
-
-                                    <ul class="list-unstyled text-secondary small">
-                                        <li class="mb-1">{{ $room->bed_type }}</li>
-                                        <li class="mb-1">{{ $room->size }} m²</li>
-                                        <li class="mb-1">{{ $room->view_type }}</li>
-                                    </ul>
-
-                                    <a href="{{ route('rooms.show', $room->id) }}"
-                                        class="text-primary small text-decoration-none fw-bold">
-                                        Room Details
-                                    </a>
-                                </div>
+                                <p><strong>Description:</strong> {{ $hotel->description }}</p>
                             </div>
-
-                            <!-- right: price -->
-                            <div class="col-md-8 border-start">
-                                <div class="p-3">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <h6 class="fw-bold">{{ $room->plan_name }}</h6>
-                                            <ul class="list-unstyled small mb-0">
-                                                <li>Breakfast included</li>
-                                            </ul>
-                                        </div>
-
-                                        <div class="text-end">
-                                            <div class="h4 fw-bold mb-0">
-                                                ${{ $room->price }}
-                                                <small class="text-muted fs-6">per night</small>
-                                            </div>
-                                            <button class="btn btn-primary px-4">
-                                                Book Now
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
                         </div>
                     </div>
                 </div>
-            @endforeach
-        </div>
-    </div>
 
-@endsection
+                {{-- Hotel list --}}
+                <h3 class="fw-bold mb-3">Available room</h3>
+
+                @foreach ($rooms as $room)
+                    <div class="col">
+                        <div class="card mb-3 shadow-sm position-relative" style="max-width: 1000px; overflow: hidden;">
+                            <div class="row g-0">
+
+                                <div class="col-md-4 position-static">
+                                    <div class="room-images">
+                                        @foreach ($room->images as $image)
+                                            <img src="{{ asset('storage/rooms/' . $image->image) }}" alt="room image">
+                                        @endforeach
+                                    </div>
+
+                                    <div class="p-3">
+                                        <h5 class="fw-bold mb-2">
+                                            {{ $room->type->name ?? 'No Type' }}
+                                        </h5>
+
+                                        <ul class="list-unstyled text-secondary small">
+                                            <li class="mb-1">Floor: {{ $room->floor_number }}</li>
+                                            <li class="mb-1">Max Guests: {{ $room->max_guests }}</li>
+                                            <li class="mb-1">Status: {{ $room->status->name ?? 'Unknown' }}</li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-8 border-start position-static">
+                                    <div class="p-3">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <h6 class="fw-bold">Room Charge</h6>
+                                                <ul class="list-unstyled small mb-0">
+                                                    <li>Price depends on room type</li>
+                                                </ul>
+                                            </div>
+
+                                            <div class="text-end">
+                                                <div class="h4 fw-bold mb-0">
+                                                    ${{ $room->charges }}
+                                                    <small class="text-muted fs-6">per night</small>
+                                                </div>
+
+                                                <a href="#"
+                                                    class="btn btn-primary px-4 stretched-link">
+                                                    Book Now
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+
+            </div>
+        </div>
+
+    @endsection

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Hotel;
+use App\Models\HotelRoom;
 use Illuminate\Http\Request;
 
 
@@ -20,9 +21,12 @@ class HotelController extends Controller
 
     public function showDetailHotel($id)
     {
-        $hotel = $this->hotel->findOrFail($id);
+        $hotel = Hotel::with('hotelImages')->findOrFail($id);
+        $rooms = HotelRoom::with(['type', 'status', 'images'])
+        ->where('hotel_id', $id)
+        ->get();
 
-        return view('userpage.booking.hotel-details', compact('hotel'));
+        return view('userpage.booking.detail-hotel', compact('hotel', 'rooms'));
     }
 
     // 上のコードを残す（バックアップ）
@@ -61,4 +65,18 @@ class HotelController extends Controller
 
         return view('userpage.booking.hotel', compact('hotel'));
     }
+     public function roomInfo()
+{
+    // 仮のホテルIDを固定
+    $id = 3; // たぬきホテルなど、DBに存在するID
+$hotel = Hotel::with('roomTypes.roomType')->findOrFail($id);
+
+
+    return view('userpage.booking.hotel.hotel', compact('hotel'));
+}
 };
+   
+
+
+
+

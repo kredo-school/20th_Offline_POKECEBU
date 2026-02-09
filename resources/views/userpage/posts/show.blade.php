@@ -1,96 +1,113 @@
-{{-- resources\views\userpage\posts\show.blade.php --}}
+{{-- resources\views\userpage\mypage\post.blade.php --}}
 @extends('layouts.user')
 
-@section('title', 'Show Post')
+@section('title', 'Post-show')
 
 @section('content')
-<div class="container py-4">
-  @php
-    $posts = [
-      (object)[
-        'id' => 1,
-        'image' => asset('images/pokecebuicon.png'),
-        'description' => 'これはダミーの投稿です',
-        'created_at' => now(),
-        'user' => (object)['id' => 1, 'name' => 'ユーザー名1', 'avatar' => null],
-        'likes' => collect([1, 2, 3]),
-        'categoryPost' => [(object)['category' => (object)['name' => 'Food']]],
-        'comments' => collect([
-          (object)[
-            'id' => 1,
-            'body' => 'コメント1です',
-            'created_at' => now(),
-            'user' => (object)['id' => 1, 'name' => 'コメントユーザー1']
-          ]
-        ]),
-      ],
-      (object)[
-        'id' => 2,
-        'image' => asset('images/pokecebuicon.png') ,
-        'description' => 'ビュー確認用の投稿です',
-        'created_at' => now(),
-        'user' => (object)['id' => 2, 'name' => 'ユーザー名2', 'avatar' => null],
-        'likes' => collect([1]),
-        'categoryPost' => [(object)['category' => (object)['name' => 'Travel']]],
-        'comments' => collect([]),
-      ],
-      (object)[
-        'id' => 3,
-        'image' => asset('images/pokecebuicon.png'),
-        'description' => '追加したダミー投稿その1です',
-        'created_at' => now(),
-        'user' => (object)['id' => 3, 'name' => 'ユーザー名3', 'avatar' => null],
-        'likes' => collect([1,2]),
-        'categoryPost' => [(object)['category' => (object)['name' => 'Culture']]],
-        'comments' => collect([]),
-      ],
-      (object)[
-        'id' => 4,
-        'image' => asset('images/Icon.png'),
-        'description' => '追加したダミー投稿その2です',
-        'created_at' => now(),
-        'user' => (object)['id' => 4, 'name' => 'ユーザー名4', 'avatar' => null],
-        'likes' => collect([]),
-        'categoryPost' => [],
-        'comments' => collect([]),
-      ],
-    ];
-  @endphp
+    <div class="post-detail">
 
-  <div class="row">
-    @foreach ($posts as $post)
-      <div class="col-md-6 col-lg-4 mb-4">
-        <div class="card shadow-sm h-100">
-          <img src="{{ $post->image }}" alt="Post Image" class="card-img-top img-fluid">
-          <div class="card-body">
-            <h5 class="card-title">{{ $post->user->name }}</h5>
-            <p class="card-text">{{ $post->description }}</p>
-            <p class="text-muted small">{{ $post->created_at->format('M d, Y') }}</p>
-            <div class="mb-2">
-              @foreach ($post->categoryPost as $category_post)
-                <span class="badge bg-secondary">{{ $category_post->category->name }}</span>
-              @endforeach
-              @if (empty($post->categoryPost))
-                <span class="badge bg-dark">Uncategorized</span>
-              @endif
-            </div>
-            <div>
-              <i class="far fa-heart"></i> {{ $post->likes->count() }}
-            </div>
-            @if ($post->comments->isNotEmpty())
-              <ul class="list-group mt-2">
-                @foreach ($post->comments as $comment)
-                  <li class="list-group-item border-0 p-0 mb-1">
-                    <span class="fw-bold">{{ $comment->user->name }}</span>:
-                    <span>{{ $comment->body }}</span>
-                  </li>
-                @endforeach
-              </ul>
+        {{-- 左：画像 --}}
+        <div class="post-media">
+            @if ($post->images->isNotEmpty())
+                <img src="{{ $post->images->first()->image }}" alt="post id{{ $post->id }}" class="main-image">
+            @else
+                <img src="{{ asset('images/Icon.png') }}" class="main-image">
             @endif
-          </div>
         </div>
-      </div>
-    @endforeach
-  </div>
-</div>
+        <div class="thumbnail-row">
+          @foreach ($post->images as $image)
+              <img src="{{ $image->image }}" class="thumb">
+          @endforeach
+        </div>
+
+        {{-- 右：情報エリア --}}
+        <div class="post-info">
+            <div class="post-info-inner">
+
+                {{-- メニュー --}}
+                @auth
+                    @if (Auth::user()->id === $post->user->id)
+                        <div class="dropdown text-end">
+                            <button class="btn btn-sm shadow-none" data-bs-toggle="dropdown">
+                                <i class="fa-solid fa-ellipsis"></i>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-end">
+                                <a href="{{ route('userpage.posts.edit', $post) }}" class="dropdown-item">Edit</a>
+                            </div>
+                        </div>
+                    @endif
+                @endauth
+                <h2 class="mt-3">{{ $post->title }}</h2>
+
+                <p class="text-muted small">{{ $post->user->name }} ・ {{ $post->created_at->format('M d, Y') }}</p>
+                <p class="post-body">{{ $post->body }}</p>
+
+            </div>
+        </div>
+    </div>
+
 @endsection
+
+{{-- CSS --}}
+<style>
+    .post-detail {
+      display: flex;
+      height: calc(100vh - 80px);
+      background: #F5f6f7;
+      max-width: 1200px;
+      margin: 0 auto;
+      
+    }
+
+    /* 左：画像 */
+    .poat-media {
+      flex: 1;
+      background: #000;
+      align-items: center;
+      display: flex;
+      justify-content: center;
+      position: relative;
+    }
+
+    .main-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .thumbnail-row {
+      position: absolute;
+      bottom: 20px;
+      display: flex;
+      gap: 8px;
+    }
+
+    .thumb {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 6px;
+      cursor: pointer;
+      opacity: 0.8;
+    }
+
+    .thumb:hover {
+      opacity: 1;
+    }
+
+    /* 左：情報エリア */
+    .post-info {
+      width: 420px;
+      background: #ffffff;
+      overflow: auto;
+      border-left: 1px solid #e5e5e5;
+    }
+
+    .post-info-inner {
+      padding: 24px;
+    }
+
+    .post-body {
+      line-height: 1.7;
+    }
+</style>

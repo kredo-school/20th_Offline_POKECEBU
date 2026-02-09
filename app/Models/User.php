@@ -6,6 +6,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Models\UserDetail;
+use App\Models\HotelReservation;
+use App\Models\Post; // Postクラスも必要なので追加しました
 
 
 class User extends Authenticatable
@@ -13,10 +16,10 @@ class User extends Authenticatable
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
     
-    const ADMIN_ROLE_ID = 1;
-    const HOTEL_ROLE_ID = 2;
-    const RESTAURANT_ROLE_ID = 3;
-    const USER_ROLE_ID = 4;
+    const USER_ROLE_ID = 1;
+    const ADMIN_ROLE_ID = 2;
+    const HOTEL_ROLE_ID = 3;
+    const RESTAURANT_ROLE_ID = 4;
 
     /**
      * The attributes that are mass assignable.
@@ -27,6 +30,10 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'first_name',
+        'last_name',
+        'phonenumber',
+        'role_id',
     ];
 
     /**
@@ -50,5 +57,25 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+ 
+
+    # ポストの取得
+    public function posts() 
+    {
+        return $this->hasMany(Post::class);
+    }
+
+    # ユーザー詳細の取得
+    public function detail() 
+    {
+        return $this->hasOne(UserDetail::class);
+    }
+
+    # ホテル予約一覧の取得
+    public function reservations() 
+    {
+        return $this->hasMany(HotelReservation::class);
     }
 }

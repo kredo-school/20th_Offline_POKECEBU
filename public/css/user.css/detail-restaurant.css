@@ -1,10 +1,9 @@
-/* --- Restaurant Main Images (Hotelと同じスタイル) --- */
 .restaurant-images {
   display: flex;
   gap: 16px;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
-  margin-bottom: 16px; /* 下に少し余白を追加 */
+  margin-bottom: 16px; 
 }
 
 .restaurant-images img {
@@ -13,25 +12,23 @@
   object-fit: cover;
   border-radius: 16px;
   scroll-snap-align: start;
-  flex-shrink: 0; /* これがないと画像が潰れることがあります */
+  flex-shrink: 0; 
 }
 
-/* --- Address (Hotelと同じフォントサイズ) --- */
 .restaurant-address {
     font-size: 1.3rem;
 }
 
-/* --- Table Images (Roomと同じスタイル) --- */
 .table-images {
   display: flex;
   gap: 16px;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
-  width: 100%; /* 親要素(col-md-4)いっぱいに広げる */
+  width: 100%; 
 }
 
 .table-images img {
-  width: 300px; /* カード内のカラムより大きい場合、横スクロールが発生します */
+  width: 300px;
   height: 200px;
   object-fit: cover;
   border-radius: 16px;
@@ -39,7 +36,6 @@
   flex-shrink: 0;
 }
 
-/* --- Star Rating (既存のものをそのまま利用) --- */
 .star-rating {
     color: #FFD700;
     font-size: 1.3rem;

@@ -49,7 +49,7 @@
 
                 @foreach ($rooms as $room)
                     <div class="col">
-                        <div class="card mb-3 shadow-sm position-relative" style="max-width: 1000px; overflow: hidden;">
+                        <div class="card mb-3 shadow-sm" style="overflow: hidden;">
                             <div class="row g-0">
 
                                 <div class="col-md-4 position-static">
@@ -72,7 +72,7 @@
                                     </div>
                                 </div>
 
-                                <div class="col-md-8 border-start position-static">
+                                <div class="col-md-8 border-start position-relative">
                                     <div class="p-3">
                                         <div class="d-flex justify-content-between align-items-center">
                                             <div>
@@ -88,8 +88,7 @@
                                                     <small class="text-muted fs-6">per night</small>
                                                 </div>
 
-                                                <a href="#"
-                                                    class="btn btn-primary px-4 stretched-link">
+                                                <a href="#" class="btn btn-primary px-4 stretched-link">
                                                     Book Now
                                                 </a>
                                             </div>

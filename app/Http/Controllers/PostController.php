@@ -41,7 +41,8 @@ class PostController extends Controller
         $request->validate([
             'title'     => 'required|max:255',
             'body'      => 'required|min:1|max:1000',
-            'image'     => 'required|mimes:jpeg,jpg,png,gif|max:1048'
+            'images'    => 'required|array',
+            'images.*'  => 'mimes:jpeg,jpg,png,gif|max:1048'
         ]);
 
         $post = new Post();
@@ -50,19 +51,21 @@ class PostController extends Controller
         $post->body        = $request->body;
         $post->save();
 
-        if($request->hasFile('image')) {
-            $imageData = 'data:image/' 
-            . $request->image->extension() 
-            . ';base64,' 
-            . base64_encode(file_get_contents($request->image));
+        if($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $imageData = 'data:image/' 
+                . $image->extension() 
+                . ';base64,' 
+                . base64_encode(file_get_contents($image));
 
-            $post->images()->create([
+                $post->images()->create([
                 'image' =>$imageData
-            ]);
+                ]);
+            }
         }
         
         return redirect()
-            ->route('userpage.posts.index')
+            ->route('user.posts.index')
             ->with('success','投稿しました✈️');
     }
 
@@ -87,24 +90,32 @@ class PostController extends Controller
     public function update(Request $request, Post $post)
     {
         $request->validate([
+            'title'     => 'required|max:255',
             'body'      =>'required|min:1|max:1000',
-            'image'     =>'mimes:jpeg,jpg,png,gif|max:1084'
+            'images.*'  =>'mimes:jpeg,jpg,png,gif|max:1084'
 
         ]);
         // postの更新
-        $post->body = $request->body;
+        $post->title    = $request->title;
+        $post->body     = $request->body;
         $post->save();
 
         // 新しい画像に変更したとき
-        if($request->hasFile('image')) {
-            $imageData = 'data:image/' 
-            . $request->image->extension() 
-            . ';base64,' 
-            . base64_encode(file_get_contents($request->image));
+        if($request->hasFile('images')) {
+            $post->images()->delete();
 
-            $post->images()->create([
+            foreach ($request->file('images') as $image) {
+
+            
+                $imageData = 'data:image/' 
+                . $image->extension() 
+                . ';base64,' 
+                . base64_encode(file_get_contents($image));
+
+                $post->images()->create([
                 'image' =>$imageData
-            ]);
+                ]);
+            }
         }
 
         

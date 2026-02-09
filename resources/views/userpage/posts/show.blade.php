@@ -16,7 +16,7 @@
         </div>
         <div class="thumbnail-row">
           @foreach ($post->images as $image)
-              <img src="{{ $image->image }}" class="thumb">
+              <img src="{{ $image->image }}" class="thumb img-fluid mb-2">
           @endforeach
         </div>
 
@@ -32,7 +32,7 @@
                                 <i class="fa-solid fa-ellipsis"></i>
                             </button>
                             <div class="dropdown-menu dropdown-menu-end">
-                                <a href="{{ route('userpage.posts.edit', $post) }}" class="dropdown-item">Edit</a>
+                                <a href="{{ route('user.posts.edit', $post) }}" class="dropdown-item">Edit</a>
                             </div>
                         </div>
                     @endif

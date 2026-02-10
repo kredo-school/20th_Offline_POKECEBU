@@ -17,23 +17,23 @@ class HotelRoom extends Model
     ];
 
     public function type()
-{
-    return $this->belongsTo(Type::class);
-}
+    {
+        return $this->belongsTo(Type::class, 'type_id');
+    }
 
-public function status()
-{
-    return $this->belongsTo(Status::class, 'type_id');
-}
+    public function status()
+    {
+        return $this->belongsTo(Status::class, 'status_id');
+    }
 
-public function images()
-{
-    return $this->hasMany(RoomImage::class, 'room_id');
-}
+    public function images()
+    {
+        return $this->hasMany(RoomImage::class, 'room_id');
+    }
 
     public function hotel()
     {
-        return $this->belongsTo(Hotel::class, 'status_id');
+        return $this->belongsTo(Hotel::class);
     }
 
     // 部屋タイプとの関係（必要なら）
@@ -42,7 +42,7 @@ public function images()
         return $this->belongsTo(HotelRoomType::class, 'type_id');
     }
 
-     public function categoryRooms()
+    public function categoryRooms()
     {
         return $this->hasMany(CategoryRoom::class, 'room_id');
     }
@@ -69,7 +69,7 @@ public function images()
         return $this->belongsTo(HotelRoomType::class, 'type_id', 'type_id');
     }
 
- 
+
 
     /**
      * 「シングル」「ダブル」などのマスター名を取得したい場合

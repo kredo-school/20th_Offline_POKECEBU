@@ -18,9 +18,10 @@ class FaqController extends Controller
 
     public function index()
     {
+        $role_admin  = config('app.role_admin');
         $all_categories = $this->category->with('faqs')->orderBy('soft_order')->get();
         $first_category = $all_categories->first();
-        return view('adminpage.faqs.faq', compact('all_categories', 'first_category'));
+        return view('adminpage.faqs.faq', compact('all_categories', 'first_category', 'role_admin'));
     }
 
     public function displayList() {
@@ -50,7 +51,7 @@ class FaqController extends Controller
 
         $this->faq->save();
 
-        return redirect()->route('faq.displayList');
+        return redirect()->route('admin.faq.displayList');
     }
 
     public function update(Request $request, string $id)
@@ -107,6 +108,6 @@ class FaqController extends Controller
 
         $this->category->save();
 
-        return redirect()->route('faq.displayList');
+        return redirect()->route('admin.faq.displayList');
     }
 }

@@ -7,8 +7,9 @@
 
     <div class="container-fluid py-3">
         <h3 class="mb-2">FAQ</h3>
-        <a href="{{ route('faq.displayList') }}" class="btn btn-secondary mb-2"><i class="fa-solid fa-pen"></i> FAQ details</a>
-
+        @if (Auth::user()->role_id == $role_admin)
+            <a href="{{ route('admin.faq.displayList') }}" class="btn btn-secondary mb-2"><i class="fa-solid fa-pen"></i> FAQ details</a>    
+        @endif
         <div class="row justify-content-center g-3">
             {{-- Left menu --}}
             <div class="col-md-3">

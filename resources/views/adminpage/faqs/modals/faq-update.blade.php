@@ -8,7 +8,7 @@
             </div>
 
             <div class="modal-body">
-                <form action="{{ route('faq.update', $faq->id) }}" method="post">
+                <form action="{{ route('admin.faq.update', $faq->id) }}" method="post">
                     @csrf
                     @method('PATCH')
                     <div class="mb-2">

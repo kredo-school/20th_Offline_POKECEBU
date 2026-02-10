@@ -26,10 +26,10 @@
                 <div>Jeepney</div>
             </a>
 
-            {{-- マイページのリンク --}}
-            <a href="#" class="menu-btn menu-mypage text-decoration-none">
+            {{-- ポストのリンク --}}
+            <a href="{{ route('user.posts.index') }}" class="menu-btn menu-mypage text-decoration-none">
                 <i class="fa-solid fa-user"></i>
-                <div>My Page</div>
+                <div>Post</div>
             </a>
 
         </div>
@@ -44,148 +44,100 @@
 
             </div>
 
-            <div class="container px-3">
-                <div class="d-flex justify-content-center flex-wrap gap-3 mb-3">
-                    {{-- @foreach ($hotelRankings as $index => $hotel)
-                <div class="col-md-4 col-sm-6 d-flex justify-content-center">
-                    <div class="card rank-card">
-                        <!-- 順位バッジ-->
-                        <div class="rank-badge rank-{{ $index + 1 }}">
-                            {{ $index + 1 }}
-                        </div>
-                        <ホテルの画像＞
-                        <img src="#" alt="{{ $hotel->name }}" class="rank-image">
+            <div class="d-flex justify-content-center flex-wrap gap-3 mb-3">
+                @foreach ($hotelRankings as $index => $hotel)
+                    <div class="col-md-4 col-sm-6 d-flex justify-content-center">
+
+                        <div class="card rank-card">
+                            <div class="rank-badge rank-{{ $index + 1 }}">
+                                {{ $index + 1 }}
+                            </div>
+                       
+                            <img src="#" alt="{{ $hotel->name }}" class="rank-image">
      
-                        
-                        <div class="card-body">
-                            <詳細リンク＞
-                            <a href="{{ route('hotels.show',$hotel->id) }}" class="text-decoration-none text-dark">
-                                <h5 class="card-title">{{ $hotel->name }}</h5>
-                            </a>
+                            <div class="card-body">
+                                <a href="#" class="text-decoration-none text-dark">
+                                    <h5 class="card-title">{{ $hotel->name }}</h5>
+                                </a>
+                                @php
+                                    $rating = $hotel->star_rating;
+                                    $fullStars = floor($rating);
+                                    $halfStar = ($rating - $fullStars) >= 0.5;
+                                @endphp
+                                <p class="card-text text-warning">
+                                    @for ($i = 0; $i < $fullStars; $i++)
+                                        <i class="fa-solid fa-star"></i>
+                                    @endfor
+                                    @if ($halfStar)
+                                        <i class="fa-solid fa-star-half-stroke"></i>
+                                    @endif
+                                    <span class="text-muted ms-1">{{ number_format($rating,1) }}</span>
+                                </p>
+                                <p class="card-city">
+                                    <i class="fa-solid fa-location-dot"></i> {{ $hotel->city }}
+                                </p>
+                                <p class="card-price">
+                                    @if ($hotel->rooms->isNotEmpty())
+                                        ¥{{ $hotel->rooms->min('charge') }}〜 
+                                    @else
+                                        <span class="text-muted">価格未設定</span>
+                                    @endif
+                                </p>
+                            </div>
+                        </div>       
+                    </div> 
+                @endforeach
 
-                            <⭐︎評価＞
-                            <p class="card-text text-warning">
-                                {{ str_repeat('★' $hotel->rating) }}
-                            </p>
-                            <p class="card-price">
-                                <i class="fa-solid fa-location-dot"></i>{{ $hotel->city }}
-                            </p>
-                             <p class="card-price">
-                                ¥{{ $hotel->hotel_rooms->charge }}〜
-                            </p>
-                        </div>
-
-                    </div>       
-                </div> 
-                @endforeach --}}
-
-
-                    {{-- あとで消す-ここから --}}
-
-
+                    {{-- あとで消す-ここから
                     <div class="card rank-card">
-                        {{--  順位バッジ --}}
-                        <div class="rank-badge rank-1">
-                            1
-                        </div>
-                        {{-- ホテルの画像 --}}
+                        <div class="rank-badge rank-1">1</div>
                         <img src="{{ asset('images/hotel-img1.jpg') }}" alt="" class="rank-image">
-
                         <div class="card-body">
-                            {{-- 詳細リンク --}}
-                            <a href="#" class="text-decoration-none text-dark">
-                                <h5 class="card-title">SUGOI hotel</h5>
-                            </a>
-
-                            {{-- ⭐︎評価 --}}
-                            <p class="card-text text-warning">
-                                ★★★★★
-                            </p>
-                             <p class="card-price">
-                                <i class="fa-solid fa-location-dot"></i>セブ市
-                            </p>
-                             <p class="card-price">
-                                ¥10,000〜
-                            </p>
+                            <a href="#" class="text-decoration-none text-dark"><h5 class="card-title">SUGOI hotel</h5></a>
+                            <p class="card-text text-warning">★★★★★</p>
+                            <p class="card-price"><i class="fa-solid fa-location-dot"></i>セブ市</p>
+                            <p class="card-price">¥10,000〜</p>
                         </div>
-
                     </div>
 
                     <div class="card rank-card">
-                        {{--  順位バッジ --}}
-                        <div class="rank-badge rank-2">
-                            2
-                        </div>
-                        {{-- ホテルの画像 --}}
+                        <div class="rank-badge rank-2">2</div>
                         <img src="{{ asset('images/hotel-img2.jpg') }}" alt="" class="rank-image">
-
                         <div class="card-body">
-                            {{-- 詳細リンク --}}
-                            <a href="#" class="text-decoration-none text-dark">
-                                <h5 class="card-title">TABUN condominium</h5>
-                            </a>
-
-                            {{-- ⭐︎評価 --}}
-                            <p class="card-text text-warning">
-                                ★★★★
-                            </p>
-                            <p class="card-price">
-                                <i class="fa-solid fa-location-dot"></i>セブ市
-                            </p>
-                             <p class="card-price">
-                                ¥10,000
-                            </p>
+                            <a href="#" class="text-decoration-none text-dark"><h5 class="card-title">TABUN condominium</h5></a>
+                            <p class="card-text text-warning">★★★★</p>
+                            <p class="card-price"><i class="fa-solid fa-location-dot"></i>セブ市</p>
+                            <p class="card-price">¥10,000</p>
                         </div>
-
-
                     </div>
 
                     <div class="card rank-card">
-                        {{--  順位バッジ --}}
-                        <div class="rank-badge rank-3">
-                            3
-                        </div>
-                        {{-- ホテルの画像 --}}
+                        <div class="rank-badge rank-3">3</div>
                         <img src="{{ asset('images/hotel-img3.jpg') }}" alt="" class="rank-image">
-
                         <div class="card-body">
-                            {{-- 詳細リンク --}}
-                            <a href="#" class="text-decoration-none text-dark">
-                                <h5 class="card-title">YABAI motel</h5>
-                            </a>
-
-                            {{-- ⭐︎評価 --}}
-                            <p class="card-text text-warning">
-                                ★★
-                            </p>
-                            <p class="card-price">
-                                <i class="fa-solid fa-location-dot"></i>セブ市
-                            </p>
-                             <p class="card-price">
-                                ¥10,000
-                            </p>
+                            <a href="#" class="text-decoration-none text-dark"><h5 class="card-title">YABAI motel</h5></a>
+                            <p class="card-text text-warning">★★</p>
+                            <p class="card-price"><i class="fa-solid fa-location-dot"></i>セブ市</p>
+                            <p class="card-price">¥10,000</p>
                         </div>
                     </div>
-
-                </div>
-                {{-- あとで消す-ここまで --}}
+                    あとで消す-ここまで --}}
 
             </div>
-
-
         </div>
 
         {{-- ---------------
-                レストラン　ランキング 
-                --------------- --}}
+            レストラン ランキング 
+            --------------- --}}
         <div>
             <div class="section-title">Restrant Ranking
                 <a href="#" class="btn btn-sm btn-outline-primary rounded-pill">View More</a>
             </div>
-            <div class="container px-3">
-                <div class="d-flex justify-content-center flex-wrap gap-3 mb-3">
-                    {{-- @foreach ($restaurantRankings as $index => $restaurant)
-                <div class="col-4">
+            
+            <div class="d-flex justify-content-center flex-wrap gap-3 mb-3">
+                @foreach ($restaurantRankings as $index => $restaurant)
+                <div class="col-md-4 col-sm-6">
+
                     <div class="card rank-card">
                         <div class="rank-badge rank-{{ $index + 1 }}">{{ $index + 1 }}</div>
                        
@@ -195,115 +147,100 @@
                             <a href="#" class="card-link text-decoration-none text-dark">
                                 <h5 class="card-title">{{ $restaurant->name }}</h5>
                             </a>
+                            @php
+                                    $rating = $hotel->star_rating;
+                                    $fullStars = floor($rating);
+                                    $halfStar = ($rating - $fullStars) >= 0.5;
+                            @endphp
                             <p class="card-text text-warning">
-                                {{ str_repeat('★' restaurant->rating) }}
+                                @for ($i = 0; $i < $fullStars; $i++)
+                                    <i class="fa-solid fa-star"></i>
+                                @endfor
+                                @if ($halfStar)
+                                    <i class="fa-solid fa-star-half-stroke"></i>
+                                @endif
+                                <span class="text-muted ms-1">{{ number_format($rating,1) }}</span>
                             </p>
+                            
                         </div>
                     </div>     
                 </div>
-                @endforeach --}}
+                @endforeach
 
                     {{-- あとで消す-ここから --}}
                     <div class="card rank-card">
-                        {{--  順位バッジ --}}
                         <div class="rank-badge rank-1">1</div>
-                        {{-- レストランの画像 --}}
                         <img src="{{ asset('images/food-img1.jpg') }}" alt="" class="rank-image">
-
                         <div class="card-body">
-                            {{-- 詳細リンク --}}
-                            <a href="#" class="card-link text-decoration-none text-dark">
-                                <h5 class="card-title">SASUGA restaurant</h5>
-                            </a>
-                            {{-- ⭐︎評価 --}}
+                            <a href="#" class="card-link text-decoration-none text-dark"><h5 class="card-title">SASUGA restaurant</h5></a>
                             <p class="card-text text-warning">★★★★★</p>
-                            <p class="card-price">
-                                <i class="fa-solid fa-location-dot"></i>セブ市
-                            </p>
+                            <p class="card-price"><i class="fa-solid fa-location-dot"></i>セブ市</p>
                         </div>
                     </div>
 
                     <div class="card rank-card">
-                        {{--  順位バッジ --}}
                         <div class="rank-badge rank-2">2</div>
-                        {{-- レストランの画像 --}}
                         <img src="{{ asset('images/food-img2.jpg') }}" alt="" class="rank-image">
-
                         <div class="card-body">
-                            {{-- 詳細リンク --}}
-                            <a href="#" class="card-link text-decoration-none text-dark">
-                                <h5 class="card-title">KITTO cafe</h5>
-                            </a>
+                            <a href="#" class="card-link text-decoration-none text-dark"><h5 class="card-title">KITTO cafe</h5></a>
                             <p class="card-text text-warning">★★★★</p>
-                            <p class="card-price">
-                                <i class="fa-solid fa-location-dot"></i>セブ市
-                            </p>
+                            <p class="card-price"><i class="fa-solid fa-location-dot"></i>セブ市</p>
                         </div>
                     </div>
 
                     <div class="card rank-card">
-                        {{--  順位バッジ --}}
                         <div class="rank-badge rank-3">3</div>
-                        {{-- レストランの画像 --}}
                         <img src="{{ asset('images/food-img3.jpg') }}" alt="" class="rank-image">
-
                         <div class="card-body">
-                            {{-- 詳細リンク --}}
-                            <a href="#" class="card-link text-decoration-none text-dark">
-                                <h5 class="card-title">MAJIDE gohan</h5>
-                            </a>
+                            <a href="#" class="card-link text-decoration-none text-dark"><h5 class="card-title">MAJIDE gohan</h5></a>
                             <p class="card-text text-warning">★★</p>
-                            <p class="card-price">
-                                <i class="fa-solid fa-location-dot"></i>セブ市
-                            </p>
+                            <p class="card-price"><i class="fa-solid fa-location-dot"></i>セブ市</p>
                         </div>
                     </div>
                     {{-- あとで消す-ここまで --}}
 
-
-                </div>
             </div>
-
         </div>
+
         {{-- --------------- 
-                ポスト 
+           ポスト 
             --------------- --}}
         <div>
             <div class="section-title">Recent Posts</div>
-            <div class="d-flex justify-content-center flex-wrap gap-3 mb-3">
-                @if ($home_posts->isNotEmpty())
-                    <div class="row ">
-                        @foreach ($home_posts as $post)
-                            <div class="col-md-6 col-lg-4 mb-4">
-                                <a href="{{ route('user.posts.show', $post->id) }}" class="post-card">
-                                    <img src="{{ $post->images->first()->image }}" alt="Post Image">
 
-                                    {{-- ハート（仮） --}}
-                                    <div class="post-like">
-                                        <i class="fa-regular fa-heart"></i>
-                                    </div>
+            @if ($home_posts->isNotEmpty())
+                <div class="row justify-content-center">
+                    @foreach ($home_posts as $post)
+                        <div class="col-md-6 col-lg-4 mb-4">
+                            <a href="{{ route('user.posts.show', $post->id) }}" class="post-card">
+                                <img src="{{ $post->images->first()->image }}" alt="Post Image">
 
-                                    {{-- テキスト --}}
-                                    <div class="post-overlay">
-                                        <h5 class="post-title">{{ $post->title }}</h5>
+                                {{-- ハート（仮） --}}
+                                <div class="post-like">
+                                    <i class="fa-regular fa-heart"></i>
+                                </div>
 
-                                        <p class="post-user mb-1"><i class="fa-regular fa-user"></i>{{ $post->user->name }}
-                                        </p>
+                                {{-- テキスト --}}
+                                <div class="post-overlay">
+                                    <h5 class="post-title">{{ $post->title }}</h5>
 
-                                        <p class="post-date">{{ $post->created_at->format('M d, Y') }}</p>
+                                    <p class="post-user mb-1"><i class="fa-regular fa-user"></i>{{ $post->user->name }}
+                                    </p>
 
-                                        <div class="mb-2">
-                                            {{-- @foreach ($post->categoryPost as $category_post)
+                                    <p class="post-date">{{ $post->created_at->format('M d, Y') }}</p>
+
+                                    <div class="mb-2">
+                                        {{-- @foreach ($post->categoryPost as $category_post)
                                             <span class="badge bg-secondary">{{ $category_post->category->name }}</span>
                                         @endforeach --}}
-                                            {{-- @if (empty($post->categoryPost))
+                                        {{-- @if (empty($post->categoryPost))
                                             <span class="badge bg-dark">Uncategorized</span>
                                          @endif --}}
-                                        </div>
-                                        <div>
-                                            {{-- <i class="far fa-heart"></i> {{ $post->likes->count() }} --}}
-                                        </div>
-                                        {{-- @if ($post->comments->isNotEmpty())
+                                    </div>
+                                    <div>
+                                        {{-- <i class="far fa-heart"></i> {{ $post->likes->count() }} --}}
+                                    </div>
+                                    {{-- @if ($post->comments->isNotEmpty())
                                             <ul class="list-group mt-2">
                                                 @foreach ($post->comments as $comment)
                                                     <li class="list-group-item border-0 p-0 mb-1">
@@ -313,22 +250,73 @@
                                                 @endforeach
                                             </ul>
                                      @endif --}}
-                                    </div>
-                                </a>
-                            </div>
-                        @endforeach
-                    </div>
-                @else
-                    <h3 class="text-muted text-center">No Posts Yet</h3>
-                @endif
-            </div>
+                                </div>
+                            </a>
+                        </div>
+                    @endforeach
+                </div>
+                <div class="text-center mt-2">
+                    <a href="{{ route('user.posts.index') }}" class="btn btn-sm btn-outline-primary rounded-pill">
+                        View More
+                    </a>
+                </div>
+            @else
+                <h3 class="text-muted text-center">No Posts Yet</h3>
+            @endif
 
-            <div class="text-center mt-2">
-                <a href="{{ route('user.posts.index', $post->post) }}"
-                    class="btn btn-sm btn-outline-primary rounded-pill">View
-                    More</a>
-            </div>
         </div>
+
+
+
+
+        {{-- 都市別ホテル --}}
+        <div>
+            @foreach ($hotelsByCity as $city => $hotels)
+                <div class="section-title">{{ $city }}</div>
+
+                <div class="d-flex justify-content-center flex-wrap gap-3 mb-3">
+                    @foreach ($hotels as $index => $hotel)
+                        <div class="col-md-4 col-sm-6 d-flex justify-content-center">
+                            <div class="card rank-card">
+                                <img src="{{ $hotel->image_path ?? asset('images/no-image.png') }}"
+                                    alt="{{ $hotel->name }}" class="rank-image">
+
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ $hotel->name }}</h5>
+                                    @php
+                                    $rating = $hotel->star_rating;
+                                    $fullStars = floor($rating);
+                                    $halfStar = ($rating - $fullStars) >= 0.5;
+                                    @endphp
+                                        <p class="card-text text-warning">
+                                            @for ($i = 0; $i < $fullStars; $i++)
+                                                <i class="fa-solid fa-star"></i>
+                                            @endfor
+                                            @if ($halfStar)
+                                            <i class="fa-solid fa-star-half-stroke"></i>
+                                            @endif
+                                            <span class="text-muted ms-1">{{ number_format($rating,1) }}</span>
+                                        </p>
+                                <p class="card-city">
+                                    <i class="fa-solid fa-location-dot"></i> {{ $hotel->city }}
+                                </p>
+                
+
+                                    <p class="card-price">
+                                      @if ($hotel->rooms->isNotEmpty())
+                                        ¥{{ $hotel->rooms->min('cgarge') }}〜 
+                                      @else
+                                          <span class="text-muted">価格未設定</span>
+                                      @endif
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            @endforeach
+        </div>
+
 
 
 
@@ -361,260 +349,258 @@
                 ©️2026 kredo POKECEBU
             </p>
         </footer>
-    </div>
 
 
 
 
 
 
-    {{-- CSS --}}
-    <style>
-        /* 全カードの設定 */
-        .main-card {
 
-            background: #f5fbff;
-            border-radius: 25px;
-            padding-bottom: 20px;
-            overflow: hidden;
+        {{-- CSS --}}
+        <style>
+            /* 全カードの設定 */
+            .main-card {
 
-        }
+                background: #f5fbff;
+                border-radius: 25px;
+                padding-bottom: 20px;
+                overflow: hidden;
 
-        /* メインメニュー */
-        .menu-btn {
-            width: 140px;
-            height: 120px;
-            border-radius: 25px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            font-size: 15px;
-            color: #ffffff;
-            font-weight: bold;
-            box-shadow: 0 3px rgba(0, 0, 0, 0.1);
-            margin: 10px;
-        }
+            }
 
-        .menu-restaurant {
-            background: #fdbf79;
-        }
+            /* メインメニュー */
+            .menu-btn {
+                width: 140px;
+                height: 120px;
+                border-radius: 25px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                font-size: 15px;
+                color: #ffffff;
+                font-weight: bold;
+                box-shadow: 0 3px rgba(0, 0, 0, 0.1);
+                margin: 10px;
+            }
 
-        .menu-hotel {
-            background: #8dbcda;
-        }
+            .menu-restaurant {
+                background: #fdbf79;
+            }
 
-        .menu-jeepney {
-            background: #96ccb9;
-        }
+            .menu-hotel {
+                background: #8dbcda;
+            }
 
-        .menu-mypage {
-            background: #e9e3d3;
-        }
+            .menu-jeepney {
+                background: #96ccb9;
+            }
 
-        /* セクション */
-        .section-title {
-            text-align: center;
-            color: #4fa3d1;
-            font-weight: bold;
-            font-size: 28px;
-            margin: 40px 0 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-        }
+            .menu-mypage {
+                background: #e9e3d3;
+            }
 
-        .section-title::before,
-        .section-title::after {
-            content: "";
-            flex: 1;
-            height: 2px;
-            background: #b5dbf0;
-            max-width: 80px;
-        }
+            /* セクション */
+            .section-title {
+                text-align: center;
+                color: #4fa3d1;
+                font-weight: bold;
+                font-size: 28px;
+                margin: 40px 0 20px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 15px;
+            }
 
-        /* ランキング */
-        .rank-card {
-            position: relative;
-            border-radius: 16px;
-            overflow: hidden;
-            aspect-ratio: 3 / 3.8;
-            width: 100%;
-            max-width: 260px;
-        }
+            .section-title::before,
+            .section-title::after {
+                content: "";
+                flex: 1;
+                height: 2px;
+                background: #b5dbf0;
+                max-width: 80px;
+            }
 
-        .rank-card:hover img {
-            transition: transform 0.4s;
-            transform: scale(1.03);
-        }
+            /* ランキング */
+            .rank-card {
+                position: relative;
+                border-radius: 16px;
+                overflow: hidden;
+                aspect-ratio: 3 / 3.8;
+                width: 100%;
+                max-width: 260px;
+            }
 
-        .rank-image {
-            width: 100%;
-            height: 100%;
-            min-height: 200px;
-            object-fit: cover;
-        }
+            .rank-card:hover img {
+                transition: transform 0.4s;
+                transform: scale(1.03);
+            }
 
-        .rank-card .card-title {
-            font-size: 18px;
-        }
+            .rank-image {
+                width: 100%;
+                height: 100%;
+                min-height: 200px;
+                object-fit: cover;
+            }
 
-        .rank-card .card-text,
-        .rank-card .card-price {
-            font-size: 13px;
-        }
+            .rank-card .card-title {
+                font-size: 18px;
+            }
 
-        .rank-card p {
-            margin-bottom: 4px; 
-            line-height: 1.2;
-        }
+            .rank-card .card-text,
+            .rank-card .card-price {
+                font-size: 13px;
+            }
 
-        /* ランキングバッジ（共通） */
-        .rank-badge {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            border-radius: 50%;
-            width: 36px;
-            height: 36px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-weight: bold;
-            color: #fff;
-            border: 1px solid white;
-            z-index: 10;
-        }
+            .rank-card p {
+                margin-bottom: 4px;
+                line-height: 1.2;
+            }
 
-        /* ランキングバッジ（順位） */
-        .rank-1 {
-            background: gold;
-            box-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
-        }
+            /* ランキングバッジ（共通） */
+            .rank-badge {
+                position: absolute;
+                top: 10px;
+                left: 10px;
+                border-radius: 50%;
+                width: 36px;
+                height: 36px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                font-weight: bold;
+                color: #fff;
+                border: 1px solid white;
+                z-index: 10;
+            }
 
-        .rank-2 {
-            background: silver;
-            box-shadow: 0 0 10px rgba(192, 192, 192, 0.8);
-        }
+            /* ランキングバッジ（順位） */
+            .rank-1 {
+                background: gold;
+                box-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+            }
 
-        .rank-3 {
-            background: #cd7f32;
-            box-shadow: 0 0 10px rgba(205, 127, 50, 0.8);
-        }
+            .rank-2 {
+                background: silver;
+                box-shadow: 0 0 10px rgba(192, 192, 192, 0.8);
+            }
 
-        /* POST */
-        .post-card {
-            position: relative;
-            display: block;
-            border-radius: 16px;
-            overflow: hidden;
-            aspect-ratio: 3 / 4.2;
-            width: 100%;
-            max-width: 260px;
-            color: #ffffff;
-            text-decoration: none;
-        }
+            .rank-3 {
+                background: #cd7f32;
+                box-shadow: 0 0 10px rgba(205, 127, 50, 0.8);
+            }
 
-        .post-card img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.4s;
-        }
+            /* POST */
+            .post-card {
+                position: relative;
+                display: block;
+                border-radius: 16px;
+                overflow: hidden;
+                aspect-ratio: 3 / 4.2;
+                width: 100%;
+                max-width: 260px;
+                color: #ffffff;
+                text-decoration: none;
+            }
 
-        /* テキスト */
-        .post-overlay {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            padding: 16px;
-            z-index: 1;
-            text-shadow: 0 2px 6px rgba(0,0,0,0.6);
-            background: linear-gradient(
-                to top,
-                rgba(0,0,0,0.6),
-                rgba(0,0,0,0)
-            );
-            width: 100%;
-        }
+            .post-card img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                transition: transform 0.4s;
+            }
 
-        .post-title {
-            font-size: 15px;
-            font-weight: 600;
-            margin-bottom: 6px;
-        }
+            /* テキスト */
+            .post-overlay {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                padding: 16px;
+                z-index: 1;
+                text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+                background: linear-gradient(to top,
+                        rgba(0, 0, 0, 0.6),
+                        rgba(0, 0, 0, 0));
+                width: 100%;
+            }
 
-        .post-user {
-            font-size: 13px;
-        }
+            .post-title {
+                font-size: 15px;
+                font-weight: 600;
+                margin-bottom: 6px;
+            }
 
-        /* ハート */
-        .post-like {
-            position: absolute;
-            top: 12px;
-            right: 12px;
-            z-index: 2;
-            background: #ffffff;
-            color: #333;
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            display: grid;
-            place-items: center;
-        }
+            .post-user {
+                font-size: 13px;
+            }
 
-        .post-card:hover img {
-            transform: scale(1.05);
-        }
+            /* ハート */
+            .post-like {
+                position: absolute;
+                top: 12px;
+                right: 12px;
+                z-index: 2;
+                background: #ffffff;
+                color: #333;
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
+                display: grid;
+                place-items: center;
+            }
 
-        /* フッター */
-        .site-footer {
-            background: #f7f8fa;
-            margin: 80px;
-            padding: 60px 0 30px;
-        }
+            .post-card:hover img {
+                transform: scale(1.05);
+            }
 
-        .footer-inner {
-            max-width: 1200px;
-            margin: auto;
-            padding: 0 20px;
-        }
+            /* フッター */
+            .site-footer {
+                background: #f7f8fa;
+                margin: 80px;
+                padding: 60px 0 30px;
+            }
 
-        .footer-columns {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 40px;
-        }
+            .footer-inner {
+                max-width: 1200px;
+                margin: auto;
+                padding: 0 20px;
+            }
 
-        .footer-col h4 {
-            font-size: 15px;
-            font-weight: 600;
-            margin-bottom: 14px;
-        }
+            .footer-columns {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 40px;
+            }
 
-        .footer-col a {
-            display: block;
-            font-size: 14px;
-            color: #555;
-            text-decoration: none;
-            margin-bottom: 8px;
-        }
+            .footer-col h4 {
+                font-size: 15px;
+                font-weight: 600;
+                margin-bottom: 14px;
+            }
 
-        .footer-col a:hover {
-            color: #000;
-        }
+            .footer-col a {
+                display: block;
+                font-size: 14px;
+                color: #555;
+                text-decoration: none;
+                margin-bottom: 8px;
+            }
 
-        .payment-icon img {
-            height: 26px;
-            margin-right: 8px;
-        }
+            .footer-col a:hover {
+                color: #000;
+            }
 
-        .footer-copy {
-            text-align: center;
-            font-size: 13px;
-            color: #888;
-            margin-top: 40px;
-        }
-    </style>
-@endsection
+            .payment-icon img {
+                height: 26px;
+                margin-right: 8px;
+            }
+
+            .footer-copy {
+                text-align: center;
+                font-size: 13px;
+                color: #888;
+                margin-top: 40px;
+            }
+        </style>
+    @endsection

@@ -20,7 +20,6 @@ use App\Http\Controllers\RestaurantTableController;
 use App\Http\Controllers\TmpHotelController;
 
 
-use App\Http\Controllers\HotelReservationController;
 use App\Http\Controllers\RestaurantReservationController;
 use App\Http\Controllers\UserDetailController;
 

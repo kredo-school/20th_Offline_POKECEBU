@@ -1,4 +1,4 @@
-  @extends('layouts.staff')
+  @extends('layouts.user')
 
   @section('title', 'reservations.hotel.detail')
 

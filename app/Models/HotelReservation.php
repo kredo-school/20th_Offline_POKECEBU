@@ -23,6 +23,12 @@ class HotelReservation extends Model
             'other', 
     ];
 
+    protected $casts = [
+        'reserved_at'   => 'datetime',
+        'start_at'      => 'datetime',
+        'end_at'        => 'datetime'
+    ];
+
     // どのホテルの予約か
     public function hotel()
     {

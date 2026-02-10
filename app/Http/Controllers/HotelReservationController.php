@@ -18,11 +18,15 @@ class HotelReservationController extends Controller
         return view('reservations.hotel');
     }
     
+    // sutffの予約詳細確認用
     public function show($id) {
-        //仮データ（あとからDBから取得する形にする）
-        return view('staff.reservation.info',[
-            'reservationId' => $id
-        ]);
+        $reservation = HotelReservation::with([
+            'user.detail',
+            'room'
+        ])->findOrFail($id);
+
+        return view('staffpage.reservations.hotel-detail',compact('reservation')
+        );
     }
     public function confirmation()
     {

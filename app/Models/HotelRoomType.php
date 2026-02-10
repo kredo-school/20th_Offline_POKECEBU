@@ -36,6 +36,6 @@ class HotelRoomType extends Model
     public function rooms(): HasMany
     {
         return $this->hasMany(HotelRoom::class, 'type_id', 'type_id')
-                    ->where('hotel_id', $this->hotel_id);
+                    ->whereColumn('hotel_rooms.hotel_id','hotel_room_types.hotel_id');
     }
 }

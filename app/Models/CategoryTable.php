@@ -13,6 +13,10 @@ class CategoryTable extends Model
         'table_id',
     ];
 
+    public $timestamps = false;
+    protected $primaryKey = ['table_id', 'category_id'];
+    public $incrementing = false;
+
     public function category()
     {
         return $this->belongsTo(Category::class);

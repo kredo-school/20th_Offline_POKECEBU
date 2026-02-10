@@ -32,7 +32,7 @@ class HotelRoomController extends Controller
     {
         $all_types = $this->type->where('target_type', $this->hotel)->get();
         $all_categories = $this->category->where('target_type', $this->hotel)->get();
-        $all_statuses = $this->status->where('target_type', $this->hotel)->get();
+        $all_statuses = $this->status->whereIn('target_type', [$this->hotel, 'all'])->get();
 
         $all_room_types = $this->hotelRoomType
             ->where('hotel_id', $hotel_id)

@@ -1,6 +1,6 @@
 @extends('layouts.staff')
  
-@section('title', 'Room Overview')
+@section('title', 'Table Overview')
  
 @section('content')
     
@@ -20,12 +20,12 @@
         <div class="card col-7">
             <div class="card-body">
                 <div class="mb-2">
-                    <h3>Rooms Overview</h3>
+                    <h3>Tables Overview</h3>
                 </div>
 
                 <div class="mb-2 text-end">
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createRoomtypeModal">
-                        <i class="fa-solid fa-plus"></i> Add Room Type
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createTabletypeModal">
+                        <i class="fa-solid fa-plus"></i> Add Table Type
                     </button>
                 </div>
 
@@ -33,8 +33,8 @@
                     <thead class="small table-warning text-secondary">
                         <tr>
                             <th>#</th>
-                            <th>Room Type</th>
-                            <th>Total Rooms</th>
+                            <th>Table Type</th>
+                            <th>Total Tables</th>
                             <th>Reserved</th>
                             <th>Available</th>
                             <th>Temporarily Unavailable</th>
@@ -49,32 +49,32 @@
                         $total_tmpUnavailable = 0;
                         $total_unavailable = 0;
                     @endphp
-                    @if (!$all_room_types->isEmpty())
+                    @if (!$all_table_types->isEmpty())
                         <tbody>
-                            @foreach ($all_room_types as $room_type)  
+                            @foreach ($all_table_types as $table_type)  
                                 <tr>
-                                    <td>{{ $room_type->id }}</td>
-                                    <td>{{ $room_type->type->name }}</td>
-                                    <td>{{ $room_type->total_rooms }}</td>
-                                    <td>{{ $room_type->reserved_cnt }}</td>
-                                    <td>{{ $room_type->available_cnt }}</td>
-                                    <td>{{ $room_type->tmpUnavailable_cnt }}</td>
-                                    <td>{{ $room_type->unavailable_cnt }}</td>
+                                    <td>{{ $table_type->id }}</td>
+                                    <td>{{ $table_type->type->name }}</td>
+                                    <td>{{ $table_type->total_tables }}</td>
+                                    <td>{{ $table_type->reserved_cnt }}</td>
+                                    <td>{{ $table_type->available_cnt }}</td>
+                                    <td>{{ $table_type->tmpUnavailable_cnt }}</td>
+                                    <td>{{ $table_type->unavailable_cnt }}</td>
                                     <td>
                                         <div class="text-end">
-                                            <button class="btn btn-sm btn-outline-warning" data-bs-toggle="modal" data-bs-target="#updateRoomtypeModal-{{ $room_type->id }}"><i class="fa-solid fa-pen"></i></button>
-                                            <button class="btn btn-sm btn-outline-danger ms-1" data-bs-toggle="modal" data-bs-target="#deleteRoomtypeModal-{{ $room_type->id }}"><i class="fa-solid fa-trash"></i></button>
+                                            <button class="btn btn-sm btn-outline-warning" data-bs-toggle="modal" data-bs-target="#updateTabletypeModal-{{ $table_type->id }}"><i class="fa-solid fa-pen"></i></button>
+                                            <button class="btn btn-sm btn-outline-danger ms-1" data-bs-toggle="modal" data-bs-target="#deleteTabletypeModal-{{ $table_type->id }}"><i class="fa-solid fa-trash"></i></button>
                                         </div>
-                                        @include('staffpage.roomtype.modals.roomtype-update')
-                                        @include('staffpage.roomtype.modals.roomtype-delete')
+                                        @include('staffpage.tabletype.modals.tabletype-update')
+                                        @include('staffpage.tabletype.modals.tabletype-delete')
                                     </td>
                                 </tr>
                                     @php
-                                        $total = $total + $room_type->total_rooms;
-                                        $total_reserved = $total_reserved + $room_type->reserved_cnt;
-                                        $total_available = $total_available + $room_type->available_cnt;
-                                        $total_tmpUnavailable = $total_tmpUnavailable + $room_type->tmpUnavailable_cnt;
-                                        $total_unavailable = $total_unavailable + $room_type->unavailable_cnt;
+                                        $total = $total + $table_type->total_tables;
+                                        $total_reserved = $total_reserved + $table_type->reserved_cnt;
+                                        $total_available = $total_available + $table_type->available_cnt;
+                                        $total_tmpUnavailable = $total_tmpUnavailable + $table_type->tmpUnavailable_cnt;
+                                        $total_unavailable = $total_unavailable + $table_type->unavailable_cnt;
                                     @endphp
                             @endforeach
                         </tbody>
@@ -98,36 +98,34 @@
     <hr>
     <div class="mt-4">
         <div class="mb-3">
-            <h2>Room Management</h2>
+            <h2>Table Management</h2>
         </div>
         <div class="mb-2 text-end text-white">
-                    <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#createRoomModal-">
-                        <i class="fa-solid fa-plus"></i> Add Room
+                    <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#createTableModal-">
+                        <i class="fa-solid fa-plus"></i> Add Table
                     </button>
                 </div>
         <table class="table table-hover align-middle bg-white text-secondary">
             <thead class="small table-secondary text-secondary">
-                <th>Room Number</th>
-                <th>Room Type</th>
-                <th>Floor Number</th>
+                <th>Table Number</th>
+                <th>Table Type</th>
                 <th>Max Guests</th>
                 <th>Charges</th>
                 <th>Amenities</th>
                 <th>Status</th>
                 <th></th>
             </thead>
-            @if (!$all_rooms->isEmpty())   
+            @if (!$all_tables->isEmpty())   
                 <tbody>
-                    @foreach ($all_rooms as $room)
+                    @foreach ($all_tables as $table)
                         <tr>
-                            <td>{{ $room->room_number }}</td>
-                            <td>{{ $room->type->name }}</td>
-                            <td>{{ $room->floor_number }}</td>
-                            <td>{{  $room->max_guests }}</td>
-                            <td>¥{{ number_format($room->charges)  }}</td>
+                            <td>{{ $table->table_number }}</td>
+                            <td>{{ $table->type->name }}</td>
+                            <td>{{  $table->max_guests }}</td>
+                            <td>¥{{ number_format($table->charges)  }}</td>
                             <td>
                                 @php
-                                    $categories = $room->categories;
+                                    $categories = $table->categories;
                                 @endphp
                                 @if ($categories->isEmpty())
                                     <span class="text-muted small">No amenity</span>
@@ -145,27 +143,27 @@
                                 @endif
                             </td>
                             <td >
-                                <div class="badge border bg-success bg-opacity-50">{{ $room->status->name }}</div>
-                                <button class="btn" data-bs-toggle="modal" data-bs-target="#updateStatusModal-{{ $room->id }}">
+                                <div class="badge border bg-success bg-opacity-50">{{ $table->status->name }}</div>
+                                <button class="btn" data-bs-toggle="modal" data-bs-target="#updateStatusModal-{{ $table->id }}">
                                     <i class="fa-solid fa-arrows-rotate"></i>
                                 </button>
                             </td>
                             <td>
                                 <div class="text-end">
-                                    <button class="btn btn-sm btn-outline-warning" data-bs-toggle="modal" data-bs-target="#updateRoomModal-{{ $room->id }}"><i class="fa-solid fa-pen"></i></button>
-                                    <button class="btn btn-sm btn-outline-danger ms-1" data-bs-toggle="modal" data-bs-target="#deleteRoomModal-{{ $room->id }}"><i class="fa-solid fa-trash"></i></button>
+                                    <button class="btn btn-sm btn-outline-warning" data-bs-toggle="modal" data-bs-target="#updateTableModal-{{ $table->id }}"><i class="fa-solid fa-pen"></i></button>
+                                    <button class="btn btn-sm btn-outline-danger ms-1" data-bs-toggle="modal" data-bs-target="#deleteTableModal-{{ $table->id }}"><i class="fa-solid fa-trash"></i></button>
                                 </div>
-                                @include('staffpage.roomtype.modals.room-update')
-                                @include('staffpage.roomtype.modals.room-delete')
-                                @include('staffpage.roomtype.modals.status-update')
+                                @include('staffpage.tabletype.modals.table-update')
+                                @include('staffpage.tabletype.modals.table-delete')
+                                @include('staffpage.tabletype.modals.status-update')
                             </td>
                         </tr>
                     @endforeach
                 </tbody>
             @endif
         </table>
-        @include('staffpage.roomtype.modals.room-create')
-        @include('staffpage.roomtype.modals.roomtype-create')
+        @include('staffpage.tabletype.modals.table-create')
+        @include('staffpage.tabletype.modals.tabletype-create')
     </div>
 </div>
 @endsection

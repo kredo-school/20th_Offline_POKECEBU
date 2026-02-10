@@ -8,7 +8,7 @@
             </div>
 
             <div class="modal-body">
-                <form action="{{ route('faq.storeCategory') }}" method="post">
+                <form action="{{ route('admin.faq.storeCategory') }}" method="post">
                     @csrf
                     <div class="mb-2">
                         <label for="category" class="form-label">Category Name</label>

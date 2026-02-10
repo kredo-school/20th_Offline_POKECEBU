@@ -15,7 +15,7 @@
                     Title : {{ $faq->title }}<br>
                 </div>
                 <div class="modal-footer border-0">
-                    <form action="{{ route('faq.visible', $faq->id) }}" method="post">
+                    <form action="{{ route('admin.faq.visible', $faq->id) }}" method="post">
                         @csrf
                         @method('PATCH')
 
@@ -44,7 +44,7 @@
                     Title : {{ $faq->title }}<br>
                 </div>
                 <div class="modal-footer border-0">
-                    <form action="{{ route('faq.hidden', $faq->id) }}" method="post">
+                    <form action="{{ route('admin.faq.hidden', $faq->id) }}" method="post">
                         @csrf
                         @method('DELETE')
 

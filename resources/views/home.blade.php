@@ -167,7 +167,7 @@
                 </div>
                 @endforeach
 
-                    {{-- あとで消す-ここから --}}
+                    {{-- あとで消す-ここから
                     <div class="card rank-card">
                         <div class="rank-badge rank-1">1</div>
                         <img src="{{ asset('images/food-img1.jpg') }}" alt="" class="rank-image">
@@ -197,7 +197,7 @@
                             <p class="card-price"><i class="fa-solid fa-location-dot"></i>セブ市</p>
                         </div>
                     </div>
-                    {{-- あとで消す-ここまで --}}
+                    あとで消す-ここまで --}}
 
             </div>
         </div>

@@ -26,7 +26,7 @@ class HotelController extends Controller
         ->where('hotel_id', $id)
         ->get();
 
-        return view('userpage.booking.detail-hotel', compact('hotel', 'rooms'));
+        return view('userpage.booking.hotel.detail-hotel', compact('hotel', 'rooms'));
     }
 
     // 上のコードを残す（バックアップ）

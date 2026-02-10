@@ -1,42 +1,45 @@
-.restaurant-images {
-  display: flex;
-  gap: 16px;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  margin-bottom: 16px; 
-}
-
-.restaurant-images img {
-  width: 300px;
-  height: 200px;
-  object-fit: cover;
-  border-radius: 16px;
-  scroll-snap-align: start;
-  flex-shrink: 0; 
-}
-
-.restaurant-address {
-    font-size: 1.3rem;
-}
-
+.restaurant-images,
 .table-images {
   display: flex;
-  gap: 16px;
+  gap: 12px;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
-  width: 100%; 
+  padding-bottom: 8px;
 }
 
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.restaurant-images img,
 .table-images img {
-  width: 300px;
-  height: 200px;
+  width: 280px;
+  height: 180px;
   object-fit: cover;
-  border-radius: 16px;
+  border-radius: 12px;
   scroll-snap-align: start;
   flex-shrink: 0;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
 
 .star-rating {
-    color: #FFD700;
-    font-size: 1.3rem;
+    font-size: 1.2rem;
+    letter-spacing: 2px;
+}
+
+.table-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.table-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+}
+
+.ls-1 {
+    letter-spacing: 1px;
 }

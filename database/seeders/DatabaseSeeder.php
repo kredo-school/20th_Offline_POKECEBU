@@ -48,9 +48,27 @@ public function run(): void
     }
 
 
-        $hotelTypeId = DB::table('types')->insertGetId(['name' => 'Deluxe Room', 'target_type' => 'hotel', 'created_at' => $now]);
-        $hotelTypeId = DB::table('types')->insertGetId(['name' => 'Suite Room', 'target_type' => 'hotel', 'created_at' => $now]);
-        $restTypeId = DB::table('types')->insertGetId(['name' => 'Window Seat', 'target_type' => 'restaurant', 'created_at' => $now]);
+        $deluxeTypeId = DB::table('types')->insertGetId([
+    'name' => 'Deluxe Room',
+    'target_type' => 'hotel',
+    'created_at' => $now,
+    'updated_at' => $now,
+]);
+
+$suiteTypeId = DB::table('types')->insertGetId([
+    'name' => 'Suite Room',
+    'target_type' => 'hotel',
+    'created_at' => $now,
+    'updated_at' => $now,
+]);
+
+$restTypeId = DB::table('types')->insertGetId([
+    'name' => 'Window Seat',
+    'target_type' => 'restaurant',
+    'created_at' => $now,
+    'updated_at' => $now,
+]);
+
         
         $statusId = DB::table('statuses')->insertGetId(['name' => 'Available', 'target_type' => 'all', 'created_at' => $now]);
         $statusId = DB::table('statuses')->insertGetId(['name' => 'Unavailable', 'target_type' => 'all', 'created_at' => $now]);
@@ -112,21 +130,66 @@ DB::table('tmp_hotels')->insert([
         DB::table('hotel_images')->insert(['hotel_id' => $hotelId, 'image' => 'sample_hotel_1.jpg', 'created_at' => $now]);
         DB::table('hotel_images')->insert(['hotel_id' => $hotelId, 'image' => 'sample_hotel_2.jpg', 'created_at' => $now]);
         DB::table('hotel_images')->insert(['hotel_id' => $hotelId, 'image' => 'sample_hotel_3.jpg', 'created_at' => $now]);
-        DB::table('hotel_room_types')->insert(['hotel_id' => $hotelId, 'type_id' => $hotelTypeId, 'total_rooms' => 10, 'created_at' => $now]);
-        
-        $roomId = DB::table('hotel_rooms')->insertGetId([
-        'hotel_id' => 1,
-        'type_id' => 2,
-        'room_number' => '201',   
-        'max_guests' => 2,
-        'charges' => 3500,
-        'status_id' => 2,
-        'created_at' => $now,
-        ]);
+        DB::table('hotel_room_types')->insert([
+                    'hotel_id' => $hotelId,
+                    'type_id' => $deluxeTypeId,
+                    'total_rooms' => 10,
+                    'created_at' => $now,
+                    'updated_at' => $now,
+        ]); 
 
-        DB::table('room_images')->insert(['room_id' => $roomId, 'image' => 'sample_room_1.jpg', 'created_at' => $now]);
-        DB::table('room_images')->insert(['room_id' => $roomId, 'image' => 'sample_room_2.jpg', 'created_at' => $now]);
-        DB::table('category_room')->insert(['room_id' => $roomId, 'category_id' => $catId]);
+        DB::table('hotel_room_types')->insert([
+            'hotel_id' => $hotelId,
+            'type_id' => $suiteTypeId,
+            'total_rooms' => 5,
+            'created_at' => $now,
+            'updated_at' => $now,
+    ]);
+
+        
+ // Room 1 (Deluxe)
+$roomId1 = DB::table('hotel_rooms')->insertGetId([
+    'hotel_id' => $hotelId,
+    'type_id' => $deluxeTypeId,
+    'room_number' => '201',
+    'max_guests' => 2,
+    'charges' => 3500,
+    'status_id' => $statusId,
+    'created_at' => $now,
+    'updated_at' => $now,
+]);
+
+// Room 2 (Deluxe)
+$roomId2 = DB::table('hotel_rooms')->insertGetId([
+    'hotel_id' => $hotelId,
+    'type_id' => $deluxeTypeId,
+    'room_number' => '202',
+    'max_guests' => 2,
+    'charges' => 3600,
+    'status_id' => $statusId,
+    'created_at' => $now,
+    'updated_at' => $now,
+]);
+
+// Room 3 (Suite)
+$roomId3 = DB::table('hotel_rooms')->insertGetId([
+    'hotel_id' => $hotelId,
+    'type_id' => $suiteTypeId,
+    'room_number' => '301',
+    'max_guests' => 4,
+    'charges' => 5200,
+    'status_id' => $statusId,
+    'created_at' => $now,
+    'updated_at' => $now,
+]);
+
+
+        DB::table('room_images')->insert([
+    ['room_id' => $roomId1, 'image' => 'sample_room_1.jpg', 'created_at' => $now, 'updated_at' => $now],
+    ['room_id' => $roomId2, 'image' => 'sample_room_2.jpg', 'created_at' => $now, 'updated_at' => $now],
+    ['room_id' => $roomId3, 'image' => 'sample_room_3.jpg', 'created_at' => $now, 'updated_at' => $now],
+]);
+
 
         // --- 3. レストラン関連 ---
 
@@ -187,9 +250,9 @@ DB::table('tmp_restaurants')->insert([
             'reservation_id' => 10001,
             'user_id'     => $userId,
             'hotel_id'    => $hotelId,
-            'room_id'     => $roomId,
+            'room_id'     => $roomId1,
             'status_id'   => $statusId,
-            'guests'      => 2,           // ★追加：これが今回のエラー原因です！
+            'guests'      => 2,          
             'total_price' => 7000,
             'reserved_at' => $now,
             'start_at'    => $now->copy()->addDays(7),
@@ -200,7 +263,6 @@ DB::table('tmp_restaurants')->insert([
         ]);
 
         // Restaurant用
-        // ※マイグレーションで resrvation_id (e抜き) か reservation_id か確認してください
         DB::table('restaurant_reservations')->insert([
             'reservation_id' => 20001, 
             'user_id'       => $userId,

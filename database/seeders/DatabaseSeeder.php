@@ -106,8 +106,8 @@ DB::table('tmp_hotels')->insert([
         'created_at' => $now,
         'updated_at' => $now,
         'deleted_at' => null,
-    ]
-]);
+        ]
+    ]);
 
         DB::table('hotel_images')->insert(['hotel_id' => $hotelId, 'image' => 'sample_hotel_1.jpg', 'created_at' => $now]);
         DB::table('hotel_images')->insert(['hotel_id' => $hotelId, 'image' => 'sample_hotel_2.jpg', 'created_at' => $now]);
@@ -115,8 +115,15 @@ DB::table('tmp_hotels')->insert([
         DB::table('hotel_room_types')->insert(['hotel_id' => $hotelId, 'type_id' => $hotelTypeId, 'total_rooms' => 10, 'created_at' => $now]);
         
         $roomId = DB::table('hotel_rooms')->insertGetId([
-            'hotel_id' => $hotelId, 'type_id' => $hotelTypeId, 'max_guests' => 2, 'charges' => 3500, 'status_id' => $statusId, 'created_at' => $now
+        'hotel_id' => 1,
+        'type_id' => 2,
+        'room_number' => '201',   
+        'max_guests' => 2,
+        'charges' => 3500,
+        'status_id' => 2,
+        'created_at' => $now,
         ]);
+
         DB::table('room_images')->insert(['room_id' => $roomId, 'image' => 'sample_room_1.jpg', 'created_at' => $now]);
         DB::table('room_images')->insert(['room_id' => $roomId, 'image' => 'sample_room_2.jpg', 'created_at' => $now]);
         DB::table('category_room')->insert(['room_id' => $roomId, 'category_id' => $catId]);
@@ -189,6 +196,7 @@ DB::table('tmp_restaurants')->insert([
             'end_at'      => $now->copy()->addDays(8),
             'created_at'  => $now,
             'updated_at'  => $now,        // 念のため追加
+            'other' => 'No request',
         ]);
 
         // Restaurant用
@@ -206,6 +214,7 @@ DB::table('tmp_restaurants')->insert([
             'end_at'        => $now->copy()->addDays(7)->setTime(20, 0),
             'created_at'    => $now,
             'updated_at'    => $now,        // 念のため追加
+            'other' => 'No request',
         ]);
      }
 }

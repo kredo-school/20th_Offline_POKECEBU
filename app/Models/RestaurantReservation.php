@@ -23,6 +23,12 @@ class RestaurantReservation extends Model
         'other'
     ];
 
+    protected $casts = [
+        'reserved_at' =>'datetime',
+        'start_at'      => 'datetime',
+        'end_at'        => 'datetime'
+    ];
+
     // 2. リレーション設定
     public function user()
     {

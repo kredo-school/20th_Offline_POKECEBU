@@ -111,7 +111,7 @@ Route::group(['middleware' => 'auth'], function(){
         Route::post('/mypage/store', [StaffMypageContoroller::class, 'storeHotel'])->name('mypage.store');
             
         Route::get('/reservations', [HotelReservationController::class, 'hotel'])->name('reservations');
-        // Route::get('/reservations/{id}', [HotelReservationController::class, 'show'])->name('reservations.show');
+        Route::get('/reservations/{id}', [HotelReservationController::class, 'show'])->name('reservations.show');
 
         #Hotel - Room
         Route::get('/{hotel_id}/overview', [HotelRoomController::class, 'index'])->name('overview');
@@ -132,7 +132,7 @@ Route::group(['middleware' => 'auth'], function(){
         Route::put('/mypage/update', [StaffMypageContoroller::class, 'updateStaffMypagerestaurant'])->name('update');
         
         Route::get('/reservations', [RestaurantStaffController::class, 'reservations'])->name('reservations');
-        // Route::get('/reservations/{id}', [RestaurantReservationController::class, 'show'])->name('reservations.show');
+        Route::get('/reservations/{id}', [RestaurantReservationController::class, 'show'])->name('reservations.show');
 
         #Restaurant - Table
         Route::get('/{rest_id}/overview', [RestaurantTableController::class, 'index'])->name('overview');
@@ -429,16 +429,16 @@ Route::get('/jeepney', function () {
 
 // MAEDA DA・YO⭐︎
 // Reservation infomation detel の作成画面（view確認画面）
-Route::get('/staffpage/reservations/hotel-detail', function() {
-return view('staffpage.reservations.hotel-detail');
-})->name('staffpage.reservation/hotel-detail');
+// Route::get('/staffpage/reservations/hotel-detail', function() {
+// return view('staffpage.reservations.hotel-detail');
+// })->name('staffpage.reservation/hotel-detail');
 
-Route::get('/staffpage/reservations/restaurant-detail', function() {
-    return view('staffpage.reservations.restaurant-detail');
-})->name('staffpage.reservations.restaurant-detail');
-Route::get('/staffpage/resavation-hotel-info', function () {
-    return view('staffpage.resavation-hotel-info');
-})->name('staffpage.resavation-hotel-info');
+// Route::get('/staffpage/reservations/restaurant-detail', function() {
+//     return view('staffpage.reservations.restaurant-detail');
+// })->name('staffpage.reservations.restaurant-detail');
+// Route::get('/staffpage/resavation-hotel-info', function () {
+//     return view('staffpage.resavation-hotel-info');
+// })->name('staffpage.resavation-hotel-info');
 
 
 

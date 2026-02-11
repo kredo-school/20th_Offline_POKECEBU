@@ -42,7 +42,7 @@ class PostController extends Controller
             'title'     => 'required|max:255',
             'body'      => 'required|min:1|max:1000',
             'images'    => 'required|array',
-            'images.*'  => 'mimes:jpeg,jpg,png,gif|max:1048'
+            'images.*'  => 'mimes:jpeg,jpg,png,gif|max:2048'
         ]);
 
         $post = new Post();

@@ -1,4 +1,3 @@
-{{-- resources\views\userpage\posts\create.blade.php --}}
 @extends('layouts.user')
 
 @section('title', 'Create Post')
@@ -57,8 +56,11 @@
 
                 {{-- image --}}
                 <div class="form-group">
-                    <label class="form-label fw-bold">Image</label>
-                    <input type="file" name="images[]" id="image" class="form-control soft-file" multiple aria-describedby="image-info" accept="image/jpeg,image/png,image/gif">
+                   <form method="post" action="{{ route('user.posts.store') }}" enctype="multipart/form-data">
+                @csrf
+                <label class="form-label fw-bold">Image</label>
+                <input type="file" name="images[]" id="image" class="form-control soft-file" multiple aria-describedby="image-info" accept="image/jpeg,image/png,image/gif">
+              </form>
                     <div class="form-text" id="image-info">
                         The acceptable formats are jpeg, jpg, png and gif only. <br>
                         Max file is 1048Kb.

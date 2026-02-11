@@ -8,9 +8,15 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Hotel extends Model
 {
+    // id を手動で設定する場合は incrementing を false にする
+    public $incrementing = false;
+
+    // keyType は int のまま
+    protected $keyType = 'int';
     use HasFactory;
 
     protected $fillable = [
+        'id',
         'name',
         'description',
         'address',
@@ -20,18 +26,40 @@ class Hotel extends Model
         'star_rating',
         'phone',
         'website',
+        'representative_name',
+        'representative_email',
         'updated_user',
         'email',
-        'representative_name',
         'image_path',
     ];
 
-    // ホテル画像との関係
-    public function hotelImages()
+    /**
+     * user リレーション（users.id と hotels.id を結ぶ）
+     */
+    public function user()
     {
-        return $this->hasMany(HotelImage::class);
+        return $this->belongsTo(User::class, 'id', 'id');
     }
 
+    /**
+     * ホテル画像との関係
+     */
+    public function images()
+    {
+        return $this->hasMany(HotelImage::class, 'hotel_id', 'id');
+    }
+
+    /**
+     * 部屋との関係
+     */
+    public function rooms()
+    {
+        return $this->hasMany(HotelRoom::class, 'hotel_id', 'id');
+    }
+
+    /**
+     * 部屋タイプとの関係
+     */
     // 部屋タイプとの関係
         
 
@@ -44,28 +72,24 @@ class Hotel extends Model
     // ホテルの部屋タイプ
     public function roomTypes()
     {
-        return $this->hasMany(HotelRoomType::class);
+        return $this->hasMany(HotelRoomType::class, 'hotel_id', 'id');
     }
 
-    // 予約との関係
+    /**
+     * 予約との関係
+     */
     public function reservations()
     {
-        return $this->hasMany(HotelReservation::class, 'hotel_id');
+        return $this->hasMany(HotelReservation::class, 'hotel_id', 'id');
     }
 
-    // 一時ホテル（申請中データ）との関係
+    /**
+     * 一時ホテル（申請中データ）との関係
+     * tmp_hotels テーブルは申請時に hotel_id を保持する想定
+     */
     public function tmpHotels()
     {
-        return $this->hasMany(TmpHotel::class, 'updated_user', 'updated_user');
-    }
-    // ホテルの部屋
-    public function rooms()
-    {
-        return $this->hasMany(HotelRoom::class);
-    }
-       public function images()
-    {
-        return $this->hasMany(HotelImage::class);
+        return $this->hasMany(TmpHotel::class, 'hotel_id', 'id');
     }
 
    

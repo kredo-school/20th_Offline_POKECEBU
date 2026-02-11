@@ -2,6 +2,18 @@
 
 @section('content')
     <div class="container-fluid py-4">
+        {{-- フラッシュメッセージ表示（追加） --}}
+        @if (session('status'))
+            <div class="alert alert-success">
+                {{ session('status') }}
+            </div>
+        @endif
+
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                {{ $errors->first() }}
+            </div>
+        @endif
         <div class="row">
             {{-- ホテル一覧（左側） --}}
             <div class="col-lg-3 mb-4">
@@ -10,7 +22,8 @@
                     @forelse($tmpHotels as $hotel)
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             {{ $hotel->name }}
-                            <a href="{{ route('hotel.approval.show', $hotel->id) }}" class="btn btn-sm btn-outline-primary">Review</a>
+                            <a href="{{ route('admin.hotel.approval.show', $hotel->id) }}"
+                                class="btn btn-sm btn-outline-primary">Review</a>
                         </li>
                     @empty
                         <li class="list-group-item">No pending hotels</li>
@@ -20,16 +33,16 @@
 
             {{-- ホテル詳細（右側） --}}
             <div class="col-lg-9">
-                @if(isset($tmpHotel) && $tmpHotel)
+                @if (isset($tmpHotel) && $tmpHotel)
                     <div class="mb-3">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
                                 <h2 class="mb-0">{{ $tmpHotel->name }}</h2>
                                 <div class="text-warning fs-5">
-                                    @for($i = 0; $i < floor($tmpHotel->star_rating ?? 0); $i++)
+                                    @for ($i = 0; $i < floor($tmpHotel->star_rating ?? 0); $i++)
                                         <i class="fa-solid fa-star"></i>
                                     @endfor
-                                    @if(isset($tmpHotel->star_rating) && ($tmpHotel->star_rating - floor($tmpHotel->star_rating)) >= 0.5)
+                                    @if (isset($tmpHotel->star_rating) && $tmpHotel->star_rating - floor($tmpHotel->star_rating) >= 0.5)
                                         <i class="fa-regular fa-star-half-stroke"></i>
                                     @endif
                                 </div>
@@ -43,11 +56,11 @@
                                     </button>
                                 </form>
 
-                                {{-- Reject を実装する場合は別ルートを作成してフォームを追加してください --}}
-                                <form method="post" action="#" style="display:inline;">
+                                {{-- Reject --}}
+                                <form method="post" action="{{ route('admin.hotel.reject', $tmpHotel->id) }}" >
                                     @csrf
                                     {{-- @method('delete') --}}
-                                    <button type="button" class="btn btn-danger btn-lg rounded-pill" disabled>
+                                    <button type="submit" class="btn btn-danger btn-lg rounded-pill">
                                         <i class="fa-solid fa-xmark me-1"></i> Reject
                                     </button>
                                 </form>
@@ -57,10 +70,11 @@
                         <p class="mt-2"><i class="fa-solid fa-location-dot me-1"></i> {{ $tmpHotel->city ?? '—' }}</p>
 
                         <div class="row mb-3">
-                            @if($tmpHotel->images && $tmpHotel->images->isNotEmpty())
-                                @foreach($tmpHotel->images as $img)
+                            @if ($tmpHotel->images && $tmpHotel->images->isNotEmpty())
+                                @foreach ($tmpHotel->images as $img)
                                     <div class="col-md-6">
-                                        <img src="{{ asset('storage/' . $img->image) }}" class="img-fluid rounded mb-2" alt="Hotel Image">
+                                        <img src="{{ asset('storage/' . $img->image) }}" class="img-fluid rounded mb-2"
+                                            alt="Hotel Image">
                                     </div>
                                 @endforeach
                             @else

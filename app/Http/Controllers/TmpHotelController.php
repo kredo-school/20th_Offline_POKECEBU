@@ -8,18 +8,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
 
-
-
 class TmpHotelController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
-
     /**
      * Show the form for creating a new resource.
      */
@@ -44,20 +34,18 @@ class TmpHotelController extends Controller
             'star_rating' => 'nullable|numeric|min:0|max:5',
             'phone' => 'nullable|string|max:50',
             'website' => 'nullable|url|max:255',
-            // 代表者情報を保存したいなら下を有効にして payload に追加する
             'representative_name' => 'nullable|string|max:255',
             'representative_email' => 'nullable|email|max:255',
             'images.*' => 'nullable|image|mimes:jpeg,png,gif|max:2048',
         ]);
 
+        // どの tmp テーブルに入れるか
+        $isHotel = ($data['target_type'] ?? 'hotel') === 'hotel';
+        $table = $isHotel ? 'tmp_hotels' : 'tmp_restaurants';
 
-        // どのテーブルに入れるか
-        $table = ($data['target_type'] ?? 'hotel') === 'hotel' ? 'tmp_hotels' : 'tmp_restaurants';
+        DB::beginTransaction();
 
-        // トランザクションでまとめる
         try {
-            DB::beginTransaction();
-
             $payload = [
                 'name' => $data['name'],
                 'description' => $data['description'] ?? null,
@@ -69,35 +57,33 @@ class TmpHotelController extends Controller
                 'phone' => $data['phone'] ?? null,
                 'website' => $data['website'] ?? null,
                 'status' => 'pending',
-                'updated_user' => Auth::id(), // null を許容する場合はそのまま
+                // 'updated_user' => Auth::id(),
                 'created_at' => now(),
                 'updated_at' => now(),
+                // 代表者情報を tmp に保存する
+                'representative_name' => $data['representative_name'] ?? null,
+                'representative_email' => $data['representative_email'] ?? null,
             ];
-
-            // もし代表者情報を tmp テーブルに保存したいならここに追加
-            // $payload['representative_name'] = $data['representative_name'] ?? null;
-            // $payload['representative_email'] = $data['representative_email'] ?? null;
 
             // 申請レコードを作成して ID を取得
             $tmpId = DB::table($table)->insertGetId($payload);
 
             // 画像があれば保存して tmp_hotel_images に登録
             if ($request->hasFile('images')) {
-                $files = $request->file('images');
+                foreach ($request->file('images') as $file) {
+                    // 一意なファイル名を作る
+                    $filename = time() . '_' . \Illuminate\Support\Str::random(6) . '.' . $file->getClientOriginalExtension();
+                    // 保存先（tmp 用フォルダ）
+                    $tmpDir = $isHotel ? "tmp/hotels/{$tmpId}" : "tmp/restaurants/{$tmpId}";
 
-                // 1枚だけ選ばれた場合、$files が UploadedFile の単体になることがあるので、配列化
-                if (!is_array($files)) {
-                    $files = [$files];
-                }
+                    // public ディスクに保存（戻り値は "tmp/hotels/{id}/{filename}"）
+                    $storedPath = $file->storeAs($tmpDir, $filename, 'public');
 
-                foreach ($files as $file) {
-                    if (!$file || !$file->isValid()) continue;
-
-                    $path = $file->store('company_images', 'public');
-
-                    DB::table('tmp_hotel_images')->insert([
-                        'tmp_hotel_id' => $tmpId,
-                        'image' => $path,
+                    // tmp_hotel_images テーブルに登録（テーブル名は tmp_hotel_images / tmp_restaurant_images など）
+                    $imageTable = $isHotel ? 'tmp_hotel_images' : 'tmp_restaurant_images';
+                    DB::table($imageTable)->insert([
+                        $isHotel ? 'tmp_hotel_id' : 'tmp_restaurant_id' => $tmpId,
+                        'image' => $storedPath,
                         'created_at' => now(),
                         'updated_at' => now(),
                     ]);
@@ -107,50 +93,11 @@ class TmpHotelController extends Controller
 
             DB::commit();
 
-            return redirect()->back()->with('status', "Your application has been received. Please wait for the administrator's approval.申請を受け付けました。管理者の承認をお待ちください。");
-        } catch (\Throwable $e) {
+            return redirect()->back()->with('status', '申請を受け付けました。管理者の承認をお待ちください。');
+        } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Failed to store tmp hotel application', [
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-                'payload' => $payload ?? null,
-            ]);
-
-            return redirect()->back()->withErrors('An error occurred while saving your application. Please try again later.');
+            Log::error('Failed to store tmp application', ['error' => $e->getMessage()]);
+            return redirect()->back()->withErrors('申請の保存中にエラーが発生しました。');
         }
-
-
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
     }
 }

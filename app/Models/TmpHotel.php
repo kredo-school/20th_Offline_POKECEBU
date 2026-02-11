@@ -26,6 +26,9 @@ class TmpHotel extends Model
         'phone',
         'website',
         'status',
+        'representative_name',    // ← 追加
+        'representative_email',   // ← 追加
+
     ];
 
     protected $casts = [

@@ -22,8 +22,11 @@ return new class extends Migration
             $table->decimal('star_rating', 2, 1)->nullable();
             $table->string('phone')->nullable();
             $table->string('website')->nullable();
-            $table->string('status');
-            $table->foreignId('updated_user')->nullable()->constrained('users');
+            // 2/6 追加：代表者情報
+            $table->string('representative_name')->nullable();
+            $table->string('representative_email')->nullable()->index();
+            $table->string('status')->default('pending');;
+            // $table->foreignId('updated_user')->nullable()->constrained('users');
             $table->timestamps();
             $table->softDeletes();
         });

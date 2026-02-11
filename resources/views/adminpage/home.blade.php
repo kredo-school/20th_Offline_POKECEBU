@@ -9,7 +9,7 @@
             <div class="col-md-5 mb-5">
                 <div class="card text-center">
                     <div class="card-body">
-                        <h3><a href="" class="text-decoration-none text-dark">{{ number_format($totalUsers) }}</a></h3>
+                        <h3><a href=# class="text-decoration-none text-dark">{{ number_format($totalUsers) }}</a></h3>
                         <p>all users</p>
                     </div>
                 </div>
@@ -30,7 +30,7 @@
                             <div class="d-flex justify-content-between align-items-center border rounded p-3 mb-2">
                                 <div>
                                     {{-- ここもdbから持ってくる --}}
-                                    <a href="#" class="text-decoration-none text-dark">🏨 Hotel name</a>
+                                    <a href="{{ route('admin.hotel.approval') }}" class="text-decoration-none text-dark">🏨 Hotel name</a>
                                 </div>
                                 <span class="badge bg-warning text-dark">
                                     ✔ Pending

@@ -12,10 +12,10 @@ return new class extends Migration {
     {
         Schema::create('approval_histories', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('application_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('approver_id')->constrained('users');
-            $table->string('action');
-            $table->text('comment')->nullable();
+            $table->string('approvable_type');
+            $table->unsignedBigInteger('approvable_id');
+            $table->unsignedBigInteger('approved_by')->nullable();
+            $table->text('notes')->nullable();
             $table->timestamps();
         });
     }

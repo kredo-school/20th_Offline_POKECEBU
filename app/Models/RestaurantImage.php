@@ -9,11 +9,11 @@ class RestaurantImage extends Model
     //
     protected $fillable = [
         'restaurant_id',
-        'image',
+        'image'
     ];
 
     public function restaurant()
     {
-        return $this->belongsTo(Restaurant::class);
+        return $this->belongsTo(Restaurant::class, 'restaurant_id', 'id');
     }
 }

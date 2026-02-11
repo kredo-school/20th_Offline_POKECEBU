@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Restaurant extends Model
@@ -11,7 +12,11 @@ class Restaurant extends Model
 
     // keyType は int のまま
     protected $keyType = 'int';
+       
+    use HasFactory;
 
+    // 複数代入可能なカラム
+    //
     protected $fillable = [
         'id',
         'name',
@@ -24,7 +29,11 @@ class Restaurant extends Model
         'phone',
         'website',
         'representative_name',
-        'representative_email'
+        'representative_email',
+        'image_path',
+        'owner_name',
+        'email',
+        'updated_user',
     ];
 
     /**
@@ -49,5 +58,16 @@ class Restaurant extends Model
     public function tables()
     {
         return $this->hasMany(RestaurantTable::class, 'restaurant_id', 'id');
+
     }
+        
+    
+
+    // restaurant_images
+    public function restaurantImages()
+    {
+        return $this->hasMany(RestaurantImage::class);
+    }
+
+  
 }

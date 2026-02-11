@@ -1,66 +1,167 @@
-{{-- resources\views\userpage\mypage\post.blade.php --}}
+{{-- resources\views\userpage\posts\show.blade.php --}}
 @extends('layouts.user')
 
-@section('title', 'Post-List')
+@section('title', 'Show Post')
 
 @section('content')
+{{-- ヘッダー --}}
+<div class="page-header">
+  <div class="header-text">
+    新しい旅を見つける
+  </div>
+  <a href="{{ route('user.posts.create') }}" class="add-post-btn">
+    + Add new post
+  </a>
+  
+</div>
+
+{{-- ポスト --}}
 <div class="container py-4">
-    <h3 class="mb-4"><i class="fa-solid fa-file-pen me-2"></i>User Posts</h3>
-
-    <table class="table table-hover align-middle bg-white border text-secondary">
-        <thead class="small table-success text-secondary">
-            <tr>
-                <th>#</th>
-                <th>Title</th>
-                <th>Category</th>
-                <th>Owner</th>
-                <th>Created At</th>
-                <th>Status</th>
-                <th>Content</th>
-                <th>Image</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($all_posts as $index => $post)
-                <tr>
-                    <td>{{ $index + 1 }}</td>
-                    <td>{{ $post['title'] }}</td>
-                    <td>未設定</td>
-                    <td>ユーザー名</td>
-                    <td>{{ now()->format('Y-m-d') }}</td>
-                    <td>下書き</td>
-                    <td>
-                        <div class="card mb-0">
-                            <div class="card-body p-2">
-                                <p class="mb-0 small">{{ $post['content'] }}</p>
-                            </div>
-                        </div>
-                    </td>
-                    <td>
-                        {{-- 画像を小さく表示 --}}
-                        <img src="{{ asset('images/Icon.png') }}" alt="Post Image" 
-                             class="img-thumbnail" style="width:100px;">
-                    </td>
-                    <td>
-                        {{-- 編集ボタン --}}
-                        <a href="{{ route('userpage.posts.edit') }}" 
-                           class="btn btn-sm btn-outline-primary me-1">
-                            <i class="fa-regular fa-pen-to-square"></i> Edit
-                        </a>
-
-                        {{-- 削除ボタン（ダミー） --}}
-                        <form action="#" method="post" class="d-inline">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-sm btn-outline-danger">
-                                <i class="fa-regular fa-trash-can"></i> Delete
-                            </button>
-                        </form>
-                    </td>
-                </tr>
-            @endforeach
-        </tbody>
-    </table>
+  <div class="row">
+    @foreach ($posts as $post)
+      <div class="col-md-6 col-lg-4 mb-4">
+        <a href="{{ route('user.posts.show',$post->id) }}" class="post-link">
+        <div class="card post-card h-100">
+          <img src="{{ $post->images->first()->image }}" alt="Post Image" class="card-img-top img-fluid">
+          <div class="card-body">
+            <h5 class="card-title">{{ $post->title }}</h5>
+            <p class="card-text">{{ $post->body }}</p>
+            
+            <p class="post-user mb-1">{{ $post->user->name }}</p>
+            
+            <p class="post-date">{{ $post->created_at->format('M d, Y') }}</p>
+            <div class="mb-2">
+              {{-- @foreach ($post->categoryPost as $category_post)
+                <span class="badge bg-secondary">{{ $category_post->category->name }}</span>
+              @endforeach --}}
+              {{-- @if (empty($post->categoryPost))
+                <span class="badge bg-dark">Uncategorized</span>
+              @endif --}}
+            </div>
+            <div>
+              {{-- <i class="far fa-heart"></i> {{ $post->likes->count() }} --}}
+            </div>
+            {{-- @if ($post->comments->isNotEmpty())
+              <ul class="list-group mt-2">
+                @foreach ($post->comments as $comment)
+                  <li class="list-group-item border-0 p-0 mb-1">
+                    <span class="fw-bold">{{ $comment->user->name }}</span>:
+                    <span>{{ $comment->body }}</span>
+                  </li>
+                @endforeach
+              </ul>
+            @endif --}}
+          </div>
+        </div>
+        </a>
+      </div>
+    @endforeach
+  </div>
 </div>
 @endsection
+
+
+
+{{-- CSS --}}
+<style>
+
+    body {
+        background: linear-gradient(
+            180deg,
+            #f0f8fb 0%,
+            #e6f5f8 50%,
+            #ffffff 100%
+        );
+    }
+
+    /* ヘッダー */
+    .page-header {
+      width: 100%;
+      height: 330px;
+      background-image: url("{{ asset('images/post-header.png') }}");
+      background-size: cover;
+      background-position: center;
+      position: relative;
+      border-radius: 0 0 32px 32px;
+      overflow: hidden;
+    }
+
+    .page-header::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.25)
+    }
+
+    .header-text {
+      position: absolute;
+      top: 55%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #ffffff;
+      font-size: 42px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .add-post-btn {
+      position: absolute;
+      right: 24px;
+      bottom: 24px;
+      padding: 12px 20px;
+      background:#fdbf79;
+      color: #ffffff;
+      text-decoration: none;
+      font-weight: 600;
+      border-radius: 999px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+      transition: all 0.2s ease;
+    }
+
+    .add-post-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2);
+    }
+
+
+    /* カード */
+    .post-card {
+        border-radius: 25px;
+        overflow: hidden;
+        background: #ffffff;
+        border: none;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+        transition: transfrom 0.3 ease, box-shadow 0.3 ease;
+        cursor: pointer;
+    }
+
+    .post-card:hover {
+        transform:translateY(-6px);
+        box-shadow: 0 18px 35px rgba(0, 0, 0, 0.12)
+    }
+
+    .post-card img {
+        height: 220px;
+        object-fit: cover;
+    }
+
+    .post-user {
+        font-weight: 600;
+        color: #2c7da0;
+    }
+
+    .post-date {
+        font-size: 0.85rem;
+        color: #8dbcd8;
+    }
+
+    .post-link {
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+
+</style>

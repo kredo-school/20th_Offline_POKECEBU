@@ -11,7 +11,7 @@
                   <h3 class="page-title"><i class="fa-regular fa-calendar-check"></i>  Restaurant Gest Details</h3>
               </div>
               <div class="d-flex gap-2">
-                  <span class="badge date-badge">2030-10-28</span>
+                  <span class="badge date-badge">{{ $reservation->start_at->format('Y-m-d') }}</span>
                   <button class="but btn-cancel">Cancel Reservation</button>
               </div>
           </div>
@@ -38,24 +38,24 @@
 
                                   {{-- detail --}}
                                   <td><i class="table-icon fa-solid fa-user-tie"></i> Guest Name</td>
-                                  {{-- 内容を入れる　メモ２ --}}
-                                  <td>Bill Gates</td>
+                                  
+                                  <td>{{ $reservation->user->name}}</td>
                               </tr>
                               <tr>
                                   <td><i class="table-icon fa-solid fa-phone"></i> Phone Number</td>
-                                  <td>098-765-4321</td>
+                                  <td>{{ optional($reservation->user->detail)->phone ?? '-'}}</td>
                               </tr>
                               <tr>
                                   <td><i class="table-icon fa-solid fa-clipboard-list"></i> Reservation ID</td>
-                                  <td>19551028</td>
+                                  <td> {{ $reservation->reservation_id }}</td>
                               </tr>
                               <tr>
                                   <td><i class="table-icon fa-solid fa-calendar-days"></i> Day & Time</td>
-                                  <td>2030-10-28</td>
+                                  <td> {{ $reservation->start_at ->format('Y-m-d') }}</td>
                               </tr>
                               <tr>
                                   <td><i class="table-icon fa-solid fa-users"></i></i> Number of Guests</td>
-                                  <td>4</td>
+                                  <td> {{ $reservation->guests }}</td>
                               </tr>
                               <tr>
                                   <td><i class="table-icon fa-solid fa-file-pen"></i></i> Status</td>

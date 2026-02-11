@@ -6,6 +6,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Models\UserDetail;
+use App\Models\HotelReservation;
+use App\Models\Post; // Postクラスも必要なので追加しました
 
 
 class User extends Authenticatable
@@ -29,7 +32,10 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'role_id', // 追加：承認時に role を設定するため
+        'first_name',
+        'last_name',
+        'phonenumber',
+        'role_id',
     ];
 
     /**
@@ -61,5 +67,25 @@ class User extends Authenticatable
     public function restaurant()
     {
         return $this->hasOne(Restaurant::class, 'id', 'id');
+    }
+
+ 
+
+    # ポストの取得
+    public function posts() 
+    {
+        return $this->hasMany(Post::class);
+    }
+
+    # ユーザー詳細の取得
+    public function detail() 
+    {
+        return $this->hasOne(UserDetail::class);
+    }
+
+    # ホテル予約一覧の取得
+    public function reservations() 
+    {
+        return $this->hasMany(HotelReservation::class);
     }
 }

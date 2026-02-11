@@ -20,7 +20,7 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
 
-                <form method="POST" action="{{ route('faq.destroy', $faq->id) }}">
+                <form method="POST" action="{{ route('admin.faq.destroy', $faq->id) }}">
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="btn btn-danger ms-2">Delete</button>

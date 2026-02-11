@@ -1,8 +1,9 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class HotelRoomType extends Model
 {
@@ -14,14 +15,27 @@ class HotelRoomType extends Model
     ];
 
     // この部屋タイプが属するホテル
-    public function hotel()
+    public function hotel(): BelongsTo
     {
         return $this->belongsTo(Hotel::class);
     }
 
-    // この部屋タイプが参照するタイプ（types テーブル）
-    public function type()
+    // 「シングル」や「ダブル」という名前を持つTypeモデルへ
+    public function roomType(): BelongsTo
     {
         return $this->belongsTo(Type::class, 'type_id');
+    }
+
+    // この部屋タイプが参照するタイプ（types テーブル）
+    public function type(): BelongsTo
+    {
+        return $this->belongsTo(Type::class, 'type_id');
+    }
+
+    // ★重要：このタイプに属する「実際の部屋」たちを取得する
+    public function rooms(): HasMany
+    {
+        return $this->hasMany(HotelRoom::class, 'type_id', 'type_id')
+                    ->whereColumn('hotel_rooms.hotel_id','hotel_room_types.hotel_id');
     }
 }

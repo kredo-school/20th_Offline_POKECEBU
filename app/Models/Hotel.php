@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\HotelReservation; 
-
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Hotel extends Model
 {
@@ -13,6 +13,7 @@ class Hotel extends Model
 
     // keyType は int のまま
     protected $keyType = 'int';
+    use HasFactory;
 
     protected $fillable = [
         'id',
@@ -26,7 +27,10 @@ class Hotel extends Model
         'phone',
         'website',
         'representative_name',
-        'representative_email'
+        'representative_email',
+        'updated_user',
+        'email',
+        'image_path',
     ];
 
     /**
@@ -56,6 +60,16 @@ class Hotel extends Model
     /**
      * 部屋タイプとの関係
      */
+    // 部屋タイプとの関係
+        
+
+    // ホテルの予約情報
+    // public function reservations()
+    // {
+    //     return $this->hasMany(HotelReservation::class);
+    // }
+
+    // ホテルの部屋タイプ
     public function roomTypes()
     {
         return $this->hasMany(HotelRoomType::class, 'hotel_id', 'id');
@@ -77,4 +91,6 @@ class Hotel extends Model
     {
         return $this->hasMany(TmpHotel::class, 'hotel_id', 'id');
     }
+
+   
 }

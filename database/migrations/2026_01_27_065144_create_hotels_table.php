@@ -34,7 +34,9 @@ return new class extends Migration {
             // $table->foreignId('updated_user')->nullable()->constrained('users');
             // 2/6削除
             // $table->foreignId('updated_user')->nullable()->constrained('users')->nullOnDelete();
-
+            // - updated_user は外部キー制約を付けていますが、onDelete('set null') を追加すると、ユーザー削除時にホテルレコードが壊れず残せます。
+             $table->string('email')->nullable(); //追か
+            $table->string('image_path')->nullable(); // ← 追加
             $table->timestamps();
         });
     }
@@ -47,3 +49,4 @@ return new class extends Migration {
         Schema::dropIfExists('hotels');
     }
 };
+

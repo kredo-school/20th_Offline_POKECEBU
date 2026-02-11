@@ -23,10 +23,13 @@ class User extends Authenticatable
      *
      * @var list<string>
      */
+
+    // （2/6 User クラス内の protected $fillable を次のように変更）
     protected $fillable = [
         'name',
         'email',
         'password',
+        'role_id', // 追加：承認時に role を設定するため
     ];
 
     /**
@@ -40,15 +43,23 @@ class User extends Authenticatable
     ];
 
     /**
-     * Get the attributes that should be cast.
+     * The attributes that should be cast.
      *
-     * @return array<string, string>
+     * @var array<string, string>
      */
-    protected function casts(): array
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
+    ];
+    
+    public function hotel()
     {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
+        return $this->hasOne(Hotel::class, 'id', 'id');
+    }
+
+    // （User クラス内に restaurant() を追加）
+    public function restaurant()
+    {
+        return $this->hasOne(Restaurant::class, 'id', 'id');
     }
 }

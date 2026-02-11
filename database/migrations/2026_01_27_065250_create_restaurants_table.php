@@ -12,7 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('restaurants', function (Blueprint $table) {
-            $table->id();
+            // $table->id();
+            // 2/6 変更後
+            $table->unsignedBigInteger('id')->primary();
+            $table->foreign('id')->references('id')->on('users')->onDelete('cascade');
+
+
             $table->string('name');
             $table->text('description')->nullable();
             $table->string('address')->nullable();
@@ -22,7 +27,15 @@ return new class extends Migration
             $table->decimal('star_rating', 2, 1)->nullable();
             $table->string('phone')->nullable();
             $table->string('website')->nullable();
-            $table->foreignId('updated_user')->nullable()->constrained('users');
+
+            // 2/6 追加：代表者情報
+            $table->string('representative_name')->nullable();
+            $table->string('representative_email')->nullable()->index();
+            
+            // 2/6 updated_user は削除
+            // $table->foreignId('updated_user')->nullable()->constrained('users');
+
+
             $table->timestamps();
         });
     }

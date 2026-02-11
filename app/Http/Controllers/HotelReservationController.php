@@ -9,7 +9,7 @@ class HotelReservationController extends Controller
     public function index()
     {
         return view('reservations.hotel');
-    public function __construct() {
+    // public function __construct() {
        
     }
     public function show($id) {

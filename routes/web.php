@@ -70,6 +70,15 @@ Route::group(['middleware' => 'auth'], function(){
         Route::delete('/faq/{id}/hidden', [FaqController::class, 'hidden'])->name('faq.hidden');
         Route::patch('/faq/{id}/visible', [FaqController::class, 'visible'])->name('faq.visible');
         Route::post('/faq/storeCategory', [FaqController::class, 'storeCategory'])->name('faq.storeCategory');
+
+        // 2/10ホテル承認,却下処理
+        Route::get('/hotel/approval', [App\Http\Controllers\AdminController::class, 'hotelApproval'])
+            ->name('hotel.approval');
+        Route::get('/hotel/approval/{id}', [App\Http\Controllers\AdminController::class, 'showPending'])
+            ->name('hotel.approval.show');
+        Route::post('/hotel/approve/{id}', [App\Http\Controllers\AdminController::class, 'approveHotel'])
+            ->name('hotel.approve');
+        Route::post('/hotels/{id}/reject', [App\Http\Controllers\AdminController::class, 'rejectHotel'])->name('hotel.reject');
     });
         
     # Staff
@@ -162,14 +171,14 @@ Route::get('/admin/hotel/edit', [AdminController::class, 'editHotel'])->name('ho
 Route::get('/admin/hotel/add', [AdminController::class, 'addHotel'])->name('hotel.add');
 
 // 申請の承認処理 ホテル 2/4 emi
-Route::get('admin/hotel/approval', [App\Http\Controllers\AdminController::class, 'hotelApproval'])
-    ->name('hotel.approval');
+// Route::get('admin/hotel/approval', [App\Http\Controllers\AdminController::class, 'hotelApproval'])
+//     ->name('hotel.approval');
 
-Route::get('admin/hotel/approval/{id}', [App\Http\Controllers\AdminController::class, 'showPending'])
-    ->name('hotel.approval.show');
+// Route::get('admin/hotel/approval/{id}', [App\Http\Controllers\AdminController::class, 'showPending'])
+//     ->name('hotel.approval.show');
 
-Route::post('admin/hotel/approve/{id}', [App\Http\Controllers\AdminController::class, 'approveHotel'])
-    ->name('admin.hotel.approve');
+// Route::post('admin/hotel/approve/{id}', [App\Http\Controllers\AdminController::class, 'approveHotel'])
+//     ->name('admin.hotel.approve');
 
 
 

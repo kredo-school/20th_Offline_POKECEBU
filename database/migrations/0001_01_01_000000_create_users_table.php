@@ -14,9 +14,13 @@ return new class extends Migration {
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
+            // $table->timestamp('email_verified_at')->nullable(); 2/6削除
             $table->string('password');
-            $table->foreignId('role_id')->nullable();
+            // 2/6変更
+            $table->unsignedBigInteger('role_id')
+                ->default(1)
+                ->comment('1:user 2:admin 3:hotel 4:restaurant');
+            $table->rememberToken();
             $table->timestamps();
         });
 

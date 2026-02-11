@@ -92,7 +92,6 @@
                                   <td>${{ number_format($reservation->total_price) }}</td>
                               </tr>
 
-                              {{-- phpの閉じタグを入れる　メモ3 --}}
 
 
                           </tbody>
@@ -111,15 +110,10 @@
                       <div class="card-header d-flex justify-content-between align-items-center">
                           <h5 class="mb-0">Notes</h5>
                       </div>
-                      <ul class="list-group list-group-flush">
-                          <li class="list-group-item">Guest is VIP, provide welcome basket</li>
-                          <li class="list-group-item">Late check-out requested at 1 PM</li>
-                          <li class="list-group-item">Arrange airport transfer</li>
-                      </ul>
-                      <div class="card-footer d-flex justify-content-between">
-                          <button class="btn btn-add">+ Add Note</button>
-                          <button class="btn btn-edit">Edit</button>
+                      <div class="card-body" style="min-height: 120px">
+                        {{ $reservation->note ?? '' }}
                       </div>
+                      
                   </div>
               </div>
           </div>

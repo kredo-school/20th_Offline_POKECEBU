@@ -62,8 +62,7 @@
                                   <td>Confirmed</td>
                               </tr>
 
-                              {{-- phpの閉じタグを入れる　メモ3 --}}
-
+                              
 
                           </tbody>
                       </table>
@@ -81,15 +80,10 @@
                       <div class="card-header d-flex justify-content-between align-items-center">
                           <h5 class="mb-0">Notes</h5>
                       </div>
-                      <ul class="list-group list-group-flush">
-                          <li class="list-group-item">2 Adults, 2Children</li>
-                          <li class="list-group-item">Two high chairs required</li>
-                          <li class="list-group-item">Birthday cake required</li>
-                      </ul>
-                      <div class="card-footer d-flex justify-content-between">
-                          <button class="btn btn-add">+ Add Note</button>
-                          <button class="btn btn-edit">Edit</button>
+                      <div class="card-body" style="min-height: 120px">
+                        {{ $reservation->note ?? '' }}
                       </div>
+                    
                   </div>
               </div>
           </div>

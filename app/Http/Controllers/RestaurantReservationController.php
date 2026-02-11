@@ -12,10 +12,13 @@ class RestaurantReservationController extends Controller
 {
 
     public function show($id) {
-        // 仮データ（後でDBから取得できる形にする）
-        return view('staff.reservation.info',[
-            'reservationId' => $id
-        ]);
+        $reservation = RestaurantReservation::with([
+            'user.detail'
+            
+        ])->findOrFail($id);
+
+        return view('staffpage.reservations.restaurant-detail', compact('reservation')
+        );
        
     }
     /**

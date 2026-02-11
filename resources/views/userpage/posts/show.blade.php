@@ -33,6 +33,13 @@
                             </button>
                             <div class="dropdown-menu dropdown-menu-end">
                                 <a href="{{ route('user.posts.edit', $post) }}" class="dropdown-item">Edit</a>
+                                
+                                  <button type="button" class="dropdown-item text-danger" data-bs-toggle="modal" data-bs-target="#delete-post-{{ $post->id }}">
+                                   Delete
+                                  </button>
+                               
+                                
+                              </div>
                             </div>
                         </div>
                     @endif

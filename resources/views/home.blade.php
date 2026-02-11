@@ -39,21 +39,21 @@
             ホテル ランキング 
         --------------- --}}
         <div>
-            <div class="section-title">Hotel Ranking
+            <div>
+                <h3 class="section-title">Hotel Ranking</h3>
                 <a href="#" class="btn btn-sm btn-outline-primary rounded-pill">View More</a>
-
             </div>
 
-            <div class="d-flex justify-content-center flex-wrap gap-3 mb-3">
+            <div class="row justify-content-center g-2 mb-3">
                 @foreach ($hotelRankings as $index => $hotel)
-                    <div class="col-md-4 col-sm-6 d-flex justify-content-center">
+                    <div class="col-6 col-md-3 col-sm-4 col-lg-2 d-flex justify-content-center">
 
                         <div class="card rank-card">
                             <div class="rank-badge rank-{{ $index + 1 }}">
                                 {{ $index + 1 }}
                             </div>
                        
-                            <img src="#" alt="{{ $hotel->name }}" class="rank-image">
+                            <img src="{{ $hotel->image_path ?? asset('images/no-image.png') }}" alt="{{ $hotel->name }}" class="rank-image">
      
                             <div class="card-body">
                                 <a href="#" class="text-decoration-none text-dark">
@@ -130,18 +130,19 @@
             レストラン ランキング 
             --------------- --}}
         <div>
-            <div class="section-title">Restrant Ranking
+            <div>
+                <h3 class="section-title">Restrant Ranking</h3>
                 <a href="#" class="btn btn-sm btn-outline-primary rounded-pill">View More</a>
             </div>
             
-            <div class="d-flex justify-content-center flex-wrap gap-3 mb-3">
+            <div class="row justify-content-center g-2 mb-3">
                 @foreach ($restaurantRankings as $index => $restaurant)
-                <div class="col-md-4 col-sm-6">
+                <div class="col-6 col-md-3 col-sm-4 col-lg-2 d-flex justify-content-center">
 
                     <div class="card rank-card">
                         <div class="rank-badge rank-{{ $index + 1 }}">{{ $index + 1 }}</div>
                        
-                        <img src="{{ $restaurant->image }}" alt="" class="renk-image">
+                        <img src="{{ $restaurant->image_path ?? asset('images/no-image.png') }}" alt="{{ $restaurant->name }}" class="rank-image">
      
                         <div class="card-body">
                             <a href="#" class="card-link text-decoration-none text-dark">
@@ -161,7 +162,9 @@
                                 @endif
                                 <span class="text-muted ms-1">{{ number_format($rating,1) }}</span>
                             </p>
-                            
+                            <p class="card-city">
+                                <i class="fa-solid fa-location-dot"></i> {{ $hotel->city }}
+                            </p>
                         </div>
                     </div>     
                 </div>
@@ -206,12 +209,15 @@
            ポスト 
             --------------- --}}
         <div>
-            <div class="section-title">Recent Posts</div>
+            <div>
+                <h3 class="section-title">Recent Posts</h3>
+                <a href="{{ route('user.posts.index') }}" class="btn btn-sm btn-outline-primary rounded-pill">View More</a>
+            </div>
 
+            <div class="row justify-content-center g-2 mb-3">
             @if ($home_posts->isNotEmpty())
-                <div class="row justify-content-center">
                     @foreach ($home_posts as $post)
-                        <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="col-6 col-md-3 col-sm-4 col-lg-2 d-flex justify-content-center">
                             <a href="{{ route('user.posts.show', $post->id) }}" class="post-card">
                                 <img src="{{ $post->images->first()->image }}" alt="Post Image">
 
@@ -254,15 +260,11 @@
                             </a>
                         </div>
                     @endforeach
+                    
+                    @else
+                    <h3 class="text-muted text-center">No Posts Yet</h3>
+                    @endif
                 </div>
-                <div class="text-center mt-2">
-                    <a href="{{ route('user.posts.index') }}" class="btn btn-sm btn-outline-primary rounded-pill">
-                        View More
-                    </a>
-                </div>
-            @else
-                <h3 class="text-muted text-center">No Posts Yet</h3>
-            @endif
 
         </div>
 
@@ -272,7 +274,9 @@
         {{-- 都市別ホテル --}}
         <div>
             @foreach ($hotelsByCity as $city => $hotels)
-                <div class="section-title">{{ $city }}</div>
+                <div>
+                    <h3 class="section-title">{{ $city }}</h3>
+                </div>
 
                 <div class="d-flex justify-content-center flex-wrap gap-3 mb-3">
                     @foreach ($hotels as $index => $hotel)

@@ -224,7 +224,7 @@ public function deleteCustomer($id)
     public function editRestaurant($id)
     {    $totalUsers = User::count();
         $restaurant = Restaurant::findOrFail($id);
-        return view('adminpage.restaurant.edit', compact('restaurant,totalUsers'));
+        return view('adminpage.restaurant.edit', compact('restaurant','totalUsers'));
     }
 
     // レストラン更新
@@ -508,6 +508,17 @@ public function deleteAdmin($id)
             }
 
             DB::commit();
+            
+            // ログチェック用一時コード
+            \Log::info('approveHotel committed', ['tmp_id' => $tmp->id, 'hotel_id' => $hotel->id, 'user_id' => $user->id]);
+
+            try {
+                $this->cleanupTmpAfterDecision($tmp);
+                \Log::info('cleanupTmpAfterDecision finished', ['tmp_id' => $tmp->id]);
+            } catch (\Throwable $e) {
+                \Log::error('cleanupTmpAfterDecision failed', ['tmp_id' => $tmp->id, 'error' => $e->getMessage()]);
+            }
+
 
             // 承認成功後（DB commit の後） データを物理削除 必要に応じて4）は削除
             $this->cleanupTmpAfterDecision($tmp);

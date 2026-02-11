@@ -154,9 +154,10 @@ $roomId1 = DB::table('hotel_rooms')->insertGetId([
     'room_number' => '201',
     'max_guests' => 2,
     'charges' => 3500,
-    'status_id' => $statusId,
+    'status_id' => 1,
     'created_at' => $now,
     'updated_at' => $now,
+    'detail' => 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusamus quasi veniam nam, maxime vero perspiciatis dolores! Excepturi consequuntur, modi necessitatibus numquam soluta officiis aliquid, culpa perspiciatis doloribus perferendis delectus incidunt. Nobis ut nesciunt dicta cupiditate laborum ad possimus, non animi eum deleniti blanditiis, iusto incidunt eligendi repellat fugit? Omnis recusandae neque similique, repudiandae delectus rem tempora sit eum ab, reiciendis totam dicta soluta eveniet culpa nulla unde in sed earum? At esse hic error similique nulla? Ducimus molestias earum iste quasi est quos vitae exercitationem sit cumque, voluptatem nulla et, obcaecati quaerat tempora? Maiores placeat sequi aut suscipit consequatur veritatis perferendis, qui quo repellendus nostrum molestias. Dignissimos, a in aliquid illo magnam, alias autem.',
 ]);
 
 // Room 2 (Deluxe)
@@ -166,9 +167,10 @@ $roomId2 = DB::table('hotel_rooms')->insertGetId([
     'room_number' => '202',
     'max_guests' => 2,
     'charges' => 3600,
-    'status_id' => $statusId,
+    'status_id' => 2,
     'created_at' => $now,
     'updated_at' => $now,
+    'detail' => 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusamus quasi veniam nam, maxime vero perspiciatis dolores! Excepturi consequuntur, modi necessitatibus numquam soluta officiis aliquid, culpa perspiciatis doloribus perferendis delectus incidunt. Nobis ut nesciunt dicta cupiditate laborum ad possimus, non animi eum deleniti blanditiis, iusto incidunt eligendi repellat fugit? Omnis recusandae neque similique, repudiandae delectus rem tempora sit eum ab, reiciendis totam dicta soluta eveniet culpa nulla unde in sed earum? At esse hic error similique nulla? Ducimus molestias earum iste quasi est quos vitae exercitationem sit cumque, voluptatem nulla et, obcaecati quaerat tempora? Maiores placeat sequi aut suscipit consequatur veritatis perferendis, qui quo repellendus nostrum molestias. Dignissimos, a in aliquid illo magnam, alias autem.',
 ]);
 
 // Room 3 (Suite)
@@ -178,9 +180,10 @@ $roomId3 = DB::table('hotel_rooms')->insertGetId([
     'room_number' => '301',
     'max_guests' => 4,
     'charges' => 5200,
-    'status_id' => $statusId,
+    'status_id' => 2,
     'created_at' => $now,
     'updated_at' => $now,
+    'detail' => 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusamus quasi veniam nam, maxime vero perspiciatis dolores! Excepturi consequuntur, modi necessitatibus numquam soluta officiis aliquid, culpa perspiciatis doloribus perferendis delectus incidunt. Nobis ut nesciunt dicta cupiditate laborum ad possimus, non animi eum deleniti blanditiis, iusto incidunt eligendi repellat fugit? Omnis recusandae neque similique, repudiandae delectus rem tempora sit eum ab, reiciendis totam dicta soluta eveniet culpa nulla unde in sed earum? At esse hic error similique nulla? Ducimus molestias earum iste quasi est quos vitae exercitationem sit cumque, voluptatem nulla et, obcaecati quaerat tempora? Maiores placeat sequi aut suscipit consequatur veritatis perferendis, qui quo repellendus nostrum molestias. Dignissimos, a in aliquid illo magnam, alias autem.',
 ]);
 
 
@@ -238,6 +241,8 @@ DB::table('tmp_restaurants')->insert([
             'status_id'     => $statusId,
             'charges'       => 0, // ★ここを追加！ (レストランの席料が無料なら 0)
             'created_at'    => $now,
+            'table_number' => 'A-1',
+            'detail' => 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusamus quasi veniam nam, maxime vero perspiciatis dolores! Excepturi consequuntur, modi necessitatibus numquam soluta officiis aliquid, culpa perspiciatis doloribus perferendis delectus incidunt. Nobis ut nesciunt dicta cupiditate laborum ad possimus, non animi eum deleniti blanditiis, iusto incidunt eligendi repellat fugit? Omnis recusandae neque similique, repudiandae delectus rem tempora sit eum ab, reiciendis totam dicta soluta eveniet culpa nulla unde in sed earum? At esse hic error similique nulla? Ducimus molestias earum iste quasi est quos vitae exercitationem sit cumque, voluptatem nulla et, obcaecati quaerat tempora? Maiores placeat sequi aut suscipit consequatur veritatis perferendis, qui quo repellendus nostrum molestias. Dignissimos, a in aliquid illo magnam, alias autem.',
         ]);
         DB::table('category_table')->insert(['table_id' => $tableId, 'category_id' => $catId]);
         DB::table('table_images')->insert(['table_id' => $tableId, 'image' => 'sample_table_1.jpg', 'created_at' => $now]);

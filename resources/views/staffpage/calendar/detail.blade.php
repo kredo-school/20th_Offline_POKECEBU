@@ -1,7 +1,8 @@
 @extends('layouts.app')
 
 @push('styles')
-<<link rel="stylesheet" href="{{ asset('css/staff.css/calendar/detail.css') }}">
+{{-- <<link rel="stylesheet" href="{{ asset('css/staff.css/calendar/detail.css') }}"> --}}
+<link rel="stylesheet" href="{{ asset('css/staff.css/calendar/detail.css') }}">
 @endpush
 
 @section('content')

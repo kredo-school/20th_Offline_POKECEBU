@@ -125,6 +125,7 @@ return [
 
     'target_type_hotel' => 'hotel',
     'target_type_restaurant' => 'restaurant',
+    'target_type_all' => 'all',
     'role_customer' => '1',
     'role_admin' => '2',
     'role_hotel' => '3',

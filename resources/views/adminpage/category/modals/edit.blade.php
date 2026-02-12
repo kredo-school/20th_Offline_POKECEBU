@@ -10,9 +10,8 @@
             </div>
             <form action="{{ route('admin.category.update', $category->id) }}" method="post">
                 @csrf
-                @method('PUT') {{-- Route::put に合わせる --}}
+                @method('PATCH')
                 <div class="modal-body text-start">
-                    {{-- Category Name --}}
                     <div class="mb-3">
                         <label for="name-{{ $category->id }}" class="form-label text-secondary small">Category
                             Name</label>
@@ -20,53 +19,14 @@
                             value="{{ old('name', $category->name) }}" class="form-control" required>
                     </div>
 
-                    {{-- Target Type (変更可能) --}}
                     <div class="mb-3">
                         <label for="target_type-{{ $category->id }}" class="form-label text-secondary small">Category
                             Type</label>
-                        <select name="target_type" id="target_type-{{ $category->id }}" class="form-select" required>
-                            <option value="hotel"
-                                {{ old('target_type', $category->target_type) == 'hotel' ? 'selected' : '' }}>Hotel
-                            </option>
-                            <option value="restaurant"
-                                {{ old('target_type', $category->target_type) == 'restaurant' ? 'selected' : '' }}>
-                                Restaurant</option>
-                        </select>
-                        <small class="text-danger mt-1 d-block" style="font-size: 0.75rem;">
-                            <i class="fa-solid fa-exclamation-triangle"></i> Warning: Changing the type will clear
-                            previous assignments.
+                        <input type="text" name="" id="" class="form-control text-capitalize" value="{{ $category->target_type }}" style="background-color: lightgray;" readonly>
+                        <small class="text-danger mt-1" style="font-size: 0.75rem;">
+                            <i class="fa-solid fa-exclamation-triangle"></i> If you want to edit the category, please create a new one.
                         </small>
                     </div>
-
-                    {{-- 紐づくアイテムの編集 --}}
-                    {{-- <div class="mb-3">
-                        <label class="form-label text-secondary small">Assign Items</label>
-                        <div style="max-height: 200px; overflow-y: auto;" class="border p-2 rounded">
-                            @if ($category->target_type === 'hotel')
-                                @foreach ($rooms as $room)
-                                    <div class="form-check text-start">
-                                        <input class="form-check-input" type="checkbox" name="room_ids[]" 
-                                            value="{{ $room->id }}" id="edit-room-{{ $category->id }}-{{ $room->id }}"
-                                            {{ $category->categoryRooms->contains('room_id', $room->id) ? 'checked' : '' }}>
-                                        <label class="form-check-label" for="edit-room-{{ $category->id }}-{{ $room->id }}">
-                                            {{ $room->name }}
-                                        </label>
-                                    </div>
-                                @endforeach
-                            @else
-                                @foreach ($tables as $table)
-                                    <div class="form-check text-start">
-                                        <input class="form-check-input" type="checkbox" name="table_ids[]" 
-                                            value="{{ $table->id }}" id="edit-table-{{ $category->id }}-{{ $table->id }}"
-                                            {{ $category->categoryTables->contains('table_id', $table->id) ? 'checked' : '' }}>
-                                        <label class="form-check-label" for="edit-table-{{ $category->id }}-{{ $table->id }}">
-                                            {{ $table->name }}
-                                        </label>
-                                    </div>
-                                @endforeach
-                            @endif
-                        </div>
-                    </div> --}}
                 </div>
                 <div class="modal-footer border-0">
                     <button type="button" class="btn btn-outline-warning btn-sm"

@@ -3,63 +3,68 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Type;
 use Illuminate\Http\Request;
 
 class TypeController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    private $type;
+    protected string $target_all;
+    protected string $target_hotel;
+    protected string $target_restaurant;
+
+    public function __construct(Type $type)
+    {
+        $this->type = $type;
+        $this->target_all = config('app.target_type_all');
+        $this->target_hotel = config('app.target_type_hotel');
+        $this->target_restaurant = config('app.target_type_restaurant');
+    }
+
     public function index()
     {
-        //
+        $all_types = $this->type->all();
+        return view('adminpage.category.type-index', compact('all_types'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
-    }
+        // バリデーション
+        $request->validate([
+            'name' => 'required|max:50',
+            'target_type' => 'required|in:all,hotel,restaurant'
+        ]);
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
+        // カテゴリ作成
+        $this->type->name = $request->name;
+        $this->type->target_type = $request->target_type;
+        $this->type->save();
+        return redirect()->back();
     }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
+    
     public function update(Request $request, string $id)
     {
-        //
+        // バリデーション
+        $request->validate([
+            'name' => 'required|max:50'
+        ]);
+
+        $type = $this->type->findOrFail($id);
+
+        // カテゴリ作成
+        $type->name = $request->name;
+
+        $type->save();
+
+        return redirect()->back();
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function destroy($id)
     {
-        //
+        $type = $this->type->findOrFail($id);
+        
+        $type->delete();
+
+        return redirect()->back();
     }
 }

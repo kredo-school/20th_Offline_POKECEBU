@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AnalysisController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\TypeController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\MyPageController;
 use App\Http\Controllers\HotelController;
@@ -47,8 +48,12 @@ Route::group(['middleware' => 'auth'], function(){
         # For Category
         Route::get('/category', [CategoryController::class, 'index'])->name('category.index'); 
         Route::post('/category/store', [CategoryController::class, 'store'])->name('category.store');
-        Route::put('/category/update/{id}', [CategoryController::class, 'update'])->name('category.update');
+        Route::patch('/category/update/{id}', [CategoryController::class, 'update'])->name('category.update');
         Route::delete('/category/delete/{id}', [CategoryController::class, 'destroy'])->name('category.destroy');
+        Route::get('/category-type', [TypeController::class, 'index'])->name('category.type-index');
+        Route::post('/category-type/store', [TypeController::class, 'store'])->name('category-type.store');
+        Route::delete('/category-type/delete/{id}', [TypeController::class, 'destroy'])->name('category-type.destroy');
+        Route::patch('/category-type/update/{id}', [TypeController::class, 'update'])->name('category-type.update');
 
         # For Customer
         Route::get('/customer', [AdminController::class, 'customer'])->name('customer');

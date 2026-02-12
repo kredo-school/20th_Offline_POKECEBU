@@ -1,15 +1,14 @@
-{{-- Add Category Modal --}}
 <div class="modal fade" id="add-category" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content border-primary">
             <div class="modal-header border-primary">
                 <h3 class="h5 modal-title text-primary">
-                    <i class="fa-solid fa-plus"></i> Add Category
+                    <i class="fa-solid fa-plus"></i> Add Type
                 </h3>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
 
-            <form action="{{ route('admin.category.store') }}" method="post">
+            <form action="{{ route('admin.category-type.store') }}" method="post">
                 @csrf
 
                 <div class="modal-body">
@@ -28,15 +27,9 @@
                         </div>
                     </div>
 
-                    {{-- Category Name --}}
                     <div class="mb-3">
-                        <label class="form-label text-secondary small">Category Name</label>
-                        <input type="text"
-                               name="name"
-                               id="modal-name"
-                               class="form-control"
-                               placeholder="e.g. Wifi / Birthday cake"
-                               required>
+                        <label class="form-label text-secondary small">Type Name</label>
+                        <input type="text" name="name" id="name" class="form-control" placeholder="e.g. Single room / Party table" required>
                     </div>
                 </div>
 

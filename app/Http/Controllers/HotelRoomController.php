@@ -16,7 +16,8 @@ class HotelRoomController extends Controller
     private $status;
     private $hotelRoomType;
     private $hotelRoom;
-    protected string $hotel;
+    protected string $target_hotel;
+    protected string $target_all;
 
     public function __construct(Type $type, Category $category, Status $status, HotelRoomType $hotelRoomType, HotelRoom $hotelRoom)
     {
@@ -25,14 +26,15 @@ class HotelRoomController extends Controller
         $this->status = $status;
         $this->hotelRoomType = $hotelRoomType;
         $this->hotelRoom = $hotelRoom;
-        $this->hotel  = config('app.target_type_hotel');
+        $this->target_hotel  = config('app.target_type_hotel');
+        $this->target_all = config('app.target_type_all');
     }
     
     public function index($hotel_id)
     {
-        $all_types = $this->type->where('target_type', $this->hotel)->get();
-        $all_categories = $this->category->where('target_type', $this->hotel)->get();
-        $all_statuses = $this->status->whereIn('target_type', [$this->hotel, 'all'])->get();
+        $all_types = $this->type->where('target_type', $this->target_hotel)->get();
+        $all_categories = $this->category->whereIn('target_type', [$this->target_hotel, $this->target_all])->get();
+        $all_statuses = $this->status->whereIn('target_type', [$this->target_hotel, $this->target_all])->get();
 
         $all_room_types = $this->hotelRoomType
             ->where('hotel_id', $hotel_id)

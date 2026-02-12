@@ -22,6 +22,11 @@ class Type extends Model
     }
     public function restaurantTables()
     {
-        return $this->hasMany(RestaurantTable::class);
+        return $this->hasMany(RestaurantTable::class, 'type_id');
+    }
+
+    public function typeRooms()
+    {
+        return $this->hasMany(HotelRoom::class, 'type_id');
     }
 }

@@ -16,7 +16,8 @@ class RestaurantTableController extends Controller
     private $status;
     private $restaurantTableType;
     private $restaurantTable;
-    protected string $restaurant;
+    protected string $target_restaurant;
+    protected string $target_all;
 
     public function __construct(Type $type, Category $category, Status $status, RestaurantTableType $restaurantTableType, RestaurantTable $restaurantTable)
     {
@@ -25,14 +26,15 @@ class RestaurantTableController extends Controller
         $this->status = $status;
         $this->restaurantTableType = $restaurantTableType;
         $this->restaurantTable = $restaurantTable;
-        $this->restaurant  = config('app.target_type_restaurant');
+        $this->target_restaurant  = config('app.target_type_restaurant');
+        $this->target_all = config('app.target_type_all');
     }
     
     public function index($restaurant_id)
     {
-        $all_types = $this->type->where('target_type', $this->restaurant)->get();
-        $all_categories = $this->category->where('target_type', $this->restaurant)->get();
-        $all_statuses = $this->status->whereIn('target_type', [$this->restaurant, 'all'])->get();
+        $all_types = $this->type->where('target_type', $this->target_restaurant)->get();
+        $all_categories = $this->category->whereIn('target_type', [$this->target_restaurant, $this->target_all])->get();
+        $all_statuses = $this->status->whereIn('target_type', [$this->target_restaurant, $this->target_all])->get();
 
         $all_table_types = $this->restaurantTableType
             ->where('restaurant_id', $restaurant_id)

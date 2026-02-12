@@ -17,6 +17,10 @@ class CategoryController extends Controller
     private $categoryTable;
     private $room;
     private $table;
+    protected string $target_all;
+    protected string $target_hotel;
+    protected string $target_restaurant;
+
 
     public function __construct(
         Category $category,
@@ -36,24 +40,10 @@ class CategoryController extends Controller
 {
     $all_categories = $this->category->all();
 
-    // 1. ホテル用カテゴリーの中で、部屋が一つも紐づいていないものをカウント
-    $uncategorized_rooms = $this->category
-        ->where('target_type', 'hotel')
-        ->whereDoesntHave('categoryRooms')
-        ->count();
-
-    // 2. レストラン用カテゴリーの中で、テーブルが一つも紐づいていないものをカウント
-    $uncategorized_tables = $this->category
-        ->where('target_type', 'restaurant')
-        ->whereDoesntHave('categoryTables')
-        ->count();
-
     return view('adminpage.category.index', [
         'all_categories' => $all_categories,
         'rooms'          => $this->room->all(),
-        'tables'         => $this->table->all(),
-        'uncategorized_rooms'  => $uncategorized_rooms,
-        'uncategorized_tables' => $uncategorized_tables
+        'tables'         => $this->table->all()
     ]);
 }
 
@@ -63,7 +53,7 @@ class CategoryController extends Controller
     // バリデーション
     $request->validate([
         'name' => 'required|max:50',
-        'target_type' => 'required|in:hotel,restaurant'
+        'target_type' => 'required|in:all,hotel,restaurant'
     ]);
 
     // カテゴリ作成
@@ -73,23 +63,23 @@ class CategoryController extends Controller
     $category->save();
 
     // ここから pivot テーブルへの紐付け
-    if ($request->target_type === 'hotel' && $request->room_ids) {
-        foreach ($request->room_ids as $roomId) {
-            CategoryRoom::create([
-                'category_id' => $category->id,
-                'room_id' => $roomId,
-            ]);
-        }
-    }
+    // if ($request->target_type === 'hotel' && $request->room_ids) {
+    //     foreach ($request->room_ids as $roomId) {
+    //         CategoryRoom::create([
+    //             'category_id' => $category->id,
+    //             'room_id' => $roomId,
+    //         ]);
+    //     }
+    // }
 
-    if ($request->target_type === 'restaurant' && $request->table_ids) {
-        foreach ($request->table_ids as $tableId) {
-            CategoryTable::create([
-                'category_id' => $category->id,
-                'table_id' => $tableId,
-            ]);
-        }
-    }
+    // if ($request->target_type === 'restaurant' && $request->table_ids) {
+    //     foreach ($request->table_ids as $tableId) {
+    //         CategoryTable::create([
+    //             'category_id' => $category->id,
+    //             'table_id' => $tableId,
+    //         ]);
+    //     }
+    // }
 
         return redirect()->route('admin.category.index', ['type' => $request->target_type]);
     }

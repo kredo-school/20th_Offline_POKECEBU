@@ -9,14 +9,14 @@
         {{-- 左：画像 --}}
         <div class="post-media">
             @if ($post->images->isNotEmpty())
-                <img src="{{ $post->images->first()->image }}" alt="post id{{ $post->id }}" class="main-image">
+                <img src="{{ $post->images->first()->image }}" alt="post id{{ $post->id }}" class="main-image" id="mainImage">
             @else
-                <img src="{{ asset('images/Icon.png') }}" class="main-image">
+                <img src="{{ asset('images/Icon.png') }}" class="main-image" id="mainImage">
             @endif
         </div>
         <div class="thumbnail-row">
           @foreach ($post->images as $image)
-              <img src="{{ $image->image }}" class="thumb img-fluid mb-2">
+              <img src="{{ $image->image }}" class="thumb img-fluid mb-2" onclick="changeImage(this)">
           @endforeach
         </div>
 
@@ -55,6 +55,20 @@
 
 @endsection
 
+<script>
+    function changeImage(element) {
+        const mainImage = document.getElementById('mainImage');
+        mainImage.src = element.src;
+
+        document.querySelectorAll('.thumb').forEach(img => {
+            img.classList.remove('active');
+        });
+
+        element.classList.add('active');
+
+    }
+</script>
+
 {{-- CSS --}}
 <style>
     .post-detail {
@@ -67,7 +81,7 @@
     }
 
     /* 左：画像 */
-    .poat-media {
+    .post-media {
       flex: 1;
       background: #000;
       align-items: center;
@@ -99,6 +113,11 @@
     }
 
     .thumb:hover {
+      opacity: 1;
+    }
+
+    .thumb.active {
+      border: 2px solid #007bff;
       opacity: 1;
     }
 

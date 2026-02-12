@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Post;
+use App\Models\PostTag;
 
 class PostController extends Controller
 {
@@ -50,6 +51,22 @@ class PostController extends Controller
         $post->title       =$request->title;
         $post->body        = $request->body;
         $post->save();
+
+        # #タグ抽出
+        preg_match_all('/#([^\s#]+)/u', $request->body,$matches);
+
+        $tagIds = [];
+
+        foreach ($matches[1] as $tagName) {
+            $tag = PostTag::firstOrCreate([
+                'name' => mb_strtolower($tagName)
+            ]);
+
+            $tagIds[] = $tag->id;
+        }
+
+        $post->tags()->sync($tagIds);
+
 
         if($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {
@@ -99,6 +116,20 @@ class PostController extends Controller
         $post->title    = $request->title;
         $post->body     = $request->body;
         $post->save();
+
+        preg_match_all('/#([^\s#]+)/u',$request->body,$matches);
+
+        $tagIds = [];
+
+        foreach ($matches[1] as $tagName) {
+
+        $tag = PostTag::firstOrCreate([
+            'name' => mb_strtolower($tagName)
+        ]);
+
+        $tagIds[] = $tag->id;
+        }
+        $post->tags()->sync($tagIds);
 
         // 新しい画像に変更したとき
         if($request->hasFile('images')) {

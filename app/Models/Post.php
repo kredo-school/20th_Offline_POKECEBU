@@ -30,5 +30,12 @@ protected $fillable = [
        
     }
 
-    
+    public function tags() {
+       return $this->belongsToMany(
+        PostTag::class,
+        'post_tag',
+        'post_id',
+        'tag_id'
+        );
+    }    
 }

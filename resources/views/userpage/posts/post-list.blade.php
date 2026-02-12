@@ -22,7 +22,9 @@
       <div class="col-md-6 col-lg-4 mb-4">
         <a href="{{ route('user.posts.show',$post->id) }}" class="post-link">
         <div class="card post-card h-100">
-          <img src="{{ $post->images->first()->image }}" alt="Post Image" class="card-img-top img-fluid">
+          @if ($post->images->isNotEmpty())
+            <img src="{{ $post->images->first()->image }}" alt="Post Image" class="card-img-top img-fluid">
+          @endif
           <div class="card-body">
             <h5 class="card-title">{{ $post->title }}</h5>
             <p class="card-text">{{ $post->body }}</p>

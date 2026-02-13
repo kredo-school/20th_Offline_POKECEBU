@@ -7,12 +7,11 @@
 {{-- ヘッダー --}}
 <div class="page-header">
   <div class="header-text">
-    新しい旅を見つける
+    POST
   </div>
   <a href="{{ route('user.posts.create') }}" class="add-post-btn">
     + Add new post
   </a>
-  
 </div>
 
 {{-- ポスト --}}
@@ -25,24 +24,34 @@
           @if ($post->images->isNotEmpty())
             <img src="{{ $post->images->first()->image }}" alt="Post Image" class="card-img-top img-fluid">
           @endif
+
           <div class="card-body">
-            <h5 class="card-title">{{ $post->title }}</h5>
-            <p class="card-text">{{ $post->body }}</p>
-            
-            <p class="post-user mb-1">{{ $post->user->name }}</p>
-            
-            <p class="post-date">{{ $post->created_at->format('M d, Y') }}</p>
-            <div class="mb-2">
-              {{-- @foreach ($post->categoryPost as $category_post)
-                <span class="badge bg-secondary">{{ $category_post->category->name }}</span>
-              @endforeach --}}
-              {{-- @if (empty($post->categoryPost))
-                <span class="badge bg-dark">Uncategorized</span>
-              @endif --}}
+            {{-- ポスト内容：上 --}}
+            <div class="post-main">
+              <h5 class="card-title">{{ $post->title }}</h5>
+              <p class="card-text">
+                {!! nl2br(e(preg_replace('/#[^\s#]+/u', '', $post->body))) !!}
+
+            </p>
             </div>
-            <div>
-              {{-- <i class="far fa-heart"></i> {{ $post->likes->count() }} --}}
+            
+            {{-- ポスト内容：下 --}}
+            <div class="post-meta">
+              <p class="post-user mb-1">{{ $post->user->name }}</p>
+              <p class="post-date">{{ $post->created_at->format('M d, Y') }}</p>
+              <div class="post-tags mb-2">
+                @foreach ($post->tags as $tag)
+                  <span class="tag-badge">
+                    #{{ $tag->name }}
+                  </span>  
+                @endforeach
+              </div>
             </div>
+              
+         
+            {{-- <div>
+              <i class="far fa-heart"></i> {{ $post->likes->count() }}
+            </div> --}}
             {{-- @if ($post->comments->isNotEmpty())
               <ul class="list-group mt-2">
                 @foreach ($post->comments as $comment)
@@ -79,12 +88,11 @@
     /* ヘッダー */
     .page-header {
       width: 100%;
-      height: 330px;
+      height: 440px;
       background-image: url("{{ asset('images/post-header.png') }}");
       background-size: cover;
       background-position: center;
       position: relative;
-      border-radius: 0 0 32px 32px;
       overflow: hidden;
     }
 
@@ -131,12 +139,14 @@
 
     /* カード */
     .post-card {
+        height: 420px;
+         display: flex;
+        flex-direction: column;
         border-radius: 25px;
-        overflow: hidden;
         background: #ffffff;
         border: none;
         box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-        transition: transfrom 0.3 ease, box-shadow 0.3 ease;
+        transition: transfrom 0.3 ease, box-shadow 0.3s ease;
         cursor: pointer;
     }
 
@@ -150,6 +160,16 @@
         object-fit: cover;
     }
 
+    .post-meta {
+      margin-top:auto;
+    }
+
+    .card-text {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
     .post-user {
         font-weight: 600;
         color: #2c7da0;
@@ -164,6 +184,17 @@
       text-decoration: none;
       color: inherit;
       display: block;
+    }
+
+    .tag-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      margin: 2px;
+      font-size: 12px;
+      border-radius: 20px;
+      background: #e0f2ff;
+      color: #0077cc;
+      font-weight: 600;
     }
 
 </style>

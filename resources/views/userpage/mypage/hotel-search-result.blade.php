@@ -171,14 +171,17 @@
                                         {{ \Illuminate\Support\Str::limit($hotel->description, 120) }}</p>
 
                                     <div class="d-flex gap-2">
-                                        <a href="{{ route('hotels.show', ['hotel' => $hotel->id]) }}"
+                                        {{-- <a href="{{ route('hotels.show', ['hotel' => $hotel->id]) }}" --}}
+                                        <a href=#
                                             class="btn btn-outline-secondary btn-sm">Details</a>
-                                        <a href="{{ route('booking.create', ['hotel' => $hotel->id]) }}"
+                                        {{-- <a href="{{ route('booking.create', ['hotel' => $hotel->id]) }}" --}}
+                                        <a href=#
                                             class="btn btn-primary btn-sm"><i
                                                 class="fa-solid fa-calendar-check me-1"></i>Book Now</a>
 
                                         {{-- Favorite toggle (replace route with your actual endpoint) --}}
-                                        <form action="{{ route('favorites.toggle') }}" method="post" class="d-inline">
+                                        {{-- <form action="{{ route('favorites.toggle') }}" method="post" class="d-inline"> --}}
+                                        <form action=# method="post" class="d-inline">
                                             @csrf
                                             <input type="hidden" name="target_type" value="hotel">
                                             <input type="hidden" name="target_id" value="{{ $hotel->id }}">

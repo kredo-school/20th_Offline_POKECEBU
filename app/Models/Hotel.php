@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\HotelReservation; 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\HotelImage;
+
 
 class Hotel extends Model
 {
@@ -48,6 +50,12 @@ class Hotel extends Model
     {
         return $this->hasMany(HotelImage::class, 'hotel_id', 'id');
     }
+
+    public function hotelImages()
+    {
+        return $this->hasMany(HotelImage::class, 'hotel_id', 'id');
+    }
+
 
     /**
      * 部屋との関係

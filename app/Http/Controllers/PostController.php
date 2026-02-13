@@ -12,7 +12,7 @@ class PostController extends Controller
 
     // 一覧
     public function index() {
-        $posts = Post::with('images', 'user')
+        $posts = Post::with('images', 'user','tags')
             ->latest()
             ->paginate(10);
 

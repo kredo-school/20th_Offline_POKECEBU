@@ -43,30 +43,31 @@
 
                             </div>
                         </div>
-                 @include('userpage.posts.modals.delete')
-                @endif
-            @endauth
+                        @include('userpage.posts.modals.delete')
+                    @endif
+                @endauth
 
-            <h2 class="mt-3">{{ $post->title }}</h2>
+                <h2 class="mt-3">{{ $post->title }}</h2>
 
-            <p class="text-muted small">{{ $post->user->name }} ・ {{ $post->created_at->format('M d, Y') }}</p>
-            <p class="post-body"> {!! nl2br(e(preg_replace('/#[^\s#]+/u', '', $post->body))) !!}
-            </p>
-            <div class="post-tags mb-2">
-                @foreach ($post->tags as $tag)
-                    <span class="tag-badge">
-                        #{{ $tag->name }}
-                    </span>
-                @endforeach
+                <p class="text-muted small">{{ $post->user->name }} ・ {{ $post->created_at->format('M d, Y') }}</p>
+                <p class="post-body"> {!! nl2br(e(preg_replace('/#[^\s#]+/u', '', $post->body))) !!}
+                </p>
+                <div class="post-tags mb-2">
+                    @foreach ($post->tags as $tag)
+                        <a href="{{ route('user.tags.show',$tag->name) }}" class="tag-badge">
+                            #{{ $tag->name }}
+                        </a>
+                    @endforeach
+                </div>
+
             </div>
-
         </div>
-    </div>
     </div>
 
 @endsection
 
 <script>
+    // 表示されている画像を変える
     function changeImage(element) {
         const mainImage = document.getElementById('mainImage');
         mainImage.src = element.src;
@@ -76,7 +77,6 @@
         });
 
         element.classList.add('active');
-
     }
 </script>
 
@@ -149,13 +149,13 @@
     }
 
     .tag-badge {
-      display: inline-block;
-      padding: 4px 10px;
-      margin: 2px;
-      font-size: 12px;
-      border-radius: 20px;
-      background: #e0f2ff;
-      color: #0077cc;
-      font-weight: 600;
+        display: inline-block;
+        padding: 4px 10px;
+        margin: 2px;
+        font-size: 12px;
+        border-radius: 20px;
+        background: #e0f2ff;
+        color: #0077cc;
+        font-weight: 600;
     }
 </style>

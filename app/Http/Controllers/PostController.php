@@ -19,16 +19,6 @@ class PostController extends Controller
         return view('userpage.posts.post-list')->with('posts',$posts);
         
     }
-
-    // public function show() {
-    //     $posts = Post::with('user')
-    //         ->latest()
-    //         ->paginate(10);
-
-    //     return view('userpage.posts.show')->with('posts',$posts);
-        
-    // }
-
     
     // POST作成
     public function create()
@@ -66,7 +56,6 @@ class PostController extends Controller
         }
 
         $post->tags()->sync($tagIds);
-
 
         if($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {
@@ -168,5 +157,16 @@ class PostController extends Controller
         return redirect()
             ->route('user.posts.index')
             ->with('success', '削除しました🗑️');
+    }
+
+    // タグ検索
+    public function tag($tagName) {
+       $tag = PostTag::where('name', $tagName)->firstOrFail();
+       $posts = $tag->posts()
+            ->with('images', 'user', 'tags')
+            ->latest()
+            ->paginate(12);
+
+        return view('userpage.posts.tag-list',compact('tag','posts'));
     }
 }

@@ -239,12 +239,7 @@
                                     <p class="post-date">{{ $post->created_at->format('M d, Y') }}</p>
 
                                     <div class="mb-2">
-                                        {{-- @foreach ($post->categoryPost as $category_post)
-                                            <span class="badge bg-secondary">{{ $category_post->category->name }}</span>
-                                        @endforeach --}}
-                                        {{-- @if (empty($post->categoryPost))
-                                            <span class="badge bg-dark">Uncategorized</span>
-                                         @endif --}}
+                                       
                                     </div>
                                     <div>
                                         {{-- <i class="far fa-heart"></i> {{ $post->likes->count() }} --}}

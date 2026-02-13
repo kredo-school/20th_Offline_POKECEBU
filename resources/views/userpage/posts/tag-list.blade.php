@@ -7,7 +7,7 @@
 {{-- ヘッダー --}}
 <div class="page-header">
   <div class="header-text">
-    POST
+    {{ $tag->name }}
   </div>
   <a href="{{ route('user.posts.create') }}" class="add-post-btn">
     + Add new post

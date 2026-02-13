@@ -9,27 +9,7 @@
 
             <form action="{{ route('user.posts.store') }}" method="post" enctype="multipart/form-data">
                 @csrf
-
-                {{-- categories --}}
-                {{-- <div class="mb-3"> --}}
-                {{-- <label for="category" class="form-label d-block fw-bold">
-        Category <span class="text-muted fw-normal">(Up to 3)</span>
-      </label>
-      @php
-        $all_categories = [
-          (object)['id' => 1, 'name' => 'Food'],
-          (object)['id' => 2, 'name' => 'Travel'],
-          (object)['id' => 3, 'name' => 'Culture'],
-        ];
-      @endphp
-      @foreach ($all_categories as $category)
-        <div class="form-check form-check-inline">
-          <input type="checkbox" name="category[]" id="{{ $category->name }}" class="form-check-input" value="{{ $category->id }}">
-          <label for="{{ $category->name }}" class="form-check-label">{{ $category->name }}</label>
-        </div>
-      @endforeach
-    </div> --}}
-
+                
                 @if ($errors->any())
                     <div class="alert alert-danger">
                         <ul class="mb-0">
@@ -220,66 +200,64 @@
 </style>
 
 @push('scripts')
-<script>
-document.addEventListener('DOMContentLoaded', function() {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
 
-    const input = document.getElementById('image');
-    const previewContainer = document.getElementById('preview-container');
-    const countText = document.getElementById('image-count');
+            const input = document.getElementById('image');
+            const previewContainer = document.getElementById('preview-container');
+            const countText = document.getElementById('image-count');
 
-    const dataTransfer = new DataTransfer();
+            const dataTransfer = new DataTransfer();
 
-    input.addEventListener('change', function(e) {
+            input.addEventListener('change', function(e) {
 
-        const files = Array.from(e.target.files);
+                const files = Array.from(e.target.files);
 
-        files.forEach(file => {
+                files.forEach(file => {
 
-            if (dataTransfer.files.length >= 5) return;
+                    if (dataTransfer.files.length >= 5) return;
 
-            dataTransfer.items.add(file);
+                    dataTransfer.items.add(file);
 
-            const reader = new FileReader();
+                    const reader = new FileReader();
 
-            reader.onload = function(event) {
+                    reader.onload = function(event) {
 
-                const box = document.createElement('div');
-                box.classList.add('preview-box');
+                        const box = document.createElement('div');
+                        box.classList.add('preview-box');
 
-                box.innerHTML = `
+                        box.innerHTML = `
                     <img src="${event.target.result}" style="width:100%;height:100%;object-fit:cover;">
                     <button type="button" class="remove-btn">&times;</button>
                 `;
 
-                box.querySelector('.remove-btn').onclick = function() {
+                        box.querySelector('.remove-btn').onclick = function() {
 
-                    const index = Array.from(dataTransfer.files)
-                        .findIndex(f => f.name === file.name);
+                            const index = Array.from(dataTransfer.files)
+                                .findIndex(f => f.name === file.name);
 
-                    dataTransfer.items.remove(index);
-                    input.files = dataTransfer.files;
+                            dataTransfer.items.remove(index);
+                            input.files = dataTransfer.files;
 
-                    box.remove();
-                    updateCount();
-                };
+                            box.remove();
+                            updateCount();
+                        };
 
-                previewContainer.appendChild(box);
-                updateCount();
-            };
+                        previewContainer.appendChild(box);
+                        updateCount();
+                    };
 
-            reader.readAsDataURL(file);
+                    reader.readAsDataURL(file);
+                });
+
+                input.files = dataTransfer.files;
+
+            });
+
+            function updateCount() {
+                countText.textContent = dataTransfer.files.length + " / 5";
+            }
+
         });
-
-        input.files = dataTransfer.files;
-       
-    });
-
-    function updateCount() {
-        countText.textContent = dataTransfer.files.length + " / 5";
-    }
-
-});
-</script>
-
+    </script>
 @endpush
-

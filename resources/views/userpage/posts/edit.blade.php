@@ -54,11 +54,21 @@
 
                 {{-- image --}}
                 <div class="form-group">
-                    <label class="form-label fw-bold">Image</label>
-                    <input type="file" name="images[]" id="images" class="form-control" multiple aria-describedby="image-info">
+                    <label class="form-label fw-bold">Image (max 5)</label>
+                    <div class="image-upload-wrapper">
+                        <div id="preview-container"></div>
+
+
+                        <label class="upload-box">
+                            <i class="fa-solid fa-camera"></i>
+                            <span id="image-count">0 / 5</span>
+                            <input type="file" name="images[]" id="image" class="form-control soft-file" multiple
+                                accept="image/jpeg,image/png,image/gif" hidden>
+                        </label>
+                    </div>
                     <div class="form-text" id="image-info">
                         The acceptable formats are jpeg, jpg, png and gif only. <br>
-                        Max file is 1048Kb.
+                        Max file is 2048Kb.
                     </div>
                     @error('image')
                       <div class="text-danger small">{{ $message }}</div> 
@@ -74,11 +84,10 @@
 
 {{-- CSS --}}
 
-
 <style>
     /* ページ全体 */
     .create-post-page {
-        min-height: calc(100vh -64px);
+        min-height: calc(100vh - 64px);
         background: linear-gradient(180deg,
                 #f0f8fb 0%,
                 #e6f5f8 50%,
@@ -143,6 +152,54 @@
         font-size: 14px;
     }
 
+    .image-upload-wrapper {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    #preview-container {
+        display: flex;
+        gap: 12px;
+    }
+
+    .preview-box {
+        position: relative;
+        width: 100px;
+        height: 100px;
+        border-radius: 14px;
+        overflow: hidden;
+    }
+
+    .remove-btn {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        background: rgba(0, 0, 0, 0.64);
+        color: #ffffff;
+        border: none;
+        border-radius: 50%;
+        width: 22px;
+        height: 22px;
+        font-size: 12px;
+        cursor: pointer;
+    }
+
+    .upload-box {
+        width: 100px;
+        height: 100px;
+        border: 2px dashed #d0dbe8;
+        border-radius: 14px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        color: #6fa9de;
+    }
+
+
     /* 投稿ボタン */
     .post-btn {
         background: linear-gradient(to right,
@@ -160,3 +217,66 @@
         opacity: 0.9;
     }
 </style>
+
+@push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+
+            const input = document.getElementById('image');
+            const previewContainer = document.getElementById('preview-container');
+            const countText = document.getElementById('image-count');
+
+            const dataTransfer = new DataTransfer();
+
+            input.addEventListener('change', function(e) {
+
+                const files = Array.from(e.target.files);
+
+                files.forEach(file => {
+
+                    if (dataTransfer.files.length >= 5) return;
+
+                    dataTransfer.items.add(file);
+
+                    const reader = new FileReader();
+
+                    reader.onload = function(event) {
+
+                        const box = document.createElement('div');
+                        box.classList.add('preview-box');
+
+                        box.innerHTML = `
+                    <img src="${event.target.result}" style="width:100%;height:100%;object-fit:cover;">
+                    <button type="button" class="remove-btn">&times;</button>
+                `;
+
+                        box.querySelector('.remove-btn').onclick = function() {
+
+                            const index = Array.from(dataTransfer.files)
+                                .findIndex(f => f.name === file.name);
+
+                            dataTransfer.items.remove(index);
+                            input.files = dataTransfer.files;
+
+                            box.remove();
+                            updateCount();
+                        };
+
+                        previewContainer.appendChild(box);
+                        updateCount();
+                    };
+
+                    reader.readAsDataURL(file);
+                });
+
+                input.files = dataTransfer.files;
+
+            });
+
+            function updateCount() {
+                countText.textContent = dataTransfer.files.length + " / 5";
+            }
+
+        });
+    </script>
+@endpush

@@ -376,16 +376,18 @@ Route::get('/mock/detail/{day}/{type}', [MockReservationController::class, 'deta
 
 
 
-// フォーム表示（GET）signup-for-company
+// ログイン不要ページ　
+// 　ホテル・レストラン登録
+// 　フォーム表示
 Route::get('signup-for-company', [TmpHotelController::class, 'create'])
     ->name('company.signup');
-
+// 　フォーム送信
+Route::post('/user/mypage/signup-for-company', [TmpHotelController::class, 'store'])
+        ->name('user.mypage.signup-for-company.store');
+// 　ホテル・レストランサーチ
 Route::get('/hotels/search', [App\Http\Controllers\HotelController::class, 'index'])->name('hotels.search');
 
 
-// フォーム送信（POST）は既にある想定
-Route::post('/user/mypage/signup-for-company', [TmpHotelController::class, 'store'])
-    ->name('user.mypage.signup-for-company.store');
 
 
 
@@ -397,14 +399,14 @@ Route::post('/user/mypage/signup-for-company', [TmpHotelController::class, 'stor
 
 // User
 // User_signup-for-company.blade
-Route::get('userpage/mypage/signup-for-company', function () {
-    return view('userpage.mypage.signup-for-company');
-})->name('userpage.mypage.signup-for-company');
+// Route::get('userpage/mypage/signup-for-company', function () {
+//     return view('userpage.mypage.signup-for-company');
+// })->name('userpage.mypage.signup-for-company');
 
 // User_userpage\mypage\hotel-serch-result.blade.php
-Route::get('userpage/mypage/hotel-serch-result', function () {
-    return view('userpage.mypage.hotel-serch-result');
-})->name('userpage.mypage.hotel-serch-result');
+// Route::get('userpage/mypage/hotel-serch-result', function () {
+//     return view('userpage.mypage.hotel-serch-result');
+// })->name('userpage.mypage.hotel-serch-result');
 
 
 

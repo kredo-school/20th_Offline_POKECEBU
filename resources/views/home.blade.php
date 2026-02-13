@@ -15,7 +15,7 @@
             </a>
 
             {{-- ホテルのリンク --}}
-            <a href="#" class="menu-btn menu-hotel text-decoration-none">
+            <a href="{{ route('hotels.search') }}" class="menu-btn menu-hotel text-decoration-none">
                 <i class="fa-solid fa-bed"></i>
                 <div>Hotel</div>
             </a>
@@ -53,8 +53,11 @@
                                 {{ $index + 1 }}
                             </div>
                        
-                            <img src="{{ $hotel->image_path ?? asset('images/no-image.png') }}" alt="{{ $hotel->name }}" class="rank-image">
-     
+                            {{-- <img src="{{ $hotel->image_path ?? asset('images/no-image.png') }}" alt="{{ $hotel->name }}" class="rank-image"> --}}
+                            <img src="{{ $hotel->image_path ? Storage::url($hotel->image_path) : asset('images/no-image.png') }}"
+     alt="{{ $hotel->name }}" class="rank-image"
+     onerror="this.onerror=null;this.src='{{ asset('images/no-image.png') }}';">
+
                             <div class="card-body">
                                 <a href="#" class="text-decoration-none text-dark">
                                     <h5 class="card-title">{{ $hotel->name }}</h5>
@@ -65,7 +68,7 @@
                                     $halfStar = ($rating - $fullStars) >= 0.5;
                                 @endphp
                                 <p class="card-text text-warning">
-                                    @for ($i = 0; $i < $fullStars; $i++)
+                                    @for ($i = 1; $i < $fullStars; $i++)
                                         <i class="fa-solid fa-star"></i>
                                     @endfor
                                     @if ($halfStar)

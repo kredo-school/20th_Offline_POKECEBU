@@ -11,6 +11,9 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use App\Mail\ApprovedNotification;
+use App\Mail\RejectedNotification;
+use Illuminate\Support\Facades\Mail;
 
 
 use App\Models\TmpHotel;
@@ -496,6 +499,20 @@ public function deleteAdmin($id)
             //     ]);
             // }
 
+            // --- 画像移行ループの直後に追加 ---
+            if (!empty($movedImages)) {
+                // 代表画像を hotels.image_path に保存（最初の画像を代表にする）
+                $hotel->image_path = $movedImages[0];
+                $hotel->save();
+
+                Log::info('Hotel representative image saved', [
+                    'hotel_id' => $hotel->id,
+                    'image_path' => $hotel->image_path,
+                ]);
+            } else {
+                Log::info('No images moved for hotel, image_path remains null', ['hotel_id' => $hotel->id]);
+            }
+
 
             // 5) 承認履歴
             if (class_exists(ApprovalHistory::class)) {
@@ -508,7 +525,11 @@ public function deleteAdmin($id)
             }
 
             DB::commit();
-            
+
+            // $user と $tempPassword がある想定
+            Mail::to($user->email)->send(new ApprovedNotification($user, $tempPassword, 'hotel'));
+
+
             // ログチェック用一時コード
             \Log::info('approveHotel committed', ['tmp_id' => $tmp->id, 'hotel_id' => $hotel->id, 'user_id' => $user->id]);
 
@@ -546,7 +567,7 @@ public function deleteAdmin($id)
     {
         $tmpHotels = TmpHotel::with('images')
             ->where('status', 'pending')
-            ->orderBy('created_at', 'desc')
+            ->orderBy('created_at', 'asc')
             ->get();
 
         $tmpHotel = $tmpHotels->first();
@@ -569,7 +590,7 @@ public function deleteAdmin($id)
         return view('adminpage.hotel.pending-approval', compact('tmpHotels', 'tmpHotel'));
     }
 
-    public function rejectHotel($id)
+    public function rejectHotel(Request $request, $id)
     {
         $tmp = TmpHotel::findOrFail($id);
 
@@ -590,6 +611,16 @@ public function deleteAdmin($id)
             }
 
             DB::commit();
+
+            // 例：理由を管理画面で受け取る場合は $reason を取得
+            $reason = $request->input('reject_reason') ?? null;
+
+            // メール送信（同期）
+            if ($tmp->representative_email) {
+                Mail::to($tmp->representative_email)->send(new RejectedNotification($tmp, $reason, 'hotel'));
+            }
+
+
             // 承認成功後（DB commit の後）データを物理削除
             $this->cleanupTmpAfterDecision($tmp);
 

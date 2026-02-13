@@ -57,9 +57,10 @@
                                 </form>
 
                                 {{-- Reject --}}
-                                <form method="post" action="{{ route('admin.hotel.reject', $tmpHotel->id) }}" >
+                                <form method="post" action="{{ route('admin.hotel.reject', $tmpHotel->id) }}">
                                     @csrf
                                     {{-- @method('delete') --}}
+                                    <textarea name="reject_reason" placeholder="却下理由を入力してください"></textarea>
                                     <button type="submit" class="btn btn-danger btn-lg rounded-pill">
                                         <i class="fa-solid fa-xmark me-1"></i> Reject
                                     </button>

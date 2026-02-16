@@ -28,6 +28,10 @@ class AdminController extends Controller
         return view('adminpage.home', compact('totalUsers'));
     }
 
+    public function showAllUsers() {
+        return view('adminpage.all-users.all-users');
+    }
+
     // Customer関連
     // User 一覧
 
@@ -37,11 +41,11 @@ class AdminController extends Controller
 // ===============================
 // Customer 一覧
 // ===============================
-public function customer()
+public function customers()
 {
     // role_id が 1 のユーザーだけを取得
     $customers = User::where('role_id', 1)->get();
-    return view('adminpage.customer.customers', compact('customers'));
+    return view('adminpage.all-users.customer.customers', compact('customers'));
 }
 
 // ===============================
@@ -50,7 +54,7 @@ public function customer()
 public function addCustomer()
 {
         $totalUsers = User::count();
-    return view('adminpage.customer.add-customers',compact('totalUsers'));
+    return view('adminpage.all-users.customer.add',compact('totalUsers'));
 }
 
 // ===============================
@@ -72,7 +76,7 @@ public function storeCustomer(Request $request)
         'role_id' => 1, // ★ Customer固定
     ]);
 
-    return redirect()->route('admin.customer')->with('success', 'Customer added!');
+    return redirect()->route('admin.customers')->with('success', 'Customer added!');
 }
 
 // ===============================
@@ -83,7 +87,7 @@ public function editCustomer($id)
         $totalUsers = User::count();
     // 編集対象も role_id が 1 のユーザーに限定して取得
     $user = User::where('role_id', 1)->findOrFail($id);
-    return view('adminpage.customer.edit-customers', compact('user','totalUsers'));
+    return view('adminpage.all-users.customer.edit', compact('user','totalUsers'));
 }
 
 // ===============================
@@ -111,7 +115,7 @@ public function updateCustomer(Request $request, $id)
     
     $user->save();
 
-    return redirect()->route('admin.customer')->with('success', 'Customer updated!');
+    return redirect()->route('admin.customers')->with('success', 'Customer updated!');
 }
 
 // ===============================
@@ -123,20 +127,20 @@ public function deleteCustomer($id)
     $user = User::where('role_id', 1)->findOrFail($id);
     $user->delete();
 
-    return redirect()->route('admin.customer')->with('success', 'Customer deleted!');
+    return redirect()->route('admin.customers')->with('success', 'Customer deleted!');
 }
 
     // ホテル一覧
     public function hotels()
     {
-        $hotels = Hotel::all();
-        return view('adminpage.hotel.hotels', compact('hotels')); // Hotel表用
+        $hotels = User::where('role_id', 3)->get();
+        return view('adminpage.all-users.hotel.hotels', compact('hotels')); // Hotel表用
     }
 
     // ホテル追加画面
     public function addHotel()
     {
-        return view('adminpage.hotel.add');
+        return view('adminpage.all-users.hotel.add');
     }
 
     // ホテル保存処理
@@ -158,7 +162,7 @@ public function deleteCustomer($id)
     public function editHotel($id)
     {
         $hotel = Hotel::findOrFail($id);
-        return view('adminpage.hotel.edit', compact('hotel'));
+        return view('adminpage.all-users.hotel.edit', compact('hotel'));
     }
 
        
@@ -193,17 +197,17 @@ public function deleteCustomer($id)
     // Restaurant関連
    public function restaurants()
 {
-    $restaurants = Restaurant::all();
+    $restaurants = User::where('role_id', 4)->get();
     $totalUsers = User::count(); // 全ユーザー数を取得
 
-    return view('adminpage.restaurant.restaurants', compact('restaurants', 'totalUsers'));
+    return view('adminpage.all-users.restaurant.restaurants', compact('restaurants', 'totalUsers'));
 }
 
 
     // レストラン追加フォーム
     public function addRestaurant()
     {    $totalUsers = User::count();
-        return view('adminpage.restaurant.add', compact('totalUsers'));
+        return view('adminpage.all-users.restaurant.add', compact('totalUsers'));
     }
 
     // レストラン保存
@@ -224,7 +228,7 @@ public function deleteCustomer($id)
     public function editRestaurant($id)
     {    $totalUsers = User::count();
         $restaurant = Restaurant::findOrFail($id);
-        return view('adminpage.restaurant.edit', compact('restaurant','totalUsers'));
+        return view('adminpage.all-users.restaurant.edit', compact('restaurant','totalUsers'));
     }
 
     // レストラン更新
@@ -259,13 +263,13 @@ public function admins()
     $admins = User::where('role_id', 2)->get(); // 管理者だけ取得
     $totalUsers = User::count(); // 全ユーザー数を取得
 
-    return view('adminpage.admin.admin', compact('admins', 'totalUsers'));
+    return view('adminpage.all-users.admin.admins', compact('admins', 'totalUsers'));
 }
 
    public function addAdmin()
 {
     $totalUsers = User::count();
-    return view('adminpage.admin.add', compact('totalUsers')); // ← ここで渡す
+    return view('adminpage.all-users.admin.add', compact('totalUsers')); // ← ここで渡す
 }
 
 
@@ -295,7 +299,7 @@ public function editAdmin($id)
 {
     $totalUsers = User::count();
     $admin = User::where('role_id', 2)->findOrFail($id);
-    return view('adminpage.admin.edit', compact('admin', 'totalUsers')); // ← 追加
+    return view('adminpage.all-users.admin.edit', compact('admin', 'totalUsers')); // ← 追加
 }
 
 
@@ -334,11 +338,11 @@ public function deleteAdmin($id)
     // 分析ページ（例）
     public function analysisHotel()
     {
-        return view('adminpage.hotel.analysis-hotel');
+        return view('adminpage.all-users.hotel.analysis-hotel');
     }
     public function analysisRestaurant()
     {
-        return view('adminpage.restaurant.analysis-restaurant');
+        return view('adminpage.all-users.restaurant.analysis-restaurant');
     }
 
   

@@ -1,10 +1,13 @@
 @extends('layouts.admin')
 
-@section('title', 'Admin Categories')
+@section('title', 'Admin Category')
 
 @section('content')
 <div class="container-fluid">
     <div class="row justify-content-center">
+        <div class="col-auto h2">Setting</div>
+    </div>
+    <div class="row justify-content-center mt-4">
         <div class="col-2 me-3">
             <div class="list-group">
                 <a href="{{ route('admin.category.index') }}" class="list-group-item">Categories</a>

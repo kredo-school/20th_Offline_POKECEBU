@@ -77,7 +77,7 @@ class DatabaseSeeder extends Seeder
         // --- 2. ホテル関連 ---
         $hotelId = DB::table('hotels')->insertGetId([
             'id' => 3,
-            'name' => 'Ocean View Hotel',
+            'name' => 'hotel',
             'description' => 'A beautiful hotel overlooking the ocean, perfect for relaxing vacations.',
             'address' => '123 Seaside Avenue',
             'city' => 'Cebu City',
@@ -196,7 +196,7 @@ class DatabaseSeeder extends Seeder
 
         $restId = DB::table('restaurants')->insertGetId([
             'id' => 4,
-            'name' => 'Lechon King',
+            'name' => 'restaurant',
             'description' => 'Famous for its delicious Cebu-style lechon, perfect for family meals and celebrations.',
             'address' => '456 Mactan Road',
             'city' => 'Mactan',

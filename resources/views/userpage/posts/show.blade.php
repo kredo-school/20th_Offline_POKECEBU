@@ -50,6 +50,7 @@
                 <h2 class="mt-3">{{ $post->title }}</h2>
 
                 <p class="text-muted small">{{ $post->user->name }} ・ {{ $post->created_at->format('M d, Y') }}</p>
+                <hr>
                 <p class="post-body"> {!! nl2br(e(preg_replace('/#[^\s#]+/u', '', $post->body))) !!}
                 </p>
                 <div class="post-tags mb-2">
@@ -149,6 +150,7 @@
     }
 
     .tag-badge {
+        text-decoration: none;
         display: inline-block;
         padding: 4px 10px;
         margin: 2px;

@@ -16,6 +16,7 @@ use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\HotelReservationController;
 use App\Http\Controllers\HotelRoomController;
+use App\Http\Controllers\LikeController;
 use App\Http\Controllers\MockReservationController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\RestaurantTableController;
@@ -170,6 +171,10 @@ Route::group(['middleware' => 'auth'], function(){
         Route::get('/posts/{post}/edit', [PostController::class, 'edit'])->name('posts.edit');
         Route::patch('/posts/{post}', [PostController::class, 'update'])->name('posts.update');
         Route::delete('/posts/{post}/destroy', [PostController::class, 'destroy'])->name('posts.destroy');
+        Route::get('/tags/{tag}', [PostController::class, 'tag'])->name('tags.show');
+
+        Route::post('/like/{post_id}/store', [LikeController::class, 'store'])->name('like.store');
+        Route::delete('/like/{post_id}/destroy', [LikeController::class, 'destroy'])->name('like.destroy');
 
 
         # User MyPage

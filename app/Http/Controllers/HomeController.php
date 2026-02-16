@@ -41,8 +41,8 @@ class HomeController extends Controller
         $hotelsByCity       = $this->getHotelsByCity();
         $home_posts         = $this->getHomePosts();
         $popularTags        = $this->getPopularTags();
-        $weather           = $this->getWeather();
-        $rate              = $this->getRate();
+        $weather            = $this->getWeather();
+        $rate               = $this->getRate();
 
         return view('home',compact(
             'hotelRankings',

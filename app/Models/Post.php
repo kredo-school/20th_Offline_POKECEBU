@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\User;
 use App\Models\PostImage;
+use Illuminate\Support\Facades\Auth;
 
 class Post extends Model
 {
@@ -38,4 +39,12 @@ protected $fillable = [
         'tag_id'
         );
     }    
+
+    public function likes() {
+       return $this->hasMany(Like::class);
+    }
+
+    public function isLiked() {
+       return $this->likes()->where('user_id',Auth::user()->id)->exists();
+    }
 }

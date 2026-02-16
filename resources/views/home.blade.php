@@ -168,7 +168,7 @@
                                     <span class="text-muted ms-1">{{ number_format($rating, 1) }}</span>
                                 </p>
                                 <p class="card-city">
-                                    <i class="fa-solid fa-location-dot"></i> {{ $hotel->city }}
+                                    <i class="fa-solid fa-location-dot"></i> {{ $restaurant->city }}
                                 </p>
                             </div>
                         </div>
@@ -279,7 +279,23 @@
 
                                 {{-- ハート（仮） --}}
                                 <div class="post-like">
-                                    <i class="fa-regular fa-heart"></i>
+                                    
+                                    @if ($post->isliked())
+                                        <form action="{{ route('user.like.destroy', $post->id) }}" method="post">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit">
+                                                <i class="fa-regular fa-heart text-danger
+                                                "></i>
+                                            </button>
+                                        </form>
+                                            
+                                    @else
+                                        <form action="{{ route('user.like.store', $post->id )}}" method="post">
+                                            @csrf
+                                            <button type="submit"><i class="fa-regular fa-heart"></i></button>
+
+                                    @endif
                                 </div>
 
                                 {{-- テキスト --}}
@@ -294,9 +310,7 @@
                                     <div class="mb-2">
 
                                     </div>
-                                    <div>
-                                        {{-- <i class="far fa-heart"></i> {{ $post->likes->count() }} --}}
-                                    </div>
+                                    
                                     {{-- @if ($post->comments->isNotEmpty())
                                             <ul class="list-group mt-2">
                                                 @foreach ($post->comments as $comment)

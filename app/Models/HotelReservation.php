@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\DB;
 
 class HotelReservation extends Model
 {
@@ -46,4 +47,68 @@ class HotelReservation extends Model
     {
         return $this->belongsTo(HotelRoom::class, 'room_id');
     }
+
+public static function getKpiStats($hotelId = null, $month = null)
+{
+    $targetMonth = $month ?? now()->month;
+
+    return self::query()
+        ->join('statuses', 'hotel_reservations.status_id', '=', 'statuses.id')
+        ->when($hotelId, function ($query, $hotelId) {
+            return $query->where('hotel_reservations.hotel_id', $hotelId);
+        })
+        ->whereMonth('hotel_reservations.created_at', $targetMonth)
+        ->whereYear('hotel_reservations.created_at', now()->year)
+        ->where('statuses.name', 'Booked')
+        ->selectRaw('COUNT(hotel_reservations.id) as customers, SUM(hotel_reservations.total_price) as sales')
+        ->first();
+}
+
+public static function getAverageStay($hotelId = null)
+{
+    return self::query()
+        ->join('statuses', 'hotel_reservations.status_id', '=', 'statuses.id')
+        ->when($hotelId, function ($query, $hotelId) {
+            return $query->where('hotel_reservations.hotel_id', $hotelId);
+        })
+        ->where('statuses.name', 'Booked')
+        ->avg(DB::raw('DATEDIFF(hotel_reservations.end_at, hotel_reservations.start_at)')) ?? 0;
+}
+
+public static function getMonthlyBookingsByYear($hotelId = null, $year = null)
+{
+    $year = $year ?? now()->year;
+    $data = [];
+
+    for ($i = 1; $i <= 12; $i++) {
+        $data[] = self::query()
+            ->join('statuses', 'hotel_reservations.status_id', '=', 'statuses.id')
+            ->when($hotelId, function ($query, $hotelId) {
+                return $query->where('hotel_reservations.hotel_id', $hotelId);
+            })
+            ->whereMonth('hotel_reservations.created_at', $i)
+            ->whereYear('hotel_reservations.created_at', $year)
+            ->where('statuses.name', 'Booked')
+            ->count('hotel_reservations.id'); 
+    }
+    return $data;
+}
+
+public static function getDayOfWeekStats($hotelId = null)
+{
+    $data = [];
+    $days = [2, 3, 4, 5, 6, 7, 1]; 
+
+    foreach ($days as $day) {
+        $data[] = self::query()
+            ->join('statuses', 'hotel_reservations.status_id', '=', 'statuses.id')
+            ->when($hotelId, function ($query, $hotelId) {
+                return $query->where('hotel_reservations.hotel_id', $hotelId);
+            })
+            ->whereRaw("DAYOFWEEK(hotel_reservations.created_at) = ?", [$day])
+            ->where('statuses.name', 'Booked')
+            ->count('hotel_reservations.id');
+    }
+    return $data;
+}
 }

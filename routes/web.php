@@ -23,6 +23,7 @@ use App\Http\Controllers\TmpHotelController;
 
 
 use App\Http\Controllers\RestaurantReservationController;
+use App\Http\Controllers\StaffAnalysisController;
 use App\Http\Controllers\UserDetailController;
 
 
@@ -56,6 +57,7 @@ Route::group(['middleware' => 'auth'], function(){
         Route::patch('/category-type/update/{id}', [TypeController::class, 'update'])->name('category-type.update');
 
         # For Customer
+        Route::get('/all-users', [AdminController::class, 'showAllUsers'])->name('showAllUsers');
         Route::get('/customer', [AdminController::class, 'customer'])->name('customer');
         Route::get('/customer/add', [AdminController::class, 'addCustomer'])->name('customer.add');
         Route::post('/customer/add', [AdminController::class, 'storeCustomer'])->name('customers.store');
@@ -128,6 +130,8 @@ Route::group(['middleware' => 'auth'], function(){
         Route::get('/reservations', [HotelReservationController::class, 'hotel'])->name('reservations');
         Route::get('/reservations/{id}', [HotelReservationController::class, 'show'])->name('reservations.show');
 
+        Route::get('/analysis/{id}',[StaffAnalysisController::class,'hotelAnalysis'])->name('analysis');
+
         #Hotel - Room
         Route::get('/{hotel_id}/overview', [HotelRoomController::class, 'index'])->name('overview');
         Route::post('/{hotel_id}/storeRoomType', [HotelRoomController::class, 'storeRoomType'])->name('storeRoomType');
@@ -170,7 +174,7 @@ Route::group(['middleware' => 'auth'], function(){
         Route::get('/posts/{post}/edit', [PostController::class, 'edit'])->name('posts.edit');
         Route::patch('/posts/{post}', [PostController::class, 'update'])->name('posts.update');
         Route::delete('/posts/{post}/destroy', [PostController::class, 'destroy'])->name('posts.destroy');
-
+        Route::get('/tags/{tag}', [PostController::class, 'tag'])->name('tags.show');
 
         # User MyPage
         Route::get('/mypage', [MyPageController::class, 'index'])->name('mypage');

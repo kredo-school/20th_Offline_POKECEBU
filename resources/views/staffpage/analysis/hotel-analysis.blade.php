@@ -1,6 +1,6 @@
-@extends('layouts.admin')
+@extends('layouts.staff')
 
-@section('title', 'Admin Analysis of Hotel')
+@section('title', 'Analysis of Hotel')
 
 @section('content')
 
@@ -50,16 +50,8 @@
         <h1 class="mb-5 fw-bold">Analysis Hotel</h1>
 
         <div class="row">
-            {{-- Sidebar --}}
-            <div class="col-md-2">
-                <div class="d-flex flex-column" id="menuGroup">
-                    <a href="{{ route('admin.analysis.hotel') }}" class="btn btn-sidebar active">Hotel</a>
-                    <a href="{{ route('admin.analysis.restaurant') }}" class="btn btn-sidebar">Restaurant</a>
-                </div>
-            </div>
-
             {{-- Main Content --}}
-            <div class="col-md-10">
+            <div class="col-md-12">
 
                 {{-- KPI Section --}}
                 <div class="analysis-container shadow-sm border-0 rounded-4">
@@ -87,7 +79,7 @@
                             <div class="display-6 fw-bold text-success">{{ number_format($avgStay, 1) }}</div>
                             <div class="text-muted small mt-2 text-uppercase">Nights / Guest</div>
                         </div>
-                        
+
                     </div>
                 </div>
 
@@ -129,9 +121,7 @@
                             </div>
                         </div>
                     </div>
-
                 </div>
-
             </div>
         </div>
     </div>

@@ -5,7 +5,7 @@
     <style>
         /* 共通：ボタンの高さを揃える */
         .action-buttons .action-btn {
-            min-height: 44px;
+            min-height: 25px;
             display: inline-flex;
             align-items: center;
             padding: 0.45rem 1rem;
@@ -173,6 +173,52 @@
 
 
                         <h4 class="mt-3"><i class="fa-solid fa-circle-info me-2"></i>Hotel Details</h4>
+                        {{-- 連絡先情報 --}}
+                        <div class="mb-3">
+                            <h5 class="mb-2"><i class="fa-solid fa-phone me-2"></i>Contact</h5>
+                            <ul class="list-unstyled mb-0">
+                                <li>
+                                    <strong>Phone:</strong>
+                                    @if (!empty($tmpHotel->phone))
+                                        <a href="tel:{{ e($tmpHotel->phone) }}">{{ e($tmpHotel->phone) }}</a>
+                                    @else
+                                        <span class="text-muted">—</span>
+                                    @endif
+                                </li>
+                                <li>
+                                    <strong>Website:</strong>
+                                    @if (!empty($tmpHotel->website))
+                                        @php
+                                            $site = $tmpHotel->website;
+                                            if (!\Illuminate\Support\Str::startsWith($site, ['http://', 'https://'])) {
+                                                $site = 'https://' . $site;
+                                            }
+                                        @endphp
+                                        <a href="{{ e($site) }}" target="_blank"
+                                            rel="noopener noreferrer">{{ e($tmpHotel->website) }}</a>
+                                    @else
+                                        <span class="text-muted">—</span>
+                                    @endif
+                                </li>
+                                <li>
+                                    <strong>Representative:</strong>
+                                    @if (!empty($tmpHotel->representative_name))
+                                        {{ e($tmpHotel->representative_name) }}
+                                    @else
+                                        <span class="text-muted">—</span>
+                                    @endif
+                                </li>
+                                <li>
+                                    <strong>Representative Email:</strong>
+                                    @if (!empty($tmpHotel->representative_email))
+                                        <a
+                                            href="mailto:{{ e($tmpHotel->representative_email) }}">{{ e($tmpHotel->representative_email) }}</a>
+                                    @else
+                                        <span class="text-muted">—</span>
+                                    @endif
+                                </li>
+                            </ul>
+                        </div>
                         <p>{{ $tmpHotel->description ?? 'No description provided.' }}</p>
                     </div>
                 @else

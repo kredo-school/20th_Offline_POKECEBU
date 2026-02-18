@@ -7,17 +7,17 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\PostImage;
+use App\Models\Comment;
 
 
-class Post extends Model
-{
+class Post extends Model{
     use SoftDeletes;
 
-protected $fillable = [ 
+    protected $fillable = [ 
     'user_id',
     'title',
     'body'
-];
+    ];
     
     
     // ポスト取得する
@@ -47,5 +47,10 @@ protected $fillable = [
 
     public function isLiked() {
        return $this->likes()->where('user_id',Auth::user()->id)->exists();
+    }
+
+    // コメント
+    public function comments() {
+       return $this->hasMany(Comment::class);
     }
 }

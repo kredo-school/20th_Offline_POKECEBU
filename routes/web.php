@@ -19,6 +19,7 @@ use App\Http\Controllers\HotelRoomController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\MockReservationController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\RestaurantTableController;
 use App\Http\Controllers\TmpHotelController;
 
@@ -179,6 +180,9 @@ Route::group(['middleware' => 'auth'], function(){
 
         Route::post('/like/{post_id}/store', [LikeController::class, 'store'])->name('like.store');
         Route::delete('/like/{post_id}/destroy', [LikeController::class, 'destroy'])->name('like.destroy');
+
+        route::post('/posts/{post_id}/comments', [CommentController::class, 'store'])->name('comment.store');
+        route::delete('/comments/{comment_id}/destroy', [CommentController::class, 'destroy'])->name('comment.destroy');
 
 
         # User MyPage

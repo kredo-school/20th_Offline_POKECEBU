@@ -79,7 +79,7 @@
                 </div>
 
 
-                {{-- <form action="{{ route('comment.store', $post->id) }}" method="post" class="comment-form">
+                <form action="{{ route('user.comment.store', $post->id) }}" method="post" class="comment-form">
                     @csrf
                     <div class="comment-input-wrapper">
                         <textarea name="comment_body{{ $post->id }}" rows="1" placeholder="Add a comment..." required>{{ old('comment_body' . $post->id) }}</textarea>
@@ -90,9 +90,9 @@
                     @error('comment_body' . $post->id)
                         <div class="text-danger xsmall mt-1">{{ $message }}</div>
                     @enderror
-                </form> --}}
+                </form>
             </div>
-                 {{-- <div class="mb-2">
+                 <div class="mb-2">
                     @if ($post->comments->isNotEmpty())
                         <ul class="list-group mt-2">
                             @foreach ($post->comments as $comment)
@@ -103,7 +103,7 @@
                             @endforeach
                         </ul>
                     @endif
-                </div> --}}
+                </div>
 
             </div>
         </div>

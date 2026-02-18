@@ -158,12 +158,24 @@
                                                 <div class="badge bg-secondary mb-2">No reviews</div>
                                             @endif
 
+                                            {{-- 部屋が無い場合は明示的メッセージを出す --}}
+                                            @if ($rooms->count() === 0)
+                                                <div class="h6 mb-0 text-muted">No rooms</div>
+                                                <div class="small text-muted">部屋情報がまだ登録されていません。</div>
+                                            @else
+                                                {{-- 部屋がある場合は最安値を表示 --}}
+                                                <div class="h5 mb-0">₱{{ $minPrice }}</div>
+                                                <div class="small text-muted">per night</div>
+                                            @endif
+
+
+{{-- 
                                             @if ($minPrice)
                                                 <div class="h5 mb-0">₱{{ $minPrice }}</div>
                                                 <div class="small text-muted">per night</div>
                                             @else
                                                 <div class="h6 mb-0 text-muted">No rooms</div>
-                                            @endif
+                                            @endif --}}
                                         </div>
                                     </div>
 
@@ -172,11 +184,9 @@
 
                                     <div class="d-flex gap-2">
                                         {{-- <a href="{{ route('hotels.show', ['hotel' => $hotel->id]) }}" --}}
-                                        <a href=#
-                                            class="btn btn-outline-secondary btn-sm">Details</a>
+                                        <a href=# class="btn btn-outline-secondary btn-sm">Details</a>
                                         {{-- <a href="{{ route('booking.create', ['hotel' => $hotel->id]) }}" --}}
-                                        <a href=#
-                                            class="btn btn-primary btn-sm"><i
+                                        <a href=# class="btn btn-primary btn-sm"><i
                                                 class="fa-solid fa-calendar-check me-1"></i>Book Now</a>
 
                                         {{-- Favorite toggle (replace route with your actual endpoint) --}}

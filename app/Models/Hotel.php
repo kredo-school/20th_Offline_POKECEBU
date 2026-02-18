@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\HotelReservation; 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Models\HotelImage;
-
+use App\Models\Review;
 
 class Hotel extends Model
 {
@@ -90,6 +90,22 @@ class Hotel extends Model
     {
         return $this->hasMany(HotelReservation::class, 'hotel_id', 'id');
     }
+
+    /**
+     * ホテルに対するレビュー（polymorphic）
+     * reviews テーブルが target_type / target_id を使っている想定
+     */
+    public function reviews()
+    {
+        return $this->morphMany(Review::class, 'target');
+    }
+
+        // （もしホテルとカテゴリが多対多で繋がっているなら）
+    public function categories()
+    {
+        return $this->belongsToMany(Category::class, 'hotel_category', 'hotel_id', 'category_id');
+    }
+
 
     /**
      * 一時ホテル（申請中データ）との関係

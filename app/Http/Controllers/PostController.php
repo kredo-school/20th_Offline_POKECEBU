@@ -72,7 +72,7 @@ class PostController extends Controller
         
         return redirect()
             ->route('user.posts.index')
-            ->with('success','投稿しました✈️');
+            ->with('success','投稿しました');
     }
 
     // 詳細
@@ -142,7 +142,7 @@ class PostController extends Controller
 
         return redirect()
             ->route('user.posts.show',$post)
-            ->with('success','更新しました✏️');
+            ->with('success','更新しました');
     }
 
     //削除    
@@ -156,7 +156,7 @@ class PostController extends Controller
 
         return redirect()
             ->route('user.posts.index')
-            ->with('success', '削除しました🗑️');
+            ->with('success', '削除しました');
     }
 
     // タグ検索

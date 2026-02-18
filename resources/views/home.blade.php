@@ -34,8 +34,6 @@
 
         </div>
 
-
-
         {{-- --------------- 
             ホテル ランキング 
         --------------- --}}
@@ -91,42 +89,6 @@
                         </div>
                     </div>
                 @endforeach
-
-                {{-- あとで消す-ここから
-                    <div class="card rank-card">
-                        <div class="rank-badge rank-1">1</div>
-                        <img src="{{ asset('images/hotel-img1.jpg') }}" alt="" class="rank-image">
-                        <div class="card-body">
-                            <a href="#" class="text-decoration-none text-dark"><h5 class="card-title">SUGOI hotel</h5></a>
-                            <p class="card-text text-warning">★★★★★</p>
-                            <p class="card-price"><i class="fa-solid fa-location-dot"></i>セブ市</p>
-                            <p class="card-price">¥10,000〜</p>
-                        </div>
-                    </div>
-
-                    <div class="card rank-card">
-                        <div class="rank-badge rank-2">2</div>
-                        <img src="{{ asset('images/hotel-img2.jpg') }}" alt="" class="rank-image">
-                        <div class="card-body">
-                            <a href="#" class="text-decoration-none text-dark"><h5 class="card-title">TABUN condominium</h5></a>
-                            <p class="card-text text-warning">★★★★</p>
-                            <p class="card-price"><i class="fa-solid fa-location-dot"></i>セブ市</p>
-                            <p class="card-price">¥10,000</p>
-                        </div>
-                    </div>
-
-                    <div class="card rank-card">
-                        <div class="rank-badge rank-3">3</div>
-                        <img src="{{ asset('images/hotel-img3.jpg') }}" alt="" class="rank-image">
-                        <div class="card-body">
-                            <a href="#" class="text-decoration-none text-dark"><h5 class="card-title">YABAI motel</h5></a>
-                            <p class="card-text text-warning">★★</p>
-                            <p class="card-price"><i class="fa-solid fa-location-dot"></i>セブ市</p>
-                            <p class="card-price">¥10,000</p>
-                        </div>
-                    </div>
-                    あとで消す-ここまで --}}
-
             </div>
         </div>
 
@@ -174,44 +136,13 @@
                         </div>
                     </div>
                 @endforeach
-
-                {{-- あとで消す-ここから
-                    <div class="card rank-card">
-                        <div class="rank-badge rank-1">1</div>
-                        <img src="{{ asset('images/food-img1.jpg') }}" alt="" class="rank-image">
-                        <div class="card-body">
-                            <a href="#" class="card-link text-decoration-none text-dark"><h5 class="card-title">SASUGA restaurant</h5></a>
-                            <p class="card-text text-warning">★★★★★</p>
-                            <p class="card-price"><i class="fa-solid fa-location-dot"></i>セブ市</p>
-                        </div>
-                    </div>
-
-                    <div class="card rank-card">
-                        <div class="rank-badge rank-2">2</div>
-                        <img src="{{ asset('images/food-img2.jpg') }}" alt="" class="rank-image">
-                        <div class="card-body">
-                            <a href="#" class="card-link text-decoration-none text-dark"><h5 class="card-title">KITTO cafe</h5></a>
-                            <p class="card-text text-warning">★★★★</p>
-                            <p class="card-price"><i class="fa-solid fa-location-dot"></i>セブ市</p>
-                        </div>
-                    </div>
-
-                    <div class="card rank-card">
-                        <div class="rank-badge rank-3">3</div>
-                        <img src="{{ asset('images/food-img3.jpg') }}" alt="" class="rank-image">
-                        <div class="card-body">
-                            <a href="#" class="card-link text-decoration-none text-dark"><h5 class="card-title">MAJIDE gohan</h5></a>
-                            <p class="card-text text-warning">★★</p>
-                            <p class="card-price"><i class="fa-solid fa-location-dot"></i>セブ市</p>
-                        </div>
-                    </div>
-                    あとで消す-ここまで --}}
-
             </div>
         </div>
 
 
-        {{-- 都市別ホテル --}}
+        {{-- -----------
+        都市別ホテル 
+        ----------------}}
         <div>
             @foreach ($hotelsByCity as $city => $hotels)
                 <div>
@@ -244,8 +175,6 @@
                                     <p class="card-city">
                                         <i class="fa-solid fa-location-dot"></i> {{ $hotel->city }}
                                     </p>
-
-
                                     <p class="card-price">
                                         @if ($hotel->rooms->isNotEmpty())
                                             ¥{{ $hotel->rooms->min('charge') }}〜
@@ -277,23 +206,22 @@
                             <a href="{{ route('user.posts.show', $post->id) }}" class="post-card">
                                 <img src="{{ $post->images->first()->image }}" alt="Post Image">
 
-                                {{-- ハート（仮） --}}
+                                {{-- ハート --}}
                                 <div class="post-like">
                                     
                                     @if ($post->isliked())
                                         <form action="{{ route('user.like.destroy', $post->id) }}" method="post">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit">
-                                                <i class="fa-regular fa-heart text-danger
-                                                "></i>
+                                            <button type="submit" class="heat-btn">
+                                               
+                                                <i class="fa-solid fa-heart text-danger"></i>
                                             </button>
-                                        </form>
-                                            
+                                        </form>    
                                     @else
                                         <form action="{{ route('user.like.store', $post->id )}}" method="post">
                                             @csrf
-                                            <button type="submit"><i class="fa-regular fa-heart"></i></button>
+                                            <button type="submit" class="heat-btn"><i class="fa-regular fa-heart"></i></button>
 
                                     @endif
                                 </div>
@@ -301,26 +229,14 @@
                                 {{-- テキスト --}}
                                 <div class="post-overlay">
                                     <h5 class="post-title">{{ $post->title }}</h5>
-
-                                    <p class="post-user mb-1"><i class="fa-regular fa-user"></i>{{ $post->user->name }}
+                                    <p class="post-user mb-1">
+                                        <i class="fa-regular fa-user"></i>{{ $post->user->name }}
+                                    </p>
+                                    <p class="post-date">
+                                        {{ $post->created_at->format('M d, Y') }}
                                     </p>
 
-                                    <p class="post-date">{{ $post->created_at->format('M d, Y') }}</p>
-
-                                    <div class="mb-2">
-
-                                    </div>
-                                    
-                                    {{-- @if ($post->comments->isNotEmpty())
-                                            <ul class="list-group mt-2">
-                                                @foreach ($post->comments as $comment)
-                                                    <li class="list-group-item border-0 p-0 mb-1">
-                                                        <span class="fw-bold">{{ $comment->user->name }}</span>:
-                                                        <span>{{ $comment->body }}</span>
-                                                    </li>
-                                                @endforeach
-                                            </ul>
-                                     @endif --}}
+                                   
                                 </div>
                             </a>
                         </div>
@@ -346,7 +262,9 @@
         </div>
 
 
-        {{-- 右固定サイド --}}
+        {{-- ----------
+        右固定サイド
+        ------------ --}}
         <div class="right-fixed-panel">
             {{-- 天気予報 --}}
             <div class="weather-card">
@@ -375,8 +293,6 @@
                 @endif
             </div>
         </div>
-
-
 
         {{-- フッター --}}
         <footer class="site-footer">
@@ -592,19 +508,22 @@
             }
 
             /* ハート */
-            .post-like {
+            .heat-btn {
                 position: absolute;
                 top: 12px;
                 right: 12px;
                 z-index: 2;
                 background: #ffffff;
                 color: #333;
-                width: 32px;
-                height: 32px;
+                width: 34px;
+                height: 34px;
                 border-radius: 50%;
+                border: 1px solid #ddd;
+                box-shadow: 0 2px 6px rgba(0,0,0,0.10);
                 display: grid;
                 place-items: center;
             }
+
 
             .post-card:hover img {
                 transform: scale(1.05);

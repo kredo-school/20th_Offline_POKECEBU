@@ -6,38 +6,36 @@ use App\Http\Controllers\Controller;
 use App\Models\HotelReservation;
 use App\Models\HotelRoomType;
 use App\Models\RestaurantReservation;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Http\Request;
 
 class AnalysisController extends Controller
 {
-public function hotelAnalysis($hotelId = null)
-{
-    $kpi             = HotelReservation::getKpiStats($hotelId);
-    $avgStay         = HotelReservation::getAverageStay($hotelId);
-    $monthlyBookings = HotelReservation::getMonthlyBookingsByYear($hotelId);
-    $dayOfWeekData   = HotelReservation::getDayOfWeekStats($hotelId);
+    public function hotelAnalysis($hotelId = null)
+    {
+        $kpi             = HotelReservation::getKpiStats($hotelId);
+        $avgStay         = HotelReservation::getAverageStay($hotelId);
+        $monthlyBookings = HotelReservation::getMonthlyBookingsByYear($hotelId);
+        $dayOfWeekData   = HotelReservation::getDayOfWeekStats($hotelId);
 
-    $typeStats   = HotelRoomType::getTypeRevenueStats($hotelId);
-    $typeLabels  = $typeStats->pluck('label_name');
-    $typeRevenue = $typeStats->pluck('total_sales');
+        $typeStats   = HotelRoomType::getTypeRevenueStats($hotelId);
+        $typeLabels  = $typeStats->pluck('label_name');
+        $typeRevenue = $typeStats->pluck('total_sales');
 
-    $typeBookingStats  = HotelRoomType::getTypeBookingStats($hotelId);    
-    $typeBookingLabels = $typeBookingStats->pluck('label_name');
-    $typeBookingCounts = $typeBookingStats->pluck('booking_count');
+        $typeBookingStats  = HotelRoomType::getTypeBookingStats($hotelId);    
+        $typeBookingLabels = $typeBookingStats->pluck('label_name');
+        $typeBookingCounts = $typeBookingStats->pluck('booking_count');
 
-    return view('adminpage.hotel.analysis-hotel', compact(
-        'kpi', 
-        'monthlyBookings', 
-        'avgStay', 
-        'dayOfWeekData', 
-        'typeLabels', 
-        'typeRevenue',
-        'typeBookingLabels',
-        'typeBookingCounts',
-        'hotelId' 
-    ));
-}
+        return view('adminpage.hotel.analysis-hotel', compact(
+            'kpi', 
+            'monthlyBookings', 
+            'avgStay', 
+            'dayOfWeekData',
+            'typeLabels', 
+            'typeRevenue',
+            'typeBookingLabels',
+            'typeBookingCounts',
+            'hotelId'
+        ));
+    }
 
     public function restaurantAnalysis()
     {
@@ -68,13 +66,13 @@ public function hotelAnalysis($hotelId = null)
         }
 
         // 4. Doughnut Chart: テーブルタイプ別売上
-$typeStats = RestaurantReservation::query()
-    ->join('restaurant_tables', 'restaurant_reservations.table_id', '=', 'restaurant_tables.id')
-    ->join('table_type', 'restaurant_tables.type_id', '=', 'table_type.id')
-    ->where('restaurant_reservations.status_id', '2')
-    ->groupBy('table_type.name')
-    ->selectRaw('table_type.name, SUM(restaurant_reservations.total_price) as total_sales')
-    ->get();
+        $typeStats = RestaurantReservation::query()
+            ->join('restaurant_tables', 'restaurant_reservations.table_id', '=', 'restaurant_tables.id')
+            ->join('table_type', 'restaurant_tables.type_id', '=', 'table_type.id')
+            ->where('restaurant_reservations.status_id', '2')
+            ->groupBy('table_type.name')
+            ->selectRaw('table_type.name, SUM(restaurant_reservations.total_price) as total_sales')
+            ->get();
 
         $typeLabels = $typeStats->pluck('name');
         $typeRevenue = $typeStats->pluck('total_sales');

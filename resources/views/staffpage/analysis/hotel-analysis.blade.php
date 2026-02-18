@@ -161,32 +161,60 @@
                 }
             });
 
-            // 2. 曜日別予約 (Line Chart)
-            const ctxLine = document.getElementById('dayOfWeekChart');
-            new Chart(ctxLine, {
-                type: 'line',
-                data: {
-                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-                    datasets: [{
-                        label: 'Reservations',
-                        data: @json($dayOfWeekData),
-                        borderColor: '#7da9d8',
-                        backgroundColor: 'rgba(125, 169, 216, 0.1)',
-                        fill: true,
-                        tension: 0.4,
-                        pointRadius: 5,
-                        pointBackgroundColor: '#7da9d8'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    }
+            // 2. 曜日別来店数 (今週 vs 過去平均)
+const ctxLine = document.getElementById('dayOfWeekChart');
+new Chart(ctxLine, {
+    type: 'line',
+    data: {
+        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+        datasets: [
+            {
+                label: 'This Week',
+                // Modelから渡される今週のデータ
+                data: @json($dayOfWeekData['thisWeek']), 
+                borderColor: '#ff9f40', // レストランらしいオレンジ
+                backgroundColor: 'rgba(255, 159, 64, 0.2)',
+                fill: true,
+                tension: 0.4,
+                pointRadius: 5,
+                pointBackgroundColor: '#ff9f40',
+                borderWidth: 3
+            },
+            {
+                label: 'Past Average',
+                // Modelから渡される過去平均のデータ
+                data: @json($dayOfWeekData['average']), 
+                borderColor: '#b2bec3', // グレーで控えめに表示
+                backgroundColor: 'transparent',
+                fill: false,
+                tension: 0.4,
+                borderDash: [5, 5], // 点線にする
+                pointRadius: 3,
+                pointBackgroundColor: '#b2bec3'
+            }
+        ]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                display: true, // 2つデータがあるので凡例を表示
+                position: 'top',
+                labels: {
+                    boxWidth: 20
                 }
-            });
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    precision: 0 // 小数点を出さない
+                }
+            }
+        }
+    }
+});
 
             // 3. ルームタイプ別売上 (Doughnut Chart)
             const ctxDoughnut = document.getElementById('typeChart');

@@ -86,29 +86,59 @@ public static function getMonthlyBookingsByYear($hotelId = null, $year = null)
             ->when($hotelId, function ($query, $hotelId) {
                 return $query->where('hotel_reservations.hotel_id', $hotelId);
             })
-            ->whereMonth('hotel_reservations.created_at', $i)
-            ->whereYear('hotel_reservations.created_at', $year)
             ->where('statuses.name', 'Booked')
-            ->count('hotel_reservations.id'); 
+            ->whereMonth('hotel_reservations.start_at', $i)
+            ->whereYear('hotel_reservations.start_at', $year)
+            ->count('hotel_reservations.id');
     }
     return $data;
 }
 
 public static function getDayOfWeekStats($hotelId = null)
 {
-    $data = [];
-    $days = [2, 3, 4, 5, 6, 7, 1]; 
+    $days = [2, 3, 4, 5, 6, 7, 1]; // 月〜日
+    $thisWeekData = [];
+    $allTimeAverage = [];
+
+    // 今週の範囲
+    $startOfWeek = now()->startOfWeek();
+    $endOfWeek   = now()->endOfWeek();
+
+    // 過去のデータの期間（週数）を取得して平均を出すため
+    $totalWeeks = self::query()
+        ->where('start_at', '<', $startOfWeek)
+        ->selectRaw('DATEDIFF(MAX(start_at), MIN(start_at)) / 7 as weeks')
+        ->value('weeks') ?: 1;
 
     foreach ($days as $day) {
-        $data[] = self::query()
+        // ① 今週のデータ
+        $thisWeekData[] = self::query()
             ->join('statuses', 'hotel_reservations.status_id', '=', 'statuses.id')
             ->when($hotelId, function ($query, $hotelId) {
                 return $query->where('hotel_reservations.hotel_id', $hotelId);
             })
-            ->whereRaw("DAYOFWEEK(hotel_reservations.created_at) = ?", [$day])
+            ->whereBetween('hotel_reservations.start_at', [$startOfWeek, $endOfWeek])
+            ->whereRaw("DAYOFWEEK(hotel_reservations.start_at) = ?", [$day])
             ->where('statuses.name', 'Booked')
             ->count('hotel_reservations.id');
+
+        // ② 過去すべての平均データ
+        $totalCount = self::query()
+            ->join('statuses', 'hotel_reservations.status_id', '=', 'statuses.id')
+            ->when($hotelId, function ($query, $hotelId) {
+                return $query->where('hotel_reservations.hotel_id', $hotelId);
+            })
+            ->where('hotel_reservations.start_at', '<', $startOfWeek)
+            ->whereRaw("DAYOFWEEK(hotel_reservations.start_at) = ?", [$day])
+            ->where('statuses.name', 'Booked')
+            ->count('hotel_reservations.id');
+        
+        $allTimeAverage[] = round($totalCount / $totalWeeks, 1);
     }
-    return $data;
+
+    return [
+        'thisWeek' => $thisWeekData,
+        'average'  => $allTimeAverage
+    ];
 }
 }

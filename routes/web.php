@@ -400,6 +400,7 @@ Route::post('/user/mypage/signup-for-company', [TmpHotelController::class, 'stor
         ->name('user.mypage.signup-for-company.store');
 // 　ホテル・レストランサーチ
 Route::get('/hotels/search', [App\Http\Controllers\HotelController::class, 'index'])->name('hotels.search');
+// Route::get('/hotels/search', [App\Http\Controllers\HotelController::class, 'search'])->name('hotels.search');
 
 
 

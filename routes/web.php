@@ -191,9 +191,11 @@ Route::group(['middleware' => 'auth'], function(){
         Route::post('/mypage/edit/updateProfile', [MyPageController::class, 'updateProfile'])->name('update.profile');
         Route::get('/mypage/booking', [BookingController::class, 'index'])->name('booking');
         Route::get('/mypage/favorite', [FavoriteController::class, 'index'])->name('favorite');
-    
-        # User Booking
+        
+        # Hotel search
         Route::get('/hotels', [HotelController::class, 'index'])->name('hotels.index');
+        
+        # User Booking
         Route::get('/hotels/{id}', [HotelController::class, 'showDetailHotel'])->name('hotels.detail');
         Route::get('/restaurants', [RestaurantController::class, 'index'])->name('restaurants.index');
         Route::get('/restaurants/{id}', [RestaurantController::class, 'showDetailRestaurant'])->name('restaurants.detail');
@@ -398,9 +400,7 @@ Route::get('signup-for-company', [TmpHotelController::class, 'create'])
 // 　フォーム送信
 Route::post('/user/mypage/signup-for-company', [TmpHotelController::class, 'store'])
         ->name('user.mypage.signup-for-company.store');
-// 　ホテル・レストランサーチ
-Route::get('/hotels/search', [App\Http\Controllers\HotelController::class, 'index'])->name('hotels.search');
-// Route::get('/hotels/search', [App\Http\Controllers\HotelController::class, 'search'])->name('hotels.search');
+
 
 
 

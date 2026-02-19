@@ -9,8 +9,7 @@
         {{-- 左：画像 --}}
         <div class="post-media">
             @if ($post->images->isNotEmpty())
-                <img src="{{ $post->images->first()->image }}" alt="post id{{ $post->id }}" class="main-image"
-                    id="mainImage">
+                <img src="{{ $post->images->first()->image }}" alt="post id{{ $post->id }}" class="main-image" id="mainImage">
             @else
                 <img src="{{ asset('images/Icon.png') }}" class="main-image" id="mainImage">
             @endif
@@ -33,18 +32,17 @@
                                 <i class="fa-solid fa-ellipsis"></i>
                             </button>
                             <div class="dropdown-menu dropdown-menu-end">
-                                <a href="{{ route('user.posts.edit', $post) }}" class="dropdown-item">Edit</a>
+                                <a href="{{ route('user.posts.edit', $post) }}" class="dropdown-item">
+                                    Edit
+                                </a>
 
-                                <button type="button" class="dropdown-item text-danger" data-bs-toggle="modal"
-                                    data-bs-target="#delete-post-{{ $post->id }}">
+                                <button type="button" class="dropdown-item text-danger" data-bs-toggle="modal" data-bs-target="#delete-post-{{ $post->id }}">
                                     Delete
                                 </button>
-
-
                             </div>
                         </div>
                         @include('userpage.posts.modals.delete')
-                    @endif
+                     @endif
                 @endauth
 
                 <h2 class="mt-3">{{ $post->title }}</h2>
@@ -61,12 +59,58 @@
                     @endforeach
                 </div>
 
+               {{-- ハート --}}
+                <div class="post-like">
+                    
+                    @if ($post->isliked())
+                        <form action="{{ route('user.like.destroy', $post->id) }}" method="post">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="heat-btn">
+                               
+                                <i class="fa-solid fa-heart text-danger"></i>
+                            </button>
+                        </form>    
+                    @else
+                        <form action="{{ route('user.like.store', $post->id )}}" method="post">
+                            @csrf
+                            <button type="submit" class="heat-btn"><i class="fa-regular fa-heart"></i></butt
+                    @endif
+                </div>
+
+
+                <form action="{{ route('user.comment.store', $post->id) }}" method="post" class="comment-form">
+                    @csrf
+                    <div class="comment-input-wrapper">
+                        <textarea name="comment_body{{ $post->id }}" rows="1" placeholder="Add a comment..." required>{{ old('comment_body' . $post->id) }}</textarea>
+                        <button type="submit" class="send-comment-btn">
+                            <i class="fa-regular fa-paper-plane"></i>
+                        </button>
+                    </div>
+                    @error('comment_body' . $post->id)
+                        <div class="text-danger xsmall mt-1">{{ $message }}</div>
+                    @enderror
+                </form>
+            </div>
+                 <div class="mb-2">
+                    @if ($post->comments->isNotEmpty())
+                        <ul class="list-group mt-2">
+                            @foreach ($post->comments as $comment)
+                                <li class="list-group-item border-0 p-0 mb-1">
+                                    <span class="fw-bold">{{ $comment->user->name }}</span>:
+                                    <span>{{ $comment->body }}</span>
+                                </li>
+                            @endforeach
+                        </ul>
+                    @endif
+                </div>
+
             </div>
         </div>
     </div>
-
 @endsection
 
+{{-- JS --}}
 <script>
     // 表示されている画像を変える
     function changeImage(element) {
@@ -160,4 +204,18 @@
         color: #0077cc;
         font-weight: 600;
     }
+
+    /* ハート */
+    .heat-btn {
+        background: #ffffff;
+        color: #333;
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        border: 1px solid #ddd;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.10);
+        display: grid;
+        place-items: center;
+    }
+
 </style>

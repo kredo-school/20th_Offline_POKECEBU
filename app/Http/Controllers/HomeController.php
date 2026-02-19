@@ -34,83 +34,83 @@ class HomeController extends Controller
      */
 
    
-    public function index()
-    {
-        $hotelRankings      = $this->getHotelRankings();
-        $restaurantRankings = $this->getRestaurantRankings();
-        $hotelsByCity       = $this->getHotelsByCity();
-        $home_posts         = $this->getHomePosts();
-        $popularTags        = $this->getPopularTags();
-        $weather            = $this->getWeather();
-        $rate               = $this->getRate();
+   public function index(){
 
-        return view('home',compact(
-            'hotelRankings',
-            'restaurantRankings',
-            'hotelsByCity',
-            'home_posts',
-            'popularTags',
-            'weather',
-            'rate'
-            ));
-        
-    }
+     $hotelRankings      = $this->getHotelRankings();
+     $restaurantRankings = $this->getRestaurantRankings();
+     $hotelsByCity       = $this->getHotelsByCity();
+     $home_posts         = $this->getHomePosts();
+     $popularTags        = $this->getPopularTags();
+     $weather            = $this->getWeather();
+     $rate               = $this->getRate();
+
+     return view('home',compact(
+         'hotelRankings',
+         'restaurantRankings',
+         'hotelsByCity',
+         'home_posts',
+         'popularTags',
+         'weather',
+         'rate'
+      ));
+   }
 
     // ホテルランキング
-    public function getHotelRankings() {
-       return Hotel::orderBy('star_rating', 'desc')
-            ->take(3)
-            ->get();
-    }
+   public function getHotelRankings() {
+      return Hotel::orderBy('star_rating', 'desc')
+         ->take(3)
+         ->get();
+   }
     
-    // レストランランキング
-    public function getRestaurantRankings() {
-       return Restaurant::orderBy('star_rating','desc')
-            ->take(3)
-            ->get();
-    }
+   // レストランランキング
+   public function getRestaurantRankings() {
+      return Restaurant::orderBy('star_rating','desc')
+         ->take(3)
+         ->get();
+   }
 
     // 都市別ホテル
-    public function getHotelsByCity() {
-       return Hotel::orderBy('star_rating','desc')
-            ->get()
-            ->groupBy('city')
-            ->map(function ($hotels) {return $hotels->take(3);
-            });
-    }
+   public function getHotelsByCity() {
+      return Hotel::orderBy('star_rating','desc')
+         ->get()
+         ->groupBy('city')
+         ->map(function ($hotels) {
+            return $hotels->take(3);
+         });
+   }
 
-    // ポスト
-    public function getHomePosts() {
-       return $this->post->latest()->take(3)->get();
-    }
+   // ポスト
+   public function getHomePosts() {
+      return $this->post->latest()->take(3)->get();
+   }
 
-    // 人気タグ
-    public function getPopularTags() {
-       return PostTag::withCount('posts')
-            ->orderByDesc('posts_count')
-            ->limit(10)
-            ->get();
-    }
+   // 人気タグ
+   public function getPopularTags() {
+      return PostTag::withCount('posts')
+         ->orderByDesc('posts_count')
+         ->limit(10)
+         ->get();
+   }
 
     // 天気予報
-    public function getWeather() {
-       return Http::get('https://api.openweathermap.org/data/2.5/weather',[
-        'q'     => 'Cebu,PH',
-        'appid' => config('services.openweather.key'),
-        'units' => 'metric',
-        'lang' => 'ja',
-       ])->json();
-    }
+   public function getWeather() {
+      return Http::get('https://api.openweathermap.org/data/2.5/weather',[
+         'q'     => 'Cebu,PH',
+         'appid' => config('services.openweather.key'),
+         'units' => 'metric',
+         'lang' => 'en',
+      ])->json();
+   }
 
-    // 為替レート
-    public function getRate() {
-       $response = Http::get("https://v6.exchangerate-api.com/v6/".env('EXCHANGE_API_KEY')."/latest/JPY");
+   // 為替レート
+   public function getRate() {
+      $response = Http::get("https://v6.exchangerate-api.com/v6/".env('EXCHANGE_API_KEY')."/latest/JPY");
 
-       if ($response->successful()) {
+      if ($response->successful()) {
         $rate = $response->json();
         return $rate["conversion_rates"]["PHP"] ?? null;
-       }
-        return null;
-    }
+      }
+      return null;
+   }
 
 }

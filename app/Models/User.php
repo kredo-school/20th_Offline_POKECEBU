@@ -88,4 +88,37 @@ class User extends Authenticatable
     {
         return $this->hasMany(HotelReservation::class);
     }
+
+    public static function getNewUserStats($hotelId = null)
+{
+    $query = self::where('role_id', 1);
+
+    if ($hotelId) {
+        $query->where('hotel_id', $hotelId);
+    }
+
+    $currentMonthCount = (clone $query)
+        ->whereMonth('created_at', now()->month)
+        ->whereYear('created_at', now()->year)
+        ->count();
+
+    $labels = [];
+    $counts = [];
+    for ($i = 5; $i >= 0; $i--) {
+        $month = now()->subMonths($i);
+        $labels[] = $month->format('M');
+        $counts[] = (clone $query)
+            ->whereMonth('created_at', $month->month)
+            ->whereYear('created_at', $month->year)
+            ->count();
+    }
+
+    return [
+        'count' => $currentMonthCount,
+        'chart' => [
+            'labels' => $labels,
+            'data' => $counts
+        ]
+    ];
+}
 }

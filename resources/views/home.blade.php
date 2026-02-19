@@ -9,7 +9,7 @@
         <div class="d-flex justify-content-center p-3">
 
             {{-- ホテルのリンク --}}
-            <a href="{{ route('hotels.search') }}" class="menu-btn menu-hotel text-decoration-none">
+            <a href="{{ route('user.hotels.index') }}" class="menu-btn menu-hotel text-decoration-none">
                 <i class="fa-solid fa-bed"></i>
                 <div>Hotel</div>
             </a>

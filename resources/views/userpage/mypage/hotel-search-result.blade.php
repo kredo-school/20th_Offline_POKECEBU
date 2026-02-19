@@ -169,7 +169,7 @@
                                             @endif
 
 
-{{-- 
+                                            {{-- 
                                             @if ($minPrice)
                                                 <div class="h5 mb-0">₱{{ $minPrice }}</div>
                                                 <div class="small text-muted">per night</div>
@@ -183,11 +183,12 @@
                                         {{ \Illuminate\Support\Str::limit($hotel->description, 120) }}</p>
 
                                     <div class="d-flex gap-2">
-                                        {{-- <a href="{{ route('hotels.show', ['hotel' => $hotel->id]) }}" --}}
-                                        <a href=# class="btn btn-outline-secondary btn-sm">Details</a>
+                                        <a href="{{ route('user.hotels.detail', ['id' => $hotel->id]) }}"
+                                            class="btn btn-outline-secondary btn-sm">Details</a>
+                                        {{-- <a href=# class="btn btn-outline-secondary btn-sm">Details</a> --}}
                                         {{-- <a href="{{ route('booking.create', ['hotel' => $hotel->id]) }}" --}}
-                                        <a href=# class="btn btn-primary btn-sm"><i
-                                                class="fa-solid fa-calendar-check me-1"></i>Book Now</a>
+                                        {{-- <a href=# class="btn btn-primary btn-sm"><i
+                                                class="fa-solid fa-calendar-check me-1"></i>Book Now</a> --}}
 
                                         {{-- Favorite toggle (replace route with your actual endpoint) --}}
                                         {{-- <form action="{{ route('favorites.toggle') }}" method="post" class="d-inline"> --}}

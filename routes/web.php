@@ -38,7 +38,6 @@ use Illuminate\Support\Facades\Auth;
 Route::get('/', function () {
     return view('auth.login');
 });
-
 Auth::routes();
 
 Route::group(['middleware' => 'auth'], function(){
@@ -112,13 +111,14 @@ Route::group(['middleware' => 'auth'], function(){
         Route::post('/faq/storeCategory', [FaqController::class, 'storeCategory'])->name('faq.storeCategory');
 
         // 2/10ホテル承認,却下処理
-        Route::get('/hotel/approval', [App\Http\Controllers\AdminController::class, 'hotelApproval'])
-            ->name('hotel.approval');
-        Route::get('/hotel/approval/{id}', [App\Http\Controllers\AdminController::class, 'showPending'])
-            ->name('hotel.approval.show');
-        Route::post('/hotel/approve/{id}', [App\Http\Controllers\AdminController::class, 'approveHotel'])
-            ->name('hotel.approve');
-        Route::post('/hotels/{id}/reject', [App\Http\Controllers\AdminController::class, 'rejectHotel'])->name('hotel.reject');
+        Route::get('/hotel/approval', [AdminController::class, 'hotelApproval'])->name('hotel.approval');
+        Route::get('/hotel/approval/{id}', [AdminController::class, 'showPending'])->name('hotel.approval.show');
+        Route::post('/hotel/approve/{id}', [AdminController::class, 'approveHotel'])->name('hotel.approve');
+        Route::post('/hotels/{id}/reject', [AdminController::class, 'rejectHotel'])->name('hotel.reject');
+
+        #For Analysis
+        Route::get('/analysis/hotel/{id?}', [AnalysisController::class, 'hotelAnalysis'])->name('analysis.hotel');
+        Route::get('/analysis/restaurant/{id?}',[AnalysisController::class, 'restaurantAnalysis'])->name('analysis.restaurant');
     });
         
     # Staff
@@ -201,6 +201,10 @@ Route::group(['middleware' => 'auth'], function(){
         Route::get('/hotels/{id}', [HotelController::class, 'showDetailHotel'])->name('hotels.detail');
         Route::get('/restaurants', [RestaurantController::class, 'index'])->name('restaurants.index');
         Route::get('/restaurants/{id}', [RestaurantController::class, 'showDetailRestaurant'])->name('restaurants.detail');
+        
+        # お気に入り
+        Route::post('/favorite/{type}/{id}', [FavoriteController::class, 'store'])->name('favorite.store');
+        Route::delete('/favorite/{type}/{id}', [FavoriteController::class, 'destroy'])->name('favorite.destroy');
     });
 });
 
@@ -449,5 +453,3 @@ Route::get('staffpage/table-type', function () {
 Route::get('/jeepney', function () {
     return view('jeepney');
 })->name('jeepney');
-Route::get('/admin/analysis/hotel', [AnalysisController::class, 'hotelAnalysis'])->name('admin.analysis.hotel');
-Route::get('/admin/analysis/restaurant',[AnalysisController::class, 'restaurantAnalysis'])->name('admin.analysis.restaurant');

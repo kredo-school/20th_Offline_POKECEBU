@@ -9,6 +9,7 @@ use Illuminate\Notifications\Notifiable;
 use App\Models\UserDetail;
 use App\Models\HotelReservation;
 use App\Models\Post; // Postクラスも必要なので追加しました
+use App\Models\Favorite;
 
 
 class User extends Authenticatable
@@ -121,4 +122,9 @@ class User extends Authenticatable
         ]
     ];
 }
+
+    // お気に入り
+    public function favorites() {
+       return $this->hasMany(Favorite::class);
+    }
 }

@@ -155,6 +155,8 @@ Route::group(['middleware' => 'auth'], function(){
         Route::get('/reservations', [RestaurantStaffController::class, 'reservations'])->name('reservations');
         Route::get('/reservations/{id}', [RestaurantReservationController::class, 'show'])->name('reservations.show');
 
+        route::get('/analysis/{id}',[StaffAnalysisController::class,'restaurantAnalysis'])->name('analysis');
+
         #Restaurant - Table
         Route::get('/{rest_id}/overview', [RestaurantTableController::class, 'index'])->name('overview');
         Route::post('/{rest_id}/storeTableType', [RestaurantTableController::class, 'storeTableType'])->name('storeTableType');

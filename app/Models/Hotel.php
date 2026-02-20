@@ -3,10 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 use App\Models\HotelReservation; 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Models\HotelImage;
 use App\Models\Review;
+use App\Models\Favorite;
 
 class Hotel extends Model
 {
@@ -116,5 +118,13 @@ class Hotel extends Model
         return $this->hasMany(TmpHotel::class, 'hotel_id', 'id');
     }
 
+
+    // お気に入り
+     public function isFavorited() {
+       return Favorite::where('user_id', Auth::id())
+           ->where('target_type', 'hotel')
+           ->where('target_id', $this->id)
+           ->exists();
+    }
    
 }

@@ -20,14 +20,49 @@
                                     {{ $hotel->address }}
                                 </p>
                             </div>
+
+                            {{-- favorite --}}
+                            <div class="ms-3">
+                                @if ($hotel->isFavorited())
+                                    <form method="POST" action="{{ route('user.favorite.destroy', ['hotel', $hotel->id]) }}">
+                                    @csrf
+                                    @method('DELETE')
+                                        <button class="btn btn-favorite">
+                                            <i class="fa-solid fa-heart text-danger"></i>
+                                        </button>
+                                  </form>
+                                @else
+                                   <form method="POST" action="{{ route('user.favorite.store', ['hotel', $hotel->id]) }}">
+                                    @csrf
+                                        <button class="btn btn-favorite">
+                                            <i class="fa-regular fa-heart"></i>
+                                        </button>
+                                  </form>
+                                @endif
+                            </div>
+
                             <div class="star-rating text-nowrap">
-                                @for ($i = 1; $i <= 5; $i++)
+                                {{-- @for ($i = 1; $i <= 5; $i++)
                                     @if ($i <= $hotel->star_rating)
                                         <i class="fa-solid fa-star text-warning"></i>
                                     @else
                                         <i class="fa-regular fa-star text-secondary opacity-25"></i>
                                     @endif
-                                @endfor
+                                @endfor --}}
+                                @php
+                                    $rating = $hotel->star_rating;
+                                    $fullStars = floor($rating);
+                                    $halfStar = $rating - $fullStars >= 0.5;
+                                @endphp
+                                <p class="card-text text-warning">
+                                    @for ($i = 1; $i <= $fullStars; $i++)
+                                        <i class="fa-solid fa-star"></i>
+                                    @endfor
+                                    @if ($halfStar)
+                                        <i class="fa-solid fa-star-half-stroke"></i>
+                                    @endif
+                                    <span class="text-muted ms-1">{{ number_format($rating, 1) }}</span>
+                                </p>
                             </div>
                         </div>
 

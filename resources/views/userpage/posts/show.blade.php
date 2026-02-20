@@ -9,7 +9,8 @@
         {{-- 左：画像 --}}
         <div class="post-media">
             @if ($post->images->isNotEmpty())
-                <img src="{{ $post->images->first()->image }}" alt="post id{{ $post->id }}" class="main-image" id="mainImage">
+                <img src="{{ $post->images->first()->image }}" alt="post id{{ $post->id }}" class="main-image"
+                    id="mainImage">
             @else
                 <img src="{{ asset('images/Icon.png') }}" class="main-image" id="mainImage">
             @endif
@@ -22,63 +23,124 @@
 
         {{-- 右：情報エリア --}}
         <div class="post-info">
-            <div class="post-info-inner">
 
-                {{-- 編集・削除 --}}
-                @auth
-                    @if (Auth::user()->id === $post->user->id)
-                        <div class="dropdown text-end">
-                            <button class="btn btn-sm shadow-none" data-bs-toggle="dropdown">
-                                <i class="fa-solid fa-ellipsis"></i>
-                            </button>
-                            <div class="dropdown-menu dropdown-menu-end">
-                                <a href="{{ route('user.posts.edit', $post) }}" class="dropdown-item">
-                                    Edit
-                                </a>
+            {{-- スクロールエリア --}}
+            <div class="post-info-scroll" id="postInfoScroll">
+                <div class="post-info-inner">
 
-                                <button type="button" class="dropdown-item text-danger" data-bs-toggle="modal" data-bs-target="#delete-post-{{ $post->id }}">
-                                    Delete
+                    {{-- 編集・削除ボタン --}}
+                    @auth
+                        @if (Auth::user()->id === $post->user->id)
+                            <div class="dropdown text-end">
+                                <button class="btn btn-sm shadow-none" data-bs-toggle="dropdown">
+                                    <i class="fa-solid fa-ellipsis"></i>
                                 </button>
+                                <div class="dropdown-menu dropdown-menu-end">
+                                    <a href="{{ route('user.posts.edit', $post) }}" class="dropdown-item">
+                                        Edit
+                                    </a>
+
+                                    <button type="button" class="dropdown-item text-danger" data-bs-toggle="modal"
+                                        data-bs-target="#delete-post-{{ $post->id }}">
+                                        Delete
+                                    </button>
+                                </div>
                             </div>
-                        </div>
-                        @include('userpage.posts.modals.delete')
-                     @endif
-                @endauth
+                            @include('userpage.posts.modals.delete')
+                        @endif
+                    @endauth
 
-                <h2 class="mt-3">{{ $post->title }}</h2>
+                    {{-- 内容 --}}
+                    <h2 class="mt-3">{{ $post->title }}</h2>
 
-                <p class="text-muted small">{{ $post->user->name }} ・ {{ $post->created_at->format('M d, Y') }}</p>
-                <hr>
-                <p class="post-body"> {!! nl2br(e(preg_replace('/#[^\s#]+/u', '', $post->body))) !!}
-                </p>
-                <div class="post-tags mb-2">
-                    @foreach ($post->tags as $tag)
-                        <a href="{{ route('user.tags.show',$tag->name) }}" class="tag-badge">
-                            #{{ $tag->name }}
-                        </a>
-                    @endforeach
-                </div>
-
-               {{-- ハート --}}
-                <div class="post-like">
+                    <p class="text-muted small">{{ $post->user->name }} ・ {{ $post->created_at->format('M d, Y') }}</p>
+                    <hr>
+                    <p class="post-body"> {!! nl2br(e(preg_replace('/#[^\s#]+/u', '', $post->body))) !!}
+                    </p>
                     
+
+
+
+                    {{-- コメント表示 --}}
+                    <div class="mb-2">
+                        @if ($post->comments->isNotEmpty())
+                        <hr>
+                            <ul class="list-group mt-2">
+                                @foreach ($post->comments as $comment)
+                                    <li class="comment-item border-0 p-0 mb-1">
+                                        <div class="comment-avatar">
+                                            @if ($comment->user->avatar)
+                                                <img src="{{ asset('storage/avatars/' . $comment->user->avatar) }}"
+                                                    alt="Avatar" class="avatar-icon">
+                                            @else
+                                                <span class="avatar-icon">
+                                                    <i class="fa-solid fa-user"></i>
+                                                </span>
+                                            @endif
+
+                                            <div class="comment-content">
+                                                <div class="comment-header">
+                                                     <span class="fw-bold">{{ $comment->user->name }}</span>:
+                                                      {{-- 削除ボタン --}}
+                                            @auth
+                                                @if (Auth::user()->id === $post->user->id)
+                                                    <span class="dropdown text-end">
+                                                        <button class="btn btn-sm shadow-none" data-bs-toggle="dropdown">
+                                                            <i class="fa-solid fa-ellipsis"></i>
+                                                        </button>
+                                                        <div class="dropdown-menu dropdown-menu-end">
+                                                            <form action="{{ route('user.comment.destroy', $comment->id) }}"
+                                                                method="post" class="d-inline">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <button type="submit"
+                                                                    class="btn btn-sm btn-link text-danger p-0 ms-2">
+                                                                    Delete
+                                                                </button>
+                                                            </form>
+                                                        </div>
+                                                    </span>
+                                                @endif
+                                            @endauth
+                                                </div>
+                                                <span>{{ $comment->body }}</span>
+                                            </div>
+                                        </div>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        @endif
+                        <div id="commentButtom"></div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- 固定エリア --}}
+            <div class="post-info-fixed">
+
+
+                {{-- ハート --}}
+                <div class="post-like">
                     @if ($post->isliked())
                         <form action="{{ route('user.like.destroy', $post->id) }}" method="post">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="heat-btn">
-                               
                                 <i class="fa-solid fa-heart text-danger"></i>
                             </button>
-                        </form>    
+                        </form>
                     @else
-                        <form action="{{ route('user.like.store', $post->id )}}" method="post">
+                        <form action="{{ route('user.like.store', $post->id) }}" method="post">
                             @csrf
-                            <button type="submit" class="heat-btn"><i class="fa-regular fa-heart"></i></butt
+                            <button type="submit" class="heat-btn">
+                                <i class="fa-regular fa-heart"></i>
+                            </button>
+                        </form>
                     @endif
                 </div>
 
 
+                {{-- コメント入力 --}}
                 <form action="{{ route('user.comment.store', $post->id) }}" method="post" class="comment-form">
                     @csrf
                     <div class="comment-input-wrapper">
@@ -91,28 +153,24 @@
                         <div class="text-danger xsmall mt-1">{{ $message }}</div>
                     @enderror
                 </form>
-            </div>
-                 <div class="mb-2">
-                    @if ($post->comments->isNotEmpty())
-                        <ul class="list-group mt-2">
-                            @foreach ($post->comments as $comment)
-                                <li class="list-group-item border-0 p-0 mb-1">
-                                    <span class="fw-bold">{{ $comment->user->name }}</span>:
-                                    <span>{{ $comment->body }}</span>
-                                </li>
-                            @endforeach
-                        </ul>
-                    @endif
-                </div>
 
+                {{-- タグ表示 --}}
+                <div class="post-tags mb-2">
+                    @foreach ($post->tags as $tag)
+                        <a href="{{ route('user.tags.show', $tag->name) }}" class="tag-badge">
+                            #{{ $tag->name }}
+                        </a>
+                    @endforeach
+                </div>
             </div>
+
         </div>
     </div>
 @endsection
 
 {{-- JS --}}
 <script>
-    // 表示されている画像を変える
+    // 選択画像を変える
     function changeImage(element) {
         const mainImage = document.getElementById('mainImage');
         mainImage.src = element.src;
@@ -123,6 +181,21 @@
 
         element.classList.add('active');
     }
+
+    // コメント投稿後にスクロール
+    @if (session('comment_posted'))
+        window.onload = function() {
+            const postInfoScroll = document.getElementById('postInfoScroll');
+            postInfoScroll.scrollTop = postInfoScroll.scrollHeight;
+            if (container) {
+                setTimeout(() => {
+                    container.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }, 300);
+            }
+        }
+    @endif
 </script>
 
 {{-- CSS --}}
@@ -181,8 +254,28 @@
     .post-info {
         width: 420px;
         background: #ffffff;
-        overflow: auto;
         border-left: 1px solid #e5e5e5;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        overflow: hidden;
+    }
+
+    .post-info-scroll {
+        flex: 1;
+        overflow-y: auto;
+        padding-bottom: 90px;
+        scroll-behavior: smooth;
+    }
+
+    .post-info-fixed {
+        position: sticky;
+        bottom: 0;
+        padding: 12px 24px;
+        border-top: 1px solid #e5e5e5;
+        background: #fff;
+        position: sticky;
+        bottom: 0;
     }
 
     .post-info-inner {
@@ -191,6 +284,38 @@
 
     .post-body {
         line-height: 1.7;
+    }
+
+    /* コメント */
+    .comment-item {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 10px;
+    }
+
+    .comment-content {
+        flex: 1;
+    }
+    .comment-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .comment-body {
+        margin-top: 2px;
+        line-height: 1.5;
+    }
+
+    .avatar-icon {
+        width: 30px;
+        height: 30px;
+        background: #ddd;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        margin-right: 8px;
     }
 
     .tag-badge {
@@ -213,9 +338,36 @@
         height: 34px;
         border-radius: 50%;
         border: 1px solid #ddd;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.10);
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.10);
         display: grid;
         place-items: center;
     }
 
+    /* コメント入力ボックス */
+    .comment-input-wrapper {
+        flex: 1;
+        display: flex;
+        gap: 8px;
+    }
+
+    .comment-input-wrapper textarea {
+        flex: 1;
+        resize: none;
+        border-radius: 20px;
+        border: 1px solid #ddd;
+        padding: 8px 12px;
+    }
+
+
+    /* 送信ボタン */
+    .send-comment-btn {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: none;
+        background: #007bff;
+        color: white;
+    }
+
+    
 </style>

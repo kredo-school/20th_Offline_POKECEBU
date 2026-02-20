@@ -48,17 +48,39 @@
                     <div class="col-6 col-md-3 col-sm-4 col-lg-2 d-flex justify-content-center">
 
                         <div class="card rank-card">
+
+                           {{-- お気に入り --}}
+                            <div class="post-like">
+                                @if ($hotel->isFavorited())
+                                    <form method="POST" action="{{ route('user.favorite.destroy', ['hotel',$hotel->id]) }}">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="btn heat-btn">
+                                            <i class="fa-solid fa-heart text-danger"></i>
+                                        </button>
+                                    </form>
+                                @else
+                                <form method="POST" action="{{ route('user.favorite.store',['hotel',$hotel->id]) }}">
+                                    @csrf
+                                    <button class="btn heat-btn">
+                                        <i class="fa-regular fa-heart"></i>
+                                    </button>
+                                </form>
+                                    
+                                @endif
+                            </div>
+
+                            {{-- ランキングバッジ --}}
                             <div class="rank-badge rank-{{ $index + 1 }}">
                                 {{ $index + 1 }}
                             </div>
 
-                            {{-- <img src="{{ $hotel->image_path ?? asset('images/no-image.png') }}" alt="{{ $hotel->name }}" class="rank-image"> --}}
                             <img src="{{ $hotel->image_path ? Storage::url($hotel->image_path) : asset('images/no-image.png') }}"
                                 alt="{{ $hotel->name }}" class="rank-image"
                                 onerror="this.onerror=null;this.src='{{ asset('images/no-image.png') }}';">
 
                             <div class="card-body">
-                                <a href="#" class="text-decoration-none text-dark">
+                                <a href="{{ route('user.hotels.detail', $hotel->id) }}" class="text-decoration-none text-dark">
                                     <h5 class="card-title">{{ $hotel->name }}</h5>
                                 </a>
                                 @php
@@ -67,7 +89,7 @@
                                     $halfStar = $rating - $fullStars >= 0.5;
                                 @endphp
                                 <p class="card-text text-warning">
-                                    @for ($i = 1; $i < $fullStars; $i++)
+                                    @for ($i = 1; $i <= $fullStars; $i++)
                                         <i class="fa-solid fa-star"></i>
                                     @endfor
                                     @if ($halfStar)
@@ -84,7 +106,7 @@
                                     @else
                                         <span class="text-muted">価格未設定</span>
                                     @endif
-                                </p>
+                                </p> 
                             </div>
                         </div>
                     </div>
@@ -106,13 +128,35 @@
                     <div class="col-6 col-md-3 col-sm-4 col-lg-2 d-flex justify-content-center">
 
                         <div class="card rank-card">
+
+                             {{-- お気に入り --}}
+                            <div class="post-like">
+                                @if ($restaurant->isFavorited())
+                                    <form method="POST" action="{{ route('user.favorite.destroy', ['restaurant',$restaurant->id]) }}">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="btn heat-btn">
+                                            <i class="fa-solid fa-heart text-danger"></i>
+                                        </button>
+                                    </form>
+                                @else
+                                <form method="POST" action="{{ route('user.favorite.store',['restaurant',$restaurant->id]) }}">
+                                    @csrf
+                                    <button class="btn heat-btn">
+                                        <i class="fa-regular fa-heart"></i>
+                                    </button>
+                                </form>
+                                    
+                                @endif
+                            </div>
+
                             <div class="rank-badge rank-{{ $index + 1 }}">{{ $index + 1 }}</div>
 
                             <img src="{{ $restaurant->image_path ?? asset('images/no-image.png') }}"
                                 alt="{{ $restaurant->name }}" class="rank-image">
 
                             <div class="card-body">
-                                <a href="#" class="card-link text-decoration-none text-dark">
+                                <a href="{{ route('user.restaurants.detail', $restaurant->id) }}" class="card-link text-decoration-none text-dark">
                                     <h5 class="card-title">{{ $restaurant->name }}</h5>
                                 </a>
                                 @php
@@ -121,7 +165,7 @@
                                     $halfStar = $rating - $fullStars >= 0.5;
                                 @endphp
                                 <p class="card-text text-warning">
-                                    @for ($i = 0; $i < $fullStars; $i++)
+                                    @for ($i = 1; $i <= $fullStars; $i++)
                                         <i class="fa-solid fa-star"></i>
                                     @endfor
                                     @if ($halfStar)
@@ -210,7 +254,7 @@
                                 <div class="post-like">
                                     
                                     @if ($post->isliked())
-                                        <form action="{{ route('user.like.destroy', $post->id) }}" method="post">
+                                        <form method="POST" action="{{ route('user.like.destroy', $post->id) }}">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="heat-btn">
@@ -219,9 +263,11 @@
                                             </button>
                                         </form>    
                                     @else
-                                        <form action="{{ route('user.like.store', $post->id )}}" method="post">
+                                        <form method="POST" action="{{ route('user.like.store', $post->id )}}">
                                             @csrf
-                                            <button type="submit" class="heat-btn"><i class="fa-regular fa-heart"></i></button>
+                                            <button type="submit" class="heat-btn">
+                                                <i class="fa-regular fa-heart"></i>
+                                            </button>
 
                                     @endif
                                 </div>

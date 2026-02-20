@@ -3,39 +3,42 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Hotel;
 use App\Models\HotelReservation;
 use App\Models\HotelRoomType;
 use App\Models\RestaurantReservation;
 
 class AnalysisController extends Controller
 {
-    public function hotelAnalysis($hotelId = null)
-    {
-        $kpi             = HotelReservation::getKpiStats($hotelId);
-        $avgStay         = HotelReservation::getAverageStay($hotelId);
-        $monthlyBookings = HotelReservation::getMonthlyBookingsByYear($hotelId);
-        $dayOfWeekData   = HotelReservation::getDayOfWeekStats($hotelId);
+   public function hotelAnalysis($hotelId = null)
+{
+    // 1. 基本統計 (既存)
+    $kpi             = HotelReservation::getKpiStats($hotelId);
+    $avgStay         = HotelReservation::getAverageStay($hotelId);
+    $monthlyBookings = HotelReservation::getMonthlyBookingsByYear($hotelId);
+    $dayOfWeekData   = HotelReservation::getDayOfWeekComparison($hotelId);
 
-        $typeStats   = HotelRoomType::getTypeRevenueStats($hotelId);
-        $typeLabels  = $typeStats->pluck('label_name');
-        $typeRevenue = $typeStats->pluck('total_sales');
+    // 【今月分】
+    $typeStatsMonth = HotelRoomType::getTypeRevenueStats($hotelId, 'month');
+    $typeBookingStatsMonth = HotelRoomType::getTypeBookingStats($hotelId, 'month');
 
-        $typeBookingStats  = HotelRoomType::getTypeBookingStats($hotelId);    
-        $typeBookingLabels = $typeBookingStats->pluck('label_name');
-        $typeBookingCounts = $typeBookingStats->pluck('booking_count');
+    // 【今年分】
+    $typeStatsYear = HotelRoomType::getTypeRevenueStats($hotelId, 'year');
+    $typeBookingStatsYear = HotelRoomType::getTypeBookingStats($hotelId, 'year');
 
-        return view('adminpage.hotel.analysis-hotel', compact(
-            'kpi', 
-            'monthlyBookings', 
-            'avgStay', 
-            'dayOfWeekData',
-            'typeLabels', 
-            'typeRevenue',
-            'typeBookingLabels',
-            'typeBookingCounts',
-            'hotelId'
-        ));
-    }
+    $hotels = Hotel::all();
+
+    return view('adminpage.hotel.analysis-hotel', compact(
+        'kpi', 
+        'monthlyBookings', 
+        'avgStay', 
+        'dayOfWeekData',
+        'typeStatsMonth', 'typeBookingStatsMonth',
+        'typeStatsYear', 'typeBookingStatsYear',
+        'hotelId',
+        'hotels'
+    ));
+}
 
     public function restaurantAnalysis()
     {

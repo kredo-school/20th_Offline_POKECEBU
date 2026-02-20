@@ -10,27 +10,22 @@ use Illuminate\Http\Request;
 
 class StaffAnalysisController extends Controller
 {
-    public function hotelAnalysis($hotelId = null)
+       public function hotelAnalysis($hotelId = null)
 {
-    // 1. KPI・基本統計の取得
+    // 1. 基本統計 (既存)
     $kpi             = HotelReservation::getKpiStats($hotelId);
     $avgStay         = HotelReservation::getAverageStay($hotelId);
     $monthlyBookings = HotelReservation::getMonthlyBookingsByYear($hotelId);
-    
-    // ★ ここを「今週 vs 過去平均」を返すメソッドに差し替え
-    $dayOfWeekData   = HotelReservation::getDayOfWeekStats($hotelId);
+    $dayOfWeekData   = HotelReservation::getDayOfWeekComparison($hotelId);
 
-    // 2. ルームタイプ別 売上統計
-    $typeStats   = HotelRoomType::getTypeRevenueStats($hotelId);
-    $typeLabels  = $typeStats->pluck('label_name');
-    $typeRevenue = $typeStats->pluck('total_sales');
+    // 【今月分】
+    $typeStatsMonth = HotelRoomType::getTypeRevenueStats($hotelId, 'month');
+    $typeBookingStatsMonth = HotelRoomType::getTypeBookingStats($hotelId, 'month');
 
-    // 3. ルームタイプ別 予約数統計
-    $typeBookingStats  = HotelRoomType::getTypeBookingStats($hotelId);    
-    $typeBookingLabels = $typeBookingStats->pluck('label_name');
-    $typeBookingCounts = $typeBookingStats->pluck('booking_count');
+    // 【今年分】
+    $typeStatsYear = HotelRoomType::getTypeRevenueStats($hotelId, 'year');
+    $typeBookingStatsYear = HotelRoomType::getTypeBookingStats($hotelId, 'year');
 
-    // ホテルのリスト
     $hotels = Hotel::all();
 
     return view('staffpage.analysis.hotel-analysis', compact(
@@ -38,13 +33,10 @@ class StaffAnalysisController extends Controller
         'monthlyBookings', 
         'avgStay', 
         'dayOfWeekData',
-        'typeLabels', 
-        'typeRevenue',
-        'typeBookingLabels',
-        'typeBookingCounts',
-        'hotels',
-        'hotelId'
+        'typeStatsMonth', 'typeBookingStatsMonth',
+        'typeStatsYear', 'typeBookingStatsYear',
+        'hotelId',
+        'hotels'
     ));
-
-    }
+}
 }

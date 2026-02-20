@@ -38,9 +38,9 @@ class HotelRoomType extends Model
         return $this->hasMany(HotelRoom::class, 'type_id', 'type_id')
                     ->whereColumn('hotel_rooms.hotel_id','hotel_room_types.hotel_id');
     }
-// タイプ別の売上集計
-public static function getTypeRevenueStats($hotelId = null)
+    public static function getTypeRevenueStats($hotelId = null, $period = 'month')
 {
+    // ★ self::query() ではなく HotelReservation::query() から始める
     return \App\Models\HotelReservation::query()
         ->join('hotel_rooms', 'hotel_reservations.room_id', '=', 'hotel_rooms.id')
         ->join('types', 'hotel_rooms.type_id', '=', 'types.id')
@@ -49,14 +49,22 @@ public static function getTypeRevenueStats($hotelId = null)
             return $query->where('hotel_reservations.hotel_id', $hotelId);
         })
         ->where('statuses.name', 'Booked')
+        ->when($period === 'month', function ($query) {
+            return $query->whereMonth('hotel_reservations.created_at', now()->month)
+                         ->whereYear('hotel_reservations.created_at', now()->year);
+        })
+        ->when($period === 'year', function ($query) {
+            return $query->whereYear('hotel_reservations.created_at', now()->year);
+        })
         ->groupBy('types.name')
+        // これで hotel_reservations.total_price が正しく認識されます
         ->selectRaw('types.name as label_name, SUM(hotel_reservations.total_price) as total_sales')
         ->get();
 }
 
-// タイプ別の予約数集計
-public static function getTypeBookingStats($hotelId = null)
+public static function getTypeBookingStats($hotelId = null, $period = 'month')
 {
+    // こちらも同様に HotelReservation からスタート
     return \App\Models\HotelReservation::query()
         ->join('hotel_rooms', 'hotel_reservations.room_id', '=', 'hotel_rooms.id')
         ->join('types', 'hotel_rooms.type_id', '=', 'types.id')
@@ -65,6 +73,13 @@ public static function getTypeBookingStats($hotelId = null)
             return $query->where('hotel_reservations.hotel_id', $hotelId);
         })
         ->where('statuses.name', 'Booked')
+        ->when($period === 'month', function ($query) {
+            return $query->whereMonth('hotel_reservations.created_at', now()->month)
+                         ->whereYear('hotel_reservations.created_at', now()->year);
+        })
+        ->when($period === 'year', function ($query) {
+            return $query->whereYear('hotel_reservations.created_at', now()->year);
+        })
         ->groupBy('types.name')
         ->selectRaw('types.name as label_name, COUNT(hotel_reservations.id) as booking_count')
         ->get();

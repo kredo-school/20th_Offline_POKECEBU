@@ -7,6 +7,8 @@ use App\Models\HotelRoom;
 use Illuminate\Http\Request;
 use App\Models\Category;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Favorite;
 
 
 
@@ -133,9 +135,24 @@ class HotelController extends Controller
                 // $query->orderBy('created_at', 'desc');
         }
 
+        // --- ホテルごとの favorites 件数を一括で取得 ---
+        $query->withCount('favorites');
 
-        // ページネーション（既存は 10 件なので合わせる）
+
+        // ページネーション
         $hotels = $query->paginate(10)->withQueryString();
+
+        // サイドバー用アメニティ一覧（Category モデルを利用）
+        $amenitiesList = \App\Models\Category::orderBy('name')->get();
+
+        // ビューに渡す
+        return view('userpage.mypage.hotel-search-result', [
+            'hotels' => $hotels,
+            'amenities' => $amenitiesList,
+
+        ]);
+
+
 
         // サイドバー用アメニティ一覧（Category モデルを利用）
         $amenitiesList = \App\Models\Category::orderBy('name')->get();

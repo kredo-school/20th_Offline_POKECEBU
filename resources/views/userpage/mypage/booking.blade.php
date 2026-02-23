@@ -4,8 +4,6 @@
 <link rel="stylesheet" href="{{ asset('css/user.css/mypage/booking.css') }}">
 @endpush
 
-
-
 @section('navbar')
 <nav class="navbar navbar-expand-md shadow-sm" style="background-color:#6FA9DE; height:80px;">
     <div class="container">
@@ -16,69 +14,141 @@
 
 @section('content')
 <div class="container mt-5">
-
     <div class="row">
+
         {{-- 左メニュー --}}
         <div class="col-3 d-flex flex-column mb-4">
             <a href="{{ route('mypage') }}" class="text-decoration-none text-dark px-3 py-2 rounded menu-item mb-1">Profile</a>
-            <a href="{{ route('booking') }}" class="text-decoration-none text-dark px-3 py-2 rounded menu-item mb-1">My Booking</a>
+            <a href="{{ route('booking') }}" class="text-decoration-none text-dark px-3 py-2 rounded menu-item mb-1 active">My Booking</a>
             <a href="{{ route('favorite') }}" class="text-decoration-none text-dark px-3 py-2 rounded menu-item mb-1">Favorite</a>
         </div>
 
         {{-- 右コンテンツ --}}
         <div class="col-9">
-            <div class="card mb-4 w-100">
+            <div class="card mb-4 shadow-sm">
                 <div class="card-body">
-                    {{-- 予約タイプ選択 --}}
-                    <div class="mb-3">
-                        <div class="btn-group w-100" role="group" aria-label="Reservation Type">
-                            <input type="radio" class="btn-check" name="reservationType" id="all" autocomplete="off" checked>
-                            <label class="btn btn-outline-primary" for="all">All ✓</label>
 
-                            <input type="radio" class="btn-check" name="reservationType" id="hotel" autocomplete="off">
-                            <label class="btn btn-outline-primary" for="hotel">Hotel</label>
-
-                            <input type="radio" class="btn-check" name="reservationType" id="restaurant" autocomplete="off">
-                            <label class="btn btn-outline-primary" for="restaurant">Restaurant</label>
-                        </div>
-                    </div>
-
-                    {{-- タブボタン --}}
-                    <ul class="nav nav-tabs nav-justified mb-3" id="bookingTab" role="tablist">
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link active" id="upcoming-tab" data-bs-toggle="tab"
-                                data-bs-target="#upcoming" type="button" role="tab" aria-controls="upcoming"
-                                aria-selected="true">Upcoming Reservation 今の予約</button>
+                    {{-- タブ --}}
+                    <ul class="nav nav-tabs nav-justified mb-3">
+                        <li class="nav-item">
+                            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#hotel">
+                                Hotel Reservations
+                            </button>
                         </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="past-tab" data-bs-toggle="tab" data-bs-target="#past"
-                                type="button" role="tab" aria-controls="past" aria-selected="false">Past Reservation 過去の予約</button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="cancelled-tab" data-bs-toggle="tab" data-bs-target="#cancelled"
-                                type="button" role="tab" aria-controls="cancelled" aria-selected="false">Cancelled Reservation キャンセルした予約</button>
+                        <li class="nav-item">
+                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#restaurant">
+                                Restaurant Reservations
+                            </button>
                         </li>
                     </ul>
 
-                    {{-- タブの中身 --}}
                     <div class="tab-content">
-                        <div class="tab-pane fade show active" id="upcoming" role="tabpanel" aria-labelledby="upcoming-tab">
-                            <p>Upcoming reservations will appear here.</p>
-                        </div>
-                        <div class="tab-pane fade" id="past" role="tabpanel" aria-labelledby="past-tab">
-                            <p>Past reservations will appear here.</p>
-                        </div>
-                        <div class="tab-pane fade" id="cancelled" role="tabpanel" aria-labelledby="cancelled-tab">
-                            <p>Cancelled reservations will appear here.</p>
-                        </div>
-                    </div>
 
+                        {{-- =========================
+                            HOTEL
+                        ========================== --}}
+                        <div class="tab-pane fade show active" id="hotel">
+
+                            {{-- Upcoming --}}
+                            <h5 class="mb-3">Upcoming</h5>
+                            @forelse($upcomingHotels as $res)
+                                <div class="border rounded p-3 mb-3 shadow-sm">
+                                    <p><strong>Reservation ID:</strong> {{ $res->reservation_id }}</p>
+                                    <p><strong>Hotel:</strong> {{ $res->hotel->name ?? 'N/A' }}</p>
+                                    <p><strong>Guests:</strong> {{ $res->guests }}</p>
+                                    <p><strong>Check-in:</strong> {{ \Carbon\Carbon::parse($res->start_at)->format('Y-m-d H:i') }}</p>
+                                    <p><strong>Check-out:</strong> {{ \Carbon\Carbon::parse($res->end_at)->format('Y-m-d H:i') }}</p>
+                                    <p><strong>Total:</strong> ₱{{ number_format($res->total_price,2) }}</p>
+                                    <span class="badge bg-success">Active</span>
+                                </div>
+                            @empty
+                                <p>No upcoming hotel reservations.</p>
+                            @endforelse
+
+                            {{-- Past --}}
+                            <h5 class="mt-4 mb-3">Past</h5>
+                            @forelse($pastHotels as $res)
+                                <div class="border rounded p-3 mb-3 shadow-sm bg-light">
+                                    <p><strong>Reservation ID:</strong> {{ $res->reservation_id }}</p>
+                                    <p><strong>Hotel:</strong> {{ $res->hotel->name ?? 'N/A' }}</p>
+                                    <p><strong>Check-in:</strong> {{ \Carbon\Carbon::parse($res->start_at)->format('Y-m-d H:i') }}</p>
+                                    <p><strong>Total:</strong> ₱{{ number_format($res->total_price,2) }}</p>
+                                    <span class="badge bg-secondary">Completed</span>
+                                </div>
+                            @empty
+                                <p>No past hotel reservations.</p>
+                            @endforelse
+
+                            {{-- Cancelled --}}
+                            <h5 class="mt-4 mb-3">Cancelled</h5>
+                            @forelse($cancelledHotels as $res)
+                                <div class="border rounded p-3 mb-3 shadow-sm bg-light">
+                                    <p><strong>Reservation ID:</strong> {{ $res->reservation_id }}</p>
+                                    <p><strong>Hotel:</strong> {{ $res->hotel->name ?? 'N/A' }}</p>
+                                    <p><strong>Total:</strong> ₱{{ number_format($res->total_price,2) }}</p>
+                                    <span class="badge bg-danger">Cancelled</span>
+                                </div>
+                            @empty
+                                <p>No cancelled hotel reservations.</p>
+                            @endforelse
+                        </div>
+
+
+                        {{-- =========================
+                            RESTAURANT
+                        ========================== --}}
+                        <div class="tab-pane fade" id="restaurant">
+
+                            {{-- Upcoming --}}
+                            <h5 class="mb-3">Upcoming</h5>
+                            @forelse($upcomingRestaurants as $res)
+                                <div class="border rounded p-3 mb-3 shadow-sm">
+                                    <p><strong>Reservation ID:</strong> {{ $res->reservation_id }}</p>
+                                    <p><strong>Restaurant:</strong> {{ $res->restaurant->name ?? 'N/A' }}</p>
+                                    <p><strong>Guests:</strong> {{ $res->guests }}</p>
+                                    <p><strong>Date:</strong> {{ \Carbon\Carbon::parse($res->start_at)->format('Y-m-d H:i') }}</p>
+                                    <p><strong>Total:</strong> ₱{{ number_format($res->total_price,2) }}</p>
+                                    <span class="badge bg-success">Active</span>
+                                </div>
+                            @empty
+                                <p>No upcoming restaurant reservations.</p>
+                            @endforelse
+
+                            {{-- Past --}}
+                            <h5 class="mt-4 mb-3">Past</h5>
+                            @forelse($pastRestaurants as $res)
+                                <div class="border rounded p-3 mb-3 shadow-sm bg-light">
+                                    <p><strong>Reservation ID:</strong> {{ $res->reservation_id }}</p>
+                                    <p><strong>Restaurant:</strong> {{ $res->restaurant->name ?? 'N/A' }}</p>
+                                    <p><strong>Date:</strong> {{ \Carbon\Carbon::parse($res->start_at)->format('Y-m-d H:i') }}</p>
+                                    <p><strong>Total:</strong> ₱{{ number_format($res->total_price,2) }}</p>
+                                    <span class="badge bg-secondary">Completed</span>
+                                </div>
+                            @empty
+                                <p>No past restaurant reservations.</p>
+                            @endforelse
+
+                            {{-- Cancelled --}}
+                            <h5 class="mt-4 mb-3">Cancelled</h5>
+                            @forelse($cancelledRestaurants as $res)
+                                <div class="border rounded p-3 mb-3 shadow-sm bg-light">
+                                    <p><strong>Reservation ID:</strong> {{ $res->reservation_id }}</p>
+                                    <p><strong>Restaurant:</strong> {{ $res->restaurant->name ?? 'N/A' }}</p>
+                                    <p><strong>Total:</strong> ₱{{ number_format($res->total_price,2) }}</p>
+                                    <span class="badge bg-danger">Cancelled</span>
+                                </div>
+                            @empty
+                                <p>No cancelled restaurant reservations.</p>
+                            @endforelse
+                        </div>
+
+                    </div>
                 </div>
             </div>
         </div>
+
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 @endsection

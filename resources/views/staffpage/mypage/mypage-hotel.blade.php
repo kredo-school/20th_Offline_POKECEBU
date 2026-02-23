@@ -23,12 +23,11 @@
 
         {{-- 右コンテンツ --}}
         <div class="col-9">
-
             <div class="card mb-4">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <span>Hotel Information</span>
                     <a href="{{ route('staff.mypage.hotel.edit') }}" class="btn btn-primary btn-sm">
-                        Edit
+                        Edit / Apply Changes
                     </a>
                 </div>
 
@@ -52,7 +51,7 @@
                         </div>
                         <div class="col-6">
                             <label class="form-label text-muted">Email</label>
-                            <input type="text" class="form-control" value="{{ $hotel->email ?? 'No information' }}" readonly>
+                            <input type="text" class="form-control" value="{{ $hotel->representative_email ?? 'No information' }}" readonly>
                         </div>
                     </div>
 
@@ -74,9 +73,14 @@
                         <input type="text" class="form-control" value="{{ $hotel->address ?? 'No information' }}" readonly>
                     </div>
 
+                    {{-- 市 --}}
+                    <div class="mb-3">
+                        <label class="form-label text-muted">City</label>
+                        <input type="text" class="form-control" value="{{ $hotel->city ?? 'No information' }}" readonly>
+                    </div>
+
                 </div>
             </div>
-
         </div>
     </div>
 </div>

@@ -89,6 +89,7 @@ class User extends Authenticatable
     {
         return $this->hasMany(HotelReservation::class);
     }
+    
 
     public static function getNewUserStats($hotelId = null)
 {

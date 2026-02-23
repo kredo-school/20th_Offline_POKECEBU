@@ -10,6 +10,8 @@ use App\Models\HotelImage;
 use App\Models\Review;
 use App\Models\Favorite;
 
+
+
 class Hotel extends Model
 {
     // id を手動で設定する場合は incrementing を false にする
@@ -126,5 +128,12 @@ class Hotel extends Model
            ->where('target_id', $this->id)
            ->exists();
     }
-   
+
+
+    public function favorites()
+    {
+        // 既存データが target_type = 'hotel' の場合に合わせる最短実装
+        return $this->hasMany(Favorite::class, 'target_id')
+            ->where('target_type', 'hotel');
+    }
 }

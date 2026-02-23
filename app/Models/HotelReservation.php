@@ -48,25 +48,26 @@ class HotelReservation extends Model
         return $this->belongsTo(HotelRoom::class, 'room_id');
     }
 
-    public static function getKpiStats($hotelId = null, $month = null)
+   public static function getMonthlyKpiStats($hotelId = null)
 {
-    $targetMonth = $month ?? now()->month;
-
     return self::query()
         ->join('statuses', 'hotel_reservations.status_id', '=', 'statuses.id')
         ->when($hotelId, function ($query, $hotelId) {
             return $query->where('hotel_reservations.hotel_id', $hotelId);
         })
-        ->whereMonth('hotel_reservations.created_at', $targetMonth)
         ->whereYear('hotel_reservations.created_at', now()->year)
         ->where('statuses.name', 'Booked')
         ->selectRaw('
+            MONTH(hotel_reservations.created_at) as month,
             COUNT(hotel_reservations.id) as total_bookings, 
-            COUNT(hotel_reservations.id) as total_guests
-        ') // 一旦、両方COUNT（件数）にしてエラーを回避します
-        ->first();
+            SUM(hotel_reservations.guests) as total_guests,
+            AVG(DATEDIFF(hotel_reservations.end_at, hotel_reservations.start_at)) as avg_stay
+        ') // check_out -> end_at, check_in -> start_at に修正
+        ->groupBy('month')
+        ->orderBy('month')
+        ->get()
+        ->keyBy('month');
 }
-
     public static function getAverageStay($hotelId = null)
     {
         return self::query()

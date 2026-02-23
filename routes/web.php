@@ -18,13 +18,13 @@ use App\Http\Controllers\HotelReservationController;
 use App\Http\Controllers\HotelRoomController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\MockReservationController;
-use App\Http\Controllers\PostController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\PostController;
 use App\Http\Controllers\RestaurantTableController;
 use App\Http\Controllers\TmpHotelController;
 
-
 use App\Http\Controllers\RestaurantReservationController;
+use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\StaffAnalysisController;
 use App\Http\Controllers\UserDetailController;
 
@@ -47,6 +47,12 @@ Route::group(['middleware' => 'auth'], function(){
     # Admin
     Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'admin'], function() {
         Route::get('/', [AdminController::class, 'index'])->name('home');
+
+        // Adomin POST
+        Route::get('/posts', [PostsController::class, 'index'])->name('posts.index');
+        Route::delete('/posts/{id}/deactivate', [PostsController::class, 'deactivate'])->name('posts.deactivate');
+        Route::patch('/posts/{id}/activate', [PostsController::class, 'activate'])->name('posts.activate');
+
         # For Category
         Route::get('/category', [CategoryController::class, 'index'])->name('category.index'); 
         Route::post('/category/store', [CategoryController::class, 'store'])->name('category.store');
@@ -179,13 +185,14 @@ Route::group(['middleware' => 'auth'], function(){
         Route::patch('/posts/{post}', [PostController::class, 'update'])->name('posts.update');
         Route::delete('/posts/{post}/destroy', [PostController::class, 'destroy'])->name('posts.destroy');
         Route::get('/tags/{tag}', [PostController::class, 'tag'])->name('tags.show');
+        route::post('/posts/{post_id}/comments', [CommentController::class, 'store'])->name('comment.store');
+        route::delete('/comments/{comment_id}/destroy', [CommentController::class, 'destroy'])->name('comment.destroy');
 
         Route::post('/like/{post_id}/store', [LikeController::class, 'store'])->name('like.store');
         Route::delete('/like/{post_id}/destroy', [LikeController::class, 'destroy'])->name('like.destroy');
 
-        route::post('/posts/{post_id}/comments', [CommentController::class, 'store'])->name('comment.store');
-        route::delete('/comments/{comment_id}/destroy', [CommentController::class, 'destroy'])->name('comment.destroy');
-
+        // レビュー
+        Route::post('/reviews', [ReviewController::class, 'store'])->name('reviews.store');
 
         # User MyPage
         Route::get('/mypage', [MyPageController::class, 'index'])->name('mypage');

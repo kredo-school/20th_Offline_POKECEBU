@@ -96,27 +96,91 @@
             {{-- Main --}}
             <div class="col-md-10">
                 {{-- KPI Section --}}
-                <div class="analysis-container shadow-sm">
-                    <div class="d-flex justify-content-center gap-3 flex-wrap">
-                        <div class="kpi-box shadow-sm">
-                            <div class="text-muted small fw-bold mb-1 text-uppercase">Total Bookings</div>
-                            <div class="h2 fw-bold text-dark">{{ number_format($kpi->total_bookings) }}</div>
+                <div class="row g-3 mb-4">
+                    <div class="col-md-4">
+                        <div class="kpi-box shadow-sm border-0">
+                            <p class="text-muted small mb-1">TOTAL RESERVATIONS</p>
+                            <h3 class="fw-bold">{{ $currentKpi ? number_format($currentKpi->total_bookings) : 0 }}</h3>
+                            <span class="badge bg-light text-muted">Current Month</span>
                         </div>
-                        <div class="kpi-box shadow-sm">
-                            <div class="text-muted small fw-bold mb-1 text-uppercase">Total Guests</div>
-                            <div class="h2 fw-bold text-primary">{{ number_format($kpi->total_guests) }}</div>
+                    </div>
+                    {{-- Total Guests --}}
+                    <div class="col-md-4">
+                        <div class="kpi-box shadow-sm border-0">
+                            <p class="text-muted small mb-1">TOTAL GUESTS</p>
+                            <h3 class="fw-bold text-primary">
+                                {{ $currentKpi ? number_format($currentKpi->total_guests) : 0 }}</h3>
+                            <span class="badge bg-light text-muted">Current Month</span>
                         </div>
-                        <div class="kpi-box shadow-sm">
-                            <div class="text-muted small fw-bold mb-1 text-uppercase">Avg. Stay</div>
-                            <div class="h2 fw-bold text-success">{{ number_format($avgStay, 1) }}</div>
-                            <div class="text-muted x-small">Nights per Booking</div>
+                    </div>
+                    {{-- Avg. Stay --}}
+                    <div class="col-md-4">
+                        <div class="kpi-box shadow-sm border-0">
+                            <p class="text-muted small mb-1">AVG. DINING TIME</p>
+                            <h3 class="fw-bold text-success">
+                                {{ $currentKpi ? number_format($currentKpi->avg_stay, 1) : '0.0' }}</h3>
+                            <span class="badge bg-light text-muted">Per Table</span>
+                        </div>
+                    </div>
+
+                    {{-- 詳細表示ボタン --}}
+                <div class="text-center mb-4">
+                    <button class="btn btn-outline-primary rounded-pill px-4" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#detailedAnalysis" aria-expanded="false">
+                        <i class="fa-solid fa-magnifying-glass-chart me-2"></i>Show Detailed Monthly Analysis
+                    </button>
+                </div>
+
+                    <div class="collapse" id="detailedAnalysis">
+                        <div class="row">
+                            {{-- KPI推移グラフ --}}
+                            <div class="col-12 mb-4">
+                                <div class="analysis-container shadow-sm">
+                                    <h6 class="chart-title border-bottom pb-3">Monthly KPI Trends</h6>
+                                    <div class="chart-wrapper">
+                                        <canvas id="kpiTrendChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- 月次パフォーマンス表 --}}
+                            <div class="col-12">
+                                <div class="analysis-container shadow-sm">
+                                    <h6 class="chart-title border-bottom pb-3">Monthly KPI Table (Yearly Overview)</h6>
+                                    <div class="table-responsive">
+                                        <table class="table table-hover align-middle text-center">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th class="text-start">Month</th>
+                                                    <th>Bookings</th>
+                                                    <th>Guests</th>
+                                                    <th>Avg. Stay</th>
+                                                    <th>Revenue</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'] as $i => $monthName)
+                                                    <tr class="{{ now()->month - 1 == $i ? 'table-primary' : '' }}">
+                                                        {{-- 今月をハイライト --}}
+                                                        <td class="text-start fw-bold">{{ $monthName }}</td>
+                                                        <td>{{ number_format($monthlyBookings[$i]) }}</td>
+                                                        <td>{{ number_format($monthlyGuests[$i]) }}</td>
+                                                        <td>{{ number_format($monthlyAvgStay[$i], 1) }}</td>
+                                                        <td class="fw-bold">₱{{ number_format($monthlyRevenue[$i]) }}</td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <div class="row mb-4">
                     {{-- Daily Occupancy Trends (書き換え箇所: 折れ線グラフ) --}}
-                    <div class="col-md-7">
+                    <div class="col-md-12">
                         <div class="analysis-container shadow-sm h-100">
                             <h6 class="chart-title border-bottom pb-3">
                                 <i class="fa-solid fa-chart-line me-2 text-primary"></i>Daily Occupancy Trends
@@ -127,9 +191,11 @@
                             </div>
                         </div>
                     </div>
+                </div>
 
+                <div class="row mb-4">
                     {{-- Monthly Performance --}}
-                    <div class="col-md-5">
+                    <div class="col-md-12">
                         <div class="analysis-container shadow-sm h-100">
                             <h6 class="chart-title border-bottom pb-3">
                                 <i class="fa-solid fa-calendar-check me-2 text-primary"></i>Monthly Performance
@@ -196,6 +262,86 @@
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
+ // --- KPI Trends Chart (Bookings, Guests, Avg.Stay) ---
+        const kpiCtx = document.getElementById('kpiTrendChart');
+        if (kpiCtx) {
+            new Chart(kpiCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                    datasets: [{
+                            label: 'Bookings',
+                            data: @json($monthlyBookings),
+                            borderColor: '#7da9d8', // Blue
+                            backgroundColor: 'transparent',
+                            borderWidth: 2,
+                            tension: 0.3,
+                            yAxisID: 'y-count',
+                        },
+                        {
+                            label: 'Guests',
+                            data: @json($monthlyGuests),
+                            borderColor: '#ffcc5c', // Yellow
+                            backgroundColor: 'transparent',
+                            borderWidth: 2,
+                            tension: 0.3,
+                            yAxisID: 'y-count',
+                        },
+                        {
+                            label: 'Avg. Stay (Days)',
+                            data: @json($monthlyAvgStay),
+                            borderColor: '#96ceb4', // Green
+                            backgroundColor: 'transparent',
+                            borderWidth: 2,
+                            borderDash: [5, 5], // 点線にして区別
+                            tension: 0.3,
+                            yAxisID: 'y-stay',
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    },
+                    scales: {
+                        'y-count': {
+                            type: 'linear',
+                            position: 'left',
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Count (Bookings/Guests)'
+                            }
+                        },
+                        'y-stay': {
+                            type: 'linear',
+                            position: 'right',
+                            beginAtZero: true,
+                            grid: {
+                                drawOnChartArea: false
+                            },
+                            title: {
+                                display: true,
+                                text: 'Days (Avg. Stay)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // 詳細ボタンが押されて表示が完了した時に実行
+        document.getElementById('detailedAnalysis').addEventListener('shown.bs.collapse', function() {
+            // グラフのサイズを再計算させる
+            if (charts['kpiTrendChart']) charts['kpiTrendChart'].resize();
+            if (charts['barChart']) charts['barChart'].resize();
+        });
+
+
         document.addEventListener('DOMContentLoaded', function() {
 
             let charts = {};

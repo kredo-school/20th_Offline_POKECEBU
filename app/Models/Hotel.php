@@ -99,10 +99,10 @@ class Hotel extends Model
      * ホテルに対するレビュー（polymorphic）
      * reviews テーブルが target_type / target_id を使っている想定
      */
-    public function reviews()
-    {
-        return $this->morphMany(Review::class, 'target');
-    }
+    // public function reviews()
+    // {
+    //     return $this->morphMany(Review::class, 'target');
+    // }
 
         // （もしホテルとカテゴリが多対多で繋がっているなら）
     public function categories()
@@ -129,6 +129,19 @@ class Hotel extends Model
            ->exists();
     }
 
+    // 評価
+    public function reviews() {
+       return $this->hasMany(Review::class,'target_id')
+           ->where('target_type', 'hotel');
+    }
+
+    // 評価済みかチェック
+    public function reviewedBy($userId) {
+       return $this->reviews()
+            ->where('user_id',$userId)
+            ->exists();
+    }
+   
 
     public function favorites()
     {

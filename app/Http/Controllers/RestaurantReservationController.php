@@ -27,7 +27,7 @@ class RestaurantReservationController extends Controller
      public function showInfo()
      {
     //  テストしたいレストランIDをここで指定（3や4など、DBにあるIDに変えてね）
-         $id = 3; 
+         $id = 5; 
         
          $restaurant = Restaurant::findOrFail($id);
 
@@ -63,10 +63,8 @@ class RestaurantReservationController extends Controller
                 'phone' => $request->phone,
             ]),
         ]);
-// ここを修正！ 'restaurant.show' という名前のルートへ飛ばす
-   return redirect()
-    ->route('mypage')
-    ->with('success', 'Reservation completed successfully!');
 
+return view('userpage.booking.restaurant.reservation-success');
 }
+
 }

@@ -6,86 +6,101 @@ use App\Http\Controllers\Controller;
 use App\Models\Hotel;
 use App\Models\HotelReservation;
 use App\Models\HotelRoomType;
+use App\Models\Restaurant;
 use App\Models\RestaurantReservation;
 
 class AnalysisController extends Controller
 {
-   public function hotelAnalysis($hotelId = null)
+  public function hotelAnalysis($hotelId = null)
 {
-    // 1. 基本統計 (既存)
+    // 1. 基本統計
     $kpi             = HotelReservation::getKpiStats($hotelId);
     $avgStay         = HotelReservation::getAverageStay($hotelId);
-    $monthlyBookings = HotelReservation::getMonthlyBookingsByYear($hotelId);
+    
+    // 月別統計（予約数と売上の両方を取得）
+    $monthlyStats    = HotelReservation::getMonthlyStatsByYear($hotelId);
+    $monthlyBookings = $monthlyStats['bookings'];
+    $monthlyRevenue  = $monthlyStats['revenue']; // これをビューに渡す
+
     $dayOfWeekData   = HotelReservation::getDayOfWeekComparison($hotelId);
 
-    // 【今月分】
-    $typeStatsMonth = HotelRoomType::getTypeRevenueStats($hotelId, 'month');
+    // ルームタイプ別統計
+    $typeStatsMonth        = HotelRoomType::getTypeRevenueStats($hotelId, 'month');
     $typeBookingStatsMonth = HotelRoomType::getTypeBookingStats($hotelId, 'month');
+    $typeStatsYear         = HotelRoomType::getTypeRevenueStats($hotelId, 'year');
+    $typeBookingStatsYear  = HotelRoomType::getTypeBookingStats($hotelId, 'year');
 
-    // 【今年分】
-    $typeStatsYear = HotelRoomType::getTypeRevenueStats($hotelId, 'year');
-    $typeBookingStatsYear = HotelRoomType::getTypeBookingStats($hotelId, 'year');
+    // --- ヒートマップ用ロジック ---
+    $year = now()->year;
+    $month = now()->month;
+    $daysInMonth = now()->daysInMonth;
+    $heatmapData = array_fill(1, $daysInMonth, 0);
+
+    $reservations = HotelReservation::when($hotelId, function($query) use ($hotelId) {
+            return $query->where('hotel_id', $hotelId);
+        })
+        ->where(function($q) use ($year, $month) {
+            $firstDay = now()->startOfMonth();
+            $lastDay = now()->endOfMonth();
+            $q->whereBetween('start_at', [$firstDay, $lastDay])
+              ->orWhereBetween('end_at', [$firstDay, $lastDay])
+              ->orWhere(function($sub) use ($firstDay, $lastDay) {
+                  $sub->where('start_at', '<=', $firstDay)
+                      ->where('end_at', '>=', $lastDay);
+              });
+        })->get();
+
+    foreach ($reservations as $res) {
+        $start = \Carbon\Carbon::parse($res->start_at);
+        $end = \Carbon\Carbon::parse($res->end_at);
+
+        for ($date = $start->copy(); $date->lte($end); $date->addDay()) {
+            if ($date->month == $month && $date->year == $year) {
+                $heatmapData[$date->day]++;
+            }
+        }
+    }
 
     $hotels = Hotel::all();
 
+    // monthlyRevenue を compact に追加
     return view('adminpage.hotel.analysis-hotel', compact(
-        'kpi', 
-        'monthlyBookings', 
-        'avgStay', 
-        'dayOfWeekData',
+        'kpi', 'monthlyBookings', 'monthlyRevenue', 'avgStay', 'dayOfWeekData',
         'typeStatsMonth', 'typeBookingStatsMonth',
         'typeStatsYear', 'typeBookingStatsYear',
-        'hotelId',
-        'hotels'
+        'hotelId', 'hotels', 'heatmapData'
     ));
 }
 
-    public function restaurantAnalysis()
-    {
-        $currentMonth = now()->month;
+public function restaurantAnalysis($restaurantId = null)
+{
+    $kpi = RestaurantReservation::getKpiStats($restaurantId); 
+    $avgStayTime = RestaurantReservation::getAverageStayTime($restaurantId); 
+    $monthlyBookings = RestaurantReservation::getMonthlyBookingsByYear($restaurantId);
+    $hourlyStats = RestaurantReservation::getHourlyStats($restaurantId);
+    $monthlyBookings = RestaurantReservation::getMonthlyStatsByYear($restaurantId);
 
-        // 1. KPI: 今月の顧客数と売上
-        $kpi = RestaurantReservation::whereMonth('created_at', $currentMonth)
-            ->where('status_id', '2')
-            ->selectRaw('COUNT(id) as customers, SUM(total_price) as sales')
-            ->first();
+    // 日次データ（棒グラフ用）
+    $year = now()->year;
+    $month = now()->month;
+    $daysInMonth = now()->daysInMonth;
+    $dailyData = array_fill(1, $daysInMonth, 0);
+    
+    $reservations = RestaurantReservation::whereMonth('reserved_at', $month)
+        ->whereYear('reserved_at', $year)
+        ->when($restaurantId, function($query) use ($restaurantId) {
+            return $query->where('restaurant_id', $restaurantId);
+        })->get();
 
-        // 2. Bar Chart: 月別予約件数
-        $monthlyBookings = [];
-        for ($i = 1; $i <= 12; $i++) {
-            $monthlyBookings[] = RestaurantReservation::whereMonth('created_at', $i)
-                ->whereYear('created_at', now()->year)
-                ->where('status_id', '2')
-                ->count();
-        }
-
-        // 3. Line Chart: 曜日別予約数
-        $dayOfWeekData = [];
-        $days = [2, 3, 4, 5, 6, 7, 1]; // Mon -> Sun
-        foreach ($days as $day) {
-            $dayOfWeekData[] = RestaurantReservation::whereRaw("DAYOFWEEK(created_at) = ?", [$day])
-                ->where('status_id', '2')
-                ->count();
-        }
-
-        // 4. Doughnut Chart: テーブルタイプ別売上
-        $typeStats = RestaurantReservation::query()
-            ->join('restaurant_tables', 'restaurant_reservations.table_id', '=', 'restaurant_tables.id')
-            ->join('table_type', 'restaurant_tables.type_id', '=', 'table_type.id')
-            ->where('restaurant_reservations.status_id', '2')
-            ->groupBy('table_type.name')
-            ->selectRaw('table_type.name, SUM(restaurant_reservations.total_price) as total_sales')
-            ->get();
-
-        $typeLabels = $typeStats->pluck('name');
-        $typeRevenue = $typeStats->pluck('total_sales');
-
-        return view('adminpage.restaurant.analysis-restaurant', compact(
-            'kpi', 
-            'monthlyBookings', 
-            'dayOfWeekData', 
-            'typeLabels', 
-            'typeRevenue'
-        ));
+    foreach ($reservations as $res) {
+        $day = \Carbon\Carbon::parse($res->reserved_at)->day;
+        $dailyData[$day]++;
     }
+
+    $restaurants = Restaurant::all();
+
+    return view('adminpage.restaurant.analysis-restaurant', compact(
+        'kpi', 'avgStayTime', 'monthlyBookings', 'dailyData', 'restaurantId', 'restaurants','hourlyStats','monthlyBookings'
+    ));
+}
 }

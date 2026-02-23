@@ -24,12 +24,12 @@
                                 <i class="fa-solid fa-user-gear me-2"></i>Admin
                             </a>
                         @endcan
-
+{{-- 
                         @can('hotel')
                             <a href="{{ route('hotel.home') }}" class="create-item">
                                 <i class="fa-solid fa-user-gear me-2"></i>Hotel
                             </a>
-                        @endcan
+                        @endcan --}}
 
                         @can('restaurant')
                             <a href="{{ route('restaurant.home') }}" class="create-item">

@@ -49,20 +49,23 @@ class HotelReservation extends Model
     }
 
     public static function getKpiStats($hotelId = null, $month = null)
-    {
-        $targetMonth = $month ?? now()->month;
+{
+    $targetMonth = $month ?? now()->month;
 
-        return self::query()
-            ->join('statuses', 'hotel_reservations.status_id', '=', 'statuses.id')
-            ->when($hotelId, function ($query, $hotelId) {
-                return $query->where('hotel_reservations.hotel_id', $hotelId);
-            })
-            ->whereMonth('hotel_reservations.created_at', $targetMonth)
-            ->whereYear('hotel_reservations.created_at', now()->year)
-            ->where('statuses.name', 'Booked')
-            ->selectRaw('COUNT(hotel_reservations.id) as customers, SUM(hotel_reservations.total_price) as sales')
-            ->first();
-    }
+    return self::query()
+        ->join('statuses', 'hotel_reservations.status_id', '=', 'statuses.id')
+        ->when($hotelId, function ($query, $hotelId) {
+            return $query->where('hotel_reservations.hotel_id', $hotelId);
+        })
+        ->whereMonth('hotel_reservations.created_at', $targetMonth)
+        ->whereYear('hotel_reservations.created_at', now()->year)
+        ->where('statuses.name', 'Booked')
+        ->selectRaw('
+            COUNT(hotel_reservations.id) as total_bookings, 
+            COUNT(hotel_reservations.id) as total_guests
+        ') // 一旦、両方COUNT（件数）にしてエラーを回避します
+        ->first();
+}
 
     public static function getAverageStay($hotelId = null)
     {
@@ -141,4 +144,37 @@ class HotelReservation extends Model
             'average'  => $allTimeAverage
         ];
     }
+
+    public static function getMonthlyStatsByYear($hotelId = null)
+{
+    $year = now()->year;
+    $monthlyBookings = array_fill(0, 12, 0);
+    $monthlyRevenue = array_fill(0, 12, 0);
+
+    $results = self::select(
+        // ここを hotel_reservations.created_at に修正
+        DB::raw('MONTH(hotel_reservations.created_at) as month'),
+        DB::raw('COUNT(*) as count'),
+        DB::raw('SUM(total_price) as revenue')
+    )
+    ->join('statuses', 'hotel_reservations.status_id', '=', 'statuses.id')
+    // ここも hotel_reservations.created_at に修正
+    ->whereYear('hotel_reservations.created_at', $year)
+    ->where('statuses.name', 'Booked')
+    ->when($hotelId, function($query) use ($hotelId) {
+        return $query->where('hotel_id', $hotelId);
+    })
+    ->groupBy('month')
+    ->get();
+
+    foreach ($results as $result) {
+        $monthlyBookings[$result->month - 1] = $result->count;
+        $monthlyRevenue[$result->month - 1] = $result->revenue;
+    }
+
+    return [
+        'bookings' => $monthlyBookings,
+        'revenue' => $monthlyRevenue
+    ];
+}
 }

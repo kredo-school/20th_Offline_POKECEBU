@@ -79,5 +79,18 @@ class Restaurant extends Model
            ->exists();
     }
 
+    // 評価
+    public function reviews() {
+       return $this->hasMany(Review::class, 'target_id')
+            ->where ('target_type', 'restaurant');;
+    }
+
+    // 評価済みかチェック
+    public function reviewdBy($userId) {
+       return $this->reviews()
+            ->where('user_id', $userId)
+            ->exists();
+    }
+
   
 }

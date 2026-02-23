@@ -57,14 +57,14 @@
                     <hr>
                     <p class="post-body"> {!! nl2br(e(preg_replace('/#[^\s#]+/u', '', $post->body))) !!}
                     </p>
-                    
+
 
 
 
                     {{-- コメント表示 --}}
                     <div class="mb-2">
                         @if ($post->comments->isNotEmpty())
-                        <hr>
+                            <hr>
                             <ul class="list-group mt-2">
                                 @foreach ($post->comments as $comment)
                                     <li class="comment-item border-0 p-0 mb-1">
@@ -80,28 +80,30 @@
 
                                             <div class="comment-content">
                                                 <div class="comment-header">
-                                                     <span class="fw-bold">{{ $comment->user->name }}</span>:
-                                                      {{-- 削除ボタン --}}
-                                            @auth
-                                                @if (Auth::user()->id === $post->user->id)
-                                                    <span class="dropdown text-end">
-                                                        <button class="btn btn-sm shadow-none" data-bs-toggle="dropdown">
-                                                            <i class="fa-solid fa-ellipsis"></i>
-                                                        </button>
-                                                        <div class="dropdown-menu dropdown-menu-end">
-                                                            <form action="{{ route('user.comment.destroy', $comment->id) }}"
-                                                                method="post" class="d-inline">
-                                                                @csrf
-                                                                @method('DELETE')
-                                                                <button type="submit"
-                                                                    class="btn btn-sm btn-link text-danger p-0 ms-2">
-                                                                    Delete
+                                                    <span class="fw-bold">{{ $comment->user->name }}</span>:
+                                                    {{-- 削除ボタン --}}
+                                                    @auth
+                                                        @if (Auth::user()->id === $post->user->id)
+                                                            <span class="dropdown text-end">
+                                                                <button class="btn btn-sm shadow-none"
+                                                                    data-bs-toggle="dropdown">
+                                                                    <i class="fa-solid fa-ellipsis"></i>
                                                                 </button>
-                                                            </form>
-                                                        </div>
-                                                    </span>
-                                                @endif
-                                            @endauth
+                                                                <div class="dropdown-menu dropdown-menu-end">
+                                                                    <form
+                                                                        action="{{ route('user.comment.destroy', $comment->id) }}"
+                                                                        method="post" class="d-inline">
+                                                                        @csrf
+                                                                        @method('DELETE')
+                                                                        <button type="submit"
+                                                                            class="btn btn-sm btn-link text-danger p-0 ms-2">
+                                                                            Delete
+                                                                        </button>
+                                                                    </form>
+                                                                </div>
+                                                            </span>
+                                                        @endif
+                                                    @endauth
                                                 </div>
                                                 <span>{{ $comment->body }}</span>
                                             </div>
@@ -296,6 +298,7 @@
     .comment-content {
         flex: 1;
     }
+
     .comment-header {
         display: flex;
         align-items: center;
@@ -368,6 +371,4 @@
         background: #007bff;
         color: white;
     }
-
-    
 </style>

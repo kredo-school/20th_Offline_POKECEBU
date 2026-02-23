@@ -1,17 +1,19 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\Hotel;
 use App\Models\HotelReservation;
 use App\Models\HotelRoomType;
+use App\Models\Hotel;
 use App\Models\Restaurant;
 use App\Models\RestaurantReservation;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
 
-class AnalysisController extends Controller
+class StaffAnalysisController extends Controller
 {
-  public function hotelAnalysis($hotelId = null)
+     public function hotelAnalysis($hotelId = null)
 {
     // 1. 基本統計
     $kpi             = HotelReservation::getKpiStats($hotelId);
@@ -20,7 +22,7 @@ class AnalysisController extends Controller
     // 月別統計（予約数と売上の両方を取得）
     $monthlyStats    = HotelReservation::getMonthlyStatsByYear($hotelId);
     $monthlyBookings = $monthlyStats['bookings'];
-    $monthlyRevenue  = $monthlyStats['revenue']; // これをビューに渡す
+    $monthlyRevenue  = $monthlyStats['revenue']; // これをビューに渡す必要があります
 
     $dayOfWeekData   = HotelReservation::getDayOfWeekComparison($hotelId);
 
@@ -51,8 +53,8 @@ class AnalysisController extends Controller
         })->get();
 
     foreach ($reservations as $res) {
-        $start = \Carbon\Carbon::parse($res->start_at);
-        $end = \Carbon\Carbon::parse($res->end_at);
+        $start = Carbon::parse($res->start_at);
+        $end = Carbon::parse($res->end_at);
 
         for ($date = $start->copy(); $date->lte($end); $date->addDay()) {
             if ($date->month == $month && $date->year == $year) {
@@ -63,14 +65,14 @@ class AnalysisController extends Controller
 
     $hotels = Hotel::all();
 
-    // monthlyRevenue を compact に追加
-    return view('adminpage.hotel.analysis-hotel', compact(
+    return view('staffpage.analysis.hotel-analysis', compact(
         'kpi', 'monthlyBookings', 'monthlyRevenue', 'avgStay', 'dayOfWeekData',
         'typeStatsMonth', 'typeBookingStatsMonth',
         'typeStatsYear', 'typeBookingStatsYear',
         'hotelId', 'hotels', 'heatmapData'
     ));
 }
+
 
 public function restaurantAnalysis($restaurantId = null)
 {
@@ -79,7 +81,7 @@ public function restaurantAnalysis($restaurantId = null)
     $monthlyBookings = RestaurantReservation::getMonthlyBookingsByYear($restaurantId);
     $hourlyStats = RestaurantReservation::getHourlyStats($restaurantId);
     $monthlyBookings = RestaurantReservation::getMonthlyStatsByYear($restaurantId);
-
+    
     // 日次データ（棒グラフ用）
     $year = now()->year;
     $month = now()->month;
@@ -93,13 +95,13 @@ public function restaurantAnalysis($restaurantId = null)
         })->get();
 
     foreach ($reservations as $res) {
-        $day = \Carbon\Carbon::parse($res->reserved_at)->day;
+        $day = Carbon::parse($res->reserved_at)->day;
         $dailyData[$day]++;
     }
 
     $restaurants = Restaurant::all();
 
-    return view('adminpage.restaurant.analysis-restaurant', compact(
+    return view('staffpage.analysis.restaurant-analysis', compact(
         'kpi', 'avgStayTime', 'monthlyBookings', 'dailyData', 'restaurantId', 'restaurants','hourlyStats','monthlyBookings'
     ));
 }

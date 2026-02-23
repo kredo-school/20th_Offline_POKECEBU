@@ -3,9 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 use App\Models\HotelReservation; 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Models\HotelImage;
+use App\Models\Review;
+use App\Models\Favorite;
+
 
 
 class Hotel extends Model
@@ -92,6 +96,22 @@ class Hotel extends Model
     }
 
     /**
+     * ホテルに対するレビュー（polymorphic）
+     * reviews テーブルが target_type / target_id を使っている想定
+     */
+    public function reviews()
+    {
+        return $this->morphMany(Review::class, 'target');
+    }
+
+        // （もしホテルとカテゴリが多対多で繋がっているなら）
+    public function categories()
+    {
+        return $this->belongsToMany(Category::class, 'hotel_category', 'hotel_id', 'category_id');
+    }
+
+
+    /**
      * 一時ホテル（申請中データ）との関係
      * tmp_hotels テーブルは申請時に hotel_id を保持する想定
      */
@@ -100,5 +120,20 @@ class Hotel extends Model
         return $this->hasMany(TmpHotel::class, 'hotel_id', 'id');
     }
 
-   
+
+    // お気に入り
+     public function isFavorited() {
+       return Favorite::where('user_id', Auth::id())
+           ->where('target_type', 'hotel')
+           ->where('target_id', $this->id)
+           ->exists();
+    }
+
+
+    public function favorites()
+    {
+        // 既存データが target_type = 'hotel' の場合に合わせる最短実装
+        return $this->hasMany(Favorite::class, 'target_id')
+            ->where('target_type', 'hotel');
+    }
 }

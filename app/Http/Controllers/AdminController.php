@@ -26,9 +26,13 @@ class AdminController extends Controller
 {
     public function index()
     {
-        $totalUsers = User::where('role_id', 3)->count();
+        $totalUsers = User::where('role_id', 1)->count();
+        $newUserStats = User::getNewUserStats(null);
+        $newRegistrationCount = $newUserStats['count'];
+        $newUserChartLabels = $newUserStats['chart']['labels'];
+        $newUserChartData = $newUserStats['chart']['data'];
 
-        return view('adminpage.home', compact('totalUsers'));
+        return view('adminpage.home', compact('totalUsers', 'newRegistrationCount', 'newUserChartLabels', 'newUserChartData'));
     }
 
     public function showAllUsers() {

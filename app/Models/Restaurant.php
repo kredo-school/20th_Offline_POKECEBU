@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Favorite;
 
 class Restaurant extends Model
 {
@@ -67,6 +69,14 @@ class Restaurant extends Model
     public function restaurantImages()
     {
         return $this->hasMany(RestaurantImage::class);
+    }
+
+    //お気に入り 
+    public function isFavorited() {
+       return Favorite::where('user_id', Auth::id())
+           ->where('target_type', 'restaurant')
+           ->where('target_id', $this->id)
+           ->exists();
     }
 
   

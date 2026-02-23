@@ -20,14 +20,49 @@
                                     {{ $restaurant->address }}
                                 </p>
                             </div>
+
+                            {{-- favorite --}}
+                            <div class="ms-3">
+                                @if ($restaurant->isFavorited())
+                                    <form method="POST" action="{{ route('user.favorite.destroy',['restaurant',$restaurant->id]) }}">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button class="btn favorite-btn">
+                                        <i class="fa-solid fa-heart text-danger"></i>
+                                    </button>
+                                </form>
+                                @else
+                                <form method="POST" action="{{ route('user.favorite.store',['restaurant',$restaurant->id]) }}">
+                                    @csrf
+                                    <button class="btn favorite-btn">
+                                        <i class="fa-regular fa-heart"></i>
+                                    </button>
+                                </form>
+                                @endif
+                            </div>
+
                             <div class="star-rating text-nowrap">
-                                @for ($i = 1; $i <= 5; $i++)
+                                {{-- @for ($i = 1; $i <= 5; $i++)
                                     @if ($i <= $restaurant->star_rating)
                                         <i class="fa-solid fa-star text-warning"></i>
                                     @else
                                         <i class="fa-regular fa-star text-secondary opacity-25"></i>
                                     @endif
-                                @endfor
+                                @endfor --}}
+                                @php
+                                    $rating = $restaurant->star_rating;
+                                    $fullStars = floor($rating);
+                                    $halfStar = $rating - $fullStars >= 0.5;
+                                @endphp
+                                <p class="card-text text-warning">
+                                    @for ($i = 1; $i <= $fullStars; $i++)
+                                        <i class="fa-solid fa-star"></i>
+                                    @endfor
+                                    @if ($halfStar)
+                                        <i class="fa-solid fa-star-half-stroke"></i>
+                                    @endif
+                                    <span class="text-muted ms-1">{{ number_format($rating, 1) }}</span>
+                                </p>
                             </div>
                         </div>
 

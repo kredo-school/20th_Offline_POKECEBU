@@ -1,28 +1,10 @@
-@extends('layouts.admin')
-
-@section('title', 'Admin Analysis of Restaurant')
-
+@extends('layouts.staff')
+ 
+@section('title', 'Analysis of Restaurant')
+ 
 @section('content')
+
     <style>
-        .btn-sidebar {
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            background-color: white;
-            color: #555;
-            width: 100%;
-            margin-bottom: 10px;
-            transition: all 0.3s;
-            text-align: left;
-            padding: 12px 20px;
-        }
-
-        .btn-sidebar.active {
-            background-color: #f39c12;
-            color: white;
-            border-color: #f39c12;
-            font-weight: bold;
-        }
-
         .analysis-container {
             background: white;
             padding: 25px;
@@ -59,27 +41,7 @@
 
     <div class="container py-4">
         <div class="row">
-            {{-- Sidebar --}}
-            <div class="col-md-2">
-                <div class="d-flex flex-column mb-4">
-                    <a href="{{ route('admin.analysis.hotel') }}" class="btn btn-sidebar"><i
-                            class="fa-solid fa-hotel me-2"></i>Hotel</a>
-                    <a href="{{ route('admin.analysis.restaurant') }}" class="btn btn-sidebar active"><i
-                            class="fa-solid fa-utensils me-2"></i>Restaurant</a>
-                </div>
-                <select class="form-select form-select-sm border-dark-subtle shadow-sm"
-                    onchange="window.location.href=this.value">
-                    <option value="{{ route('admin.analysis.restaurant') }}" {{ is_null($restaurantId) ? 'selected' : '' }}>
-                        All Restaurants</option>
-                    @foreach ($restaurants as $res)
-                        <option value="{{ route('admin.analysis.restaurant', ['id' => $res->id]) }}"
-                            {{ $restaurantId == $res->id ? 'selected' : '' }}>{{ $res->name }}</option>
-                    @endforeach
-                </select>
-            </div>
-
-            {{-- Main Content --}}
-            <div class="col-md-10">
+            <div class="col">
                 {{-- KPI Section --}}
                 <div class="analysis-container shadow-sm">
                     <div class="d-flex justify-content-center gap-3 flex-wrap">
@@ -119,7 +81,7 @@
 
                 {{-- Daily & Monthly Charts --}}
                 <div class="row mb-4">
-                    {{-- Daily Bookings (折れ線グラフ) --}}
+                    {{-- Daily Bookings --}}
                     <div class="col-md-7">
                         <div class="analysis-container shadow-sm h-100">
                             <h6 class="chart-title border-bottom pb-3">
@@ -132,7 +94,7 @@
                         </div>
                     </div>
 
-                    {{-- Monthly Trends (棒グラフに一本化) --}}
+                    {{-- Monthly Trends (売上を削除し、予約数のみの棒グラフに修正) --}}
                     <div class="col-md-5">
                         <div class="analysis-container shadow-sm h-100">
                             <h6 class="chart-title border-bottom pb-3">
@@ -185,11 +147,11 @@
                 });
             }
 
-            // --- 2. 月別棒グラフ (予約数のみ) ---
+            // --- 2. 月別棒グラフ (予約数のみのシンプル版に修正) ---
             const monthlyCtx = document.getElementById('monthlyBarChart');
             if (monthlyCtx) {
                 new Chart(monthlyCtx, {
-                    type: 'bar',
+                    type: 'bar', // datasetごとのtype指定をやめて全体をbarに
                     data: {
                         labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
                         datasets: [{
@@ -203,16 +165,15 @@
                         responsive: true,
                         maintainAspectRatio: false,
                         plugins: {
-                            legend: { display: false }
+                            legend: { display: false } // 凡例も不要なので非表示
                         },
                         scales: {
                             y: {
                                 beginAtZero: true,
-                                ticks: { stepSize: 1 }
+                                ticks: { stepSize: 1 },
+                                title: { display: true, text: 'Reservations' }
                             },
-                            x: {
-                                grid: { display: false }
-                            }
+                            x: { grid: { display: false } }
                         }
                     }
                 });
@@ -257,11 +218,7 @@
                             },
                             x: {
                                 grid: { display: false },
-                                ticks: {
-                                    maxRotation: 0,
-                                    autoSkip: true,
-                                    maxTicksLimit: 12
-                                }
+                                ticks: { maxRotation: 0, autoSkip: true, maxTicksLimit: 12 }
                             }
                         }
                     }

@@ -1,30 +1,55 @@
-@extends('adminpage.home')
+@extends('layouts.admin')
 
 @section('content')
-<div class="container">
-    <h3>Edit Admin</h3>
+<div class="container-fluid">
+    <div class="row justify-content-center">
 
-    <form method="POST" action="{{ route('admin.admin.update', $admin->id) }}">
-        @csrf
-        @method('PUT')
+        <!-- メイン -->
+        <div class="col-md-9 p-4">
+            <div class="card shadow-sm rounded-4 pt-2">
+                <div class="card-header bg-light ">
+                    <h5 class="mb-1">Edit Admin</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ route('admin.admin.update', $admin->id) }}">
+                        @csrf
+                        @method('PUT')
 
-        <div class="mb-3">
-            <label>Name</label>
-            <input name="name" class="form-control" value="{{ $admin->name }}">
+                        <div class="mb-3">
+                            <label class="form-label">Name</label>
+                            <input type="text" name="name" class="form-control" value="{{ $admin->name }}">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" name="email" class="form-control" value="{{ $admin->email }}">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Password (optional)</label>
+                            <input type="password" name="password" class="form-control">
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2 mt-3">
+                            <a href="{{ route('admin.admins') }}" class="btn btn-outline-secondary px-4">Back</a>
+                            <button type="submit" class="btn btn-warning px-4">Update</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            {{-- エラーメッセージを表示するコード --}}
+            @if ($errors->any())
+                <div class="alert alert-danger">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
         </div>
-
-        <div class="mb-3">
-            <label>Email</label>
-            <input name="email" class="form-control" value="{{ $admin->email }}">
-        </div>
-
-        <div class="mb-3">
-            <label>Password (optional)</label>
-            <input type="password" name="password" class="form-control">
-        </div>
-
-        <button class="btn btn-primary">Update</button>
-        <a href="{{ route('admin.admins') }}" class="btn btn-secondary">Back</a>
-    </form>
+    </div>
 </div>
 @endsection
+
+

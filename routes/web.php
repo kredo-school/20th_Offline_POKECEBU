@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AnalysisController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\PostsController;
 use App\Http\Controllers\Admin\TypeController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\MyPageController;
@@ -63,6 +64,8 @@ Route::group(['middleware' => 'auth'], function () {
         Route::delete('/category-type/delete/{id}', [TypeController::class, 'destroy'])->name('category-type.destroy');
         Route::patch('/category-type/update/{id}', [TypeController::class, 'update'])->name('category-type.update');
 
+        ### All Users
+        Route::get('/all-users', [AdminController::class, 'showAllUsers'])->name('showAllUsers');
         # For Customer
         Route::get('/all-users', [AdminController::class, 'showAllUsers'])->name('showAllUsers');
         Route::get('/customer', [AdminController::class, 'customer'])->name('customer');
@@ -93,6 +96,9 @@ Route::group(['middleware' => 'auth'], function () {
         Route::put('/admin/update/{id}', [AdminController::class, 'updateAdmin'])->name('admin.update');
         Route::delete('/admin/delete/{id}', [AdminController::class, 'deleteAdmin'])->name('admin.delete');
 
+        # Hotel/Restaurant List
+        Route::get('/showList/{name}', [AdminController::class, 'showList'])->name('showList');
+
         // ホテル予約
         Route::get('/hotels', [HotelController::class, 'roomInfo'])->name('hotels.index');
         Route::get('/reservation/confirmation', [HotelReservationController::class, 'confirmation'])->name('reservation.confirmation');
@@ -119,6 +125,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/hotel/approval/{id}', [AdminController::class, 'showPending'])->name('hotel.approval.show');
         Route::post('/hotel/approve/{id}', [AdminController::class, 'approveHotel'])->name('hotel.approve');
         Route::post('/hotels/{id}/reject', [AdminController::class, 'rejectHotel'])->name('hotel.reject');
+        Route::get('/hotel/{id}/detail', [AdminController::class, 'showDetail'])->name('showDetail');
 
         #For Analysis
         Route::get('/analysis/hotel/{id?}', [AnalysisController::class, 'hotelAnalysis'])->name('analysis.hotel');

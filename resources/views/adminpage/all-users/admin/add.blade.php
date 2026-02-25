@@ -1,39 +1,53 @@
-@extends('adminpage.home')
+@extends('layouts.admin')
 
 @section('content')
-<div class="container">
-    <h3>Add Admin</h3>
+<div class="container-fluid">
+    <div class="row justify-content-center">
 
-    <form method="POST" action="{{ route('admin.admin.store') }}">
-        @csrf
+        <!-- メイン -->
+        <div class="col-md-9 p-4">
+            <div class="card shadow-sm rounded-4 pt-2">
+                <div class="card-header bg-light ">
+                    <h5 class="mb-1">Add Admin</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ route('admin.admin.store') }}">
+                        @csrf
 
-        <div class="mb-3">
-            <label>Name</label>
-            <input name="name" class="form-control">
-        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Name</label>
+                            <input type="text" name="name" class="form-control" value="{{ old('name') }}">
+                        </div>
 
-        <div class="mb-3">
-            <label>Email</label>
-            <input name="email" class="form-control">
-        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" name="email" class="form-control" value="{{ old('email') }}">
+                        </div>
 
-        <div class="mb-3">
-            <label>Password</label>
-            <input type="password" name="password" class="form-control">
-        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Password</label>
+                            <input type="password" name="password" class="form-control">
+                        </div>
 
-        <button class="btn btn-success">Save</button>
-        <a href="{{ route('admin.admins') }}" class="btn btn-secondary">Back</a>
-        {{-- エラーメッセージを表示するコード --}}
-        @if ($errors->any())
-            <div class="alert alert-danger">
-                <ul>
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
+                        <div class="d-flex justify-content-end gap-2 mt-3">
+                            <a href="{{ route('admin.admins') }}" class="btn btn-outline-secondary px-4">Back</a>
+                            <button type="submit" class="btn btn-primary px-4">Add Admin</button>
+                        </div>
+                    </form>
+                </div>
             </div>
-        @endif
-    </form>
+            {{-- エラーメッセージを表示するコード --}}
+            @if ($errors->any())
+                <div class="alert alert-danger">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+        </div>
+    </div>
 </div>
 @endsection
+

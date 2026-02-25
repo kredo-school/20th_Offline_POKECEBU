@@ -107,7 +107,8 @@ class Hotel extends Model
         // （もしホテルとカテゴリが多対多で繋がっているなら）
     public function categories()
     {
-        return $this->belongsToMany(Category::class, 'hotel_category', 'hotel_id', 'category_id');
+        // return $this->belongsToMany(Category::class, 'hotel_category', 'hotel_id', 'category_id');
+        return $this->belongsToMany(Category::class, 'category_room', 'hotel_id', 'category_id');
     }
 
 

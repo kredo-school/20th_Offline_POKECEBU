@@ -17,37 +17,49 @@ class MyPageController extends Controller
         return view('userpage.mypage.mypage', compact('user'));
     }
 
-    public function editProfile(){
+    public function editProfile()
+    {
         $user = Auth::user();
         $user->load('detail');
         return view('userpage.mypage.edit-profile', compact('user'));
     }
-    
-public function updateProfile(Request $request)
-{
-    // 1. バリデーション 🛡️
-    $request->validate([
-        'first_name' => 'nullable|string|max:255',
-        'last_name'  => 'required|string|max:255',
-        'phone'      => 'nullable|string|max:20',
-    ]);
 
-    $user = Auth::user();
+    public function updateProfile(Request $request)
+    {
+        // 1. バリデーション 🛡️
+        $request->validate([
+            'first_name' => 'nullable|string|max:255',
+        'last_name'  => 'nullable|string|max:255',
+            'phone'      => 'nullable|string|max:20',
+            'avatar'     => 'nullable|image|mimes:jpeg,png,jpg,gif', // 画像バリデーション
+        ]);
 
-    // 2. 保存処理 💾
-    // 第1引数で「誰のデータか」を指定し、第2引数で「何を保存するか」を指定します
-    $user->detail()->updateOrCreate(
-        ['user_id' => $user->id], // 検索条件
-        [
+        $user = Auth::user();
+
+        // 2. 保存データの配列
+        $data = [
             'first_name' => $request->first_name,
             'last_name'  => $request->last_name,
             'phone'      => $request->phone,
-        ]
-    );
+        ];
 
-    // 3. リダイレクト 🏠
-    return redirect('/mypage')->with('success', 'Profile updated!');
+        // 3. 画像がアップロードされていれば、base64化してDBに保存
+      if ($request->hasFile('avatar')) {
+    $file = $request->file('avatar');
+    $data['avatar'] = 'data:image/' . $file->extension() . ';base64,' . base64_encode(file_get_contents($file->getRealPath()));
+    
+    // ここで止めて確認！
+   
 }
+
+        // 4. 更新 or 作成
+        $user->detail()->updateOrCreate(
+            ['user_id' => $user->id],
+            $data
+        );
+
+        return redirect(route('mypage'))->with('success', 'Profile updated!');
+    }
     public function editPersonal()
     {
         $user = Auth::user();
@@ -58,8 +70,8 @@ public function updateProfile(Request $request)
     public function updatePersonal(Request $request)
     {
         $request->validate([
-            'first_name' => 'nullable|string|max:255',
-            'last_name'  => 'required|string|max:255',
+            'first_name' => 'string|max:255',
+            'last_name'  => 'string|max:255',
             'phone'      => 'nullable|string|max:20',
             'birthday'   => 'nullable|date',
         ]);
@@ -116,18 +128,8 @@ public function updateProfile(Request $request)
 
         return redirect('/mypage');
     }
+
+
     
-public function booking()
-    {
-        $user = Auth::user();
-
-        // ユーザーの予約を取得
-        $reservations = HotelReservation::where('user_id', $user->id)
-                            ->orderBy('reserved_at', 'desc')
-                            ->get();
-
-        // Blade に渡す
-        return view('userpage.mypage.booking', compact('user', 'reservations'));
-    }
-
 }
+

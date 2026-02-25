@@ -51,11 +51,11 @@
                             </div>
                         </div>
 
-                        <div class="mb-3">
+                        {{-- <div class="mb-3">
                             <label class="form-label text-muted small">Country</label>
                             <input type="text" name="country" class="form-control"
                                 value="{{ old('country', $user->detail->country ?? 'Japan') }}" required>
-                        </div>
+                        </div> --}}
 
                         <div class="d-flex justify-content-end mt-4 gap-2">
                             <button type="button" class="btn btn-outline-secondary px-4" onclick="history.back()">

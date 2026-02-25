@@ -1,8 +1,25 @@
+@extends('layouts.admin')
+
+@section('content')
 <div class="container-fluid">
-    <div class="mt-3 mb-3">
+    <div class="mt-3 mb-2">
+        <div class="mb-1"><a href="{{ route('admin.hotels') }}">◀︎ All Users</a></div>
         <h2>List of Hotels</h2>
     </div>
+    {{-- フラッシュメッセージ表示（追加） --}}
+        @if (session('status'))
+            <div class="alert alert-success">
+                {{ session('status') }}
+            </div>
+        @endif
+
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                {{ $errors->first() }}
+            </div>
+        @endif
     <!-- Search Area -->
+    {{-- 
     <div class="card mb-3">
         <div class="card-body">
             <form method="GET">
@@ -77,13 +94,16 @@
             </form>
         </div>
     </div>
+    --}}
 
     <div class="small text-secondary mb-2">
-        Showing 1-10 of 100 records
-        {{-- Showing {{ $hotels->firstItem() }}–{{ $hotels->lastItem() }}
-        of {{ $hotels->total() }} records --}}
+        {{-- @if ($targetList)
+            Showing {{ $targetList->firstItem() }}-{{ $targetList->lastItem() }}
+            of {{ $targetList->total() }} records
+        @else
+            Showing 0-0 of 0 records
+        @endif --}}
     </div>
-
     <table class="table table-hover align-middle bg-white text-secondary">
         <thead class="small table-primary text-secondary">
             <tr>
@@ -98,34 +118,50 @@
             </tr>
         </thead>
         <tbody>
-            <!-- TODO : get data from db(foreach) -->
-            <tr>
-                <td>1</td>
-                <td>Maple Crown Hotel</td>
-                <td>212-555-0184</td>
-                <td>12 Maple St</td>
-                <td>2025-12-03 1:46:54</td>
-                <td>2025-12-03 1:46:54</td>
-                <td>Pending</td>
-                <td>
-                    <div class="dropdown">
-                        <button class="btn btn-sm" data-bs-toggle="dropdown">
-                            <i class="fa-solid fa-ellipsis"></i>
-                        </button>
-                        <div class="dropdown-menu">
-                            <button class="dropdown-item" data-bs-toggle="modal" data-bs-target="#approveModal-">
-                                <i class="fa-regular fa-circle-check"></i> Approve
-                            </button>
-                            <button class="dropdown-item text-danger" data-bs-toggle="modal"
-                                data-bs-target="#rejectModal-">
-                                <i class="fa-regular fa-circle-xmark"></i> Reject
-                            </button>
-                        </div>
-                    </div>
-                </td>
-            </tr>
+            @if ($hotels)
+                @foreach ($hotels as $hotel)
+                    <tr>
+                        <td>{{ $hotel->type === 'tmp' ? 'New' : optional($hotel->user)->id }}</td>
+                        <td>{{ $hotel->name ?? optional($hotel->user)->name }}</td>
+                        <td>{{ $hotel->phone }}</td>
+                        <td>{{ $hotel->address }}</td>
+                        <td>{{ optional($hotel->created_at)->format('Y-m-d H:i') }}</td>
+                        <td>{{ optional($hotel->updated_at)->format('Y-m-d H:i') }}</td>
+                        <td>
+                            @if($hotel->status === 'approved')
+                                <i class="fa-solid fa-check text-success me-1"></i> Approved
+                            @else
+                                <i class="fa-solid fa-circle-exclamation text-danger me-1"></i> Pending
+                            @endif
+                        </td>
+                        <td>
+                            <div class="dropdown">
+                                <button class="btn btn-sm" data-bs-toggle="dropdown">
+                                    <i class="fa-solid fa-ellipsis"></i>
+                                </button>
+                                <div class="dropdown-menu">
+                                    @if($hotel->status === 'pending')
+                                        <button class="dropdown-item" data-bs-toggle="modal" data-bs-target="#approveModal-{{ $hotel->id }}">
+                                            <i class="fa-regular fa-circle-check"></i> Approve
+                                        </button>
+                                        <button class="dropdown-item text-danger" data-bs-toggle="modal" data-bs-target="#rejectModal-{{ $hotel->id }}">
+                                            <i class="fa-regular fa-circle-xmark"></i> Reject
+                                        </button>
+                                    @else
+                                        <a href="{{ route('admin.showDetail', $hotel->id) }}" class="dropdown-item">
+                                            <i class="fa-solid fa-eye"></i> View details
+                                        </a>
+                                    @endif
+                                </div>
+                            </div>
+                            
+                            @include('adminpage.list.hotel.modals.approve')
+                            @include('adminpage.list.hotel.modals.reject')
+                        </td>
+                    </tr>
+                @endforeach
+            @endif
         </tbody>
     </table>
-    @include('adminpage.list.modals.approve')
-    @include('adminpage.list.modals.reject')
 </div>
+@endsection

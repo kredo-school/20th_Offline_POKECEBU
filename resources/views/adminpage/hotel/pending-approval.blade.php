@@ -15,29 +15,21 @@
             </div>
         @endif
         <div class="row">
-            {{-- ホテル一覧（左側） --}}
-            <div class="col-lg-3 mb-4">
-                <h4 class="mb-3"><i class="fa-solid fa-building me-2"></i>Pending Hotels</h4>
-                <ul class="list-group">
-                    @forelse($tmpHotels as $hotel)
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            {{ $hotel->name }}
-                            <a href="{{ route('admin.hotel.approval.show', $hotel->id) }}"
-                                class="btn btn-sm btn-outline-primary">Review</a>
-                        </li>
-                    @empty
-                        <li class="list-group-item">No pending hotels</li>
-                    @endforelse
-                </ul>
-            </div>
-
+            <div class="mb-2"><a href="{{ route('admin.showList', 'hotel') }}">◀︎ List of Hotels</a></div>
             {{-- ホテル詳細（右側） --}}
             <div class="col-lg-9">
                 @if (isset($tmpHotel) && $tmpHotel)
                     <div class="mb-3">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <h2 class="mb-0">{{ $tmpHotel->name }}</h2>
+                                <h2 class="mb-0">
+                                    @if (is_null($tmpHotel->hotel_id))
+                                        <span class="badge bg-info-subtle text-info me-1">New</span>
+                                    @else
+                                        <span class="badge bg-success-subtle text-success me-1">Update</span>
+                                    @endif
+                                    {{ $tmpHotel->name }}
+                                </h2>
                                 <div class="text-warning fs-5">
                                     @for ($i = 0; $i < floor($tmpHotel->star_rating ?? 0); $i++)
                                         <i class="fa-solid fa-star"></i>
@@ -60,7 +52,7 @@
                                 <form method="post" action="{{ route('admin.hotel.reject', $tmpHotel->id) }}">
                                     @csrf
                                     {{-- @method('delete') --}}
-                                    <textarea name="reject_reason" placeholder="却下理由を入力してください"></textarea>
+                                    <textarea name="reject_reason" placeholder="Reasons for reject"></textarea>
                                     <button type="submit" class="btn btn-danger btn-lg rounded-pill">
                                         <i class="fa-solid fa-xmark me-1"></i> Reject
                                     </button>

@@ -33,14 +33,14 @@
                     <td>{{ optional($admin->created_at)->format('Y-m-d H:i') }}</td>
                     <td>{{ optional($admin->updated_at)->format('Y-m-d H:i') }}</td>
                     <td>
-                        <a href="{{ route('admin.admin.edit', $admin->id) }}" class="btn btn-sm btn-primary">
+                        <a href="{{ route('admin.admin.edit', $admin->id) }}" class="btn btn-sm btn-warning text-white">
                             Edit
                         </a>
 
                         <form action="{{ route('admin.admin.delete', $admin->id) }}" method="POST" class="d-inline">
                             @csrf
                             @method('DELETE')
-                            <button class="btn btn-sm btn-danger" onclick="return confirm('Delete this admin?')">
+                            <button class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete \'{{ $admin->name }}\'?')">
                                 Delete
                             </button>
                         </form>

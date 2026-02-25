@@ -32,14 +32,14 @@
                     <td>{{ optional($customer->created_at)->format('Y-m-d H:i') }}</td>
                     <td>{{ optional($customer->updated_at)->format('Y-m-d H:i') }}</td>
                     <td>
-                        <a href="{{ route('admin.customer.edit', $customer->id) }}" class="btn btn-sm btn-primary">
+                        <a href="{{ route('admin.customer.edit', $customer->id) }}" class="btn btn-sm btn-warning text-white">
                             Edit
                         </a>
 
                         <form action="{{ route('admin.customer.delete', $customer->id) }}" method="POST" class="d-inline">
                             @csrf
                             @method('DELETE')
-                            <button class="btn btn-sm btn-danger" onclick="return confirm('Delete this customer?')">
+                            <button class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete \'{{ $customer->name }}\'?')">
                                 Delete
                             </button>
                         </form>

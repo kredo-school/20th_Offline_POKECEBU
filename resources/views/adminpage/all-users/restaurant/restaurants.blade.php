@@ -5,7 +5,7 @@
 @section('admin-content')
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h2 class="h4 mb-0 text-secondary">Restaurants</h2>
-        <a href="#" class="btn btn-dark fw-bolder text-white">
+        <a href="{{ route('admin.showList', 'restaurant') }}" class="btn btn-dark fw-bolder text-white">
             <i class="fa-regular fa-address-book"></i> List of Restaurant
         </a>
     </div>
@@ -33,13 +33,13 @@
                     <td>{{ optional($restaurant->created_at)->format('Y-m-d H:i') }}</td>
                     <td>{{ optional($restaurant->updated_at)->format('Y-m-d H:i') }}</td>
                     <td>
-                        <a href="{{ route('restaurant.edit', $restaurant->id) }}" class="btn btn-primary btn-sm">Edit</a>
+                        <a href="{{ route('restaurant.edit', $restaurant->id) }}" class="btn btn-warning text-white btn-sm">Edit</a>
 
                         <form action="{{ route('restaurant.delete', $restaurant->id) }}" method="POST" style="display:inline;">
                             @csrf
                             @method('DELETE')
                             <button class="btn btn-danger btn-sm"
-                                onclick="return confirm('Delete this restaurant?')">Delete</button>
+                                onclick="return confirm('Are you sure you want to delete \'{{ $restaurant->name }}\'?')">Delete</button>
                         </form>
                     </td>
                 </tr>

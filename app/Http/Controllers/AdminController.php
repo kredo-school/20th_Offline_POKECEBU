@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Mail;
 
 use App\Models\TmpHotel;
 use App\Models\TmpHotelImage;
-    
+
 use App\Models\HotelImage;
 use App\Models\ApprovalHistory;
 
@@ -26,112 +26,108 @@ class AdminController extends Controller
 {
     public function index()
     {
-        $totalUsers = User::where('role_id', 3)->count();
+        $totalUsers = User::all()->count();
 
         return view('adminpage.home', compact('totalUsers'));
     }
 
-    public function showAllUsers() {
+
+    // User 一覧
+    public function showAllUsers()
+    {
         return view('adminpage.all-users.all-users');
     }
 
-    // Customer関連
-    // User 一覧
-
-// ===============================
-// Customer追加フォーム
-// ===============================
-// ===============================
-// Customer 一覧
-// ===============================
-public function customers()
-{
-    // role_id が 1 のユーザーだけを取得
-    $customers = User::where('role_id', 1)->get();
-    return view('adminpage.all-users.customer.customers', compact('customers'));
-}
-
-// ===============================
-// Customer 追加画面
-// ===============================
-public function addCustomer()
-{
-        $totalUsers = User::count();
-    return view('adminpage.all-users.customer.add',compact('totalUsers'));
-}
-
-// ===============================
-// Customer 保存
-// ===============================
-public function storeCustomer(Request $request)
-{
-        $totalUsers = User::count();
-    $request->validate([
-        'name' => 'required|string|max:255',
-        'email' => 'required|email|unique:users,email',
-        'password' => 'required|string|min:6',
-    ]);
-
-    User::create([
-        'name' => $request->name,
-        'email' => $request->email,
-        'password' => bcrypt($request->password),
-        'role_id' => 1, // ★ Customer固定
-    ]);
-
-    return redirect()->route('admin.customers')->with('success', 'Customer added!');
-}
-
-// ===============================
-// Customer 編集画面
-// ===============================
-public function editCustomer($id)
-{
-        $totalUsers = User::count();
-    // 編集対象も role_id が 1 のユーザーに限定して取得
-    $user = User::where('role_id', 1)->findOrFail($id);
-    return view('adminpage.all-users.customer.edit', compact('user','totalUsers'));
-}
-
-// ===============================
-// Customer 更新
-// ===============================
-public function updateCustomer(Request $request, $id)
-{
-        $totalUsers = User::count();
-    // 更新対象も role_id が 1 に限定
-    $user = User::where('role_id', 1)->findOrFail($id);
-
-    $request->validate([
-        'name' => 'required|string|max:255',
-        'email' => "required|email|unique:users,email,{$id}",
-        'password' => 'nullable|string|min:6',
-    ]);
-
-    $user->name = $request->name;
-    $user->email = $request->email;
-    
-    if ($request->password) {
-        $user->password = bcrypt($request->password);
+    // ===============================
+    // Customer追加フォーム
+    // ===============================
+    // ===============================
+    // Customer 一覧
+    // ===============================
+    public function customers()
+    {
+        // role_id が 1 のユーザーだけを取得
+        $customers = User::where('role_id', 1)->get();
+        return view('adminpage.all-users.customer.customers', compact('customers'));
     }
 
-    
-    $user->save();
+    // ===============================
+    // Customer 追加画面
+    // ===============================
+    public function addCustomer()
+    {
+        return view('adminpage.all-users.customer.add');
+    }
 
-    return redirect()->route('admin.customers')->with('success', 'Customer updated!');
-}
+    // ===============================
+    // Customer 保存
+    // ===============================
+    public function storeCustomer(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|string|min:6',
+        ]);
 
-// ===============================
-// Customer 削除
-// ===============================
-public function deleteCustomer($id)
-{
-    // 削除対象も role_id が 1 に限定
-    $user = User::where('role_id', 1)->findOrFail($id);
-    $user->delete();
+        User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => bcrypt($request->password),
+            'role_id' => 1, // ★ Customer固定
+        ]);
 
-    return redirect()->route('admin.customers')->with('success', 'Customer deleted!');
-}
+        return redirect()->route('admin.customers')->with('success', 'Customer added!');
+    }
+
+    // ===============================
+    // Customer 編集画面
+    // ===============================
+    public function editCustomer($id)
+    {
+        // 編集対象も role_id が 1 のユーザーに限定して取得
+        $user = User::where('role_id', 1)->findOrFail($id);
+        return view('adminpage.all-users.customer.edit', compact('user'));
+    }
+
+    // ===============================
+    // Customer 更新
+    // ===============================
+    public function updateCustomer(Request $request, $id)
+    {
+        // 更新対象も role_id が 1 に限定
+        $user = User::where('role_id', 1)->findOrFail($id);
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => "required|email|unique:users,email,{$id}",
+            'password' => 'nullable|string|min:6',
+        ]);
+
+        $user->name = $request->name;
+        $user->email = $request->email;
+
+        if ($request->password) {
+            $user->password = bcrypt($request->password);
+        }
+
+
+        $user->save();
+
+        return redirect()->route('admin.customers')->with('success', 'Customer updated!');
+    }
+
+    // ===============================
+    // Customer 削除
+    // ===============================
+    public function deleteCustomer($id)
+    {
+        // 削除対象も role_id が 1 に限定
+        $user = User::where('role_id', 1)->findOrFail($id);
+        $user->delete();
+
+        return redirect()->route('admin.customers')->with('success', 'Customer deleted!');
+    }
 
     // ホテル一覧
     public function hotels()
@@ -164,26 +160,22 @@ public function deleteCustomer($id)
     // ホテル編集画面
     public function editHotel($id)
     {
-        $hotel = Hotel::findOrFail($id);
+        $hotel = User::where('role_id', 3)->findOrFail($id);
         return view('adminpage.all-users.hotel.edit', compact('hotel'));
     }
-
-       
-    
 
     // ホテル更新処理
     public function updateHotel(Request $request, $id)
     {
-        $hotel = Hotel::findOrFail($id);
-
-        $data = $request->validate([
-            'name' => 'required|string|max:255',
-            'city' => 'nullable|string|max:100',
-            'phone' => 'nullable|string|max:50',
-            'address' => 'nullable|string|max:255',
+        $hotel = User::where('role_id', 3)->findOrFail($id);
+        
+        $request->validate([
+            'password' => 'nullable|string|min:6',
         ]);
 
-        $hotel->update($data);
+        $hotel->password = bcrypt($request->password);
+
+        $hotel->save();
 
         return redirect()->route('admin.hotels')->with('success', 'Hotel updated!');
     }
@@ -191,7 +183,7 @@ public function deleteCustomer($id)
     // ホテル削除
     public function deleteHotel($id)
     {
-        $hotel = Hotel::findOrFail($id);
+        $hotel = User::where('role_id', 3)->findOrFail($id);
         $hotel->delete();
 
         return redirect()->route('admin.hotels')->with('success', 'Hotel deleted!');
@@ -199,17 +191,18 @@ public function deleteCustomer($id)
 
     // Restaurant関連
    public function restaurants()
-{
-    $restaurants = User::where('role_id', 4)->get();
-    $totalUsers = User::count(); // 全ユーザー数を取得
+    {
+        $restaurants = User::where('role_id', 4)->get();
+        $totalUsers = User::count(); // 全ユーザー数を取得
 
-    return view('adminpage.all-users.restaurant.restaurants', compact('restaurants', 'totalUsers'));
-}
+        return view('adminpage.all-users.restaurant.restaurants', compact('restaurants', 'totalUsers'));
+    }
 
 
     // レストラン追加フォーム
     public function addRestaurant()
-    {    $totalUsers = User::count();
+    {
+        $totalUsers = User::count();
         return view('adminpage.all-users.restaurant.add', compact('totalUsers'));
     }
 
@@ -229,114 +222,148 @@ public function deleteCustomer($id)
 
     // レストラン編集フォーム
     public function editRestaurant($id)
-    {    $totalUsers = User::count();
-        $restaurant = Restaurant::findOrFail($id);
-        return view('adminpage.all-users.restaurant.edit', compact('restaurant','totalUsers'));
+    {
+        $restaurant = User::where('role_id', 4)->findOrFail($id);
+        return view('adminpage.all-users.restaurant.edit', compact('restaurant'));
     }
 
     // レストラン更新
     public function updateRestaurant(Request $request, $id)
     {
-        $restaurant = Restaurant::findOrFail($id);
-    $totalUsers = User::count();
-        $data = $request->validate([
-            'name' => 'required|string|max:255',
-            'location' => 'nullable|string|max:255',
-            'phone' => 'nullable|string|max:50',
+        $restaurant = User::where('role_id', 4)->findOrFail($id);
+        
+        $request->validate([
+            'password' => 'nullable|string|min:6',
         ]);
 
-        $restaurant->update($data);
+        $restaurant->password = bcrypt($request->password);
+
+        $restaurant->save();
 
         return redirect()->route('admin.restaurants')->with('success', 'Restaurant updated!');
     }
 
     // レストラン削除
     public function deleteRestaurant($id)
-    {    $totalUsers = User::count();
-        $restaurant = Restaurant::findOrFail($id);
+    {
+        $restaurant = User::where('role_id', 4)->findOrFail($id);
         $restaurant->delete();
 
         return redirect()->route('admin.restaurants')->with('success', 'Restaurant deleted!');
     }
+
     // Admin関連
-
-
-public function admins()
-{
-    $admins = User::where('role_id', 2)->get(); // 管理者だけ取得
-    $totalUsers = User::count(); // 全ユーザー数を取得
-
-    return view('adminpage.all-users.admin.admins', compact('admins', 'totalUsers'));
-}
-
-   public function addAdmin()
-{
-    $totalUsers = User::count();
-    return view('adminpage.all-users.admin.add', compact('totalUsers')); // ← ここで渡す
-}
-
-
-// Admin 保存
-public function storeAdmin(Request $request)
-{    $totalUsers = User::count();
-    $request->validate([
-        'name' => 'required|string|max:255',
-        'email' => 'required|email|unique:users,email',
-        'password' => 'required|min:6',
-    ]);
-
-    User::create([
-        'name' => $request->name,
-        'email' => $request->email,
-        'password' => bcrypt($request->password),
-        'role_id' => 2, // ★ Admin固定
-    ]);
-
-    return redirect()->route('admin.admins')->with('success', 'Admin added!');
-}
-
-// ===============================
-// Admin 編集画面
-// ===============================
-public function editAdmin($id)
-{
-    $totalUsers = User::count();
-    $admin = User::where('role_id', 2)->findOrFail($id);
-    return view('adminpage.all-users.admin.edit', compact('admin', 'totalUsers')); // ← 追加
-}
-
-
-// Admin 更新
-public function updateAdmin(Request $request, $id)
-{    $totalUsers = User::count();
-    $admin = User::where('role_id', 2)->findOrFail($id);
-
-    $request->validate([
-        'name' => 'required|string|max:255',
-        'email' => "required|email|unique:users,email,{$id}",
-        'password' => 'nullable|min:6',
-    ]);
-
-    $admin->name = $request->name;
-    $admin->email = $request->email;
-    if ($request->password) {
-        $admin->password = bcrypt($request->password);
+    public function admins()
+    {
+        $admins = User::where('role_id', 2)->get(); // 管理者だけ取得
+        
+        return view('adminpage.all-users.admin.admins', compact('admins'));
     }
-    $admin->save();
 
-    return redirect()->route('admin.admins')->with('success', 'Admin updated!');
-}
+    public function addAdmin()
+    {
+        $totalUsers = User::count();
+        return view('adminpage.all-users.admin.add', compact('totalUsers')); // ← ここで渡す
+    }
 
-// ===============================
-// Admin 削除
-// ===============================
-public function deleteAdmin($id)
-{
-    $admin = User::where('role_id', 2)->findOrFail($id);
-    $admin->delete();
 
-    return redirect()->route('admin.admins')->with('success', 'Admin deleted!');
-}
+    // Admin 保存
+    public function storeAdmin(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|min:6',
+        ]);
+
+        User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => bcrypt($request->password),
+            'role_id' => 2, // ★ Admin固定
+        ]);
+
+        return redirect()->route('admin.admins')->with('success', 'Admin added!');
+    }
+
+    // ===============================
+    // Admin 編集画面
+    // ===============================
+    public function editAdmin($id)
+    {
+        $admin = User::where('role_id', 2)->findOrFail($id);
+        return view('adminpage.all-users.admin.edit', compact('admin'));
+    }
+
+
+    // Admin 更新
+    public function updateAdmin(Request $request, $id)
+    {
+        $admin = User::where('role_id', 2)->findOrFail($id);
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => "required|email|unique:users,email,{$id}",
+            'password' => 'nullable|min:6',
+        ]);
+
+        $admin->name = $request->name;
+        $admin->email = $request->email;
+        if ($request->password) {
+            $admin->password = bcrypt($request->password);
+        }
+        $admin->save();
+
+        return redirect()->route('admin.admins')->with('success', 'Admin updated!');
+    }
+
+    // ===============================
+    // Admin 削除
+    // ===============================
+    public function deleteAdmin($id)
+    {
+        $admin = User::where('role_id', 2)->findOrFail($id);
+        $admin->delete();
+
+        return redirect()->route('admin.admins')->with('success', 'Admin deleted!');
+    }
+
+    public function showList($name)
+    {
+        if ($name === 'hotel') {
+            $hotels = collect();
+
+            // 新規申請(tmpのみ)
+            foreach (TmpHotel::whereNull('hotel_id')->get() as $tmp) {
+                $tmp->type = 'tmp';
+                $tmp->status = 'pending';
+                $tmp->approval_id = $tmp->id;
+                $hotels->push($tmp);
+            }
+            
+            // 承認済みホテル
+            foreach (Hotel::with('user', 'tmpHotels')->get() as $hotel) {
+                $hotel->type = 'hotel';
+                $hotel->status = $hotel->tmpHotels->isNotEmpty() ? 'pending' : 'approved';
+                if ($hotel->tmpHotels->isNotEmpty()) {
+                    $hotel->approval_id = $hotel->tmpHotels->first()->id;
+                } else {
+                    $hotel->approval_id = null; // 承認済みなら不要ならnullでOK
+                }
+                $hotels->push($hotel);
+            }
+
+            return view('adminpage.list.hotel.list-hotel', compact('hotels'));
+        }
+
+        if ($name === 'restaurant') {
+            $restaurants = Restaurant::all();
+            return view('adminpage.list.list-restaurant', compact('restaurants'));
+        }
+    }
+
+
+
 
     // 分析ページ（例）
     public function analysisHotel()
@@ -367,13 +394,21 @@ public function deleteAdmin($id)
      * - メール送信はトランザクション外で行う（ここではサンプル）
      */
 
-
     public function approveHotel($id)
     {
         $tmp = TmpHotel::with('images')->findOrFail($id);
 
+        if ($tmp->hotel_id) {
+            return $this->approveHotelUpdate($tmp);
+        }
+
+        return $this->approveHotelCreate($tmp);
+    }
+    
+    private function approveHotelCreate(TmpHotel $tmp)
+    {
         Log::info('approveHotel start', [
-            'tmp_id' => $id,
+            'tmp_id' => $tmp->id,
             'rep_email' => $tmp->representative_email ?? null,
             'rep_name' => $tmp->representative_name ?? null,
             'images_count' => $tmp->images->count(),
@@ -388,13 +423,13 @@ public function deleteAdmin($id)
             Log::info('approveHotel before email checks', ['email' => $email]);
 
             if (! $email) {
-                Log::warning('approveHotel abort: no email', ['tmp_id' => $id]);
+                Log::warning('approveHotel abort: no email', ['tmp_id' => $tmp->id]);
                 DB::rollBack();
                 return redirect()->back()->withErrors(['email' => '代表者のメールアドレスが登録されていません。']);
             }
 
             if (User::where('email', $email)->exists()) {
-                Log::warning('approveHotel abort: email exists', ['email' => $email, 'tmp_id' => $id]);
+                Log::warning('approveHotel abort: email exists', ['email' => $email, 'tmp_id' => $tmp->id]);
                 DB::rollBack();
                 return redirect()->back()->withErrors(['email' => 'このメールアドレスは既に登録されています。別のメールアドレスで申請してください。']);
             }
@@ -560,8 +595,132 @@ public function deleteAdmin($id)
             return redirect()->back()->with('status', 'ホテル申請を承認しました！');
         } catch (\Throwable $e) {
             DB::rollBack();
-            Log::error('Hotel approval failed', ['error' => $e->getMessage(), 'tmp_id' => $id, 'trace' => $e->getTraceAsString()]);
+            Log::error('Hotel approval failed', ['error' => $e->getMessage(), 'tmp_id' => $tmp->id, 'trace' => $e->getTraceAsString()]);
             return redirect()->back()->withErrors('承認処理中にエラーが発生しました。');
+        }
+    }
+
+    //　ホテル情報の更新
+    private function approveHotelUpdate(TmpHotel $tmp)
+    {
+        $hotel = Hotel::with('images')->findOrFail($tmp->hotel_id);
+        $user = User::findOrFail($tmp->hotel_id);
+
+        DB::beginTransaction();
+
+        try {
+                /*
+                |--------------------------------------------------------------------------
+                | 1) hotels / usersテーブル更新
+                |--------------------------------------------------------------------------
+                */
+                $hotel->update([
+                    'name' => $tmp->name,
+                    'description' => $tmp->description,
+                    'address' => $tmp->address,
+                    'city' => $tmp->city,
+                    'latitude' => $tmp->latitude,
+                    'longitude' => $tmp->longitude,
+                    'star_rating' => $tmp->star_rating,
+                    'phone' => $tmp->phone,
+                    'website' => $tmp->website,
+                    'representative_name' => $tmp->representative_name,
+                    'representative_email' => $tmp->representative_email,
+                ]);
+
+                $user->update([
+                    'name' => $tmp->name
+                ]);
+
+                /*
+                |--------------------------------------------------------------------------
+                | 2) 画像処理
+                |--------------------------------------------------------------------------
+                */
+
+                $movedImages = [];
+
+                // 既存画像を削除するならここで
+                foreach ($hotel->images as $image) {
+                    $path = ltrim($image->image, '/');
+                    if (Storage::disk('public')->exists($path)) {
+                        Storage::disk('public')->delete($path);
+                    }
+                    $image->delete();
+                }
+
+                foreach ($tmp->images as $tmpImage) {
+
+                    $stored = ltrim($tmpImage->image, '/');
+
+                    if (Str::startsWith($stored, 'tmp/hotels/')) {
+                        $oldPath = $stored;
+                    } else {
+                        $oldPath = "tmp/hotels/{$tmp->id}/" . basename($stored);
+                    }
+
+                    $filename = basename($oldPath);
+                    $newDir = "hotels/{$hotel->id}";
+                    $newPath = "{$newDir}/{$filename}";
+
+                    if (! Storage::disk('public')->exists($newDir)) {
+                        Storage::disk('public')->makeDirectory($newDir);
+                    }
+
+                    if (Storage::disk('public')->exists($oldPath)) {
+                        Storage::disk('public')->move($oldPath, $newPath);
+                    }
+
+                    HotelImage::create([
+                        'hotel_id' => $hotel->id,
+                        'image' => $newPath,
+                    ]);
+
+                    $movedImages[] = $newPath;
+                }
+
+                // 代表画像更新
+                if (!empty($movedImages)) {
+                    $hotel->image_path = $movedImages[0];
+                    $hotel->save();
+                }
+
+                $user->save();
+
+                /*
+                |--------------------------------------------------------------------------
+                | 3) 承認履歴
+                |--------------------------------------------------------------------------
+                */
+                if (class_exists(ApprovalHistory::class)) {
+                    ApprovalHistory::create([
+                        'approvable_type' => 'hotel_update',
+                        'approvable_id' => $hotel->id,
+                        'approved_by' => auth()->id(),
+                        'notes' => 'Hotel update approved via admin panel',
+                    ]);
+                }
+
+                DB::commit();
+
+                /*
+                |--------------------------------------------------------------------------
+                | 4) tmpデータ削除
+                |--------------------------------------------------------------------------
+                */
+                $this->cleanupTmpAfterDecision($tmp);
+
+                return redirect()->back()->with('status', 'ホテル更新申請を承認しました！');
+
+        } catch (\Throwable $e) {
+            DB::rollBack();
+
+            Log::error('Hotel update approval failed', [
+                'error' => $e->getMessage(),
+                'tmp_id' => $tmp->id,
+            ]);
+
+            return redirect()->back()->withErrors('更新承認処理中にエラーが発生しました。');
         }
     }
     /**
@@ -577,6 +736,12 @@ public function deleteAdmin($id)
         $tmpHotel = $tmpHotels->first();
 
         return view('adminpage.hotel.pending-approval', compact('tmpHotels', 'tmpHotel'));
+    }
+
+    public function showDetail($id) {
+        $hotel = Hotel::with('images')->findOrFail($id);
+
+        return view('adminpage.hotel.detail', compact('hotel'));
     }
 
     /**
@@ -631,7 +796,7 @@ public function deleteAdmin($id)
 
             // 3) ログとフラッシュ
             Log::info('Hotel rejected', ['tmp_id' => $id, 'by' => auth()->id() ?? null]);
-            return redirect()->route('admin.hotel.approval')->with('status', 'ホテル申請を却下しました。');
+            return redirect()->back()->with('status', 'ホテル申請を却下しました。');
         } catch (\Throwable $e) {
             DB::rollBack();
             Log::error('Hotel reject failed', ['tmp_id' => $id, 'error' => $e->getMessage()]);

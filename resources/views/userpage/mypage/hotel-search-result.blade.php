@@ -2,6 +2,9 @@
 @extends('layouts.user')
 
 @section('content')
+    <!-- head に入れる -->
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     @php
         /**
          * Helper: return a usable image URL for a hotel.
@@ -158,12 +161,18 @@
                                                 <div class="badge bg-secondary mb-2">No reviews</div>
                                             @endif
 
-                                            @if ($minPrice)
-                                                <div class="h5 mb-0">₱{{ $minPrice }}</div>
-                                                <div class="small text-muted">per night</div>
-                                            @else
+                                            {{-- 部屋が無い場合は明示的メッセージを出す --}}
+                                            @if ($rooms->count() === 0)
                                                 <div class="h6 mb-0 text-muted">No rooms</div>
+                                                <div class="small text-muted">部屋情報がまだ登録されていません。</div>
+                                            @else
+                                                {{-- 部屋がある場合は最安値を表示 --}}
+                                                <div class="h5 mb-0">₱{{ $minPrice }}~</div>
+                                                <div class="small text-muted">per night</div>
                                             @endif
+
+
+
                                         </div>
                                     </div>
 
@@ -171,22 +180,48 @@
                                         {{ \Illuminate\Support\Str::limit($hotel->description, 120) }}</p>
 
                                     <div class="d-flex gap-2">
-                                        {{-- <a href="{{ route('hotels.show', ['hotel' => $hotel->id]) }}" --}}
-                                        <a href=#
+                                        <a href="{{ route('user.hotels.detail', ['id' => $hotel->id]) }}"
                                             class="btn btn-outline-secondary btn-sm">Details</a>
+                                        {{-- 即時予約ボタンはいったんコメントアウト --}}
                                         {{-- <a href="{{ route('booking.create', ['hotel' => $hotel->id]) }}" --}}
-                                        <a href=#
-                                            class="btn btn-primary btn-sm"><i
-                                                class="fa-solid fa-calendar-check me-1"></i>Book Now</a>
+                                        {{-- <a href=# class="btn btn-primary btn-sm"><i
+                                                class="fa-solid fa-calendar-check me-1"></i>Book Now</a> --}}
 
-                                        {{-- Favorite toggle (replace route with your actual endpoint) --}}
-                                        {{-- <form action="{{ route('favorites.toggle') }}" method="post" class="d-inline"> --}}
-                                        <form action=# method="post" class="d-inline">
-                                            @csrf
-                                            <input type="hidden" name="target_type" value="hotel">
-                                            <input type="hidden" name="target_id" value="{{ $hotel->id }}">
-                                            <button type="submit" class="btn btn-outline-danger btn-sm">❤</button>
-                                        </form>
+                                        {{-- favorite --}}
+                                        <div class="ms-3 d-inline-flex align-items-center gap-2">
+                                            @if ($hotel->isFavorited())
+                                                <form method="POST"
+                                                    action="{{ route('user.favorite.destroy', ['hotel', $hotel->id]) }}"
+                                                    class="d-inline">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button class="btn btn-favorite btn p-0" type="submit"
+                                                        aria-label="Unfavorite">
+                                                        <i class="fa-solid fa-heart text-danger align-middle"
+                                                            style="font-size:1rem;"></i>
+                                                    </button>
+                                                </form>
+                                            @else
+                                                <form method="POST"
+                                                    action="{{ route('user.favorite.store', ['hotel', $hotel->id]) }}"
+                                                    class="d-inline">
+                                                    @csrf
+                                                    <button class="btn btn-favorite btn p-0" type="submit"
+                                                        aria-label="Favorite">
+                                                        <i class="fa-regular fa-heart align-middle"
+                                                            style="font-size:1rem;"></i>
+                                                    </button>
+                                                </form>
+                                            @endif
+                                                {{-- 合計いいね数（未ログインでも表示） --}}
+                                            <div class="favorites-count small text-muted align-middle"
+                                                data-count="{{ $hotel->favorites_count ?? 0 }}">
+                                                <span class="d-inline-block align-middle">
+                                                    {{ $hotel->favorites_count ?? 0 }}</span>
+                                            </div>
+                                        </div>
+
+
                                     </div>
                                 </div>
                             </div>
@@ -216,4 +251,7 @@
             </section>
         </div>
     </div>
+
+
+    });
 @endsection

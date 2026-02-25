@@ -71,7 +71,8 @@ class DatabaseSeeder extends Seeder
 
 
         $statusId = DB::table('statuses')->insertGetId(['name' => 'Available', 'target_type' => 'all', 'created_at' => $now]);
-        $statusId = DB::table('statuses')->insertGetId(['name' => 'Unavailable', 'target_type' => 'all', 'created_at' => $now]);
+        DB::table('statuses')->insertGetId(['name' => 'Unavailable', 'target_type' => 'all', 'created_at' => $now]);
+        DB::table('statuses')->insertGetId(['name' => 'Booked', 'target_type' => 'all', 'created_at' => $now]);
         $catId = DB::table('categories')->insertGetId(['name' => 'Free Wi-Fi', 'target_type' => 'all', 'created_at' => $now]);
 
         // --- 2. ホテル関連 ---
@@ -102,8 +103,10 @@ class DatabaseSeeder extends Seeder
                 'longitude' => 123.8854,
                 'star_rating' => 5,
                 'phone' => '09123456789',
+                'representative_name' => 'Pending Luxury rep name',
+                'representative_email' => 'PendingLuxury@email.com',
                 'website' => 'https://pendingluxuryresort.example.com',
-                'status' => '申請中',
+                'status' => 'pending',
                 'created_at' => $now,
                 'updated_at' => $now,
                 'deleted_at' => null,
@@ -117,8 +120,10 @@ class DatabaseSeeder extends Seeder
                 'longitude' => 123.9167,
                 'star_rating' => 3,
                 'phone' => '09987654321',
+                'representative_name' => 'Pending Cozy Inn rep name',
+                'representative_email' => 'CozyInn@email.com',
                 'website' => 'https://pendingcozyinn.example.com',
-                'status' => '申請中',
+                'status' => 'pending',
                 'created_at' => $now,
                 'updated_at' => $now,
                 'deleted_at' => null,
@@ -253,11 +258,27 @@ class DatabaseSeeder extends Seeder
             'user_id' => $userId,
             'hotel_id' => 3,
             'room_id' => $roomId1,
-            'status_id' => $statusId,
+            'status_id' => 3,
             'guests' => 2,
             'total_price' => 7000,
             'reserved_at' => $now,
             'start_at' => $now->copy()->addDays(7),
+            'end_at' => $now->copy()->addDays(8),
+            'created_at' => $now,
+            'updated_at' => $now,        // 念のため追加
+            'other' => 'No request',
+        ]);
+
+        DB::table('hotel_reservations')->insert([
+            'reservation_id' => 10002,
+            'user_id' => $userId,
+            'hotel_id' => 3,
+            'room_id' => $roomId3,
+            'status_id' => 3,
+            'guests' => 2,
+            'total_price' => 4000,
+            'reserved_at' => $now,
+            'start_at' => $now->copy()->addDays(5),
             'end_at' => $now->copy()->addDays(8),
             'created_at' => $now,
             'updated_at' => $now,        // 念のため追加
@@ -270,7 +291,7 @@ class DatabaseSeeder extends Seeder
             'user_id' => $userId,
             'restaurant_id' => 4,
             'table_id' => $tableId,
-            'status_id' => $statusId,
+            'status_id' => 3,
             'guests' => 2,           // ★追加：こちらも人数を追加
             'total_price' => 1500,
             'reserved_at' => $now,

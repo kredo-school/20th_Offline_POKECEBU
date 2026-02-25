@@ -17,15 +17,18 @@ class HotelReservationController extends Controller
     {
         return view('reservations.hotel');
     }
-    
+
     // sutffの予約詳細確認用
-    public function show($id) {
+    public function show($id)
+    {
         $reservation = HotelReservation::with([
             'user.detail',
             'room'
         ])->findOrFail($id);
 
-        return view('staffpage.reservations.hotel-detail',compact('reservation')
+        return view(
+            'staffpage.reservations.hotel-detail',
+            compact('reservation')
         );
     }
     public function confirmation()
@@ -90,33 +93,60 @@ class HotelReservationController extends Controller
     }
 
     // 予約確定
-    public function confirmReservation(Request $request)
-    {
-        $user = Auth::user();
-        $hotel = Hotel::find($request->hotel_id);
-        $roomType = HotelRoomType::find($request->room_type_id);
+public function confirmReservation(Request $request)
+{
+    $user = Auth::user();
+    
+    // 1. まずデータを取得（ここで失敗したら先に進ませない）
+    $hotel = Hotel::findOrFail($request->hotel_id);
+    $roomType = HotelRoomType::findOrFail($request->room_type_id); // ここで定義！
 
-        $userDetail = session('user_detail', []);
+    // 2. 部屋の価格データを取得
+    $roomData = HotelRoom::where('hotel_id', $hotel->id)
+                ->where('type_id', $roomType->type_id) // これで赤文字が消えるはず
+                ->first();
+
+    // 3. 予約インスタンス作成
+    $reservation = new HotelReservation();
+    $reservation->reservation_id = 'RES' . time() . rand(100, 999);
+    
+    $reservation->user_id    = $user->id;
+    $reservation->hotel_id   = $hotel->id;
+    $reservation->room_id    = $roomType->id; // HotelRoomTypeのID
+    $reservation->guests     = $request->guests;
+
+    // 金額計算（roomDataがない場合の安全策）
+    $pricePerPerson = $roomData ? $roomData->charges : 0;
+    $reservation->total_price = $pricePerPerson * $request->guests;
+
+    // フォームからの情報を保存
+   $reservation->user_id = auth()->id();
+
+    // 追加ゲスト（セッションから）
         $otherGuests = session('other_guests', []);
+        $reservation->other = json_encode([
+            'additional_guests' => $otherGuests,
+    ]);
 
-        // 予約作成
-        $reservation = new HotelReservation();
-        $reservation->user_id = $user->id;
-        $reservation->hotel_id = $hotel->id;
-        $reservation->room_id = $roomType->id ?? null;
-        $reservation->guests = $request->guests;
-        $reservation->user_name = $userDetail['first_name'] . ' ' . $userDetail['last_name'];
-        $reservation->user_email = $userDetail['email'] ?? '';
-        $reservation->user_phone = $userDetail['phone'] ?? '';
-        $reservation->other = json_encode($otherGuests);
-        $reservation->save();
+    $reservation->status_id = 1;
+    $reservation->start_at  = now();
+    $reservation->end_at    = now()->addDays(1);
 
-        // セッションをクリア
-        $request->session()->forget(['user_detail', 'other_guests']);
+    // 4. 保存実行
+    $reservation->save();
 
-        // 成功画面へ
-        return redirect()->route('reservation.success', ['reservation_id' => $reservation->id]);
-    }
+    // 5. セッション削除
+    $request->session()->forget(['other_guests']);
+
+    return redirect()->route('reservation.success', [
+        'reservation_id' => $reservation->reservation_id
+    ]);
+}
+
+
+
+
+
 
 
     // HotelReservationController.php
@@ -145,6 +175,7 @@ class HotelReservationController extends Controller
         // roomType があれば取得する（無ければ null）
         $roomType = !empty($request->room_type_id) ? HotelRoomType::find($request->room_type_id) : null;
         $hotel = !empty($request->hotel_id) ? Hotel::find($request->hotel_id) : null;
+        dd('pay通ってる');
 
         // 本来のPayPal処理はスキップ、成功画面に飛ばす
         return view('userpage.booking.hotel.reservation-success', compact('inputs', 'hotel', 'roomType'));
@@ -161,5 +192,5 @@ class HotelReservationController extends Controller
 
         return view('userpage.booking.hotel.reservation-success', compact('inputs', 'hotel', 'roomType'));
     }
+    
 }
-

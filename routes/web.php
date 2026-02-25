@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AnalysisController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\PostsController;
 use App\Http\Controllers\Admin\TypeController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\MyPageController;
@@ -16,18 +17,21 @@ use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\HotelReservationController;
 use App\Http\Controllers\HotelRoomController;
+use App\Http\Controllers\LikeController;
 use App\Http\Controllers\MockReservationController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\RestaurantTableController;
 use App\Http\Controllers\TmpHotelController;
 
-
 use App\Http\Controllers\RestaurantReservationController;
+use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\StaffAnalysisController;
 use App\Http\Controllers\UserDetailController;
 
 
 
-use App\Http\Controllers\StaffMypageContoroller;
+use App\Http\Controllers\StaffMypageController;
 use App\Models\Hotel;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
@@ -35,18 +39,23 @@ use Illuminate\Support\Facades\Auth;
 Route::get('/', function () {
     return view('auth.login');
 });
-
 Auth::routes();
 
-Route::group(['middleware' => 'auth'], function(){
+Route::group(['middleware' => 'auth'], function () {
     Route::get('/', [HomeController::class, 'index'])->name('home');
     Route::get('/faq', [FaqController::class, 'index'])->name('faq.index');
 
     # Admin
-    Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'admin'], function() {
+    Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'admin'], function () {
         Route::get('/', [AdminController::class, 'index'])->name('home');
+
+        // Adomin POST
+        Route::get('/posts', [PostsController::class, 'index'])->name('posts.index');
+        Route::delete('/posts/{id}/deactivate', [PostsController::class, 'deactivate'])->name('posts.deactivate');
+        Route::patch('/posts/{id}/activate', [PostsController::class, 'activate'])->name('posts.activate');
+
         # For Category
-        Route::get('/category', [CategoryController::class, 'index'])->name('category.index'); 
+        Route::get('/category', [CategoryController::class, 'index'])->name('category.index');
         Route::post('/category/store', [CategoryController::class, 'store'])->name('category.store');
         Route::patch('/category/update/{id}', [CategoryController::class, 'update'])->name('category.update');
         Route::delete('/category/delete/{id}', [CategoryController::class, 'destroy'])->name('category.destroy');
@@ -58,6 +67,7 @@ Route::group(['middleware' => 'auth'], function(){
         ### All Users
         Route::get('/all-users', [AdminController::class, 'showAllUsers'])->name('showAllUsers');
         # For Customer
+        Route::get('/all-users', [AdminController::class, 'showAllUsers'])->name('showAllUsers');
         Route::get('/customer', [AdminController::class, 'customer'])->name('customer');
         Route::get('/customer/add', [AdminController::class, 'addCustomer'])->name('customer.add');
         Route::post('/customer/add', [AdminController::class, 'storeCustomer'])->name('customers.store');
@@ -91,18 +101,16 @@ Route::group(['middleware' => 'auth'], function(){
 
         // ホテル予約
         Route::get('/hotels', [HotelController::class, 'roomInfo'])->name('hotels.index');
-        Route::get('reservation/confirmation', [HotelReservationController::class, 'confirmation'])->name('reservation.confirmation');
-        Route::post('reservation/confirm', [HotelReservationController::class, 'confirmReservation'])->name('reservation.confirm');
-        Route::post('reservation/payment-form', [HotelReservationController::class, 'payment'])->name('reservation.payment.form');
-        Route::post('reservation/payment', [HotelReservationController::class, 'pay'])->name('reservation.pay');
-        Route::get('reservation/payment/success',[HotelReservationController::class,'reservationSuccess'])->name('reservation.success');
-        Route::get('reservation/payment', function() {return view('userpage.booking.hotel.payment');})->name('reservation.payment.form');
-        Route::post('reservation/payment', [HotelReservationController::class, 'pay'])->name('reservation.pay');
+        Route::get('/reservation/confirmation', [HotelReservationController::class, 'confirmation'])->name('reservation.confirmation');
+        Route::post('/reservation/confirm', [HotelReservationController::class, 'confirmReservation'])->name('reservation.confirm');
+        Route::post('/reservation/payment-form', [HotelReservationController::class, 'payment'])->name('reservation.payment.form');
+        Route::post('/reservation/payment', [HotelReservationController::class, 'pay'])->name('reservation.pay');
+            Route::get('/reservation/payment/success', [HotelReservationController::class, 'reservationSuccess'])->name('reservation.success');
 
         // ホテル予約ユーザー詳細
         Route::get('/mypage/user', [UserDetailController::class, 'show'])->name('mypage.show');
         Route::post('/mypage/userupdate', [UserDetailController::class, 'update'])->name('mypage.update');
-        
+
         # FAQ    
         Route::get('/faq/list', [FaqController::class, 'displayList'])->name('faq.displayList');
         Route::post('/faq/store', [FaqController::class, 'store'])->name('faq.store');
@@ -113,26 +121,30 @@ Route::group(['middleware' => 'auth'], function(){
         Route::post('/faq/storeCategory', [FaqController::class, 'storeCategory'])->name('faq.storeCategory');
 
         // 2/10ホテル承認,却下処理
-        Route::get('/hotel/approval', [App\Http\Controllers\AdminController::class, 'hotelApproval'])
-            ->name('hotel.approval');
-        Route::get('/hotel/approval/{id}', [App\Http\Controllers\AdminController::class, 'showPending'])
-            ->name('hotel.approval.show');
-        Route::post('/hotel/approve/{id}', [App\Http\Controllers\AdminController::class, 'approveHotel'])
-            ->name('hotel.approve');
-        Route::post('/hotels/{id}/reject', [App\Http\Controllers\AdminController::class, 'rejectHotel'])->name('hotel.reject');
+        Route::get('/hotel/approval', [AdminController::class, 'hotelApproval'])->name('hotel.approval');
+        Route::get('/hotel/approval/{id}', [AdminController::class, 'showPending'])->name('hotel.approval.show');
+        Route::post('/hotel/approve/{id}', [AdminController::class, 'approveHotel'])->name('hotel.approve');
+        Route::post('/hotels/{id}/reject', [AdminController::class, 'rejectHotel'])->name('hotel.reject');
         Route::get('/hotel/{id}/detail', [AdminController::class, 'showDetail'])->name('showDetail');
+
+        #For Analysis
+        Route::get('/analysis/hotel/{id?}', [AnalysisController::class, 'hotelAnalysis'])->name('analysis.hotel');
+        Route::get('/analysis/restaurant/{id?}',[AnalysisController::class, 'restaurantAnalysis'])->name('analysis.restaurant');
     });
-        
+
     # Staff
-    Route::group(['prefix' => 'hotel', 'as' => 'hotel.', 'middleware' => 'hotel'], function() {
+    Route::group(['prefix' => 'hotel', 'as' => 'hotel.', 'middleware' => 'hotel'], function () {
         # Hotel
-        Route::get('/', [HotelStaffController::class, 'index'])->name('home');
-        Route::get('/mypage', [StaffMypageContoroller::class, 'index'])->name('mypage');
-        Route::get('/mypage/edit', [StaffMypageContoroller::class, 'editStaffMypage'])->name('mypage.edit');            
-        Route::post('/mypage/store', [StaffMypageContoroller::class, 'storeHotel'])->name('mypage.store');
-            
+        
+    Route::get('/mypage/hotel', [StaffMypageController::class, 'index'])->name('mypage.hotel');
+   Route::get('/mypage/hotel/edit', [StaffMypageController::class, 'editStaffMypage'])->name('staff.mypage.hotel.edit');   
+    Route::post('/mypage/hotel/store', [StaffMypageController::class, 'storeHotel'])->name('mypage.hotel.store');
+    Route::get('/mypage/hotel/complete', [StaffMypageController::class, 'complete'])->name('mypage.hotel.complete');
+
         Route::get('/reservations', [HotelReservationController::class, 'hotel'])->name('reservations');
         Route::get('/reservations/{id}', [HotelReservationController::class, 'show'])->name('reservations.show');
+
+        Route::get('/analysis/{id}',[StaffAnalysisController::class,'hotelAnalysis'])->name('analysis');
 
         #Hotel - Room
         Route::get('/{hotel_id}/overview', [HotelRoomController::class, 'index'])->name('overview');
@@ -145,15 +157,17 @@ Route::group(['middleware' => 'auth'], function(){
         Route::patch('/{id}/updateStatus', [HotelRoomController::class, 'updateStatus'])->name('updateStatus');
     });
 
-    Route::group(['prefix' => 'restaurant', 'as' => 'restaurant.', 'middleware' => 'restaurant'], function() {
+    Route::group(['prefix' => 'restaurant', 'as' => 'restaurant.', 'middleware' => 'restaurant'], function () {
         # Restaurant
         Route::get('/', [RestaurantStaffController::class, 'index'])->name('home');
-        Route::get('/mypage', [StaffMypageContoroller::class, 'indexRestaurant'])->name('mypage');
-        Route::get('/mypage/edit', [StaffMypageContoroller::class, 'editStaffMypagerestaurant'])->name('edit');
-        Route::put('/mypage/update', [StaffMypageContoroller::class, 'updateStaffMypagerestaurant'])->name('update');
-        
+        Route::get('/mypage', [StaffMypageController::class, 'indexRestaurant'])->name('mypage');
+        Route::get('/mypage/edit', [StaffMypageController::class, 'editStaffMypagerestaurant'])->name('restaurant.edit');
+        Route::put('/mypage/update', [StaffMypageController::class, 'updateStaffMypagerestaurant'])->name('update');
+
         Route::get('/reservations', [RestaurantStaffController::class, 'reservations'])->name('reservations');
         Route::get('/reservations/{id}', [RestaurantReservationController::class, 'show'])->name('reservations.show');
+
+        route::get('/analysis/{id}',[StaffAnalysisController::class,'restaurantAnalysis'])->name('analysis');
 
         #Restaurant - Table
         Route::get('/{rest_id}/overview', [RestaurantTableController::class, 'index'])->name('overview');
@@ -167,7 +181,7 @@ Route::group(['middleware' => 'auth'], function(){
     });
 
     # User
-    Route::group(['prefix'=>'user','as'=>'user.'],function(){
+    Route::group(['prefix' => 'user', 'as' => 'user.'], function () {
         # User Home
         Route::get('/posts', [PostController::class, 'index'])->name('posts.index');
         Route::get('/posts/create', [PostController::class, 'create'])->name('posts.create');
@@ -176,7 +190,15 @@ Route::group(['middleware' => 'auth'], function(){
         Route::get('/posts/{post}/edit', [PostController::class, 'edit'])->name('posts.edit');
         Route::patch('/posts/{post}', [PostController::class, 'update'])->name('posts.update');
         Route::delete('/posts/{post}/destroy', [PostController::class, 'destroy'])->name('posts.destroy');
+        Route::get('/tags/{tag}', [PostController::class, 'tag'])->name('tags.show');
+        route::post('/posts/{post_id}/comments', [CommentController::class, 'store'])->name('comment.store');
+        route::delete('/comments/{comment_id}/destroy', [CommentController::class, 'destroy'])->name('comment.destroy');
 
+        Route::post('/like/{post_id}/store', [LikeController::class, 'store'])->name('like.store');
+        Route::delete('/like/{post_id}/destroy', [LikeController::class, 'destroy'])->name('like.destroy');
+
+        // レビュー
+        Route::post('/reviews', [ReviewController::class, 'store'])->name('reviews.store');
 
         # User MyPage
         Route::get('/mypage', [MyPageController::class, 'index'])->name('mypage');
@@ -188,17 +210,23 @@ Route::group(['middleware' => 'auth'], function(){
         Route::post('/mypage/edit/updateProfile', [MyPageController::class, 'updateProfile'])->name('update.profile');
         Route::get('/mypage/booking', [BookingController::class, 'index'])->name('booking');
         Route::get('/mypage/favorite', [FavoriteController::class, 'index'])->name('favorite');
-    
-        # User Booking
+        
+        # Hotel search
         Route::get('/hotels', [HotelController::class, 'index'])->name('hotels.index');
+        
+        # User Booking
         Route::get('/hotels/{id}', [HotelController::class, 'showDetailHotel'])->name('hotels.detail');
         Route::get('/restaurants', [RestaurantController::class, 'index'])->name('restaurants.index');
         Route::get('/restaurants/{id}', [RestaurantController::class, 'showDetailRestaurant'])->name('restaurants.detail');
+        
+        # お気に入り
+        Route::post('/favorite/{type}/{id}', [FavoriteController::class, 'store'])->name('favorite.store');
+        Route::delete('/favorite/{type}/{id}', [FavoriteController::class, 'destroy'])->name('favorite.destroy');
     });
 });
 
 
-Route::get('/userhotel', function(){
+Route::get('/userhotel', function () {
     return view('userpage.booking.hotel');
 })->name('user.hotel');
 Route::middleware('auth')->group(function () {
@@ -223,7 +251,8 @@ Route::post('reservation/payment-form', [HotelReservationController::class, 'pay
     ->name('reservation.payment.form');
 Route::post('reservation/payment', [HotelReservationController::class, 'pay'])
     ->name('reservation.pay');
-Route::get('reservation/payment/success',[HotelReservationController::class,'reservationSuccess'])->name('reservation.success');Route::get('reservation/payment', function() {
+Route::get('reservation/payment/success', [HotelReservationController::class, 'reservationSuccess'])->name('reservation.success');
+Route::get('reservation/payment', function () {
     return view('userpage.booking.hotel.payment');
 })->name('reservation.payment.form');
 Route::post('reservation/payment', [HotelReservationController::class, 'pay'])->name('reservation.pay');
@@ -238,7 +267,7 @@ Route::middleware('auth')->group(function () {
 
 
 // レストラン予約
-Route::get('/restaurant/{id}', [RestaurantReservationController::class, 'showInfo'])
+Route::get('/restaurant/reservation', [RestaurantReservationController::class, 'showInfo'])
     ->name('restaurant.show');
 
 Route::post('/restaurant/reserve', [RestaurantReservationController::class, 'store'])
@@ -249,18 +278,19 @@ Route::post('/restaurant/reserve', [RestaurantReservationController::class, 'sto
 // これ
 
 Route::prefix('staff')->middleware('auth')->group(function () {
-  
-    
+
+
     Route::get('/hotel', [HotelStaffController::class, 'index'])->name('staff.homehotel');
     Route::get('/staff/reservations', [HotelStaffController::class, 'reservations'])->name('staff.reservations');
 
-    Route::get('/staff/mypage/hotel', [StaffMypageContoroller::class, 'index'])->name('staff.mypage.hotel');
-    Route::get('/staff/mypage/hotel/edit', [StaffMypageContoroller::class, 'editStaffMypage'])->name('staff.mypage.hotel.edit');
-    Route::post('/staff/mypage/hotel/store', [StaffMypageContoroller::class, 'storeHotel'])->name('staff.mypage.hotel.store');
+    Route::get('/staff/mypage/hotel', [StaffMypageController::class, 'index'])->name('staff.mypage.hotel');
+    Route::get('/staff/mypage/hotel/edit', [StaffMypageController::class, 'editStaffMypage'])->name('staff.mypage.hotel.edit');
+    Route::post('/staff/mypage/hotel/store', [StaffMypageController::class, 'storeHotel'])->name('staff.mypage.hotel.store');
 
-    Route::get('/staff/mypage/restaurant', [StaffMypageContoroller::class, 'indexRestaurant'])->name('staff.mypage.restaurant');
-    Route::get('/staff/mypage/restaurant/edit', [StaffMypageContoroller::class, 'editStaffMypagerestaurant'])->name('staff.edit-restaurant');
-    Route::put('/staff/mypage/restaurant/update', [StaffMypageContoroller::class, 'updateStaffMypagerestaurant'])->name('staff.update-restaurant');
+    Route::get('/staff/mypage/restaurant', [StaffMypageController::class, 'indexRestaurant'])->name('staff.mypage.restaurant');
+    Route::get('/staff/mypage/restaurant/edit', [StaffMypageController::class, 'editStaffMypagerestaurant'])->name('staff.edit.restaurant');
+    Route::post('/staff/mypage/restaurant/update', [StaffMypageController::class, 'updateStaffMypagerestaurant'])->name('staff.update.restaurant');
+       Route::get('/mypage/restaurant/complete', [StaffMypageController::class, 'restaurantcomplete'])->name('restaurant.complete');
 
     Route::get('/restaurant', [RestaurantStaffController::class, 'index'])->name('staff.homerestaurant');
     Route::get('/staff/reservations/restaurant', [RestaurantStaffController::class, 'reservations'])->name('staff.reservations.restaurant');
@@ -300,7 +330,7 @@ Route::delete('/admin/customer/delete/{id}', [AdminController::class, 'deleteCus
 
 
 // ホテル一覧
-Route::get('/admin/hotels', [AdminController::class,'hotels'])->name('admin.hotels');
+Route::get('/admin/hotels', [AdminController::class, 'hotels'])->name('admin.hotels');
 
 // ホテル追加
 // ホテル追加画面（GET）
@@ -373,7 +403,7 @@ Route::put('/admin/admin/update/{id}', [AdminController::class, 'updateAdmin'])
 Route::delete('/admin/admin/delete/{id}', [AdminController::class, 'deleteAdmin'])
     ->name('admin.admin.delete');
 
-    
+
 
 
 // カレンダー
@@ -394,9 +424,11 @@ Route::get('signup-for-company', [TmpHotelController::class, 'create'])
     ->name('company.signup');
 // 　フォーム送信
 Route::post('/user/mypage/signup-for-company', [TmpHotelController::class, 'store'])
-        ->name('user.mypage.signup-for-company.store');
+    ->name('user.mypage.signup-for-company.store');
 // 　ホテル・レストランサーチ
 Route::get('/hotels/search', [App\Http\Controllers\HotelController::class, 'index'])->name('hotels.search');
+   
+
 
 
 
@@ -442,4 +474,4 @@ Route::get('/jeepney', function () {
     return view('jeepney');
 })->name('jeepney');
 Route::get('/admin/analysis/hotel', [AnalysisController::class, 'hotelAnalysis'])->name('admin.analysis.hotel');
-Route::get('/admin/analysis/restaurant',[AnalysisController::class, 'restaurantAnalysis'])->name('admin.analysis.restaurant');
+Route::get('/admin/analysis/restaurant', [AnalysisController::class, 'restaurantAnalysis'])->name('admin.analysis.restaurant');

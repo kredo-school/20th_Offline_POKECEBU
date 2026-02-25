@@ -1,18 +1,19 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\Hotel;
 use App\Models\HotelReservation;
 use App\Models\HotelRoomType;
+use App\Models\Hotel;
 use App\Models\Restaurant;
 use App\Models\RestaurantReservation;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 
-class AnalysisController extends Controller
+class StaffAnalysisController extends Controller
 {
- public function hotelAnalysis($hotelId = null)
+    public function hotelAnalysis($hotelId = null)
 {
     // 1. 月ごとのKPI統計を一括取得 (Bookings, Guests, AvgStay)
     // Model側でgroupBy('month')してkeyBy('month')したもの
@@ -62,8 +63,8 @@ class AnalysisController extends Controller
         })->get();
 
     foreach ($reservations as $res) {
-        $start = \Carbon\Carbon::parse($res->start_at);
-        $end = \Carbon\Carbon::parse($res->end_at);
+        $start = Carbon::parse($res->start_at);
+        $end = Carbon::parse($res->end_at);
         for ($date = $start->copy(); $date->lte($end); $date->addDay()) {
             if ($date->month == $month && $date->year == $year) {
                 $heatmapData[$date->day]++;
@@ -76,7 +77,7 @@ class AnalysisController extends Controller
     // 画面上部のカードに表示する「今月のKPI」
     $currentKpi = $monthlyKpis->get(now()->month);
 
-    return view('adminpage.hotel.analysis-hotel', compact(
+    return view('staffpage.analysis.hotel-analysis', compact(
         'currentKpi', 'monthlyBookings', 'monthlyRevenue', 'monthlyGuests', 'monthlyAvgStay',
         'dayOfWeekData', 'typeStatsMonth', 'typeBookingStatsMonth',
         'typeStatsYear', 'typeBookingStatsYear',
@@ -127,7 +128,7 @@ public function restaurantAnalysis($restaurantId = null)
     $restaurants = Restaurant::all();
     $currentKpi = $monthlyKpis->get(now()->month);
 
-    return view('adminpage.restaurant.analysis-restaurant', compact(
+    return view('staffpage.analysis.restaurant-analysis', compact(
         'kpi', 'avgStayTime', 'monthlyBookings', 'monthlyGuests', 'monthlyAvgStay', 
         'dailyData', 'restaurantId', 'restaurants', 'hourlyStats', 'currentKpi'
     ));

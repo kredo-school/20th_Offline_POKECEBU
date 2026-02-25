@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\UserDetail;
+use App\Models\HotelReservationDetail;
+
 
 class MyPageController extends Controller
 {
@@ -114,4 +116,18 @@ public function updateProfile(Request $request)
 
         return redirect('/mypage');
     }
+    
+public function booking()
+    {
+        $user = Auth::user();
+
+        // ユーザーの予約を取得
+        $reservations = HotelReservation::where('user_id', $user->id)
+                            ->orderBy('reserved_at', 'desc')
+                            ->get();
+
+        // Blade に渡す
+        return view('userpage.mypage.booking', compact('user', 'reservations'));
+    }
+
 }

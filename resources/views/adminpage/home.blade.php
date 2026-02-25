@@ -47,35 +47,59 @@
                     <div class="card-body">
                         {{-- Hotels --}}
                         {{-- @foreach ($pendingHotels as $hotel) --}}
-                            <div class="d-flex justify-content-between align-items-center border rounded p-3 mb-3 bg-light">
-                                <div>
-                                    <span class="me-2">🏨</span>
-                                    <a href="{{ route('admin.hotel.approval') }}" class="text-decoration-none text-dark fw-bold">Hotel name</a>
+                        <a href="{{ route('admin.showList', 'hotel') }}" class="text-decoration-none text-dark fw-bold">
+                            <div class="d-flex align-items-center border rounded p-3 mb-3 bg-light">
+                                <div class="col-3">
+                                    <i class="fa-solid fa-hotel me-2"></i>Hotel
                                 </div>
-                                <span class="badge bg-warning text-dark px-3 py-2">
-                                    <i class="fa-solid fa-hourglass-start me-1"></i> Pending
-                                </span>
+
+                                <div class="col-6 text-center">
+                                    @if ($countTmpHotel != 0)
+                                        <span class="text-danger">Pending: {{ $countTmpHotel }}</span>
+                                    @else
+                                        Pending: {{ $countTmpHotel }}
+                                    @endif
+                                </div>
+
+                                <div class="col-3 text-end">
+                                    <span class="badge bg-warning text-dark px-3 py-2">
+                                        <i class="fa-solid fa-eye"></i> View the list
+                                    </span>
+                                </div>
                             </div>
+                        </a>
                         {{-- @endforeach --}}
 
                         {{-- Restaurants --}}
                         {{-- @foreach ($pendingRestaurants as $restaurant) --}}
-                            <div class="d-flex justify-content-between align-items-center border rounded p-3 mb-3 bg-light">
-                                <div>
-                                    <span class="me-2">🍴</span>
-                                    <a href="#" class="text-decoration-none text-dark fw-bold">Restaurant name</a>
+                        <a href="{{ route('admin.showList', 'restaurant') }}" class="text-decoration-none text-dark fw-bold">
+                            <div class="d-flex align-items-center border rounded p-3 mb-3 bg-light">
+                                <div class="col-3">
+                                    <i class="fa-solid fa-utensils me-2"></i>Restaurant
                                 </div>
-                                <span class="badge bg-warning text-dark px-3 py-2">
-                                    <i class="fa-solid fa-hourglass-start me-1"></i> Pending
-                                </span>
+
+                                <div class="col-6 text-center">
+                                    @if ($countTmpHotel != 0)
+                                        <span class="text-danger">Pending: {{ $countTmpRestaurant }}</span>
+                                    @else
+                                        Pending: {{ $countTmpRestaurant }}
+                                    @endif
+                                </div>
+
+                                <div class="col-3 text-end">
+                                    <span class="badge bg-warning text-dark px-3 py-2">
+                                        <i class="fa-solid fa-eye"></i> View the list
+                                    </span>
+                                </div>
                             </div>
+                        </a>
                         {{-- @endforeach --}}
 
                         {{-- No Data Message --}}
-                        {{-- @if ($pendingHotels->isEmpty() && $pendingRestaurants->isEmpty()) --}}
+                        {{-- @if ($pendingHotels->isEmpty() && $pendingRestaurants->isEmpty())
                             <div class="text-center py-4">
                                 <p class="text-muted mb-0">No pending approvals 🎉</p>
-                            </div>
+                            </div>  --}}
                         {{-- @endif --}}
                     </div>
                 </div>

@@ -125,7 +125,14 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/hotel/approval/{id}', [AdminController::class, 'showPending'])->name('hotel.approval.show');
         Route::post('/hotel/approve/{id}', [AdminController::class, 'approveHotel'])->name('hotel.approve');
         Route::post('/hotels/{id}/reject', [AdminController::class, 'rejectHotel'])->name('hotel.reject');
-        Route::get('/hotel/{id}/detail', [AdminController::class, 'showDetail'])->name('showDetail');
+        Route::get('/hotel/{id}/detail', [AdminController::class, 'showDetailHotel'])->name('showDetailHotel');
+
+        // restaurant approve/reject
+        Route::get('/restaurant/approval', [AdminController::class, 'approvalRestaurant'])->name('approvalRestaurant');
+        Route::get('/restaurant/approval/{id}', [AdminController::class, 'showPendingRestaurant'])->name('showPendingRestaurant');
+        Route::post('/restaurant/approve/{id}', [AdminController::class, 'approveRestaurant'])->name('approveRestaurant');
+        Route::post('/restaurant/{id}/reject', [AdminController::class, 'rejectRestaurant'])->name('rejectRestaurant');
+        Route::get('/restaurant/{id}/detail', [AdminController::class, 'showDetailRestaurant'])->name('showDetailRestaurant');
 
         #For Analysis
         Route::get('/analysis/hotel/{id?}', [AnalysisController::class, 'hotelAnalysis'])->name('analysis.hotel');

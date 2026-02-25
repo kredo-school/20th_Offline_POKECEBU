@@ -77,26 +77,26 @@
             </div>
         @endif
         <div class="row">
-            <div class="mb-2"><a href="{{ route('admin.showList', 'hotel') }}">◀︎ List of Hotels</a></div>
+            <div class="mb-2"><a href="{{ route('admin.showList', 'restaurant') }}">◀︎ List of Restaurants</a></div>
             {{-- ホテル詳細（右側） --}}
             <div class="col-lg-9">
-                @if (isset($tmpHotel) && $tmpHotel)
+                @if (isset($tmpRestaurant) && $tmpRestaurant)
                     <div class="mb-3">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
                                 <h2 class="mb-0">
-                                    @if (is_null($tmpHotel->hotel_id))
+                                    @if (is_null($tmpRestaurant->restaurant_id))
                                         <span class="badge bg-info-subtle text-info me-1">New</span>
                                     @else
                                         <span class="badge bg-success-subtle text-success me-1">Update</span>
                                     @endif
-                                    {{ $tmpHotel->name }}
+                                    {{ $tmpRestaurant->name }}
                                 </h2>
                                 <div class="text-warning fs-5">
-                                    @for ($i = 0; $i < floor($tmpHotel->star_rating ?? 0); $i++)
+                                    @for ($i = 0; $i < floor($tmpRestaurant->star_rating ?? 0); $i++)
                                         <i class="fa-solid fa-star"></i>
                                     @endfor
-                                    @if (isset($tmpHotel->star_rating) && $tmpHotel->star_rating - floor($tmpHotel->star_rating) >= 0.5)
+                                    @if (isset($tmpRestaurant->star_rating) && $tmpRestaurant->star_rating - floor($tmpRestaurant->star_rating) >= 0.5)
                                         <i class="fa-regular fa-star-half-stroke"></i>
                                     @endif
                                 </div>
@@ -104,7 +104,7 @@
 
                             {{-- Approve / Reject ボタン群（ヘッダー内に収める） --}}
                             <div class="d-flex gap-2 align-items-center action-buttons">
-                                <form method="post" action="{{ route('admin.hotel.approveHotel', $tmpHotel->id) }}">
+                                <form method="post" action="{{ route('admin.approveRestaurant', $tmpRestaurant->id) }}">
                                     @csrf
                                     <button type="submit" class="btn btn-primary rounded-pill action-btn">
                                         <i class="fa-solid fa-check me-1"></i> Approve
@@ -112,7 +112,7 @@
                                 </form>
 
                                 <div class="reject-wrapper" style="position:relative;">
-                                    <form method="post" action="{{ route('admin.hotel.rejectHotel', $tmpHotel->id) }}"
+                                    <form method="post" action="{{ route('admin.rejectRestaurant', $tmpRestaurant->id) }}"
                                         class="reject-form click-mode" novalidate>
                                         @csrf
 
@@ -135,12 +135,12 @@
                         </div>
 
                         {{-- ヘッダー外：場所表示 --}}
-                        <p class="mt-2"><i class="fa-solid fa-location-dot me-1"></i> {{ $tmpHotel->city ?? '—' }}</p>
+                        <p class="mt-2"><i class="fa-solid fa-location-dot me-1"></i> {{ $tmpRestaurant->city ?? '—' }}</p>
 
                         {{-- 画像ギャラリー（重複を削除：ここで一度だけ表示） --}}
                         <div class="row mb-3">
-                            @if ($tmpHotel->images && $tmpHotel->images->isNotEmpty())
-                                @foreach ($tmpHotel->images as $img)
+                            @if ($tmpRestaurant->images && $tmpRestaurant->images->isNotEmpty())
+                                @foreach ($tmpRestaurant->images as $img)
                                     <div class="col-md-6">
                                         @php
                                             // 画像パスがフル URL か相対パスかに対応
@@ -152,7 +152,7 @@
                                                 : \Illuminate\Support\Facades\Storage::url(ltrim($img->image, '/'));
                                         @endphp
                                         <a href="{{ $imgUrl }}" target="_blank" rel="noopener noreferrer">
-                                            <img src="{{ $imgUrl }}" class="img-fluid rounded mb-2" alt="Hotel Image">
+                                            <img src="{{ $imgUrl }}" class="img-fluid rounded mb-2" alt="Restaurant Image">
                                         </a>
                                     </div>
                                 @endforeach
@@ -164,57 +164,57 @@
                         </div>
 
 
-                        <h4 class="mt-3"><i class="fa-solid fa-circle-info me-2"></i>Hotel Details</h4>
+                        <h4 class="mt-3"><i class="fa-solid fa-circle-info me-2"></i>Restaurant Details</h4>
                         {{-- 連絡先情報 --}}
                         <div class="mb-3">
                             <h5 class="mb-2"><i class="fa-solid fa-phone me-2"></i>Contact</h5>
                             <ul class="list-unstyled mb-0">
                                 <li>
                                     <strong>Phone:</strong>
-                                    @if (!empty($tmpHotel->phone))
-                                        <a href="tel:{{ e($tmpHotel->phone) }}">{{ e($tmpHotel->phone) }}</a>
+                                    @if (!empty($tmpRestaurant->phone))
+                                        <a href="tel:{{ e($tmpRestaurant->phone) }}">{{ e($tmpRestaurant->phone) }}</a>
                                     @else
                                         <span class="text-muted">—</span>
                                     @endif
                                 </li>
                                 <li>
                                     <strong>Website:</strong>
-                                    @if (!empty($tmpHotel->website))
+                                    @if (!empty($tmpRestaurant->website))
                                         @php
-                                            $site = $tmpHotel->website;
+                                            $site = $tmpRestaurant->website;
                                             if (!\Illuminate\Support\Str::startsWith($site, ['http://', 'https://'])) {
                                                 $site = 'https://' . $site;
                                             }
                                         @endphp
                                         <a href="{{ e($site) }}" target="_blank"
-                                            rel="noopener noreferrer">{{ e($tmpHotel->website) }}</a>
+                                            rel="noopener noreferrer">{{ e($tmpRestaurant->website) }}</a>
                                     @else
                                         <span class="text-muted">—</span>
                                     @endif
                                 </li>
                                 <li>
                                     <strong>Representative:</strong>
-                                    @if (!empty($tmpHotel->representative_name))
-                                        {{ e($tmpHotel->representative_name) }}
+                                    @if (!empty($tmpRestaurant->representative_name))
+                                        {{ e($tmpRestaurant->representative_name) }}
                                     @else
                                         <span class="text-muted">—</span>
                                     @endif
                                 </li>
                                 <li>
                                     <strong>Representative Email:</strong>
-                                    @if (!empty($tmpHotel->representative_email))
+                                    @if (!empty($tmpRestaurant->representative_email))
                                         <a
-                                            href="mailto:{{ e($tmpHotel->representative_email) }}">{{ e($tmpHotel->representative_email) }}</a>
+                                            href="mailto:{{ e($tmpRestaurant->representative_email) }}">{{ e($tmpRestaurant->representative_email) }}</a>
                                     @else
                                         <span class="text-muted">—</span>
                                     @endif
                                 </li>
                             </ul>
                         </div>
-                        <p>{{ $tmpHotel->description ?? 'No description provided.' }}</p>
+                        <p>{{ $tmpRestaurant->description ?? 'No description provided.' }}</p>
                     </div>
                 @else
-                    <p>No hotel selected.</p>
+                    <p>No restaurant selected.</p>
                 @endif
             </div>
         </div>

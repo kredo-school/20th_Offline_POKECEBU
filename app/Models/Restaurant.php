@@ -92,5 +92,9 @@ class Restaurant extends Model
             ->exists();
     }
 
+    public function tmpRestaurants()
+    {
+        return $this->hasMany(TmpRestaurant::class, 'restaurant_id', 'id');
+    }
   
 }

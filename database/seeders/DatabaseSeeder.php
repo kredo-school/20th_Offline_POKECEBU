@@ -27,7 +27,8 @@ class DatabaseSeeder extends Seeder
             'tmp_restaurants', 'room_images', 'hotel_rooms', 'hotel_room_types', 
             'hotel_reservations', 'restaurant_tables', 'table_images', 
             'restaurant_reservations', 'category_table', 'users', 'user_details', 
-            'types', 'statuses', 'categories', 'restaurants', 'hotels'
+            'types', 'statuses', 'categories', 'restaurants', 'hotels',
+            'faq_categories', 'faqs'
         ];
 
         foreach ($tables as $table) {
@@ -88,7 +89,7 @@ class DatabaseSeeder extends Seeder
 
         /*
         |--------------------------------------------------------------------------
-        | 3. Hotels, Hotel Images & Rooms (各ホテル5部屋 + 画像3枚)
+        | 3. Hotels, Hotel Images & Rooms (ホテルごとに5部屋 + 画像3枚)
         |--------------------------------------------------------------------------
         */
         $numHotels = 5;
@@ -119,7 +120,6 @@ class DatabaseSeeder extends Seeder
                 'updated_at' => $now,
             ]);
 
-            // hotel_images テーブルに画像を追加
             for ($img = 1; $img <= 3; $img++) {
                 DB::table('hotel_images')->insert([
                     'hotel_id' => $hUserId,
@@ -157,7 +157,7 @@ class DatabaseSeeder extends Seeder
 
         /*
         |--------------------------------------------------------------------------
-        | 4. Restaurants, Restaurant Images & Tables (各レストラン5テーブル + 画像3枚)
+        | 4. Restaurants, Restaurant Images & Tables (レストランごとに5テーブル + 画像3枚)
         |--------------------------------------------------------------------------
         */
         $numRestaurants = 5;
@@ -188,7 +188,6 @@ class DatabaseSeeder extends Seeder
                 'updated_at' => $now,
             ]);
 
-            // restaurant_images テーブルに画像を追加
             for ($img = 1; $img <= 3; $img++) {
                 DB::table('restaurant_images')->insert([
                     'restaurant_id' => $rUserId,
@@ -220,7 +219,7 @@ class DatabaseSeeder extends Seeder
 
         /*
         |--------------------------------------------------------------------------
-        | 5. 大量の予約データ (過去14ヶ月分 / 合計800件)
+        | 5. 予約データの生成 (計800件)
         |--------------------------------------------------------------------------
         */
         for ($i = 0; $i < 800; $i++) {
@@ -232,7 +231,7 @@ class DatabaseSeeder extends Seeder
             $endAt = $startAt->copy()->addDays(rand(1, 4));
 
             DB::table('hotel_reservations')->insert([
-                'reservation_id' => 'HRES' . $faker->unique()->numberBetween(100000, 9999999),
+                'reservation_id' => 'HRES' . $faker->unique(true)->numberBetween(100000, 9999999),
                 'user_id' => $userIds['customer'],
                 'hotel_id' => $roomInfo['hotel_id'],
                 'room_id' => $roomInfo['id'],
@@ -252,7 +251,7 @@ class DatabaseSeeder extends Seeder
             $resStart = $reservedAt->copy()->addDays(rand(1, 20))->setTime(rand(11, 20), 0);
 
             DB::table('restaurant_reservations')->insert([
-                'reservation_id' => 'RRES' . $faker->unique()->numberBetween(100000, 9999999),
+                'reservation_id' => 'RRES' . $faker->unique(true)->numberBetween(100000, 9999999),
                 'user_id' => $userIds['customer'],
                 'restaurant_id' => $tableInfo['restaurant_id'],
                 'table_id' => $tableInfo['id'],
@@ -267,32 +266,28 @@ class DatabaseSeeder extends Seeder
                 'updated_at' => $reservedAt,
             ]);
         }
-        // Restaurant用
-        DB::table('restaurant_reservations')->insert([
-            'reservation_id' => 20001,
-            'user_id' => $userId,
-            'restaurant_id' => 4,
-            'table_id' => $tableId,
-            'status_id' => 3,
-            'guests' => 2,           // ★追加：こちらも人数を追加
-            'total_price' => 1500,
-            'reserved_at' => $now,
-            'start_at' => $now->copy()->addDays(7)->setTime(18, 0),
-            'end_at' => $now->copy()->addDays(7)->setTime(20, 0),
-            'created_at' => $now,
-            'updated_at' => $now,        // 念のため追加
-            'other' => 'No request',
+
+        /*
+        |--------------------------------------------------------------------------
+        | 6. FAQ データの生成
+        |--------------------------------------------------------------------------
+        */
+        DB::table('faq_categories')->insert([
+            ['name' => 'Hotels', 'soft_order' => 1, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Restaurants', 'soft_order' => 2, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Reservations', 'soft_order' => 3, 'created_at' => $now, 'updated_at' => $now],
         ]);
-      
-        // FAQ
-        DB::table('faq_categories')->updateOrInsert(['name' => 'Hotels'], ['soft_order' => 1, 'created_at' => $now, 'updated_at' => $now]);
-        DB::table('faq_categories')->updateOrInsert(['name' => 'Restaurants'], ['soft_order' => 2, 'created_at' => $now, 'updated_at' => $now]);
-        DB::table('faq_categories')->updateOrInsert(['name' => 'Plans/Reservations'], ['soft_order' => 3, 'created_at' => $now, 'updated_at' => $now]);
 
-        DB::table('faqs')->updateOrInsert(['faq_category_id' => 1, 'title' => 'title1'], ['question' => 'question1', 'answer' => 'answer1', 'soft_order' => 1, 'created_at' => $now, 'updated_at' => $now]);
-        DB::table('faqs')->updateOrInsert(['faq_category_id' => 1, 'title' => 'title2'], ['question' => 'question2', 'answer' => 'answer2', 'soft_order' => 2, 'created_at' => $now, 'updated_at' => $now]);
-        DB::table('faqs')->updateOrInsert(['faq_category_id' => 1, 'title' => 'title3'], ['question' => 'question3', 'answer' => 'answer3', 'soft_order' => 3, 'created_at' => $now, 'updated_at' => $now]);
+        for ($f = 1; $f <= 6; $f++) {
+            DB::table('faqs')->insert([
+                'faq_category_id' => rand(1, 3),
+                'title' => "Question Topic $f",
+                'question' => "This is the sample question $f?",
+                'answer' => "This is the sample answer $f from the admin.",
+                'soft_order' => $f,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ]);
+        }
     }
-
-    
 }

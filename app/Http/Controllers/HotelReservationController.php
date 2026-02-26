@@ -13,11 +13,7 @@ use Illuminate\Support\Facades\Auth;
 
 class HotelReservationController extends Controller
 {
-    public function index()
-    {
-        return view('reservations.hotel');
-    }
-
+  
     // sutffの予約詳細確認用
     public function show($id)
     {

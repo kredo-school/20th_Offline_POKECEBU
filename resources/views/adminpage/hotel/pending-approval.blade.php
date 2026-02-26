@@ -104,7 +104,7 @@
 
                             {{-- Approve / Reject ボタン群（ヘッダー内に収める） --}}
                             <div class="d-flex gap-2 align-items-center action-buttons">
-                                <form method="post" action="{{ route('admin.hotel.approveHotel', $tmpHotel->id) }}">
+                                <form method="post" action="{{ route('admin.hotel.approve', $tmpHotel->id) }}">
                                     @csrf
                                     <button type="submit" class="btn btn-primary rounded-pill action-btn">
                                         <i class="fa-solid fa-check me-1"></i> Approve
@@ -112,7 +112,7 @@
                                 </form>
 
                                 <div class="reject-wrapper" style="position:relative;">
-                                    <form method="post" action="{{ route('admin.hotel.rejectHotel', $tmpHotel->id) }}"
+                                    <form method="post" action="{{ route('admin.hotel.reject', $tmpHotel->id) }}"
                                         class="reject-form click-mode" novalidate>
                                         @csrf
 

@@ -148,7 +148,7 @@
                                             <i class="fa-regular fa-circle-xmark"></i> Reject
                                         </button>
                                     @else
-                                        <a href="{{ route('admin.showDetail', $hotel->id) }}" class="dropdown-item">
+                                        <a href="{{ route('admin.showDetailHotel', $hotel->id) }}" class="dropdown-item">
                                             <i class="fa-solid fa-eye"></i> View details
                                         </a>
                                     @endif

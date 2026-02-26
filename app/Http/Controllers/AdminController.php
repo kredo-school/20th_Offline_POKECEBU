@@ -21,18 +21,25 @@ use App\Models\TmpHotelImage;
 
 use App\Models\HotelImage;
 use App\Models\ApprovalHistory;
+use App\Models\RestaurantImage;
+use App\Models\TmpRestaurant;
+use App\Models\TmpRestaurantImage;
 
 class AdminController extends Controller
 {
     public function index()
     {
-        $totalUsers = User::where('role_id', 1)->count();
+        $totalUsers = User::all()->count();
         $newUserStats = User::getNewUserStats(null);
         $newRegistrationCount = $newUserStats['count'];
         $newUserChartLabels = $newUserStats['chart']['labels'];
         $newUserChartData = $newUserStats['chart']['data'];
+        $countTmpHotel = TmpHotel::all()->count();
+        $countTmpRestaurant = TmpRestaurant::all()->count();
 
-        return view('adminpage.home', compact('totalUsers', 'newRegistrationCount', 'newUserChartLabels', 'newUserChartData'));
+        return view('adminpage.home', 
+                    compact('totalUsers', 'newRegistrationCount', 'newUserChartLabels', 'newUserChartData',
+                                            'countTmpHotel', 'countTmpRestaurant'));
     }
 
 
@@ -361,8 +368,27 @@ class AdminController extends Controller
         }
 
         if ($name === 'restaurant') {
-            $restaurants = Restaurant::all();
-            return view('adminpage.list.list-restaurant', compact('restaurants'));
+            $restaurants = collect();
+
+            foreach (TmpRestaurant::whereNull('restaurant_id')->get() as $tmp) {
+                $tmp->type = 'tmp';
+                $tmp->status = 'pending';
+                $tmp->approval_id = $tmp->id;
+                $restaurants->push($tmp);
+            }
+            
+            foreach (Restaurant::with('user', 'tmpRestaurants')->get() as $restaurant) {
+                $restaurant->type = 'restaurant';
+                $restaurant->status = $restaurant->tmpRestaurants->isNotEmpty() ? 'pending' : 'approved';
+                if ($restaurant->tmpRestaurants->isNotEmpty()) {
+                    $restaurant->approval_id = $restaurant->tmpRestaurants->first()->id;
+                } else {
+                    $restaurant->approval_id = null;
+                }
+                $restaurants->push($restaurant);
+            }
+            
+            return view('adminpage.list.restaurant.list-restaurant', compact('restaurants'));
         }
     }
 
@@ -742,7 +768,7 @@ class AdminController extends Controller
         return view('adminpage.hotel.pending-approval', compact('tmpHotels', 'tmpHotel'));
     }
 
-    public function showDetail($id) {
+    public function showDetailHotel($id) {
         $hotel = Hotel::with('images')->findOrFail($id);
 
         return view('adminpage.hotel.detail', compact('hotel'));
@@ -843,6 +869,470 @@ class AdminController extends Controller
             }
             // 代替でクエリ一括削除するなら（外部キーやトリガーに注意）
             // \DB::table('tmp_hotel_images')->where('tmp_hotel_id', $tmp->id)->delete();
+
+            // 3) tmp レコード自体を物理削除（SoftDeletes があるなら forceDelete）
+            if (method_exists($tmp, 'forceDelete')) {
+                $tmp->forceDelete();
+            } else {
+                $tmp->delete();
+            }
+
+            \Illuminate\Support\Facades\Log::info('Tmp DB records physically removed', ['tmp_id' => $tmp->id]);
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('Cleanup (physical delete) failed', [
+                'tmp_id' => $tmp->id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+        }
+    }
+
+    // レストラン承認
+    public function approveRestaurant($id)
+    {
+        $tmp = TmpRestaurant::with('images')->findOrFail($id);
+
+        if ($tmp->restaurant_id) {
+            return $this->approveRestaurantUpdate($tmp);
+        }
+
+        return $this->approveRestaurantCreate($tmp);
+    }
+    
+    private function approveRestaurantCreate(TmpRestaurant $tmp)
+    {
+        Log::info('approveRestaurant start', [
+            'tmp_id' => $tmp->id,
+            'rep_email' => $tmp->representative_email ?? null,
+            'rep_name' => $tmp->representative_name ?? null,
+            'images_count' => $tmp->images->count(),
+        ]);
+
+        $email = $tmp->representative_email ?? null;
+        $tempPassword = Str::random(12);
+
+        DB::beginTransaction();
+
+        try {
+            Log::info('approveRestaurant before email checks', ['email' => $email]);
+
+            if (! $email) {
+                Log::warning('approveRestaurant abort: no email', ['tmp_id' => $tmp->id]);
+                DB::rollBack();
+                return redirect()->back()->withErrors(['email' => '代表者のメールアドレスが登録されていません。']);
+            }
+
+            if (User::where('email', $email)->exists()) {
+                Log::warning('approveRestaurant abort: email exists', ['email' => $email, 'tmp_id' => $tmp->id]);
+                DB::rollBack();
+                return redirect()->back()->withErrors(['email' => 'このメールアドレスは既に登録されています。別のメールアドレスで申請してください。']);
+            }
+
+            Log::info('approveRestaurant creating user', ['email' => $email]);
+
+            // 1) users を作成
+            $user = User::create([
+                'name' => $tmp->name ?? ($tmp->representative_name ?? 'No Name'),
+                'email' => $email,
+                'password' => Hash::make($tempPassword),
+                'role_id' => User::RESTAURANT_ROLE_ID ?? 4,
+            ]);
+
+            // 2) restaurants を作成（id を users.id に合わせる）
+            $restaurant = Restaurant::create([
+                'id' => $user->id,
+                'name' => $tmp->name,
+                'description' => $tmp->description,
+                'address' => $tmp->address,
+                'city' => $tmp->city,
+                'latitude' => $tmp->latitude,
+                'longitude' => $tmp->longitude,
+                'star_rating' => $tmp->star_rating,
+                'phone' => $tmp->phone,
+                'website' => $tmp->website,
+                'representative_name' => $tmp->representative_name ?? null,
+                'representative_email' => $tmp->representative_email ?? null,
+            ]);
+            
+            // 3)画像移行（修正版）
+            $movedImages = [];
+            foreach ($tmp->images as $tmpImage) {
+                // tmpImage->image が "tmp/restaurants/{id}/file.jpg" の場合はそのまま使い、
+                // 単に "file.jpg" の場合は tmp/restaurants/{tmp->id}/file.jpg を想定する
+                $stored = ltrim($tmpImage->image, '/');
+                if (Str::startsWith($stored, 'tmp/restaurants/')) {
+                    $oldPath = $stored;
+                } else {
+                    $oldPath = "tmp/restaurants/{$tmp->id}/" . basename($stored);
+                }
+
+                $filename = basename($oldPath);
+                $newDir = "restaurants/{$restaurant->id}";
+                $newPath = "{$newDir}/{$filename}";
+
+                try {
+                    if (! Storage::disk('public')->exists($newDir)) {
+                        Storage::disk('public')->makeDirectory($newDir);
+                    }
+
+                    if (Storage::disk('public')->exists($oldPath)) {
+                        // move を使って確実に移動（コピー＋削除より簡潔）
+                        Storage::disk('public')->move($oldPath, $newPath);
+                    } else {
+                        Log::warning('Tmp image file not found during approval', ['path' => $oldPath, 'tmp_image_id' => $tmpImage->id]);
+                        // 見つからない場合は既存の値を保持（運用に合わせて変更可）
+                        $newPath = $oldPath;
+                    }
+
+                    // RestaurantImage には保存先パスを入れる（必要なら basename のみを入れる方針に統一）
+                    RestaurantImage::create([
+                        'restaurant_id' => $restaurant->id,
+                        'image' => $newPath,
+                    ]);
+
+                    $movedImages[] = $newPath;
+                } catch (\Throwable $e) {
+                    Log::error('Failed to move tmp image during restaurant approval', [
+                        'error' => $e->getMessage(),
+                        'old' => $oldPath,
+                        'new' => $newPath,
+                    ]);
+                    throw $e;
+                }
+            }
+
+
+            // 4) tmp 側の DB レコードと物理ファイルをクリーンアップ（承認成功時）
+            // try {
+            //     // DB の tmp image レコードを削除
+            //     $tmp->images()->delete();
+
+            //     // 物理ファイル（tmp ディレクトリ）を削除
+            //     $tmpDir = "tmp/restaurants/{$tmp->id}";
+            //     if (Storage::disk('public')->exists($tmpDir)) {
+            //         // ファイルをすべて削除してからディレクトリを削除
+            //         $files = Storage::disk('public')->files($tmpDir);
+            //         foreach ($files as $file) {
+            //             Storage::disk('public')->delete($file);
+            //         }
+            //         Storage::disk('public')->deleteDirectory($tmpDir);
+            //         Log::info('Tmp files removed after approval', ['tmp_id' => $tmp->id, 'dir' => $tmpDir]);
+            //     } else {
+            //         Log::info('No tmp directory to remove after approval', ['tmp_id' => $tmp->id, 'dir' => $tmpDir]);
+            //     }
+
+            //     // tmp レコードは softDeletes を使っているので delete() で deleted_at をセット
+            //     $tmp->delete();
+            // } catch (\Throwable $cleanupEx) {
+            //     // クリーンアップ失敗は致命的にせずログに残して続行
+            //     Log::error('Tmp cleanup failed after approval', [
+            //         'tmp_id' => $tmp->id,
+            //         'error' => $cleanupEx->getMessage(),
+            //         'trace' => $cleanupEx->getTraceAsString(),
+            //     ]);
+            // }
+
+            // --- 画像移行ループの直後に追加 ---
+            if (!empty($movedImages)) {
+                // 代表画像を restaurants.image_path に保存（最初の画像を代表にする）
+                $restaurant->image_path = $movedImages[0];
+                $restaurant->save();
+
+                Log::info('Restaurant representative image saved', [
+                    'restaurant_id' => $restaurant->id,
+                    'image_path' => $restaurant->image_path,
+                ]);
+            } else {
+                Log::info('No images moved for restaurant, image_path remains null', ['restaurant_id' => $restaurant->id]);
+            }
+
+
+            // 5) 承認履歴
+            if (class_exists(ApprovalHistory::class)) {
+                ApprovalHistory::create([
+                    'approvable_type' => 'restaurant',
+                    'approvable_id' => $restaurant->id,
+                    'approved_by' => auth()->id() ?? null,
+                    'notes' => 'Approved via admin panel',
+                ]);
+            }
+
+            DB::commit();
+
+            // $user と $tempPassword がある想定
+            Mail::to($user->email)->send(new ApprovedNotification($user, $tempPassword, 'restaurant'));
+
+
+            // ログチェック用一時コード
+            \Log::info('approveRestaurant committed', ['tmp_id' => $tmp->id, 'restaurant_id' => $restaurant->id, 'user_id' => $user->id]);
+
+            try {
+                $this->cleanupTmpAfterDecisionRestaurant($tmp);
+                \Log::info('cleanupTmpAfterDecision finished', ['tmp_id' => $tmp->id]);
+            } catch (\Throwable $e) {
+                \Log::error('cleanupTmpAfterDecision failed', ['tmp_id' => $tmp->id, 'error' => $e->getMessage()]);
+            }
+
+
+            // 承認成功後（DB commit の後） データを物理削除 必要に応じて4）は削除
+            $this->cleanupTmpAfterDecisionRestaurant($tmp);
+
+
+            // 6) メール送信（トランザクション外）
+            try {
+                Log::info('Restaurant approved', ['restaurant_id' => $restaurant->id, 'user_id' => $user->id]);
+                // Mail::to($user->email)->send(new \App\Mail\ApprovedNotification($user, $tempPassword));
+            } catch (\Throwable $e) {
+                Log::error('Failed to send approval email', ['error' => $e->getMessage(), 'user_id' => $user->id]);
+            }
+
+            return redirect()->back()->with('status', 'ホテル申請を承認しました！');
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            Log::error('Restaurant approval failed', ['error' => $e->getMessage(), 'tmp_id' => $tmp->id, 'trace' => $e->getTraceAsString()]);
+            return redirect()->back()->withErrors('承認処理中にエラーが発生しました。');
+        }
+    }
+
+    //　ホテル情報の更新
+    private function approveRestaurantUpdate(TmpRestaurant $tmp)
+    {
+        $restaurant = Restaurant::with('images')->findOrFail($tmp->restaurant_id);
+        $user = User::findOrFail($tmp->restaurant_id);
+
+        DB::beginTransaction();
+
+        try {
+                /*
+                |--------------------------------------------------------------------------
+                | 1) restaurants / usersテーブル更新
+                |--------------------------------------------------------------------------
+                */
+                $restaurant->update([
+                    'name' => $tmp->name,
+                    'description' => $tmp->description,
+                    'address' => $tmp->address,
+                    'city' => $tmp->city,
+                    'latitude' => $tmp->latitude,
+                    'longitude' => $tmp->longitude,
+                    'star_rating' => $tmp->star_rating,
+                    'phone' => $tmp->phone,
+                    'website' => $tmp->website,
+                    'representative_name' => $tmp->representative_name,
+                    'representative_email' => $tmp->representative_email,
+                ]);
+
+                $user->update([
+                    'name' => $tmp->name
+                ]);
+
+                /*
+                |--------------------------------------------------------------------------
+                | 2) 画像処理
+                |--------------------------------------------------------------------------
+                */
+
+                $movedImages = [];
+
+                // 既存画像を削除するならここで
+                foreach ($restaurant->images as $image) {
+                    $path = ltrim($image->image, '/');
+                    if (Storage::disk('public')->exists($path)) {
+                        Storage::disk('public')->delete($path);
+                    }
+                    $image->delete();
+                }
+
+                foreach ($tmp->images as $tmpImage) {
+
+                    $stored = ltrim($tmpImage->image, '/');
+
+                    if (Str::startsWith($stored, 'tmp/restaurants/')) {
+                        $oldPath = $stored;
+                    } else {
+                        $oldPath = "tmp/restaurants/{$tmp->id}/" . basename($stored);
+                    }
+
+                    $filename = basename($oldPath);
+                    $newDir = "restaurants/{$restaurant->id}";
+                    $newPath = "{$newDir}/{$filename}";
+
+                    if (! Storage::disk('public')->exists($newDir)) {
+                        Storage::disk('public')->makeDirectory($newDir);
+                    }
+
+                    if (Storage::disk('public')->exists($oldPath)) {
+                        Storage::disk('public')->move($oldPath, $newPath);
+                    }
+
+                    RestaurantImage::create([
+                        'restaurant_id' => $restaurant->id,
+                        'image' => $newPath,
+                    ]);
+
+                    $movedImages[] = $newPath;
+                }
+
+                // 代表画像更新
+                if (!empty($movedImages)) {
+                    $restaurant->image_path = $movedImages[0];
+                    $restaurant->save();
+                }
+
+                $user->save();
+
+                /*
+                |--------------------------------------------------------------------------
+                | 3) 承認履歴
+                |--------------------------------------------------------------------------
+                */
+                if (class_exists(ApprovalHistory::class)) {
+                    ApprovalHistory::create([
+                        'approvable_type' => 'restaurant_update',
+                        'approvable_id' => $restaurant->id,
+                        'approved_by' => auth()->id(),
+                        'notes' => 'Restaurant update approved via admin panel',
+                    ]);
+                }
+
+                DB::commit();
+
+                /*
+                |--------------------------------------------------------------------------
+                | 4) tmpデータ削除
+                |--------------------------------------------------------------------------
+                */
+                $this->cleanupTmpAfterDecisionRestaurant($tmp);
+
+                return redirect()->back()->with('status', 'ホテル更新申請を承認しました！');
+
+        } catch (\Throwable $e) {
+            DB::rollBack();
+
+            Log::error('Restaurant update approval failed', [
+                'error' => $e->getMessage(),
+                'tmp_id' => $tmp->id,
+            ]);
+
+            return redirect()->back()->withErrors('更新承認処理中にエラーが発生しました。');
+        }
+    }
+    /**
+     * 承認一覧ページ（左に一覧、右に最初の申請を表示）
+     */
+    public function approvalRestaurant()
+    {
+        $tmpRestaurants = TmpRestaurant::with('images')
+            ->where('status', 'pending')
+            ->orderBy('created_at', 'asc')
+            ->get();
+
+        $tmpRestaurant = $tmpRestaurants->first();
+
+        return view('adminpage.restaurant.pending-approval', compact('tmpRestaurants', 'tmpRestaurant'));
+    }
+
+    public function showDetailRestaurant($id) {
+        $restaurant = Restaurant::with('images')->findOrFail($id);
+
+        return view('adminpage.restaurant.detail', compact('restaurant'));
+    }
+
+    /**
+     * 個別申請を選択して表示（Review ボタンでここに飛ばす）
+     */
+    public function showPendingRestaurant($id)
+    {
+        $tmpRestaurants = TmpRestaurant::with('images')
+            ->where('status', 'pending')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $tmpRestaurant = TmpRestaurant::with('images')->findOrFail($id);
+
+        return view('adminpage.restaurant.pending-approval', compact('tmpRestaurants', 'tmpRestaurant'));
+    }
+
+    public function rejectRestaurant(Request $request, $id)
+    {
+        $tmp = TmpRestaurant::findOrFail($id);
+
+        DB::beginTransaction();
+        try {
+            // 1) ステータス更新（運用に合わせてカラム名を調整）
+            $tmp->status = 'rejected';
+            $tmp->save();
+
+            // 2) 承認履歴（任意）
+            if (class_exists(ApprovalHistory::class)) {
+                ApprovalHistory::create([
+                    'approvable_type' => 'restaurant',
+                    'approvable_id' => $id,
+                    'approved_by' => auth()->id() ?? null,
+                    'notes' => 'Rejected via admin panel',
+                ]);
+            }
+
+            DB::commit();
+
+            // 例：理由を管理画面で受け取る場合は $reason を取得
+            $reason = $request->input('reject_reason') ?? null;
+
+            // メール送信（同期）
+            if ($tmp->representative_email) {
+                Mail::to($tmp->representative_email)->send(new RejectedNotification($tmp, $reason, 'restaurant'));
+            }
+
+
+            // 承認成功後（DB commit の後）データを物理削除
+            $this->cleanupTmpAfterDecisionRestaurant($tmp);
+
+
+            // 3) ログとフラッシュ
+            Log::info('Restaurant rejected', ['tmp_id' => $id, 'by' => auth()->id() ?? null]);
+            return redirect()->back()->with('status', 'ホテル申請を却下しました。');
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            Log::error('Restaurant reject failed', ['tmp_id' => $id, 'error' => $e->getMessage()]);
+            return redirect()->back()->withErrors('却下処理中にエラーが発生しました。');
+        }
+    }
+
+    private function cleanupTmpAfterDecisionRestaurant(\App\Models\TmpRestaurant $tmp)
+    {
+        try {
+            // 1) tmp ディレクトリ内の物理ファイルをすべて削除
+            $tmpDir = "tmp/restaurants/{$tmp->id}";
+            $disk = \Illuminate\Support\Facades\Storage::disk('public');
+
+            if ($disk->exists($tmpDir)) {
+                $files = $disk->allFiles($tmpDir);
+                foreach ($files as $file) {
+                    if ($disk->exists($file)) {
+                        $disk->delete($file);
+                    }
+                }
+                // ディレクトリ削除（空なら削除される）
+                $disk->deleteDirectory($tmpDir);
+                \Illuminate\Support\Facades\Log::info('Tmp files physically removed', ['tmp_id' => $tmp->id, 'dir' => $tmpDir]);
+            } else {
+                \Illuminate\Support\Facades\Log::info('No tmp directory to remove', ['tmp_id' => $tmp->id, 'dir' => $tmpDir]);
+            }
+
+            // 2) tmp_restaurant_images テーブルのレコードを物理削除（モデルが SoftDeletes なら forceDelete、なければ delete）
+            foreach ($tmp->images()->get() as $img) {
+                $imgPath = ltrim($img->image ?? '', '/');
+                if ($imgPath && $disk->exists($imgPath)) {
+                    $disk->delete($imgPath);
+                }
+                if (method_exists($img, 'forceDelete')) {
+                    $img->forceDelete();
+                } else {
+                    $img->delete();
+                }
+            }
+            // 代替でクエリ一括削除するなら（外部キーやトリガーに注意）
+            // \DB::table('tmp_restaurant_images')->where('tmp_restaurant_id', $tmp->id)->delete();
 
             // 3) tmp レコード自体を物理削除（SoftDeletes があるなら forceDelete）
             if (method_exists($tmp, 'forceDelete')) {

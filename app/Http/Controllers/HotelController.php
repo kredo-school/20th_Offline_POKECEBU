@@ -9,6 +9,8 @@ use App\Models\Category;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Favorite;
+use App\Http\Requests\SearchRequest;
+
 
 
 
@@ -47,114 +49,94 @@ class HotelController extends Controller
     }
 
     // 実データ一覧表示（新しい index）
-    public function index(Request $request)
+    public function index(SearchRequest $request)
     {
-        // ベースクエリ：必要なリレーションを eager load
-        $query = \App\Models\Hotel::query()
-            ->with(['hotelImages', 'rooms.roomType', 'rooms.reservations', 'reviews']);
+        $ci = $request->input('checkin');
+        $co = $request->input('checkout');
+        $adults = (int) $request->input('adults', 0);
+        $roomsNeeded = (int) $request->input('rooms', 0);
+        $amenities = (array) $request->input('amenities', []);
 
-        // 1) 場所（destination）: city または address に部分一致
-        if ($dest = trim($request->input('destination', ''))) {
-            $dest = mb_strtolower($dest);
-            $query->where(function ($q) use ($dest) {
-                $q->whereRaw('LOWER(city) LIKE ?', ["%{$dest}%"])
-                    ->orWhereRaw('LOWER(address) LIKE ?', ["%{$dest}%"]);
+        $query = Hotel::query()
+            ->with(['hotelImages', 'rooms.categories', 'rooms.reservations', 'reviews'])
+            ->withCount('favorites');
+
+        // destination（既存の処理があればそのまま）
+        if ($destination = $request->input('destination')) {
+            $query->where(function ($q) use ($destination) {
+                $q->where('city', 'like', "%{$destination}%")
+                    ->orWhere('address', 'like', "%{$destination}%")
+                    ->orWhere('name', 'like', "%{$destination}%");
             });
         }
 
-
-        // 2) 人数（adults）: max_guests 以上の部屋があるホテル
-        if ($adults = (int) $request->input('adults')) {
-            $query->where(function ($q) use ($adults) {
-                $q->whereHas('rooms', function ($r) use ($adults) {
-                    $r->where('max_guests', '>=', $adults);
-                })->orWhereDoesntHave('rooms');
+        // 人数フィルタ: 少なくとも1部屋で max_guests >= adults を満たす部屋があるホテル
+        if ($adults > 0) {
+            $query->whereHas('rooms', function ($q) use ($adults) {
+                $q->where('max_guests', '>=', $adults);
             });
         }
 
+        // 日付と部屋数が指定されている場合は空室数で絞る
+        if ($roomsNeeded > 0 && $ci && $co) {
+            $ciCarbon = Carbon::parse($ci)->startOfDay();
+            $coCarbon = Carbon::parse($co)->endOfDay();
 
-        // 3) アメニティ（amenities[]）: categories が多対多で繋がっている想定
-        if ($amenities = $request->input('amenities')) {
-            $query->whereHas('categories', function ($q) use ($amenities) {
-                $q->whereIn('categories.id', (array) $amenities);
-            });
-        }
-
-
-        // 4) 日付による可用性（checkin, checkout）
-        $checkin = $request->input('checkin');
-        $checkout = $request->input('checkout');
-        if ($checkin && $checkout) {
-            try {
-                $ci = Carbon::parse($checkin)->startOfDay();
-                $co = Carbon::parse($checkout)->endOfDay();
-
-                // 「指定期間に空きのある部屋があるホテル」または「部屋が無いホテル」を残す
-                $query->where(function ($q) use ($ci, $co) {
-                    $q->whereHas('rooms', function ($q2) use ($ci, $co) {
-                        $q2->whereDoesntHave('reservations', function ($r) use ($ci, $co) {
-                            $r->where(function ($s) use ($ci, $co) {
-                                $s->whereBetween('start_at', [$ci, $co])
-                                    ->orWhereBetween('end_at', [$ci, $co])
-                                    ->orWhere(function ($u) use ($ci, $co) {
-                                        $u->where('start_at', '<=', $ci)->where('end_at', '>=', $co);
-                                    });
+            // ホテルに対して「空き部屋がある rooms を持つ」ことを確認し、
+            // さらに available_rooms_count を計算して having で絞る
+            $query->whereHas('rooms', function ($q) use ($ciCarbon, $coCarbon) {
+                $q->whereDoesntHave('reservations', function ($r) use ($ciCarbon, $coCarbon) {
+                    $r->where(function ($s) use ($ciCarbon, $coCarbon) {
+                        $s->whereBetween('start_at', [$ciCarbon, $coCarbon])
+                            ->orWhereBetween('end_at', [$ciCarbon, $coCarbon])
+                            ->orWhere(function ($u) use ($ciCarbon, $coCarbon) {
+                                $u->where('start_at', '<=', $ciCarbon)->where('end_at', '>=', $coCarbon);
                             });
-                        });
-                    })->orWhereDoesntHave('rooms');
+                    });
                 });
-            } catch (\Exception $e) {
-                // 日付パース失敗時は無視（必要ならバリデーションを追加）
-            }
+            })
+                ->withCount(['rooms as available_rooms_count' => function ($q) use ($ciCarbon, $coCarbon) {
+                    $q->whereDoesntHave('reservations', function ($r) use ($ciCarbon, $coCarbon) {
+                        $r->where(function ($s) use ($ciCarbon, $coCarbon) {
+                            $s->whereBetween('start_at', [$ciCarbon, $coCarbon])
+                                ->orWhereBetween('end_at', [$ciCarbon, $coCarbon])
+                                ->orWhere(function ($u) use ($ciCarbon, $coCarbon) {
+                                    $u->where('start_at', '<=', $ciCarbon)->where('end_at', '>=', $coCarbon);
+                                });
+                        });
+                    });
+                }])
+                ->having('available_rooms_count', '>=', $roomsNeeded);
         }
 
+        // amenities フィルタ（カテゴリの belongsToMany を想定）
+        if (!empty($amenities)) {
+            $query->whereHas('rooms', function ($q) use ($amenities) {
+                $q->whereHas('categories', function ($q2) use ($amenities) {
+                    $q2->whereIn('categories.id', $amenities);
+                });
+            });
+        }
 
-        // 5) ソート（price_asc, price_desc, rating, default: created_at desc）
-        // rooms_count を取得（部屋数でソートするため）
-        $query->withCount('rooms');
-
-        // withMin / withAvg を使って rooms の最小料金や reviews の平均を取得
-        $query->withMin('rooms', 'charges')->withAvg('reviews', 'rating');
-
-        // 優先ソート：まず rooms_count（部屋ありを上位）で降順、その後ユーザー指定の sort を適用
-        // rooms_count が同じ場合は created_at を降順にする（必要に応じて変更）
-        $query->orderByDesc('rooms_count');
+        // ソート
         switch ($request->input('sort')) {
             case 'price_asc':
-                $query->orderBy('rooms_min_charges', 'asc');
+                // rooms の最安値でソート（簡易）
+                $query->orderByRaw('(SELECT MIN(charges) FROM hotel_rooms WHERE hotel_rooms.hotel_id = hotels.id) ASC');
                 break;
             case 'price_desc':
-                $query->orderBy('rooms_min_charges', 'desc');
+                $query->orderByRaw('(SELECT MIN(charges) FROM hotel_rooms WHERE hotel_rooms.hotel_id = hotels.id) DESC');
                 break;
             case 'rating':
-                $query->orderBy('reviews_avg_rating', 'desc');
+                $query->orderByDesc('star_rating');
                 break;
             default:
-                // 部屋ありを優先して表示したい場合は下の orderByRaw を使う（コメント解除）
-                $query->orderByRaw('(select count(*) from hotel_rooms where hotel_rooms.hotel_id = hotels.id) desc');
-                // $query->orderBy('created_at', 'desc');
+                // recommended の場合はデフォルト順
+                $query->latest('id');
         }
 
-        // --- ホテルごとの favorites 件数を一括で取得 ---
-        $query->withCount('favorites');
-
-
-        // ページネーション
         $hotels = $query->paginate(10)->withQueryString();
 
-        // サイドバー用アメニティ一覧（Category モデルを利用）
-        $amenitiesList = \App\Models\Category::orderBy('name')->get();
-
-        // ビューに渡す
-        return view('userpage.mypage.hotel-search-result', [
-            'hotels' => $hotels,
-            'amenities' => $amenitiesList,
-
-        ]);
-
-
-
-        // サイドバー用アメニティ一覧（Category モデルを利用）
         $amenitiesList = \App\Models\Category::orderBy('name')->get();
 
         return view('userpage.mypage.hotel-search-result', [
@@ -162,6 +144,7 @@ class HotelController extends Controller
             'amenities' => $amenitiesList,
         ]);
     }
+
 
     public function show($id)
     {

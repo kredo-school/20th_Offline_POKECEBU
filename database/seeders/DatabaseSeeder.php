@@ -267,5 +267,32 @@ class DatabaseSeeder extends Seeder
                 'updated_at' => $reservedAt,
             ]);
         }
+        // Restaurant用
+        DB::table('restaurant_reservations')->insert([
+            'reservation_id' => 20001,
+            'user_id' => $userId,
+            'restaurant_id' => 4,
+            'table_id' => $tableId,
+            'status_id' => 3,
+            'guests' => 2,           // ★追加：こちらも人数を追加
+            'total_price' => 1500,
+            'reserved_at' => $now,
+            'start_at' => $now->copy()->addDays(7)->setTime(18, 0),
+            'end_at' => $now->copy()->addDays(7)->setTime(20, 0),
+            'created_at' => $now,
+            'updated_at' => $now,        // 念のため追加
+            'other' => 'No request',
+        ]);
+      
+        // FAQ
+        DB::table('faq_categories')->updateOrInsert(['name' => 'Hotels'], ['soft_order' => 1, 'created_at' => $now, 'updated_at' => $now]);
+        DB::table('faq_categories')->updateOrInsert(['name' => 'Restaurants'], ['soft_order' => 2, 'created_at' => $now, 'updated_at' => $now]);
+        DB::table('faq_categories')->updateOrInsert(['name' => 'Plans/Reservations'], ['soft_order' => 3, 'created_at' => $now, 'updated_at' => $now]);
+
+        DB::table('faqs')->updateOrInsert(['faq_category_id' => 1, 'title' => 'title1'], ['question' => 'question1', 'answer' => 'answer1', 'soft_order' => 1, 'created_at' => $now, 'updated_at' => $now]);
+        DB::table('faqs')->updateOrInsert(['faq_category_id' => 1, 'title' => 'title2'], ['question' => 'question2', 'answer' => 'answer2', 'soft_order' => 2, 'created_at' => $now, 'updated_at' => $now]);
+        DB::table('faqs')->updateOrInsert(['faq_category_id' => 1, 'title' => 'title3'], ['question' => 'question3', 'answer' => 'answer3', 'soft_order' => 3, 'created_at' => $now, 'updated_at' => $now]);
     }
+
+    
 }

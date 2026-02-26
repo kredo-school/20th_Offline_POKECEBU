@@ -46,19 +46,19 @@
                                 <h5 class="text-muted">You have no favorites yet.</h5>
                             </div>
                         @else
-
-                        {{-- Empty message --}}
-                        <div id="empty-message" class="text-center py-5" style="display:none;">
-                            <i class="fas fa-heart fa-3x text-muted mb-3"></i>
+                            {{-- Empty message --}}
+                            <div id="empty-message" class="text-center py-5" style="display:none;">
+                                <i class="fas fa-heart fa-3x text-muted mb-3"></i>
                                 <h5 class="text-muted">You have no favorites yet.</h5>
-                        </div>
+                            </div>
                             {{-- Hotels --}}
                             @foreach ($favoriteHotels as $hotel)
                                 <div class="card mb-3 favorite-card hotel">
                                     <div class="card-body">
                                         <h5>{{ $hotel->name }}</h5>
                                         <p>{{ $hotel->address }}</p>
-                                        <a href="{{ route('user.hotels.detail', $hotel->id) }}" class="bnt btn-primary">View Hotel</a>
+                                        <a href="{{ route('user.hotels.detail', $hotel->id) }}" class="bnt btn-primary">View
+                                            Hotel</a>
                                     </div>
                                 </div>
                             @endforeach
@@ -69,7 +69,8 @@
                                     <div class="card-body">
                                         <h5>{{ $restaurant->name }}</h5>
                                         <p>{{ $restaurant->address }}</p>
-                                        <a href="{{ route('user.restaurants.detail', $restaurant->id) }}" class="bnt btn-primary">View Restaurant</a>
+                                        <a href="{{ route('user.restaurants.detail', $restaurant->id) }}"
+                                            class="bnt btn-primary">View Restaurant</a>
                                     </div>
                                 </div>
                             @endforeach
@@ -82,52 +83,50 @@
     </div>
 
 
- <script>
-document.addEventListener('DOMContentLoaded', function() {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
 
-    const radios = document.querySelectorAll('input[name="favoriteType"]');
-    const cards = document.querySelectorAll('.favorite-card');
-    const emptyMessage = document.getElementById('empty-message');
+            const radios = document.querySelectorAll('input[name="favoriteType"]');
+            const cards = document.querySelectorAll('.favorite-card');
+            const emptyMessage = document.getElementById('empty-message');
 
-    radios.forEach(radio => {
-        radio.addEventListener('change', function() {
+            radios.forEach(radio => {
+                radio.addEventListener('change', function() {
 
-            let type = this.id;
+                    let type = this.id;
 
-            cards.forEach(card => {
+                    cards.forEach(card => {
 
-                if (type === 'all') {
-                    card.classList.remove('d-none');
-                }
-                else if (type === 'hotel') {
-                    card.classList.toggle(
-                        'd-none',
-                        !card.classList.contains('hotel')
-                    );
-                }
-                else if (type === 'restaurant') {
-                    card.classList.toggle(
-                        'd-none',
-                        !card.classList.contains('restaurant')
-                    );
-                }
+                        if (type === 'all') {
+                            card.classList.remove('d-none');
+                        } else if (type === 'hotel') {
+                            card.classList.toggle(
+                                'd-none',
+                                !card.classList.contains('hotel')
+                            );
+                        } else if (type === 'restaurant') {
+                            card.classList.toggle(
+                                'd-none',
+                                !card.classList.contains('restaurant')
+                            );
+                        }
 
+                    });
+
+                    checkEmpty();
+                });
             });
 
-            checkEmpty();
+            function checkEmpty() {
+                const visibleCards =
+                    document.querySelectorAll('.favorite-card:not(.d-none)');
+
+                emptyMessage.style.display =
+                    visibleCards.length === 0 ?
+                    'block' :
+                    'none';
+            }
+
         });
-    });
-
-    function checkEmpty() {
-        const visibleCards =
-            document.querySelectorAll('.favorite-card:not(.d-none)');
-
-        emptyMessage.style.display =
-            visibleCards.length === 0
-                ? 'block'
-                : 'none';
-    }
-
-});
-</script>
+    </script>
 @endsection

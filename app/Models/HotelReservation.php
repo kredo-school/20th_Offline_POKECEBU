@@ -178,4 +178,21 @@ class HotelReservation extends Model
         'revenue' => $monthlyRevenue
     ];
 }
+
+  // キャンセル料の設定
+    public function getCancellationRateAttribute() {
+       $today = now()->startOfDay();
+       $checkIn = $this->start_at->startOfDay();
+       $daysBefore = $today->diffInDays($checkIn,false);
+
+       if($daysBefore <= 0) return 100; // 当日キャンセルは全額
+       if($daysBefore <= 1) return 80; // 前日キャンセルは80%
+       if($daysBefore <= 3) return 50; // 3日前までは50%
+       return 0; // それ以外は無料
+    }
+
+    // キャンセル料の計算
+    public function getCancellationFeeAttribute() {
+       return ($this->price * $this->cancellation_rate) / 100;
+    }
 }

@@ -89,7 +89,11 @@
                               </tr>
                               <tr>
                                   <td><i class="table-icon fa-solid fa-money-check-dollar"></i> Total Price</td>
-                                  <td>${{ number_format($reservation->total_price) }}</td>
+                                  <td>{{ number_format($reservation->total_price) }}</td>
+                              </tr>
+                              <tr>
+                                  <td><i class="table-icon fa-solid fa-money-check-dollar"></i> Cancellation Fee</td>
+                                  <td>{{ number_format($reservation->hotel->cancellation_fee) }}</td>
                               </tr>
 
 
@@ -186,51 +190,51 @@
 
   /* 印刷機能 */
   @media print {
-    /* 画面用のヘッダーやナビは非表示 */
-    nav,
-    .btn,
-    .btn-cancel,
-    .btn-print,
-    .btn-send,
-    .btn-add,
-    .btn-edit {
-      display: none !important;
+      /* ヘッダーやナビは非表示 */
+      nav,
+      .btn,
+      .btn-cancel,
+      .btn-print,
+      .btn-send,
+      .btn-add,
+      .btn-edit {
+        display: none !important;
+      }
+
+      body {
+        background: #ffffff !important;
+      }
+
+      /* 紙いっぱいに表示 */
+      .container {
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+
+      /* カードを印刷向けに */
+      .card {
+        box-shadow: none !important;
+        border: 1px solid #ccc;
+        page-break-inside: avoid;
+      }
+
+    /* Notes を下に配置 */
+    .col-md-8,
+    .col-md-4 {
+      width: 100% !important;
     }
-    /* 背景を白にする */
-    body {
-      background: #ffffff !important;
+
+    /* テーブルをくっきり */
+    table {
+      border-collapse: collapse !important;
     }
 
-    /* コンテンツを紙いっぱいに表示 */
-    .container {
-      max-width: 100% !important;
-      margin: 0 !important;
-      padding: 0 !important;
+    th,
+    td {
+      border: 1px solid #999 !important;
+      color: #000 !important;
     }
-    /* カードを印刷向けに */
-  .card {
-    box-shadow: none !important;
-    border: 1px solid #ccc;
-    page-break-inside: avoid;
-  }
-
-  /* Notes を下に回す（横並び回避） */
-  .col-md-8,
-  .col-md-4 {
-    width: 100% !important;
-  }
-
-  /* テーブルをくっきり */
-  table {
-    border-collapse: collapse !important;
-  }
-
-  th,
-  td {
-    border: 1px solid #999 !important;
-    color: #000 !important;
-  }
-
   }
 
   </style>

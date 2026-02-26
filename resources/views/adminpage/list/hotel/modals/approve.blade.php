@@ -16,13 +16,13 @@
                         </strong>?
                     </p>
 
-                    <a href="{{ route('admin.hotel.showPending', $hotel->approval_id) }}">View details</a>
+                    <a href="{{ route('admin.hotel.approval.show', $hotel->approval_id) }}">View details</a>
                 </div>
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
 
-                    <form method="post" action="{{ route('admin.hotel.approveHotel', $hotel->approval_id) }}">
+                    <form method="post" action="{{ route('admin.hotel.approve', $hotel->approval_id) }}">
                         @csrf
                         <button type="submit" class="btn btn-primary ms-2">Approve</button>
                     </form>

@@ -53,11 +53,18 @@
                 </div>
 
                 <div class="col-md-2">
-                    <select name="adults" class="form-select">
-                        <option value="2" {{ request('adults') == 2 ? 'selected' : '' }}>2 Adults</option>
-                        <option value="1" {{ request('adults') == 1 ? 'selected' : '' }}>1 Adult</option>
+                    <select id="adults" name="adults" class="form-select">
+                        <option value="">Select number of guests</option>
+
+                        @foreach ($guestOptions as $g)
+                            <option value="{{ $g }}"
+                                {{ (string) old('adults', request('adults')) === (string) $g ? 'selected' : '' }}>
+                                {{ $g }} {{ $g > 1 ? 'people' : 'person' }}
+                            </option>
+                        @endforeach
                     </select>
                 </div>
+
 
                 <div class="col-md-1 d-grid">
                     <button type="submit" class="btn btn-primary" aria-label="Search">
@@ -96,6 +103,28 @@
                                 <button type="submit" class="btn btn-outline-primary btn-sm">Apply Filters</button>
                             </div>
                         </form>
+
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function() {
+                                try {
+                                    const navEntries = performance.getEntriesByType && performance.getEntriesByType('navigation');
+                                    const isReload = navEntries && navEntries.length && navEntries[0].type === 'reload';
+                                    // 古いブラウザ向けフォールバック
+                                    const perfNav = performance.navigation && performance.navigation.type === 1;
+
+                                    if (isReload || perfNav) {
+                                        const base = location.protocol + '//' + location.host + location.pathname;
+                                        // 履歴を置き換えてからリダイレクト（履歴を汚さない）
+                                        history.replaceState(null, '', base);
+                                        location.replace(base);
+                                    }
+                                } catch (e) {
+                                    // 念のためエラーは無視
+                                    console.warn('Refresh detection failed', e);
+                                }
+                            });
+                        </script>
+
 
                         <hr>
 
@@ -213,7 +242,7 @@
                                                     </button>
                                                 </form>
                                             @endif
-                                                {{-- 合計いいね数（未ログインでも表示） --}}
+                                            {{-- 合計いいね数（未ログインでも表示） --}}
                                             <div class="favorites-count small text-muted align-middle"
                                                 data-count="{{ $hotel->favorites_count ?? 0 }}">
                                                 <span class="d-inline-block align-middle">
@@ -233,9 +262,29 @@
 
                 {{-- Pagination --}}
                 <div class="mt-3">
-                    @if (method_exists($hotels, 'links'))
-                        {{ $hotels->withQueryString()->links() }}
+                    @if (method_exists($hotels, 'firstItem'))
+                        <div class="d-flex flex-column flex-sm-row align-items-center justify-content-between">
+                            <div class="mb-2 mb-sm-0 text-muted">
+                                @if ($hotels->total() > 0)
+                                    Showing <strong>{{ $hotels->firstItem() }}</strong> to
+                                    <strong>{{ $hotels->lastItem() }}</strong> of <strong>{{ $hotels->total() }}</strong>
+                                    results
+                                @else
+                                    No results found
+                                @endif
+                            </div>
+
+                            <nav aria-label="Search results pages">
+                                {{ $hotels->withQueryString()->links('pagination::bootstrap-5') }}
+                            </nav>
+                        </div>
+                    @elseif (method_exists($hotels, 'links'))
+                        {{-- links() はあるが件数メソッドがない場合（簡易表示） --}}
+                        <nav aria-label="Search results pages">
+                            {{ $hotels->withQueryString()->links('pagination::bootstrap-5') }}
+                        </nav>
                     @else
+                        {{-- フォールバック（静的） --}}
                         <nav aria-label="Search results pages">
                             <ul class="pagination justify-content-center">
                                 <li class="page-item disabled"><a class="page-link" href="#"

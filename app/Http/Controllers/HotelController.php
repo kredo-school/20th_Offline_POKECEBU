@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\SearchRequest;
+use App\Models\Category;
+use App\Models\Favorite;
 use App\Models\Hotel;
 use App\Models\HotelRoom;
-use Illuminate\Http\Request;
-use App\Models\Category;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Favorite;
-use App\Http\Requests\SearchRequest;
 
 
 
@@ -57,11 +57,32 @@ class HotelController extends Controller
         $roomsNeeded = (int) $request->input('rooms', 0);
         $amenities = (array) $request->input('amenities', []);
 
+        // -----------------------------
+        // 追加: guestOptions を作成（人数プルダウン用）
+        // -----------------------------
+        $guestOptions = \App\Models\HotelRoom::orderBy('max_guests') // テーブルのカラム名に合わせる
+            ->pluck('max_guests')   // 例: [2,3,4,5,6]
+            ->unique()
+            ->values();
+
+        // -----------------------------
+        // 追加: サーバ側バリデーション（adults が許可値のいずれかであること）
+        // GET リクエストで adults が送られてきた場合のみ検証
+        // -----------------------------
+        if ($request->isMethod('get') && $request->filled('adults')) {
+            // in: ルールは文字列で渡す
+            $allowed = $guestOptions->map(fn($v) => (string)$v)->toArray(); // ['2','3','4',...]
+            $request->validate([
+                'adults' => ['nullable', 'in:' . implode(',', $allowed)],
+                // 必要なら他の検索パラメータのルールをここに追加
+            ]);
+        }
+
         $query = Hotel::query()
             ->with(['hotelImages', 'rooms.categories', 'rooms.reservations', 'reviews'])
             ->withCount('favorites');
 
-        // destination（既存の処理があればそのまま）
+        // destination（既存の処理）
         if ($destination = $request->input('destination')) {
             $query->where(function ($q) use ($destination) {
                 $q->where('city', 'like', "%{$destination}%")
@@ -70,7 +91,7 @@ class HotelController extends Controller
             });
         }
 
-        // 人数フィルタ: 少なくとも1部屋で max_guests >= adults を満たす部屋があるホテル
+        // 人数フィルタ
         if ($adults > 0) {
             $query->whereHas('rooms', function ($q) use ($adults) {
                 $q->where('max_guests', '>=', $adults);
@@ -82,8 +103,6 @@ class HotelController extends Controller
             $ciCarbon = Carbon::parse($ci)->startOfDay();
             $coCarbon = Carbon::parse($co)->endOfDay();
 
-            // ホテルに対して「空き部屋がある rooms を持つ」ことを確認し、
-            // さらに available_rooms_count を計算して having で絞る
             $query->whereHas('rooms', function ($q) use ($ciCarbon, $coCarbon) {
                 $q->whereDoesntHave('reservations', function ($r) use ($ciCarbon, $coCarbon) {
                     $r->where(function ($s) use ($ciCarbon, $coCarbon) {
@@ -109,7 +128,7 @@ class HotelController extends Controller
                 ->having('available_rooms_count', '>=', $roomsNeeded);
         }
 
-        // amenities フィルタ（カテゴリの belongsToMany を想定）
+        // amenities フィルタ
         if (!empty($amenities)) {
             $query->whereHas('rooms', function ($q) use ($amenities) {
                 $q->whereHas('categories', function ($q2) use ($amenities) {
@@ -121,7 +140,6 @@ class HotelController extends Controller
         // ソート
         switch ($request->input('sort')) {
             case 'price_asc':
-                // rooms の最安値でソート（簡易）
                 $query->orderByRaw('(SELECT MIN(charges) FROM hotel_rooms WHERE hotel_rooms.hotel_id = hotels.id) ASC');
                 break;
             case 'price_desc':
@@ -131,7 +149,6 @@ class HotelController extends Controller
                 $query->orderByDesc('star_rating');
                 break;
             default:
-                // recommended の場合はデフォルト順
                 $query->latest('id');
         }
 
@@ -139,12 +156,15 @@ class HotelController extends Controller
 
         $amenitiesList = \App\Models\Category::orderBy('name')->get();
 
+        // -----------------------------
+        // 変更: ビューに guestOptions を渡す
+        // -----------------------------
         return view('userpage.mypage.hotel-search-result', [
             'hotels' => $hotels,
             'amenities' => $amenitiesList,
+            'guestOptions' => $guestOptions, // 追加
         ]);
     }
-
 
     public function show($id)
     {
@@ -167,4 +187,29 @@ class HotelController extends Controller
 
         return view('userpage.booking.hotel.hotel', compact('hotel'));
     }
+
+    // app/Http/Controllers/HotelController.php
+
+    // public function search(Request $request)
+    // {
+    //     // ビュー用の選択肢を作る（2,3,4,5,6 のような Collection）
+    //     $guestOptions = HotelRoom::orderBy('maxguest')
+    //         ->pluck('maxguest')
+    //         ->unique()
+    //         ->values();
+
+    //     // GET で adults が送られてきたら検証する（空許容なら nullable）
+    //     if ($request->isMethod('get') && $request->filled('adults')) {
+    //         $allowed = $guestOptions->map(fn($v) => (string)$v)->toArray(); // ['2','3','4',...]
+    //         $request->validate([
+    //             'adults' => ['nullable', 'in:' . implode(',', $allowed)],
+    //             // 他の検索パラメータのルールがあればここに追加
+    //         ]);
+    //     }
+
+    //     // 既存の rooms 取得など
+    //     $rooms = HotelRoom::orderBy('name')->get();
+
+    //     return view('userpage.mypage.hotel-search-result', compact('rooms', 'guestOptions'));
+    // }
 };

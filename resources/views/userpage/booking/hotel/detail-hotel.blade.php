@@ -148,7 +148,7 @@
                                         </div>
                                         <div class="col-lg-6 text-lg-end">
                                             @if ($room->status->name == 'Available')
-                                                <a href="#"
+                                                <a href="{{ route('mypage.show') }}"
                                                     class="btn btn-primary btn-lg px-5 rounded-pill shadow-sm fw-bold position-relative"
                                                     style="z-index: 1050;">
                                                     Book Now
@@ -243,7 +243,7 @@
                                     <button type="button" class="btn btn-light rounded-pill px-4"
                                         data-bs-dismiss="modal">Close</button>
                                     @if ($room->status->name == 'Available')
-                                        <a href="#" class="btn btn-primary rounded-pill px-5 fw-bold shadow">Confirm
+                                        <a href="{{ route('mypage.show') }}" class="btn btn-primary rounded-pill px-5 fw-bold shadow">Confirm
                                             Reservation</a>
                                     @else
                                         <button class="btn btn-secondary rounded-pill px-5 disabled">Fully Booked</button>

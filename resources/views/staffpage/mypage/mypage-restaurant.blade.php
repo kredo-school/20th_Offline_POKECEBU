@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.staff')
 
 @push('styles')
 <style>
@@ -7,13 +7,7 @@
 </style>
 @endpush
 
-@section('navbar')
-<nav class="navbar navbar-expand-md shadow-sm" style="background-color:#6FA9DE; height:80px;">
-    <div class="container">
-        <span class="navbar-brand fw-bold">Restaurant My Page</span>
-    </div>
-</nav>
-@endsection
+
 
 @section('content')
 <div class="container mt-5">
@@ -93,12 +87,7 @@
                     </div>
 
                     {{-- Star Rating --}}
-                    <div class="mb-3">
-                        <label class="form-label text-muted">Star Rating</label>
-                        <input type="text" class="form-control"
-                               value="{{ $restaurant->star_rating ?? '-' }}" readonly>
-                    </div>
-
+                  
                     {{-- Email / Phone --}}
                     <div class="row mb-3">
                         <div class="col-6">

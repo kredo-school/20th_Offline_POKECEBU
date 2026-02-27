@@ -1,16 +1,10 @@
-@extends('layouts.app')
+@extends('layouts.staff')
 
 @push('styles')
 <link rel="stylesheet" href="{{ asset('css/staff.css/mypage/mypage-restaurant.css') }}">
 @endpush
 
-@section('navbar')
-<nav class="navbar navbar-expand-md shadow-sm" style="background-color:#6FA9DE; height:80px;">
-    <div class="container">
-        <span class="navbar-brand fw-bold">Restaurant My Page</span>
-    </div>
-</nav>
-@endsection
+
 
 @section('content')
 <div class="container mt-5">
@@ -66,12 +60,7 @@
                    value="{{ old('longitude', $restaurant->longitude) }}">
         </div>
 
-        <div class="mb-3">
-            <label>Star Rating</label>
-            <input type="number" name="star_rating" class="form-control"
-                   value="{{ old('star_rating', $restaurant->star_rating) }}"
-                   min="1" max="5">
-        </div>
+
 
         <div class="mb-3">
             <label>Representative Name</label>

@@ -78,7 +78,7 @@ public function update(Request $request)
     }
 
     // 予約プロセス中でない（通常のプロフィール更新）場合は、マイページに戻る
-    return redirect()->back()
-                     ->with('success', 'Profile updated successfully.');
+    return redirect()->route('reservation.payment.form');
 }
+
 }

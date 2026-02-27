@@ -1,16 +1,10 @@
-@extends('layouts.app')
+@extends('layouts.staff')
 
 @push('styles')
     <link rel="stylesheet" href="{{ asset('css/staff.css/mypage/mypage-hotel.css') }}">
 @endpush
 
-@section('navbar')
-    <nav class="navbar navbar-expand-md shadow-sm" style="background-color:#6FA9DE; height:80px;">
-        <div class="container">
-            <span class="navbar-brand fw-bold">Hotel My Page</span>
-        </div>
-    </nav>
-@endsection
+
 
 @section('content')
     <div class="container mt-5">

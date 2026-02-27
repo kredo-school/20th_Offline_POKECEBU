@@ -103,7 +103,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/hotels', [HotelController::class, 'roomInfo'])->name('hotels.index');
         Route::get('/reservation/confirmation', [HotelReservationController::class, 'confirmation'])->name('reservation.confirmation');
         Route::post('/reservation/confirm', [HotelReservationController::class, 'confirmReservation'])->name('reservation.confirm');
-        Route::post('/reservation/payment-form', [HotelReservationController::class, 'payment'])->name('reservation.payment.form');
+       Route::match(['get', 'post'], '/reservation/payment-form', [HotelReservationController::class, 'payment'])->name('reservation.payment.form');
         Route::post('/reservation/payment', [HotelReservationController::class, 'pay'])->name('reservation.pay');
             Route::get('/reservation/payment/success', [HotelReservationController::class, 'reservationSuccess'])->name('reservation.success');
 
@@ -257,14 +257,11 @@ Route::get('reservation/confirmation', [HotelReservationController::class, 'conf
     ->name('reservation.confirmation');
 Route::post('reservation/confirm', [HotelReservationController::class, 'confirmReservation'])
     ->name('reservation.confirm');
-Route::post('reservation/payment-form', [HotelReservationController::class, 'payment'])
+Route::match(['get', 'post'], '/reservation/payment-form', [HotelReservationController::class, 'payment'])
     ->name('reservation.payment.form');
 Route::post('reservation/payment', [HotelReservationController::class, 'pay'])
     ->name('reservation.pay');
 Route::get('reservation/payment/success', [HotelReservationController::class, 'reservationSuccess'])->name('reservation.success');
-Route::get('reservation/payment', function () {
-    return view('userpage.booking.hotel.payment');
-})->name('reservation.payment.form');
 Route::post('reservation/payment', [HotelReservationController::class, 'pay'])->name('reservation.pay');
 
 // ホテル予約ユーザー
@@ -508,3 +505,8 @@ Route::get('/admin/analysis/restaurant', [AnalysisController::class, 'restaurant
 //     });
 
 // });
+// web.php の一番最後に追記
+// --- routes/web.php の一番最後に追記 ---
+
+// adminの中に入ってしまっている「reservation.payment.form」を
+// 「adminなしのURL」として完全に新しく定義し直します

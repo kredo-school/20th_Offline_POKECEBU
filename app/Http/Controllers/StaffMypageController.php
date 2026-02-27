@@ -9,16 +9,21 @@ use App\Models\Restaurant;
 use App\Models\TmpRestaurant;
 use Illuminate\Support\Facades\Auth;
 use App\Models\TmpHotelImage;
+use App\Models\TmpRestaurantImage;
 
 class StaffMypageController extends Controller
 {
     // ホテルマイページ表示
     public function index()
     {
-        $hotel = Hotel::first(); // 1ホテル担当前提
-        return view('staffpage.mypage.mypage-hotel', compact('hotel'));
-    }
+        // ホテル情報を取得し、リレーション先の images も一緒に読み込む
+        $hotel = Hotel::with('images')->first();
 
+        // もし images テーブルから最新の1枚だけ取り出すなら
+        $hotelImage = $hotel->images()->latest()->first();
+
+        return view('staffpage.mypage.mypage-hotel', compact('hotel', 'hotelImage'));
+    }
     // 編集ページ
     public function editStaffMypage()
     {
@@ -26,45 +31,54 @@ class StaffMypageController extends Controller
         return view('staffpage.mypage.edit-hotel', compact('hotel'));
     }
 
-  
-public function storeHotel(Request $request)
-{
-    // 1. バリデーション
-    $request->validate([
-        'name' => 'required|string|max:255',
-        // 他の項目...
-        'image_path' => 'nullable|image|max:2048', // ここで画像ファイルをチェック
-    ]);
 
-    // 2. ホテルの基本情報をTmpHotelに保存
-    $data = $request->only([
-        'name', 'description', 'address', 'city', 'latitude', 'longitude', 
-        'star_rating', 'phone', 'website', 'representative_name', 
-        'representative_email', 'email'
-    ]);
-    $data['hotel_id'] = Hotel::first()->id; 
-    $data['status'] = 'pending';
-
-    $tmpHotel = TmpHotel::create($data); // 保存してIDを取得
-
-    // 3. 画像がある場合、TmpHotelImageテーブルにBase64で保存
-    if ($request->hasFile('image_path')) {
-        $imageFile = $request->file('image_path');
-        
-        // Base64エンコード処理
-        $imageData = base64_encode(file_get_contents($imageFile->getRealPath()));
-        $base64String = 'data:' . $imageFile->getMimeType() . ';base64,' . $imageData;
-
-        // TmpHotelImageモデルを使って保存
-        TmpHotelImage::create([
-            'tmp_hotel_id' => $tmpHotel->id, // 作成したTmpHotelのIDを紐付け
-            'image' => $base64String,        // Base64文字列
+    public function storeHotel(Request $request)
+    {
+        // 1. バリデーション
+        $request->validate([
+            'name' => 'required|string|max:255',
+            // 他の項目...
+            'image_path' => 'nullable|image|max:2048', // ここで画像ファイルをチェック
         ]);
+
+        // 2. ホテルの基本情報をTmpHotelに保存
+        $data = $request->only([
+            'name',
+            'description',
+            'address',
+            'city',
+            'latitude',
+            'longitude',
+            'star_rating',
+            'phone',
+            'website',
+            'representative_name',
+            'representative_email',
+            'email'
+        ]);
+        $data['hotel_id'] = Hotel::first()->id;
+        $data['status'] = 'pending';
+
+        $tmpHotel = TmpHotel::create($data); // 保存してIDを取得
+
+        // 3. 画像がある場合、TmpHotelImageテーブルにBase64で保存
+        if ($request->hasFile('image_path')) {
+            $imageFile = $request->file('image_path');
+
+            // Base64エンコード処理
+            $imageData = base64_encode(file_get_contents($imageFile->getRealPath()));
+            $base64String = 'data:' . $imageFile->getMimeType() . ';base64,' . $imageData;
+
+            // TmpHotelImageモデルを使って保存
+            TmpHotelImage::create([
+                'tmp_hotel_id' => $tmpHotel->id, // 作成したTmpHotelのIDを紐付け
+                'image' => $base64String,        // Base64文字列
+            ]);
+        }
+
+        return redirect()->route('hotel.mypage.hotel.complete');
     }
 
-      return redirect()->route('hotel.mypage.hotel.complete');
-}
- 
 
 
 
@@ -89,25 +103,18 @@ public function storeHotel(Request $request)
         return view('staffpage.mypage.edit-restaurant', compact('restaurant'));
     }
 
-    // 更新申請（TmpRestaurantへ保存）
+
+
     public function updateStaffMypagerestaurant(Request $request)
     {
+        // 1. バリデーション
         $request->validate([
             'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'address' => 'nullable|string',
-            'city' => 'nullable|string',
-            'latitude' => 'nullable|numeric',
-            'longitude' => 'nullable|numeric',
-            'star_rating' => 'nullable|numeric|min:0|max:5',
-            'phone' => 'nullable|string',
-            'website' => 'nullable|string',
-            'representative_name' => 'nullable|string|max:255',
-            'representative_email' => 'nullable|email|max:255',
-            'email' => 'nullable|email|max:255',
-            'image_path' => 'nullable|file|image|max:2048',
+            // ... 他のバリデーション ...
+            'image_path' => 'nullable|image|max:2048',
         ]);
 
+        // 2. レストランの基本情報をTmpRestaurantに保存
         $data = $request->only([
             'name',
             'description',
@@ -123,26 +130,34 @@ public function storeHotel(Request $request)
             'email'
         ]);
 
-        // 画像保存
-        if ($request->hasFile('image_path')) {
-            $data['image_path'] =
-                $request->file('image_path')->store('restaurant_images', 'public');
-        }
-
         $restaurant = Restaurant::first();
-
         if (!$restaurant) {
-            return redirect()->route('restaurant.mypage')
-                ->with('error', 'Restaurant not found.');
+            return redirect()->back()->with('error', 'Restaurant not found.');
         }
 
         $data['restaurant_id'] = $restaurant->id;
         $data['status'] = 'pending';
 
-        TmpRestaurant::create($data);
+        // 基本情報を保存
+        $tmpRestaurant = TmpRestaurant::create($data);
 
-        return redirect()->route('restaurant.complete')
-            ->with('success', 'Update request submitted successfully.');
+        // 3. 画像がある場合、TmpRestaurantImageテーブルにBase64で保存
+        if ($request->hasFile('image_path')) {
+            $imageFile = $request->file('image_path');
+
+            // Base64エンコード処理
+            $imageData = base64_encode(file_get_contents($imageFile->getRealPath()));
+            $base64String = 'data:' . $imageFile->getMimeType() . ';base64,' . $imageData;
+
+            // 画像専用テーブルに保存
+            TmpRestaurantImage::create([
+                'tmp_restaurant_id' => $tmpRestaurant->id, // 外部キー（接着剤）
+                'image' => $base64String,
+            ]);
+        }
+
+        // 完了画面へリダイレクト
+        return redirect()->route('restaurant.complete');
     }
     public function restaurantcomplete()
     {

@@ -72,21 +72,34 @@ class HotelReservationController extends Controller
     }
 
     public function payment(Request $request)
-    {
-        $hotel = Hotel::findOrFail($request->hotel_id);
-        $roomType = HotelRoomType::findOrFail($request->room_type_id);
+{
+    // 1. Requestになければセッションから探す（ここが404回避のキモ）
+    $hotelId = $request->hotel_id ?? session('hotel_id');
+    $roomTypeId = $request->room_type_id ?? session('room_type_id');
+    $guests = $request->guests ?? session('guests_count', 1);
 
-        // 支払い画面でも価格を再取得（またはhiddenで受け取る）
-        $roomData = HotelRoom::where('hotel_id', $hotel->id)
-            ->where('type_id', $roomType->type_id)
-            ->first();
-        $price = $roomData ? $roomData->charges : 0;
-
-        $guests = $request->guests;
-        $totalPrice = $price * $guests; // 合計金額
-
-        return view('userpage.booking.hotel.payment', compact('hotel', 'roomType', 'guests', 'price', 'totalPrice'));
+    // 2. それでもデータがない時は一覧に戻す（404にしない）
+    if (!$hotelId || !$roomTypeId) {
+        return redirect()->route('hotels.index')->with('error', 'Session timeout. Please select a room again.');
     }
+
+    // 3. findOrFail ではなく find で取得してチェック（安全策）
+    $hotel = Hotel::find($hotelId);
+    $roomType = HotelRoomType::find($roomTypeId);
+
+    if (!$hotel || !$roomType) {
+        return redirect()->route('hotels.index')->with('error', 'Information not found.');
+    }
+
+    $roomData = HotelRoom::where('hotel_id', $hotel->id)
+        ->where('type_id', $roomType->type_id)
+        ->first();
+
+    $price = $roomData ? $roomData->charges : 0;
+    $totalPrice = $price * $guests;
+
+    return view('userpage.booking.hotel.payment', compact('hotel', 'roomType', 'guests', 'price', 'totalPrice'));
+}
 
     // 予約確定
 public function confirmReservation(Request $request)

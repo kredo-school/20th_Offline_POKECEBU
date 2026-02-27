@@ -24,42 +24,47 @@ class MyPageController extends Controller
         return view('userpage.mypage.edit-profile', compact('user'));
     }
 
-    public function updateProfile(Request $request)
-    {
-        // 1. バリデーション 🛡️
-        $request->validate([
-            'first_name' => 'nullable|string|max:255',
+   public function updateProfile(Request $request)
+{
+    // 1. バリデーション：mimesに jpg, jpeg のみを指定 🛡️
+    $request->validate([
+        'first_name' => 'nullable|string|max:255',
         'last_name'  => 'nullable|string|max:255',
-            'phone'      => 'nullable|string|max:20',
-            'avatar'     => 'nullable|image|mimes:jpeg,png,jpg,gif', // 画像バリデーション
-        ]);
+        'phone'      => 'nullable|string|max:20',
+        'avatar'     => 'nullable|image|mimes:jpg,jpeg|max:2048', // jpg, jpegのみ許可
+    ], [
+        'avatar.mimes' => 'Only JPG and JPEG formats are supported.',
+        'avatar.max'   => 'The image size must not exceed 2MB.',
+    ]);
 
-        $user = Auth::user();
+    $user = Auth::user();
+    $data = [
+        'first_name' => $request->first_name,
+        'last_name'  => $request->last_name,
+        'phone'      => $request->phone,
+    ];
 
-        // 2. 保存データの配列
-        $data = [
-            'first_name' => $request->first_name,
-            'last_name'  => $request->last_name,
-            'phone'      => $request->phone,
-        ];
+    if ($request->hasFile('avatar')) {
+        $file = $request->file('avatar');
+        $data['avatar'] = 'data:image/' . $file->extension() . ';base64,' . base64_encode(file_get_contents($file->getRealPath()));
+    }
 
-        // 3. 画像がアップロードされていれば、base64化してDBに保存
-      if ($request->hasFile('avatar')) {
-    $file = $request->file('avatar');
-    $data['avatar'] = 'data:image/' . $file->extension() . ';base64,' . base64_encode(file_get_contents($file->getRealPath()));
-    
-    // ここで止めて確認！
-   
+    $user->detail()->updateOrCreate(['user_id' => $user->id], $data);
+
+    return redirect()->route('user.mypage')->with('success', 'Profile updated!');
 }
 
-        // 4. 更新 or 作成
-        $user->detail()->updateOrCreate(
-            ['user_id' => $user->id],
-            $data
-        );
-
-        return redirect(route('mypage'))->with('success', 'Profile updated!');
+// --- 追加：写真を削除する機能 ---
+public function deleteAvatar()
+{
+    $user = Auth::user();
+    
+    if ($user->detail) {
+        $user->detail->update(['avatar' => null]);
     }
+
+    return redirect()->back()->with('success', 'Profile photo deleted.');
+}
     public function editPersonal()
     {
         $user = Auth::user();

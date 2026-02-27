@@ -126,7 +126,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/mypage/hotel', [StaffMypageController::class, 'index'])->name('mypage.hotel');
    Route::get('/mypage/hotel/edit', [StaffMypageController::class, 'editStaffMypage'])->name('staff.mypage.hotel.edit');   
     Route::post('/mypage/hotel/store', [StaffMypageController::class, 'storeHotel'])->name('mypage.hotel.store');
-    Route::get('/mypage/hotel/complete', [StaffMypageController::class, 'complete'])->name('mypage.hotel.complete');
+Route::get('/mypage/hotel/complete', [StaffMypageController::class, 'complete'])->name('mypage.hotel.complete');
 
         Route::get('/reservations', [HotelReservationController::class, 'hotel'])->name('reservations');
         Route::get('/reservations/{id}', [HotelReservationController::class, 'show'])->name('reservations.show');
@@ -190,6 +190,9 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/mypage', [MyPageController::class, 'index'])->name('mypage');
         Route::get('/mypage/edit', [MyPageController::class, 'editPersonal'])->name('mypage.edit');
         Route::post('/mypage/updateProfile', [MyPageController::class, 'updatePersonal'])->name('mypage.updateProfile');
+
+        Route::post('/user/mypage/delete-avatar', [MyPageController::class, 'deleteAvatar'])->name('delete.avatar');
+
         Route::get('/mypage/edit/adress', [MyPageController::class, 'editAdress'])->name('edit.adress');
         Route::post('/mypage/edit/updateAdress', [MyPageController::class, 'updateAdress'])->name('update.adress');
         Route::get('/mypage/edit/profile', [MyPageController::class, 'editProfile'])->name('edit.profile');
@@ -197,7 +200,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/mypage/booking', [BookingController::class, 'index'])->name('booking');
         Route::get('/mypage/favorite', [FavoriteController::class, 'index'])->name('favorite');
         
-        # Hotel search
+        # Hotel searchx
         Route::get('/hotels', [HotelController::class, 'index'])->name('hotels.index');
         
         # User Booking
@@ -461,3 +464,26 @@ Route::get('/jeepney', function () {
 })->name('jeepney');
 Route::get('/admin/analysis/hotel', [AnalysisController::class, 'hotelAnalysis'])->name('admin.analysis.hotel');
 Route::get('/admin/analysis/restaurant', [AnalysisController::class, 'restaurantAnalysis'])->name('admin.analysis.restaurant');
+
+
+
+
+
+
+
+
+
+// // 他の全てのグループ（Route::group(['middleware' => 'auth']など）の外に書く　なんか無理やったやつ
+// Route::middleware(['auth'])->group(function () {
+
+//     Route::prefix('hotel')->as('hotel.')->group(function () {
+//         // 完了画面
+//         Route::get('/mypage/hotel/complete', [StaffMypageController::class, 'complete'])
+//             ->name('mypage.hotel.complete');
+            
+//         // 保存処理
+//         Route::post('/mypage/hotel/store', [StaffMypageController::class, 'storeHotel'])
+//             ->name('mypage.hotel.store');
+//     });
+
+// });

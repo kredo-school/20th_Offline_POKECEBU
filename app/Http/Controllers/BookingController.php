@@ -22,12 +22,12 @@ class BookingController extends Controller
 
     $upcomingHotels = $hotelReservations->filter(function ($res) use ($today) {
         // status_id が 1 (Active) かつ、終了日が今日以降
-        return $res->status_id == 1 && \Carbon\Carbon::parse($res->end_at)->startOfDay() >= $today;
+        return $res->status_id == 2 && \Carbon\Carbon::parse($res->end_at)->startOfDay() >= $today;
     });
 
     $pastHotels = $hotelReservations->filter(function ($res) use ($today) {
         // status_id が 1 だが終了日が過ぎている、または完了ステータス(仮に4とするなら)
-        return ($res->status_id == 1 && \Carbon\Carbon::parse($res->end_at)->startOfDay() < $today);
+        return ($res->status_id == 2 && \Carbon\Carbon::parse($res->end_at)->startOfDay() < $today);
     });
 
     $cancelledHotels = $hotelReservations->filter(function ($res) {
@@ -41,11 +41,11 @@ class BookingController extends Controller
         ->get();
 
     $upcomingRestaurants = $restaurantReservations->filter(function ($res) use ($today) {
-        return $res->status_id == 1 && \Carbon\Carbon::parse($res->start_at)->startOfDay() >= $today;
+        return $res->status_id == 2 && \Carbon\Carbon::parse($res->start_at)->startOfDay() >= $today;
     });
 
     $pastRestaurants = $restaurantReservations->filter(function ($res) use ($today) {
-        return ($res->status_id == 1 && \Carbon\Carbon::parse($res->start_at)->startOfDay() < $today);
+        return ($res->status_id == 2 && \Carbon\Carbon::parse($res->start_at)->startOfDay() < $today);
     });
 
     $cancelledRestaurants = $restaurantReservations->filter(function ($res) {

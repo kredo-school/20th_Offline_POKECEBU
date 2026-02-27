@@ -74,6 +74,14 @@
                                     <p><strong>Check-in:</strong> {{ \Carbon\Carbon::parse($res->start_at)->format('Y-m-d H:i') }}</p>
                                     <p><strong>Total:</strong> ₱{{ number_format($res->total_price,2) }}</p>
                                     <span class="badge bg-secondary">Completed</span>
+
+                                    {{-- 評価ボタン --}}
+                                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#reviewModal{{ $res->hotel->id }}">Write Review</button>
+                                   
+                                     @include('userpage.mypage.modals.review', [
+                                        'target' => $res->hotel,
+                                        'type' => 'hotel'
+                                     ])
                                 </div>
                             @empty
                                 <p>No past hotel reservations.</p>

@@ -1,93 +1,107 @@
 @extends('layouts.app')
 
 @push('styles')
-<link rel="stylesheet" href="{{ asset('css/staff.css/mypage/mypage-hotel.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/staff.css/mypage/mypage-hotel.css') }}">
 @endpush
 
 @section('navbar')
-<nav class="navbar navbar-expand-md shadow-sm" style="background-color:#6FA9DE; height:80px;">
-    <div class="container">
-        <span class="navbar-brand fw-bold">Hotel My Page</span>
-    </div>
-</nav>
+    <nav class="navbar navbar-expand-md shadow-sm" style="background-color:#6FA9DE; height:80px;">
+        <div class="container">
+            <span class="navbar-brand fw-bold">Hotel My Page</span>
+        </div>
+    </nav>
 @endsection
 
 @section('content')
-<div class="container mt-5">
-    <h2>Edit Hotel Information (Application)</h2>
+    <div class="container mt-5">
+        <h2>Edit Hotel Information (Application)</h2>
 
-    <form action="{{ route('staff.mypage.hotel.store') }}" method="POST" enctype="multipart/form-data">
-        @csrf
+        <form action="{{ route('staff.mypage.hotel.store') }}" method="POST" enctype="multipart/form-data">
+            @csrf
 
-        <div class="mb-3">
-            <label>Name</label>
-            <input type="text" name="name" class="form-control" value="{{ old('name', $hotel->name) }}">
-        </div>
+            <div class="mb-3">
+                <label>Name</label>
+                <input type="text" name="name" class="form-control" value="{{ old('name', $hotel->name) }}">
+            </div>
 
-        <div class="mb-3">
-            <label>Description</label>
-            <textarea name="description" class="form-control">{{ old('description', $hotel->description) }}</textarea>
-        </div>
+            <div class="mb-3">
+                <label>Description</label>
+                <textarea name="description" class="form-control">{{ old('description', $hotel->description) }}</textarea>
+            </div>
 
-        <div class="mb-3">
-            <label>Phone</label>
-            <input type="text" name="phone" class="form-control" value="{{ old('phone', $hotel->phone) }}">
-        </div>
+            <div class="mb-3">
+                <label>Phone</label>
+                <input type="text" name="phone" class="form-control" value="{{ old('phone', $hotel->phone) }}">
+            </div>
 
-        <div class="mb-3">
-            <label>Website</label>
-            <input type="text" name="website" class="form-control" value="{{ old('website', $hotel->website) }}">
-        </div>
+            <div class="mb-3">
+                <label>Website</label>
+                <input type="text" name="website" class="form-control" value="{{ old('website', $hotel->website) }}">
+            </div>
 
-        <div class="mb-3">
-            <label>Address</label>
-            <input type="text" name="address" class="form-control" value="{{ old('address', $hotel->address) }}">
-        </div>
+            <div class="mb-3">
+                <label>Address</label>
+                <input type="text" name="address" class="form-control" value="{{ old('address', $hotel->address) }}">
+            </div>
 
-        <div class="mb-3">
-            <label>City</label>
-            <input type="text" name="city" class="form-control" value="{{ old('city', $hotel->city) }}">
-        </div>
+            <div class="mb-3">
+                <label>City</label>
+                <input type="text" name="city" class="form-control" value="{{ old('city', $hotel->city) }}">
+            </div>
 
-        <div class="mb-3">
-            <label>Latitude</label>
-            <input type="text" name="latitude" class="form-control" value="{{ old('latitude', $hotel->latitude) }}">
-        </div>
+            <div class="mb-3">
+                <label>Latitude</label>
+                <input type="text" name="latitude" class="form-control" value="{{ old('latitude', $hotel->latitude) }}">
+            </div>
 
-        <div class="mb-3">
-            <label>Longitude</label>
-            <input type="text" name="longitude" class="form-control" value="{{ old('longitude', $hotel->longitude) }}">
-        </div>
+            <div class="mb-3">
+                <label>Longitude</label>
+                <input type="text" name="longitude" class="form-control"
+                    value="{{ old('longitude', $hotel->longitude) }}">
+            </div>
 
-        <div class="mb-3">
-            <label>Star Rating</label>
-            <input type="number" name="star_rating" class="form-control" value="{{ old('star_rating', $hotel->star_rating) }}" min="1" max="5">
-        </div>
+            <div class="mb-3">
+                <label>Star Rating</label>
+                <input type="number" name="star_rating" class="form-control"
+                    value="{{ old('star_rating', $hotel->star_rating) }}" min="1" max="5">
+            </div>
 
-        <div class="mb-3">
-            <label>Representative Name</label>
-            <input type="text" name="representative_name" class="form-control" value="{{ old('representative_name', $hotel->representative_name) }}">
-        </div>
+            <div class="mb-3">
+                <label>Representative Name</label>
+                <input type="text" name="representative_name" class="form-control"
+                    value="{{ old('representative_name', $hotel->representative_name) }}">
+            </div>
 
-        <div class="mb-3">
-            <label>Representative Email</label>
-            <input type="email" name="representative_email" class="form-control" value="{{ old('representative_email', $hotel->representative_email) }}">
-        </div>
+            <div class="mb-3">
+                <label>Representative Email</label>
+                <input type="email" name="representative_email" class="form-control"
+                    value="{{ old('representative_email', $hotel->representative_email) }}">
+            </div>
 
-        <div class="mb-3">
-            <label>Email (Hotel Account)</label>
-            <input type="email" name="email" class="form-control" value="{{ old('email', $hotel->email) }}">
-        </div>
+            <div class="mb-3">
+                <label>Email (Hotel Account)</label>
+                <input type="email" name="email" class="form-control" value="{{ old('email', $hotel->email) }}">
+            </div>
 
-        <div class="mb-3">
-            <label>Hotel Image</label>
-            <input type="file" name="image_path" class="form-control">
-            @if($hotel->image_path)
-                <small>Current: {{ $hotel->image_path }}</small>
-            @endif
-        </div>
+            <div class="mb-3">
+                <label>Hotel Image</label>
+                <input type="file" name="image_path" class="form-control">
+                @if ($hotel->image_path)
+                    <small>Current: {{ $hotel->image_path }}</small>
+                @endif
+            </div>
 
-        <button type="submit" class="btn btn-primary">Submit Application</button>
-    </form>
-</div>
+            <button type="submit" class="btn btn-primary">Submit Application</button>
+        </form>
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+    </div>
+
 @endsection

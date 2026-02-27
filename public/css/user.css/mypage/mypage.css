@@ -1,2 +1,47 @@
 .menu-item { transition: background-color 0.2s ease, color 0.2s ease; }
 .menu-item:hover { background-color: #f0f4ff; color: #0d6efd; }
+/* プロフィール画像の親コンテナ */
+/* 画像を包むコンテナ：大きさを固定して中央寄せ */
+.avatar-wrapper {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    margin: 0 auto; /* 親要素の中で中央に配置 */
+    display: inline-block; /* ＋ボタンの基準をこの枠内に固定 */
+}
+
+/* 初期設定アイコンの背景 */
+.avatar-placeholder {
+    width: 100px;
+    height: 100px;
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* インスタ風＋ボタン：画像/アイコンの右下に絶対配置 */
+.avatar-add-badge {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background-color: #0095f6; /* インスタっぽい青 */
+    color: white;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 2px solid white; /* 白枠を入れると浮き出て見える */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    text-decoration: none;
+    z-index: 10;
+}
+
+.avatar-add-badge:hover {
+    background-color: #1877f2;
+    color: white;
+}

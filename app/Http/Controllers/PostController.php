@@ -78,7 +78,20 @@ class PostController extends Controller
     // 詳細
     public function show(Post $post)
     {
-        return view('userpage.posts.show')->with('post',$post);
+        $post->load(['images', 'tags', 'user']);
+
+        $tagIds = $post->tags->pluck('id');
+
+        $relatedPosts = Post::whereHas('tags', function($query) use ($tagIds) {
+            $query->whereIn('tag_id', $tagIds);
+        })
+        ->where('id', '!=', $post->id)
+        ->with(['images','user'])
+        ->latest()
+        ->take(6)
+        ->get();
+
+        return view('userpage.posts.show', compact('post', 'relatedPosts'));
     }
 
     // 編集

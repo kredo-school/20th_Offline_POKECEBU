@@ -12,7 +12,6 @@ use App\Models\Restaurant;
 
 class ReviewController extends Controller
 {
-    
     // レビュー保存
     public function store(Request $request) {
        $request->validate([
@@ -25,12 +24,12 @@ class ReviewController extends Controller
         if ($request->target_type == 'hotel') {
             $allowed = HotelReservation::where('user_id',Auth::id())
                 ->where('hotel_id',$request->target_id)
-                ->whereDate('checkout_date','<',now())
+                ->whereDate('end_at','<',now())
                 ->exists();
         } else {
             $allowed = RestaurantReservation::where('user_id',Auth::id())
                 ->where('restaurant_id',$request->target_id)
-                ->whereDate('reservation_date','<',now())
+                ->whereDate('start_at','<',now())
                 ->exists();
         }
 

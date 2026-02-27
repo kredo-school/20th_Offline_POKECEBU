@@ -193,9 +193,9 @@
                     <h3 class="section-title">{{ $city }}</h3>
                 </div>
 
-                <div class="d-flex justify-content-center flex-wrap gap-3 mb-3">
+                <div class="row justify-content-center g-2 mb-3">
                     @foreach ($hotels as $index => $hotel)
-                        <div class="col-md-4 col-sm-6 d-flex justify-content-center">
+                        <div class="col-6 col-md-3 col-sm-4 col-lg-2 d-flex justify-content-center">
                             <div class="card rank-card">
                                 <img src="{{ $hotel->image_path ?? asset('images/no-image.png') }}"
                                     alt="{{ $hotel->name }}" class="rank-image">
@@ -340,36 +340,7 @@
             </div>
         </div>
 
-        {{-- フッター --}}
-        <footer class="site-footer">
-            <div class="footer-inner">
-                <div class="footer-columns">
-                    <div class="footer-col">
-                        <h4>サポート</h4>
-                        <a href="#">カスタマーサポート</a>
-                        <a href="#">お問い合わせ</a>
-                        <a href="#">よくある質問</a>
-                    </div>
-
-                    <div class="footer-col">
-                        <h4>このサイトについて</h4>
-                        <a href="#">会社概要</a>
-                        <a href="#">利用規則</a>
-                        <a href="#">プライバシーポリシー</a>
-                    </div>
-                    <div class="footer-col">
-                        <h4>お支払い方法</h4>
-                        <div class="payment-icon">
-                            <img src="{{ asset('/images/reservation-cards.png') }}">
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <p class="footer-copy">
-                ©️2026 kredo POKECEBU
-            </p>
-        </footer>
-
+ 
 
 
 
@@ -378,13 +349,6 @@
 
         {{-- CSS --}}
         <style>
-            /* 全カードの設定 */
-            .main-card {
-                background: #f5fbff;
-                border-radius: 25px;
-                padding-bottom: 20px;
-                overflow: hidden;
-            }
 
             /* メインメニュー */
             .menu-btn {
@@ -587,54 +551,6 @@
                 font-weight: 600;
             }
 
-            /* フッター */
-            .site-footer {
-                background: #f7f8fa;
-                margin: 80px;
-                padding: 60px 0 30px;
-            }
-
-            .footer-inner {
-                max-width: 1200px;
-                margin: auto;
-                padding: 0 20px;
-            }
-
-            .footer-columns {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-                gap: 40px;
-            }
-
-            .footer-col h4 {
-                font-size: 15px;
-                font-weight: 600;
-                margin-bottom: 14px;
-            }
-
-            .footer-col a {
-                display: block;
-                font-size: 14px;
-                color: #555;
-                text-decoration: none;
-                margin-bottom: 8px;
-            }
-
-            .footer-col a:hover {
-                color: #000;
-            }
-
-            .payment-icon img {
-                height: 26px;
-                margin-right: 8px;
-            }
-
-            .footer-copy {
-                text-align: center;
-                font-size: 13px;
-                color: #888;
-                margin-top: 40px;
-            }
 
             /* 右固定サイド */
             .right-fixed-panel {

@@ -1,10 +1,10 @@
-<div class="modal fade" id="reviewModal{{ $hotel->id }}">
+<div class="modal fade" id="reviewModal{{ $target->id }}">
   <div class="modal-dialog">
     <div class="modal-content">
       <form method="POST" action="{{ route('user.reviews.store') }}">
         @csrf
-        <input type="hidden" name="target_type" value="hotel">
-        <input type="hidden" name="target_id" value="{{ $hotel->id }}">
+        <input type="hidden" name="target_type" value="{{ $type }}">
+        <input type="hidden" name="target_id" value="{{ $target->id }}">
         <div class="modal-header">
           <h5>レビュー投稿</h5>
         </div>

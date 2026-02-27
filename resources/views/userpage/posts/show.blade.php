@@ -168,6 +168,61 @@
 
         </div>
     </div>
+
+    <hr class="mt-5">
+
+<div>
+    <div>
+        <h3 class="section-title">
+            Related Posts
+        </h3>
+    </div>
+
+    <div class="row justify-content-center g-2 mb-5">
+        @if ($relatedPosts->isNotEmpty())
+            @foreach ($relatedPosts as $post)
+                <div class="col-6 col-md-3 col-sm-4 col-lg-2 d-flex justify-content-center">
+                    <a href="{{ route('user.posts.show', $post->id) }}" class="post-card">
+                        <img src="{{ $post->images->first()->image ?? asset('images/Icon.png') }}" alt="Post Image">
+
+                        {{-- ハート --}}
+                        <div class="post-like">
+                            @if ($post->isliked())
+                                <form method="POST" action="{{ route('user.like.destroy', $post->id) }}">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="heat-btn">
+                                        <i class="fa-solid fa-heart text-danger"></i>
+                                    </button>
+                                </form>
+                            @else
+                                <form method="POST" action="{{ route('user.like.store', $post->id) }}">
+                                    @csrf
+                                    <button type="submit" class="heat-btn">
+                                        <i class="fa-regular fa-heart"></i>
+                                    </button>
+                                </form>
+                            @endif
+                        </div>
+
+                        {{-- テキスト --}}
+                        <div class="post-overlay">
+                            <h5 class="post-title">{{ $post->title }}</h5>
+                            <p class="post-user mb-1">
+                                <i class="fa-regular fa-user"></i>{{ $post->user->name }}
+                            </p>
+                            <p class="post-date">
+                                {{ $post->created_at->format('M d, Y') }}
+                            </p>
+                        </div>
+                    </a>
+                </div>
+            @endforeach
+        @else
+            <h5 class="text-muted text-center">No Related Posts</h5>
+        @endif
+    </div>
+</div>
 @endsection
 
 {{-- JS --}}

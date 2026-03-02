@@ -18,7 +18,7 @@
                             Room Type: {{ $room->type->name }}<br>
                             Floor Number: {{ $room->floor_number }}<br>
                             Max Guests: {{ $room->max_guests }}<br>
-                            Charges: {{ $room->charges }}<br>
+                            Charges: ₱{{ number_format($room->charges) }}<br>
                         </p>
 
                         <div class="text-end">
@@ -34,7 +34,7 @@
                             Room Type: {{ $room->type->name }}<br>
                             Floor Number: {{ $room->floor_number }}<br>
                             Max Guests: {{ $room->max_guests }}<br>
-                            Charges: {{ $room->charges }}<br>
+                            Charges: ₱{{ number_format($room->charges) }}<br>
                         </p>
 
                         <div class="modal-footer">

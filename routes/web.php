@@ -158,10 +158,13 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('/{hotel_id}/storeRoomType', [HotelRoomController::class, 'storeRoomType'])->name('storeRoomType');
         Route::patch('/{id}/updateRoomType', [HotelRoomController::class, 'updateRoomType'])->name('updateRoomType');
         Route::delete('/{id}/destroyRoomType', [HotelRoomController::class, 'destroyRoomType'])->name('destroyRoomType');
+        Route::get('/{hotel_id}/createRoom', [HotelRoomController::class, 'createRoom'])->name('createRoom');
         Route::post('/{hotel_id}/storeRoom', [HotelRoomController::class, 'storeRoom'])->name('storeRoom');
+        Route::get('/{hotel_id}/{id}/editRoom', [HotelRoomController::class, 'editRoom'])->name('editRoom');
         Route::patch('/{id}/updateRoom', [HotelRoomController::class, 'updateRoom'])->name('updateRoom');
         Route::delete('/{id}/destroyRoom', [HotelRoomController::class, 'destroyRoom'])->name('destroyRoom');
         Route::patch('/{id}/updateStatus', [HotelRoomController::class, 'updateStatus'])->name('updateStatus');
+        Route::get('/{id}/viewRoom', [HotelRoomController::class, 'viewRoom'])->name('viewRoom');
     });
 
     Route::group(['prefix' => 'restaurant', 'as' => 'restaurant.', 'middleware' => 'restaurant'], function () {
@@ -181,10 +184,13 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('/{rest_id}/storeTableType', [RestaurantTableController::class, 'storeTableType'])->name('storeTableType');
         Route::patch('/{id}/updateTableType', [RestaurantTableController::class, 'updateTableType'])->name('updateTableType');
         Route::delete('/{id}/destroyTableType', [RestaurantTableController::class, 'destroyTableType'])->name('destroyTableType');
+        Route::get('/{rest_id}/createTable', [RestaurantTableController::class, 'createTable'])->name('createTable');
         Route::post('/{rest_id}/storeTable', [RestaurantTableController::class, 'storeTable'])->name('storeTable');
+        Route::get('/{rest_id}/{id}/editTable', [RestaurantTableController::class, 'editTable'])->name('editTable');
         Route::patch('/{id}/updateTable', [RestaurantTableController::class, 'updateTable'])->name('updateTable');
         Route::delete('/{id}/destroyTable', [RestaurantTableController::class, 'destroyTable'])->name('destroyTable');
         Route::patch('/{id}/updateStatus', [RestaurantTableController::class, 'updateStatus'])->name('updateStatus');
+        Route::get('/{id}/viewTable', [RestaurantTableController::class, 'viewTable'])->name('viewTable');
     });
 
     # User
@@ -206,6 +212,8 @@ Route::group(['middleware' => 'auth'], function () {
 
         // レビュー
         Route::post('/reviews', [ReviewController::class, 'store'])->name('reviews.store');
+        Route::put('/reviews/{review}', [ReviewController::class, 'update'])->name('reviews.update');
+        Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
 
         # User MyPage
         Route::get('/mypage', [MyPageController::class, 'index'])->name('mypage');

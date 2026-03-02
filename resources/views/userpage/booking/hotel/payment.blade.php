@@ -1,6 +1,6 @@
 
 
-@extends('layouts.app')
+@extends('layouts.user')
 
 @section('content')
 <div class="container my-5" style="max-width: 600px; margin:auto;">

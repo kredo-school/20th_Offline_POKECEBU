@@ -3,293 +3,323 @@
 @section('title', 'Admin Analysis of Restaurant')
 
 @section('content')
+
     <style>
+        :root {
+            --brand-orange: #f39c12;
+            --soft-orange: rgba(243, 156, 18, 0.1);
+            --text-dark: #1e293b;
+            --bg-body: #f8fafc;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: #444;
+            font-family: 'Nunito', sans-serif;
+        }
+
+        /* 画面全体のゆとり設定 */
+        .analysis-wrapper {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* サイドバーボタン */
         .btn-sidebar {
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
             background-color: white;
-            color: #555;
+            color: #64748b;
             width: 100%;
-            margin-bottom: 10px;
-            transition: all 0.3s;
-            text-align: left;
+            margin-bottom: 12px;
             padding: 12px 20px;
+            transition: all 0.2s;
+            text-align: left;
+            font-size: 0.9rem;
         }
 
         .btn-sidebar.active {
-            background-color: #f39c12;
+            background-color: var(--brand-orange);
             color: white;
-            border-color: #f39c12;
-            font-weight: bold;
+            border-color: var(--brand-orange);
+            font-weight: 700;
+            box-shadow: 0 4px 12px rgba(243, 156, 18, 0.3);
         }
 
-        .analysis-container {
+        /* 分析カードの共通設定 */
+        .analysis-card {
+            background: white;
+            padding: 30px;
+            margin-bottom: 40px;
+            border-radius: 20px;
+            border: none;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+        }
+
+        /* KPIボックス */
+        .kpi-box {
             background: white;
             padding: 25px;
-            margin-bottom: 25px;
-            border-radius: 15px;
-        }
-
-        .kpi-box {
-            border-radius: 15px;
-            padding: 25px;
+            border-radius: 18px;
             text-align: center;
+            border: 1px solid #f1f5f9;
+            transition: transform 0.2s;
             flex: 1;
             min-width: 200px;
-            background: #ffffff;
-            border: 1px solid #f0f0f0;
         }
+        .kpi-box:hover { transform: translateY(-5px); }
 
         .chart-title {
             font-size: 1rem;
-            font-weight: 700;
-            color: #333;
-            margin-bottom: 20px;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 25px;
             display: flex;
             align-items: center;
             justify-content: center;
+            letter-spacing: 0.5px;
         }
 
         .chart-wrapper {
             position: relative;
-            height: 350px !important;
+            height: 300px !important;
             width: 100%;
+        }
+
+        .btn-detail {
+            border-radius: 50px;
+            padding: 10px 30px;
+            font-weight: 700;
+            transition: all 0.3s;
         }
     </style>
 
-    <div class="container py-4">
-        <div class="row">
-            {{-- Sidebar --}}
-            <div class="col-md-2">
+    <div class="analysis-wrapper">
+        <div class="row g-5">
+            
+            {{-- 1. Sidebar --}}
+            <div class="col-lg-2">
                 <div class="d-flex flex-column mb-4">
-                    <a href="{{ route('admin.analysis.hotel') }}" class="btn btn-sidebar"><i
-                            class="fa-solid fa-hotel me-2"></i>Hotel</a>
-                    <a href="{{ route('admin.analysis.restaurant') }}" class="btn btn-sidebar active"><i
-                            class="fa-solid fa-utensils me-2"></i>Restaurant</a>
+                    <a href="{{ route('admin.analysis.hotel') }}" class="btn btn-sidebar">
+                        <i class="fa-solid fa-hotel me-2"></i>Hotel
+                    </a>
+                    <a href="{{ route('admin.analysis.restaurant') }}" class="btn btn-sidebar active">
+                        <i class="fa-solid fa-utensils me-2"></i>Restaurant
+                    </a>
                 </div>
-                <select class="form-select form-select-sm border-dark-subtle shadow-sm"
-                    onchange="window.location.href=this.value">
-                    <option value="{{ route('admin.analysis.restaurant') }}" {{ is_null($restaurantId) ? 'selected' : '' }}>
-                        All Restaurants</option>
-                    @foreach ($restaurants as $res)
-                        <option value="{{ route('admin.analysis.restaurant', ['id' => $res->id]) }}"
-                            {{ $restaurantId == $res->id ? 'selected' : '' }}>{{ $res->name }}</option>
-                    @endforeach
-                </select>
+                
+                <div class="mt-4">
+                    <label class="small fw-bold text-muted mb-2 ms-1">Select Restaurant</label>
+                    <select class="form-select border-0 shadow-sm rounded-3" onchange="window.location.href=this.value">
+                        <option value="{{ route('admin.analysis.restaurant') }}" {{ is_null($restaurantId) ? 'selected' : '' }}>All Restaurants</option>
+                        @foreach ($restaurants as $res)
+                            <option value="{{ route('admin.analysis.restaurant', ['id' => $res->id]) }}" {{ $restaurantId == $res->id ? 'selected' : '' }}>
+                                {{ $res->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
             </div>
 
-            {{-- Main Content --}}
-            <div class="col-md-10">
-                {{-- 今月のKPIカード --}}
-                <div class="analysis-container shadow-sm">
-                    <div class="d-flex justify-content-center gap-3 flex-wrap">
-                        <div class="kpi-box shadow-sm border-0">
-                            <div class="text-muted small fw-bold mb-1 text-uppercase">Total Reservations</div>
-                            <div class="h2 fw-bold text-dark">{{ number_format($kpi->total_bookings ?? 0) }}</div>
-                            <div class="text-muted x-small">Current Month</div>
+            {{-- 2. Main Content --}}
+            <div class="col-lg-10">
+                
+                {{-- KPI Section --}}
+                <div class="row g-4 mb-5">
+                    <div class="col-md-4">
+                        <div class="kpi-box shadow-sm">
+                            <p class="text-muted small fw-bold mb-2 text-uppercase">Reservations</p>
+                            <h3 class="fw-extrabold m-0">{{ number_format($kpi->total_bookings ?? 0) }}</h3>
+                            <span class="badge bg-light text-muted mt-2">This Month</span>
                         </div>
-                        <div class="kpi-box shadow-sm border-0">
-                            <div class="text-muted small fw-bold mb-1 text-uppercase">Total Guests</div>
-                            <div class="h2 fw-bold text-warning">{{ number_format($kpi->total_guests ?? 0) }}</div>
-                            <div class="text-muted x-small">Current Month</div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="kpi-box shadow-sm">
+                            <p class="text-muted small fw-bold mb-2 text-warning text-uppercase">Total Guests</p>
+                            <h3 class="fw-extrabold text-warning m-0">{{ number_format($kpi->total_guests ?? 0) }}</h3>
+                            <span class="badge bg-light text-muted mt-2">This Month</span>
                         </div>
-                        <div class="kpi-box shadow-sm border-0">
-                            <div class="text-muted small fw-bold mb-1 text-uppercase">Avg. Dining Time</div>
-                            <div class="h2 fw-bold text-success">{{ number_format($avgStayTime ?? 0) }} min</div>
-                            <div class="text-muted x-small">Per Table</div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="kpi-box shadow-sm">
+                            <p class="text-muted small fw-bold mb-2 text-success text-uppercase">Avg. Dining Time</p>
+                            <h3 class="fw-extrabold text-success m-0">{{ number_format($avgStayTime ?? 0) }}<span class="fs-6 ms-1">min</span></h3>
+                            <span class="badge bg-light text-muted mt-2">Per Table</span>
                         </div>
                     </div>
                 </div>
 
                 {{-- 詳細表示ボタン --}}
-                <div class="text-center mb-4">
-                    <button class="btn btn-outline-warning btn-detail shadow-sm" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#detailedAnalysis">
-                        <i class="fa-solid fa-chart-pie me-2"></i>Show Yearly Detailed Analysis
+                <div class="text-center mb-5">
+                    <button class="btn btn-outline-warning btn-detail shadow-sm px-5" type="button" data-bs-toggle="collapse" data-bs-target="#detailedAnalysis">
+                        <i class="fa-solid fa-chart-pie me-2"></i>Show Yearly Detailed Report
                     </button>
                 </div>
 
-                {{-- 詳細エリア (デフォルトは非表示) --}}
-                <div class="collapse" id="detailedAnalysis">
-                    <div class="row">
-                        {{-- KPI推移グラフ --}}
-                        <div class="col-12 mb-4">
-                            <div class="analysis-container shadow-sm">
-                                <h6 class="chart-title border-bottom pb-3">Monthly KPI Trends</h6>
-                                <div class="chart-wrapper">
-                                    <canvas id="kpiTrendChart"></canvas>
-                                </div>
-                            </div>
+                {{-- Yearly Detailed Area (Hidden by default) --}}
+                <div class="collapse mb-4" id="detailedAnalysis">
+                    <div class="analysis-card">
+                        <h6 class="chart-title border-bottom pb-3">Monthly Business Performance</h6>
+                        <div class="chart-wrapper">
+                            <canvas id="kpiTrendChart"></canvas>
                         </div>
-                        {{-- 月次パフォーマンス表 --}}
-                        <div class="col-12 mb-4">
-                            <div class="analysis-container shadow-sm">
-                                <h6 class="chart-title border-bottom pb-3">Monthly KPI Table</h6>
-                                <div class="table-responsive">
-                                    <table class="table table-hover align-middle text-center">
-                                        <thead class="table-light">
-                                            <tr>
-                                                <th class="text-start ps-4">Month</th>
-                                                <th>Bookings</th>
-                                                <th>Guests</th>
-                                                <th>Avg. Stay (min)</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach (['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'] as $i => $monthName)
-                                                <tr class="{{ now()->month - 1 == $i ? 'table-warning' : '' }}">
-                                                    <td class="text-start ps-4 fw-bold">{{ $monthName }}</td>
-                                                    <td>{{ number_format($monthlyBookings[$i]) }}</td>
-                                                    <td>{{ number_format($monthlyGuests[$i]) }}</td>
-                                                    <td>{{ number_format($monthlyAvgStay[$i], 1) }}</td>
-                                                </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
+                    </div>
+
+                    <div class="analysis-card p-0 overflow-hidden shadow-sm">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle text-center m-0">
+                                <thead class="table-light text-muted">
+                                    <tr>
+                                        <th class="text-start ps-4">Month</th>
+                                        <th>Bookings</th>
+                                        <th>Guests</th>
+                                        <th>Avg. Stay (min)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'] as $i => $monthName)
+                                        <tr class="{{ now()->month - 1 == $i ? 'table-warning text-dark' : '' }}">
+                                            <td class="text-start ps-4 fw-bold text-muted">{{ $monthName }}</td>
+                                            <td>{{ number_format($monthlyBookings[$i] ?? 0) }}</td>
+                                            <td>{{ number_format($monthlyGuests[$i] ?? 0) }}</td>
+                                            <td class="fw-bold">{{ number_format($monthlyAvgStay[$i] ?? 0, 1) }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
 
-                <div class="row mb-4">
-                    <div class="col-12">
-                        <div class="analysis-container shadow-sm">
-                            <h6 class="chart-title border-bottom pb-3">
-                                <i class="fa-solid fa-clock me-2 text-warning"></i>Peak Hours Analysis (Current Month)
-                            </h6>
-                            <div class="chart-wrapper mt-3" style="height: 300px;">
-                                <canvas id="hourlyPeakChart"></canvas>
-                            </div>
-                            <div class="text-center mt-2">
-                                <small class="text-muted">"Booking concentration by hour, based on check-in times."</small>
-                            </div>
-                        </div>
+                {{-- Peak Hours Analysis --}}
+                <div class="analysis-card">
+                    <h6 class="chart-title border-bottom pb-3">
+                        <i class="fa-solid fa-clock me-2 text-warning"></i>Peak Hours Concentration
+                    </h6>
+                    <div class="chart-wrapper mt-3">
+                        <canvas id="hourlyPeakChart"></canvas>
+                    </div>
+                    <div class="text-center mt-3">
+                        <p class="small text-muted mb-0">Analyzes when guests typically arrive throughout the day.</p>
                     </div>
                 </div>
 
-                {{-- Daily & Monthly Charts --}}
-                <div class="row mb-4">
-                    {{-- Daily Bookings (折れ線グラフ) --}}
-                    <div class="col">
-                        <div class="analysis-container shadow-sm h-100">
-                            <h6 class="chart-title border-bottom pb-3">
-                                <i class="fa-solid fa-chart-line me-2 text-warning"></i>Daily Booking Volume
-                                ({{ now()->format('F') }})
-                            </h6>
-                            <div class="chart-wrapper mt-3">
-                                <canvas id="dailyBookingChart"></canvas>
-                            </div>
-                        </div>
+                {{-- Daily Booking Volume --}}
+                <div class="analysis-card">
+                    <h6 class="chart-title border-bottom pb-3">
+                        <i class="fa-solid fa-chart-line me-2 text-warning"></i>Daily Booking Trend ({{ now()->format('F') }})
+                    </h6>
+                    <div class="chart-wrapper mt-3">
+                        <canvas id="dailyBookingChart"></canvas>
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // グラフオブジェクトを保持する変数
-        let charts = {};
+        let resCharts = {};
 
-        // --- 1. KPI Trends Chart (詳細エリア内) ---
-        const kpiTrendCtx = document.getElementById('kpiTrendChart');
-        if (kpiTrendCtx) {
-            charts['kpiTrendChart'] = new Chart(kpiTrendCtx, {
-                type: 'line',
-                data: {
-                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-                    datasets: [
-                        { label: 'Bookings', data: @json($monthlyBookings), borderColor: '#f39c12', tension: 0.3, yAxisID: 'y' },
-                        { label: 'Guests', data: @json($monthlyGuests), borderColor: '#e67e22', tension: 0.3, yAxisID: 'y' },
-                        { label: 'Avg. Stay', data: @json($monthlyAvgStay), borderColor: '#2ecc71', borderDash: [5, 5], tension: 0.3, yAxisID: 'y1' }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: { beginAtZero: true, position: 'left' },
-                        y1: { beginAtZero: true, position: 'right', grid: { drawOnChartArea: false } }
-                    }
-                }
-            });
-        }
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            // PHPデータを安全にパース
+            const monthlyBookings = @json($monthlyBookings ?? []);
+            const monthlyGuests = @json($monthlyGuests ?? []);
+            const monthlyAvgStay = @json($monthlyAvgStay ?? []);
+            const dailyData = @json($dailyData ?? []);
+            const hourlyData = @json($hourlyStats ?? []);
 
-        // --- 2. 日次予約トレンド ---
-        const dailyCtx = document.getElementById('dailyBookingChart');
-        if (dailyCtx) {
-            const dailyData = @json($dailyData);
-            new Chart(dailyCtx, {
-                type: 'line',
-                data: {
-                    labels: Object.keys(dailyData).map(day => day + '日'),
-                    datasets: [{
-                        label: 'Reservations',
-                        data: Object.values(dailyData),
-                        borderColor: '#f39c12',
-                        backgroundColor: 'rgba(243, 156, 18, 0.15)',
-                        fill: true,
-                        tension: 0.4,
-                        borderWidth: 3,
-                        pointBackgroundColor: '#f39c12',
-                        pointRadius: 3
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } }, x: { grid: { display: false } } }
-                }
-            });
-        }
-
-        // --- 4. 時間帯別の予約分布 (Peak Hours) ---
-        const hourlyCtx = document.getElementById('hourlyPeakChart');
-        if (hourlyCtx) {
-            const hourlyData = @json($hourlyStats);
-            new Chart(hourlyCtx, {
-                type: 'line',
-                data: {
-                    labels: Array.from({ length: 24 }, (_, i) => i + ':00'),
-                    datasets: [{
-                        label: 'Reservations',
-                        data: hourlyData,
-                        borderColor: '#f39c12',
-                        backgroundColor: 'rgba(243, 156, 18, 0.1)',
-                        fill: true,
-                        tension: 0.4,
-                        pointRadius: 4,
-                        pointBackgroundColor: '#f39c12',
-                        borderWidth: 3
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { 
-                        legend: { display: false },
-                        tooltip: { callbacks: { label: (ctx) => `予約件数: ${ctx.raw}件` } }
+            // --- 1. KPI Trend Chart ---
+            const kpiCtx = document.getElementById('kpiTrendChart');
+            if (kpiCtx) {
+                resCharts['kpiTrendChart'] = new Chart(kpiCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                        datasets: [
+                            { label: 'Bookings', data: monthlyBookings, borderColor: '#f39c12', tension: 0.3, yAxisID: 'y' },
+                            { label: 'Stay Time', data: monthlyAvgStay, borderColor: '#2ecc71', borderDash: [5, 5], tension: 0.3, yAxisID: 'y1' }
+                        ]
                     },
-                    scales: { 
-                        y: { beginAtZero: true, ticks: { stepSize: 1 }, grid: { color: '#f0f0f0' } },
-                        x: { grid: { display: false }, ticks: { maxRotation: 0, autoSkip: true, maxTicksLimit: 12 } }
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: { display: false },
+                            y1: { display: false }
+                        }
                     }
-                }
-            });
-        }
+                });
+            }
 
-        // --- 5. Collapse表示時の再描画処理 ---
-        const detailedAnalysis = document.getElementById('detailedAnalysis');
-        if (detailedAnalysis) {
-            detailedAnalysis.addEventListener('shown.bs.collapse', function () {
-                if (charts['kpiTrendChart']) {
-                    charts['kpiTrendChart'].resize();
-                }
+            // --- 2. Hourly Peak Chart ---
+            const hourlyCtx = document.getElementById('hourlyPeakChart');
+            if (hourlyCtx) {
+                resCharts['hourlyChart'] = new Chart(hourlyCtx, {
+                    type: 'line',
+                    data: {
+                        labels: Array.from({ length: 24 }, (_, i) => i + ':00'),
+                        datasets: [{
+                            label: 'Arrivals',
+                            data: hourlyData,
+                            borderColor: '#f39c12',
+                            backgroundColor: 'rgba(243, 156, 18, 0.1)',
+                            fill: true,
+                            tension: 0.4,
+                            pointRadius: 4,
+                            pointBackgroundColor: '#f39c12',
+                            borderWidth: 3
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            y: { beginAtZero: true, grid: { color: '#f1f5f9' }, ticks: { stepSize: 1 } },
+                            x: { grid: { display: false } }
+                        }
+                    }
+                });
+            }
+
+            // --- 3. Daily Booking Chart ---
+            const dailyCtx = document.getElementById('dailyBookingChart');
+            if (dailyCtx) {
+                resCharts['dailyChart'] = new Chart(dailyCtx, {
+                    type: 'line',
+                    data: {
+                        labels: Object.keys(dailyData).map(day => day + 'd'),
+                        datasets: [{
+                            label: 'Bookings',
+                            data: Object.values(dailyData),
+                            borderColor: '#f39c12',
+                            backgroundColor: 'rgba(243, 156, 18, 0.05)',
+                            fill: true,
+                            tension: 0.4,
+                            borderWidth: 3,
+                            pointRadius: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            y: { beginAtZero: true, ticks: { stepSize: 1 } },
+                            x: { grid: { display: false } }
+                        }
+                    }
+                });
+            }
+
+            // リサイズ対応
+            document.getElementById('detailedAnalysis').addEventListener('shown.bs.collapse', function() {
+                if (resCharts['kpiTrendChart']) resCharts['kpiTrendChart'].resize();
             });
-        }
-    });
+        });
     </script>
 @endsection

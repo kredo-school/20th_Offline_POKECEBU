@@ -15,6 +15,10 @@ class HotelReservation extends Model
         'room_id',       // 必要に応じて
         'user_name',
         'user_email',
+
+
+
+        
         'user_phone',
         'checkin_date',
         'checkout_date',

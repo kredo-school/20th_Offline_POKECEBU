@@ -116,34 +116,30 @@ public function confirmReservation(Request $request)
                 ->first();
 
     // 3. 予約インスタンス作成
-    $reservation = new HotelReservation();
-    $reservation->reservation_id = 'RES' . time() . rand(100, 999);
-    
-    $reservation->user_id    = $user->id;
-    $reservation->hotel_id   = $hotel->id;
-    $reservation->room_id    = $roomType->id; // HotelRoomTypeのID
-    $reservation->guests     = $request->guests;
+    // 予約インスタンス作成
+$reservation = new HotelReservation();
+$reservation->reservation_id = 'RES' . time() . rand(100, 999);
+$reservation->user_id    = $user->id;
+$reservation->hotel_id   = $hotel->id;
+$reservation->room_id    = $roomType->id;
+$reservation->guests     = $request->guests;
 
-    // 金額計算（roomDataがない場合の安全策）
-    $pricePerPerson = $roomData ? $roomData->charges : 0;
-    $reservation->total_price = $pricePerPerson * $request->guests;
+// 金額計算
+$pricePerPerson = $roomData ? $roomData->charges : 0;
+$reservation->total_price = $pricePerPerson * $request->guests;
 
-    // フォームからの情報を保存
-   $reservation->user_id = auth()->id();
+// 追加ゲスト
+$otherGuests = session('other_guests', []);
+$reservation->other = json_encode([
+    'additional_guests' => $otherGuests,
+]);
 
-    // 追加ゲスト（セッションから）
-        $otherGuests = session('other_guests', []);
-        $reservation->other = json_encode([
-            'additional_guests' => $otherGuests,
-    ]);
+$reservation->status_id = 3; // ← ここを 3 に変更
+$reservation->start_at  = now();
+$reservation->end_at    = now()->addDays(1);
 
-    $reservation->status_id = 1;
-    $reservation->start_at  = now();
-    $reservation->end_at    = now()->addDays(1);
-
-    // 4. 保存実行
-    $reservation->save();
-
+// 保存
+$reservation->save();
     // 5. セッション削除
     $request->session()->forget(['other_guests']);
 

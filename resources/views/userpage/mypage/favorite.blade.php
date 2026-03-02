@@ -51,29 +51,50 @@
                                 <i class="fas fa-heart fa-3x text-muted mb-3"></i>
                                 <h5 class="text-muted">You have no favorites yet.</h5>
                             </div>
+                            
                             {{-- Hotels --}}
-                            @foreach ($favoriteHotels as $hotel)
-                                <div class="card mb-3 favorite-card hotel">
-                                    <div class="card-body">
-                                        <h5>{{ $hotel->name }}</h5>
-                                        <p>{{ $hotel->address }}</p>
-                                        <a href="{{ route('user.hotels.detail', $hotel->id) }}" class="bnt btn-primary">View
-                                            Hotel</a>
+                            <div class="row justify-center g-2 mb-3">
+                                @foreach ($favoriteHotels as $hotel)
+                                    <div
+                                        class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center card favorite-card hotel mb-3">
+                                        <div class="card card-favorite">
+                                            <img src="{{ $hotel->image_path ?? asset('images/no-image.png') }}"
+                                                alt="{{ $hotel->name }}" class="favorite-image">
+                                            <div class="favorite-body">
+                                                <a href="{{ route('user.hotels.detail', $hotel->id) }}"
+                                                    class="favorite-link">
+                                                    <h5 class="card-title">{{ $hotel->name }}</h5>
+                                                    <p class="card-city">{{ $hotel->city }}</p>
+
+                                                </a>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                            @endforeach
+                                @endforeach
+                            </div>
 
                             {{-- Restaurants --}}
-                            @foreach ($favoriteRestaurants as $restaurant)
-                                <div class="card mb-3 favorite-card restaurant">
-                                    <div class="card-body">
-                                        <h5>{{ $restaurant->name }}</h5>
-                                        <p>{{ $restaurant->address }}</p>
-                                        <a href="{{ route('user.restaurants.detail', $restaurant->id) }}"
-                                            class="bnt btn-primary">View Restaurant</a>
+                            <div class="row justify-center g-2 mb-3">
+                                @foreach ($favoriteRestaurants as $restaurant)
+                                    <div
+                                        class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center card favorite-card restaurant mb-3 ">
+                                        <div class="card card-favorite">
+                                            <img src="{{ $restaurant->image_path ?? asset('images/no-image.png') }}"
+                                                alt="{{ $restaurant->name }}" class="favorite-image">
+                                            <div class="favorite-body">
+                                                <a href="{{ route('user.restaurants.detail', $restaurant->id) }}"
+                                                    class="favorite-link">
+                                                    <h5 class="card-title">{{ $restaurant->name }}</h5>
+                                                    <p class="card-city">
+                                                        <i class="fa-solid fa-location-dot"></i>
+                                                        {{ $restaurant->city }}
+                                                    </p>
+                                                </a>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                            @endforeach
+                                @endforeach
+                            </div>
                         @endif
 
                     </div>
@@ -130,3 +151,45 @@
         });
     </script>
 @endsection
+
+
+<style>
+    .favorite-card {
+        position: relative;
+        border-radius: 16px;
+        overflow: hidden;
+        aspect-ratio: 3 / 3.8;
+        width: 100%;
+        height: 100%;
+        max-width: 320px;
+    }
+
+    .favorite-image {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+    }
+
+    .favorite-body {
+        flex-grow: 1;
+    }
+
+    .card-title {
+        font-size: 14px;
+    }
+
+    .card-text,
+    .rank-card .card-price {
+        font-size: 13px;
+    }
+
+    .card-city {
+        margin-bottom: 4px;
+        line-height: 1.2;
+    }
+
+    .favorite-link {
+        text-decoration: none;
+        color: #333;
+    }
+</style>

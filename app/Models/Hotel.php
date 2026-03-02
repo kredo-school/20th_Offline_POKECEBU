@@ -142,6 +142,13 @@ class Hotel extends Model
             ->where('user_id',$userId)
             ->exists();
     }
+
+     // 評価を取得(編集用)
+    public function reviewBy($userId) {
+       return $this->reviews()
+            ->where('user_id',$userId)
+            ->first();
+    }
    
 
     public function favorites()

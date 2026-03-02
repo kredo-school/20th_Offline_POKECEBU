@@ -76,12 +76,15 @@
                                     <span class="badge bg-secondary">Completed</span>
 
                                     {{-- 評価ボタン --}}
-                                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#reviewModal{{ $res->hotel->id }}">Write Review</button>
-                                   
-                                     @include('userpage.mypage.modals.review', [
+                                    @php
+                                    $review = $res->hotel->reviewBy(auth()->id());
+                                    @endphp
+                                        <button class="btn {{ $review ?  'btn-secondary' : 'btn-primary'}}" data-bs-toggle="modal" data-bs-target="#reviewModal{{ $res->hotel->id }}">{{ $review ? '投稿済み' : 'Write Review' }}</button>
+                                        @include('userpage.mypage.modals.review', [
                                         'target' => $res->hotel,
                                         'type' => 'hotel'
                                      ])
+        
                                 </div>
                             @empty
                                 <p>No past hotel reservations.</p>

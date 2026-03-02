@@ -47,6 +47,15 @@ class ReviewController extends Controller
        return back();
     }
 
+    public function destroy($id) {
+       $review = Review::findOrFail($id);
+       if($review->user_id !== Auth::id()) {
+        abort(403);
+       }
+       $review->delete();
+       return back()->with('success', 'レビューを削除しました');
+    }
+
     // 平均評価の更新
     private function updateAverage($type, $id) {
         $average = Review::where('target_type', $type)

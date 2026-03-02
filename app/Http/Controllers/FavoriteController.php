@@ -24,7 +24,12 @@ class FavoriteController extends Controller
         $favoriteHotels = Hotel::whereIn('id', $hotelIds)->get();
         $favoriteRestaurants = Restaurant::whereIn('id', $restaurantIds)->get();
 
-        return view('userpage.mypage.favorite', compact('favoriteHotels', 'favoriteRestaurants'));
+        $allFavorites = $favoriteHotels
+            ->merge($favoriteRestaurants)
+            ->sortByDesc('create_at')
+            ->values();
+
+        return view('userpage.mypage.favorite', compact('allFavorites', 'favoriteHotels', 'favoriteRestaurants'));
     }
 
     // お気に入り登録

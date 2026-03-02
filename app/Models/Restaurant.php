@@ -92,6 +92,13 @@ class Restaurant extends Model
             ->exists();
     }
 
+    // 評価を取得
+    public function reviewBy($userId) {
+       return $this->reviews()
+            ->where('user_id', $userId)
+            ->first();
+    }
+
     public function tmpRestaurants()
     {
         return $this->hasMany(TmpRestaurant::class, 'restaurant_id', 'id');

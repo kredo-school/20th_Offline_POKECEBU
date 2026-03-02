@@ -39,8 +39,9 @@
         --------------- --}}
         <div>
             <div>
-                <h3 class="section-title">Hotel Ranking  <a href="#" class="btn btn-sm btn-outline-primary rounded-pill">View More</a></h3>
-               
+                <h3 class="section-title">Hotel Ranking <a href="#"
+                        class="btn btn-sm btn-outline-primary rounded-pill">View More</a></h3>
+
             </div>
 
             <div class="row justify-content-center g-2 mb-3">
@@ -49,10 +50,11 @@
 
                         <div class="card rank-card">
 
-                           {{-- お気に入り --}}
+                            {{-- お気に入り --}}
                             <div class="post-like">
                                 @if ($hotel->isFavorited())
-                                    <form method="POST" action="{{ route('user.favorite.destroy', ['hotel',$hotel->id]) }}">
+                                    <form method="POST"
+                                        action="{{ route('user.favorite.destroy', ['hotel', $hotel->id]) }}">
                                         @csrf
                                         @method('DELETE')
                                         <button class="btn heat-btn">
@@ -60,13 +62,12 @@
                                         </button>
                                     </form>
                                 @else
-                                <form method="POST" action="{{ route('user.favorite.store',['hotel',$hotel->id]) }}">
-                                    @csrf
-                                    <button class="btn heat-btn">
-                                        <i class="fa-regular fa-heart"></i>
-                                    </button>
-                                </form>
-                                    
+                                    <form method="POST" action="{{ route('user.favorite.store', ['hotel', $hotel->id]) }}">
+                                        @csrf
+                                        <button class="btn heat-btn">
+                                            <i class="fa-regular fa-heart"></i>
+                                        </button>
+                                    </form>
                                 @endif
                             </div>
 
@@ -79,24 +80,30 @@
                                 alt="{{ $hotel->name }}" class="rank-image"
                                 onerror="this.onerror=null;this.src='{{ asset('images/no-image.png') }}';">
 
-                            <div class="card-body">
-                                <a href="{{ route('user.hotels.detail', $hotel->id) }}" class="text-decoration-none text-dark">
+                            <div class="rank-body">
+                                <a href="{{ route('user.hotels.detail', $hotel->id) }}"
+                                    class="rank-link">
                                     <h5 class="card-title">{{ $hotel->name }}</h5>
                                 </a>
-                                @php
-                                    $rating = $hotel->star_rating;
-                                    $fullStars = floor($rating);
-                                    $halfStar = $rating - $fullStars >= 0.5;
-                                @endphp
-                                <p class="card-text text-warning">
-                                    @for ($i = 1; $i <= $fullStars; $i++)
-                                        <i class="fa-solid fa-star"></i>
-                                    @endfor
-                                    @if ($halfStar)
-                                        <i class="fa-solid fa-star-half-stroke"></i>
-                                    @endif
-                                    <span class="text-muted ms-1">{{ number_format($rating, 1) }}</span>
-                                </p>
+
+                                {{-- 星 --}}
+                                <div class="rank-star">
+                                    @php
+                                        $rating = $hotel->star_rating;
+                                        $fullStars = floor($rating);
+                                        $halfStar = $rating - $fullStars >= 0.5;
+                                    @endphp
+                                    <p class="card-text text-warning">
+                                        @for ($i = 1; $i <= $fullStars; $i++)
+                                            <i class="fa-solid fa-star"></i>
+                                        @endfor
+                                        @if ($halfStar)
+                                            <i class="fa-solid fa-star-half-stroke"></i>
+                                        @endif
+                                        <span class="text-muted ms-1">{{ number_format  ($rating, 1) }}</span>
+                                    </p>
+                                </div>
+
                                 <p class="card-city">
                                     <i class="fa-solid fa-location-dot"></i> {{ $hotel->city }}
                                 </p>
@@ -106,7 +113,7 @@
                                     @else
                                         <span class="text-muted">価格未設定</span>
                                     @endif
-                                </p> 
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -119,8 +126,9 @@
             --------------- --}}
         <div>
             <div>
-                <h3 class="section-title">Restrant Ranking <a href="#" class="btn btn-sm btn-outline-primary rounded-pill">View More</a></h3>
-                
+                <h3 class="section-title">Restrant Ranking <a href="#"
+                        class="btn btn-sm btn-outline-primary rounded-pill">View More</a></h3>
+
             </div>
 
             <div class="row justify-content-center g-2 mb-3">
@@ -129,10 +137,11 @@
 
                         <div class="card rank-card">
 
-                             {{-- お気に入り --}}
+                            {{-- お気に入り --}}
                             <div class="post-like">
                                 @if ($restaurant->isFavorited())
-                                    <form method="POST" action="{{ route('user.favorite.destroy', ['restaurant',$restaurant->id]) }}">
+                                    <form method="POST"
+                                        action="{{ route('user.favorite.destroy', ['restaurant', $restaurant->id]) }}">
                                         @csrf
                                         @method('DELETE')
                                         <button class="btn heat-btn">
@@ -140,13 +149,13 @@
                                         </button>
                                     </form>
                                 @else
-                                <form method="POST" action="{{ route('user.favorite.store',['restaurant',$restaurant->id]) }}">
-                                    @csrf
-                                    <button class="btn heat-btn">
-                                        <i class="fa-regular fa-heart"></i>
-                                    </button>
-                                </form>
-                                    
+                                    <form method="POST"
+                                        action="{{ route('user.favorite.store', ['restaurant', $restaurant->id]) }}">
+                                        @csrf
+                                        <button class="btn heat-btn">
+                                            <i class="fa-regular fa-heart"></i>
+                                        </button>
+                                    </form>
                                 @endif
                             </div>
 
@@ -155,24 +164,27 @@
                             <img src="{{ $restaurant->image_path ?? asset('images/no-image.png') }}"
                                 alt="{{ $restaurant->name }}" class="rank-image">
 
-                            <div class="card-body">
-                                <a href="{{ route('user.restaurants.detail', $restaurant->id) }}" class="card-link text-decoration-none text-dark">
+                            <div class="rank-body">
+                                <a href="{{ route('user.restaurants.detail', $restaurant->id) }}"
+                                    class="rank-link">
                                     <h5 class="card-title">{{ $restaurant->name }}</h5>
                                 </a>
-                                @php
-                                    $rating = $restaurant->star_rating;
-                                    $fullStars = floor($rating);
-                                    $halfStar = $rating - $fullStars >= 0.5;
-                                @endphp
-                                <p class="card-text text-warning">
-                                    @for ($i = 1; $i <= $fullStars; $i++)
-                                        <i class="fa-solid fa-star"></i>
-                                    @endfor
-                                    @if ($halfStar)
-                                        <i class="fa-solid fa-star-half-stroke"></i>
-                                    @endif
-                                    <span class="text-muted ms-1">{{ number_format($rating, 1) }}</span>
-                                </p>
+                                <div class="rank-star">
+                                    @php
+                                        $rating = $restaurant->star_rating;
+                                        $fullStars = floor($rating);
+                                        $halfStar = $rating - $fullStars >= 0.5;
+                                    @endphp
+                                    <p class="card-text text-warning">
+                                        @for ($i = 1; $i <= $fullStars; $i++)
+                                            <i class="fa-solid fa-star"></i>
+                                        @endfor
+                                        @if ($halfStar)
+                                            <i class="fa-solid fa-star-half-stroke"></i>
+                                        @endif
+                                        <span class="text-muted ms-1">{{ number_format  ($rating, 1) }}</span>
+                                    </p>
+                                </div>
                                 <p class="card-city">
                                     <i class="fa-solid fa-location-dot"></i> {{ $restaurant->city }}
                                 </p>
@@ -186,7 +198,7 @@
 
         {{-- -----------
         都市別ホテル 
-        ----------------}}
+        -------------- --}}
         <div>
             @foreach ($hotelsByCity as $city => $hotels)
                 <div>
@@ -200,22 +212,27 @@
                                 <img src="{{ $hotel->image_path ?? asset('images/no-image.png') }}"
                                     alt="{{ $hotel->name }}" class="rank-image">
 
-                                <div class="card-body">
+                                <div class="rank-body">
+                                    <a href="{{ route('user.hotels.detail', $hotel->id) }}"
+                                    class="rank-link">
                                     <h5 class="card-title">{{ $hotel->name }}</h5>
-                                    @php
-                                        $rating = $hotel->star_rating;
-                                        $fullStars = floor($rating);
-                                        $halfStar = $rating - $fullStars >= 0.5;
-                                    @endphp
-                                    <p class="card-text text-warning">
-                                        @for ($i = 0; $i < $fullStars; $i++)
-                                            <i class="fa-solid fa-star"></i>
-                                        @endfor
-                                        @if ($halfStar)
-                                            <i class="fa-solid fa-star-half-stroke"></i>
-                                        @endif
-                                        <span class="text-muted ms-1">{{ number_format($rating, 1) }}</span>
-                                    </p>
+                                    </a>
+                                    <div class="rank-star">
+                                        @php
+                                            $rating = $hotel->star_rating;
+                                            $fullStars = floor($rating);
+                                            $halfStar = $rating - $fullStars >= 0.5;
+                                        @endphp
+                                        <p class="card-text text-warning">
+                                            @for ($i = 0; $i < $fullStars; $i++)
+                                                <i class="fa-solid fa-star"></i>
+                                            @endfor
+                                            @if ($halfStar)
+                                                <i class="fa-solid fa-star-half-stroke"></i>
+                                            @endif
+                                            <span class="text-muted ms-1">{{ number_format  ($rating, 1) }}</span>
+                                        </p>
+                                    </div>
                                     <p class="card-city">
                                         <i class="fa-solid fa-location-dot"></i> {{ $hotel->city }}
                                     </p>
@@ -239,8 +256,9 @@
             --------------- --}}
         <div>
             <div>
-                <h3 class="section-title">Recent Posts <a href="{{ route('user.posts.index') }}" class="btn btn-sm btn-outline-primary rounded-pill">View More</a></h3>
-                
+                <h3 class="section-title">Recent Posts <a href="{{ route('user.posts.index') }}"
+                        class="btn btn-sm btn-outline-primary rounded-pill">View More</a></h3>
+
             </div>
 
             <div class="row justify-content-center g-2 mb-3">
@@ -252,23 +270,22 @@
 
                                 {{-- ハート --}}
                                 <div class="post-like">
-                                    
+
                                     @if ($post->isliked())
                                         <form method="POST" action="{{ route('user.like.destroy', $post->id) }}">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="heat-btn">
-                                               
+
                                                 <i class="fa-solid fa-heart text-danger"></i>
                                             </button>
-                                        </form>    
+                                        </form>
                                     @else
-                                        <form method="POST" action="{{ route('user.like.store', $post->id )}}">
+                                        <form method="POST" action="{{ route('user.like.store', $post->id) }}">
                                             @csrf
                                             <button type="submit" class="heat-btn">
                                                 <i class="fa-regular fa-heart"></i>
                                             </button>
-
                                     @endif
                                 </div>
 
@@ -282,7 +299,7 @@
                                         {{ $post->created_at->format('M d, Y') }}
                                     </p>
 
-                                   
+
                                 </div>
                             </a>
                         </div>
@@ -340,7 +357,7 @@
             </div>
         </div>
 
- 
+
 
 
 
@@ -349,7 +366,6 @@
 
         {{-- CSS --}}
         <style>
-
             /* メインメニュー */
             .menu-btn {
                 width: 140px;
@@ -438,6 +454,11 @@
             .rank-card p {
                 margin-bottom: 4px;
                 line-height: 1.2;
+            }
+
+            .rank-link {
+                text-decoration: none;
+                color: #333;
             }
 
             /* ランキングバッジ（共通） */
@@ -529,7 +550,7 @@
                 height: 34px;
                 border-radius: 50%;
                 border: 1px solid #ddd;
-                box-shadow: 0 2px 6px rgba(0,0,0,0.10);
+                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.10);
                 display: grid;
                 place-items: center;
             }

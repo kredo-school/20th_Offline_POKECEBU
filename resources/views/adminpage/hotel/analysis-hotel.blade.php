@@ -4,535 +4,295 @@
 
 @section('content')
 
-    <style>
-        .btn-sidebar {
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            background-color: white;
-            color: #555;
-            width: 100%;
-            margin-bottom: 10px;
-            transition: all 0.3s;
-            text-align: left;
-            padding: 12px 20px;
-        }
-
-        .btn-sidebar.active {
-            background-color: #7da9d8;
-            color: white;
-            border-color: #7da9d8;
-            font-weight: bold;
-        }
-
-        .analysis-container {
-            background: white;
-            padding: 25px;
-            margin-bottom: 25px;
-            border-radius: 15px;
-        }
-
-        .kpi-box {
-            border-radius: 15px;
-            padding: 25px;
-            text-align: center;
-            flex: 1;
-            min-width: 200px;
-            background: #ffffff;
-            border: 1px solid #f0f0f0;
-        }
-
-        .chart-title {
-            font-size: 1rem;
-            font-weight: 700;
-            color: #333;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .chart-wrapper {
-            position: relative;
-            height: 300px !important;
-            width: 100%;
-        }
-
-        .nav-pills .nav-link {
-            color: #7da9d8;
-            border: 1px solid #7da9d8;
-            margin-left: 5px;
-            border-radius: 20px;
-            padding: 5px 15px;
-        }
-
-        .nav-pills .nav-link.active {
-            background-color: #7da9d8;
-            color: white;
-            border-color: #7da9d8;
-        }
-    </style>
-
-    <div class="container py-4">
-        <div class="row">
-            {{-- Sidebar --}}
-            <div class="col-md-2">
+    <div class="analysis-wrapper">
+        <div class="row g-5"> {{-- g-5 で左右の隙間を拡大 --}}
+            
+            {{-- 1. Sidebar (左側) --}}
+            <div class="col-lg-2">
                 <div class="d-flex flex-column mb-4">
-                    <a href="{{ route('admin.analysis.hotel') }}" class="btn btn-sidebar active"><i
-                            class="fa-solid fa-hotel me-2"></i>Hotel</a>
-                    <a href="{{ route('admin.analysis.restaurant') }}" class="btn btn-sidebar"><i
-                            class="fa-solid fa-utensils me-2"></i>Restaurant</a>
+                    <a href="{{ route('admin.analysis.hotel') }}" class="btn btn-sidebar active">
+                        <i class="fa-solid fa-hotel me-2"></i>Hotel
+                    </a>
+                    <a href="{{ route('admin.analysis.restaurant') }}" class="btn btn-sidebar">
+                        <i class="fa-solid fa-utensils me-2"></i>Restaurant
+                    </a>
                 </div>
-                <select class="form-select form-select-sm border-dark-subtle shadow-sm"
-                    onchange="window.location.href=this.value">
-                    <option value="{{ route('admin.analysis.hotel') }}" {{ is_null($hotelId) ? 'selected' : '' }}>All Hotels
-                    </option>
-                    @foreach ($hotels as $hotel)
-                        <option value="{{ route('admin.analysis.hotel', ['id' => $hotel->id]) }}"
-                            {{ $hotelId == $hotel->id ? 'selected' : '' }}>{{ $hotel->name }}</option>
-                    @endforeach
-                </select>
+                
+                <div class="mt-4">
+                    <label class="small fw-bold text-muted mb-2 ms-1">Hotel Selector</label>
+                    <select class="form-select border-0 shadow-sm rounded-3" onchange="window.location.href=this.value">
+                        <option value="{{ route('admin.analysis.hotel') }}" {{ is_null($hotelId) ? 'selected' : '' }}>All Hotels</option>
+                        @foreach ($hotels as $hotel)
+                            <option value="{{ route('admin.analysis.hotel', ['id' => $hotel->id]) }}" {{ $hotelId == $hotel->id ? 'selected' : '' }}>
+                                {{ $hotel->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
             </div>
 
-            {{-- Main --}}
-            <div class="col-md-10">
+            {{-- 2. Main Content (右側) --}}
+            <div class="col-lg-10">
+                
                 {{-- KPI Section --}}
-                <div class="row g-3 mb-4">
+                <div class="row g-4 mb-5">
                     <div class="col-md-4">
-                        <div class="kpi-box shadow-sm border-0">
-                            <p class="text-muted small mb-1">TOTAL RESERVATIONS</p>
-                            <h3 class="fw-bold">{{ $currentKpi ? number_format($currentKpi->total_bookings) : 0 }}</h3>
-                            <span class="badge bg-light text-muted">Current Month</span>
+                        <div class="kpi-box shadow-sm">
+                            <p class="text-muted small fw-bold mb-2">TOTAL RESERVATIONS</p>
+                            <h3 class="fw-extrabold m-0">{{ number_format($currentKpi->total_bookings ?? 0) }}</h3>
+                            <span class="badge bg-light text-muted mt-2">Current Month</span>
                         </div>
                     </div>
-                    {{-- Total Guests --}}
                     <div class="col-md-4">
-                        <div class="kpi-box shadow-sm border-0">
-                            <p class="text-muted small mb-1">TOTAL GUESTS</p>
-                            <h3 class="fw-bold text-primary">
-                                {{ $currentKpi ? number_format($currentKpi->total_guests) : 0 }}</h3>
-                            <span class="badge bg-light text-muted">Current Month</span>
+                        <div class="kpi-box shadow-sm">
+                            <p class="text-muted small fw-bold mb-2 text-primary">TOTAL GUESTS</p>
+                            <h3 class="fw-extrabold text-primary m-0">{{ number_format($currentKpi->total_guests ?? 0) }}</h3>
+                            <span class="badge bg-light text-muted mt-2">Current Month</span>
                         </div>
                     </div>
-                    {{-- Avg. Stay --}}
                     <div class="col-md-4">
-                        <div class="kpi-box shadow-sm border-0">
-                            <p class="text-muted small mb-1">AVG. DINING TIME</p>
-                            <h3 class="fw-bold text-success">
-                                {{ $currentKpi ? number_format($currentKpi->avg_stay, 1) : '0.0' }}</h3>
-                            <span class="badge bg-light text-muted">Per Table</span>
+                        <div class="kpi-box shadow-sm">
+                            <p class="text-muted small fw-bold mb-2 text-success">AVG. STAY</p>
+                            <h3 class="fw-extrabold text-success m-0">{{ number_format($currentKpi->avg_stay ?? 0, 1) }}d</h3>
+                            <span class="badge bg-light text-muted mt-2">Per Booking</span>
                         </div>
                     </div>
+                </div>
 
-                    {{-- 詳細表示ボタン --}}
-                <div class="text-center mb-4">
-                    <button class="btn btn-outline-primary rounded-pill px-4" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#detailedAnalysis" aria-expanded="false">
-                        <i class="fa-solid fa-magnifying-glass-chart me-2"></i>Show Detailed Monthly Analysis
+                {{-- 詳細表示ボタン --}}
+                <div class="text-center mb-5">
+                    <button class="btn btn-outline-primary rounded-pill px-5 shadow-sm" type="button" data-bs-toggle="collapse" data-bs-target="#detailedAnalysis">
+                        <i class="fa-solid fa-magnifying-glass-chart me-2"></i>Show Detailed Monthly Report
                     </button>
                 </div>
 
-                    <div class="collapse" id="detailedAnalysis">
-                        <div class="row">
-                            {{-- KPI推移グラフ --}}
-                            <div class="col-12 mb-4">
-                                <div class="analysis-container shadow-sm">
-                                    <h6 class="chart-title border-bottom pb-3">Monthly KPI Trends</h6>
-                                    <div class="chart-wrapper">
-                                        <canvas id="kpiTrendChart"></canvas>
-                                    </div>
-                                </div>
-                            </div>
+                <div class="collapse mb-4" id="detailedAnalysis">
+                    <div class="analysis-card">
+                        <h6 class="chart-title border-bottom pb-3">Monthly Performance Trends</h6>
+                        <div class="chart-wrapper">
+                            <canvas id="kpiTrendChart"></canvas>
+                        </div>
+                    </div>
 
-                            {{-- 月次パフォーマンス表 --}}
-                            <div class="col-12">
-                                <div class="analysis-container shadow-sm">
-                                    <h6 class="chart-title border-bottom pb-3">Monthly KPI Table (Yearly Overview)</h6>
-                                    <div class="table-responsive">
-                                        <table class="table table-hover align-middle text-center">
-                                            <thead class="table-light">
-                                                <tr>
-                                                    <th class="text-start">Month</th>
-                                                    <th>Bookings</th>
-                                                    <th>Guests</th>
-                                                    <th>Avg. Stay</th>
-                                                    <th>Revenue</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @foreach (['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'] as $i => $monthName)
-                                                    <tr class="{{ now()->month - 1 == $i ? 'table-primary' : '' }}">
-                                                        {{-- 今月をハイライト --}}
-                                                        <td class="text-start fw-bold">{{ $monthName }}</td>
-                                                        <td>{{ number_format($monthlyBookings[$i]) }}</td>
-                                                        <td>{{ number_format($monthlyGuests[$i]) }}</td>
-                                                        <td>{{ number_format($monthlyAvgStay[$i], 1) }}</td>
-                                                        <td class="fw-bold">₱{{ number_format($monthlyRevenue[$i]) }}</td>
-                                                    </tr>
-                                                @endforeach
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
+                    <div class="analysis-card p-0 overflow-hidden shadow-sm">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle text-center m-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="text-start ps-4">Month</th>
+                                        <th>Bookings</th>
+                                        <th>Guests</th>
+                                        <th>Revenue</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'] as $i => $monthName)
+                                        <tr class="{{ now()->month - 1 == $i ? 'table-primary' : '' }}">
+                                            <td class="text-start ps-4 fw-bold">{{ $monthName }}</td>
+                                            <td>{{ number_format($monthlyBookings[$i] ?? 0) }}</td>
+                                            <td>{{ number_format($monthlyGuests[$i] ?? 0) }}</td>
+                                            <td class="fw-bold">₱{{ number_format($monthlyRevenue[$i] ?? 0) }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
 
-                <div class="row mb-4">
-                    {{-- Daily Occupancy Trends (書き換え箇所: 折れ線グラフ) --}}
-                    <div class="col-md-12">
-                        <div class="analysis-container shadow-sm h-100">
-                            <h6 class="chart-title border-bottom pb-3">
-                                <i class="fa-solid fa-chart-line me-2 text-primary"></i>Daily Occupancy Trends
-                                ({{ now()->format('F Y') }})
-                            </h6>
-                            <div class="chart-wrapper mt-3">
-                                <canvas id="dailyOccupancyChart"></canvas>
-                            </div>
-                        </div>
+                {{-- 日次トレンド (Occupancy) --}}
+                <div class="analysis-card">
+                    <h6 class="chart-title border-bottom pb-3">
+                        <i class="fa-solid fa-chart-line me-2 text-primary"></i>Daily Occupancy Trend ({{ now()->format('F Y') }})
+                    </h6>
+                    <div class="chart-wrapper mt-3">
+                        <canvas id="dailyOccupancyChart"></canvas>
                     </div>
                 </div>
 
-                <div class="row mb-4">
-                    {{-- Monthly Performance --}}
-                    <div class="col-md-12">
-                        <div class="analysis-container shadow-sm h-100">
-                            <h6 class="chart-title border-bottom pb-3">
-                                <i class="fa-solid fa-calendar-check me-2 text-primary"></i>Monthly Performance
-                            </h6>
-                            <div class="chart-wrapper mt-3">
-                                <canvas id="barChart"></canvas>
-                            </div>
-                        </div>
+                {{-- 月別パフォーマンス (Mixed Chart) --}}
+                <div class="analysis-card">
+                    <h6 class="chart-title border-bottom pb-3">
+                        <i class="fa-solid fa-calendar-check me-2 text-primary"></i>Monthly Booking vs Revenue
+                    </h6>
+                    <div class="chart-wrapper mt-3">
+                        <canvas id="barChart"></canvas>
                     </div>
                 </div>
 
                 {{-- Room Type Section --}}
-                <div class="analysis-container shadow-sm rounded-4">
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h6 class="chart-title m-0"><i class="fa-solid fa-door-open me-2 text-primary"></i>Room Type
-                            Insights</h6>
-                        <ul class="nav nav-pills" id="pills-tab" role="tablist">
+                <div class="analysis-card">
+                    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
+                        <h6 class="chart-title m-0"><i class="fa-solid fa-door-open me-2 text-primary"></i>Room Type Insights</h6>
+                        <ul class="nav nav-pills nav-pills-custom" id="pills-tab">
                             <li class="nav-item">
-                                <button class="nav-link active btn-sm" id="tab-month" data-bs-toggle="pill"
-                                    data-bs-target="#pills-month" type="button" role="tab" aria-controls="pills-month"
-                                    aria-selected="true">This Month</button>
+                                <button class="nav-link active" id="tab-month" data-bs-toggle="pill" data-bs-target="#pills-month">This Month</button>
                             </li>
                             <li class="nav-item">
-                                <button class="nav-link btn-sm" id="tab-year" data-bs-toggle="pill"
-                                    data-bs-target="#pills-year" type="button" role="tab" aria-controls="pills-year"
-                                    aria-selected="false">This Year</button>
+                                <button class="nav-link" id="tab-year" data-bs-toggle="pill" data-bs-target="#pills-year">This Year</button>
                             </li>
                         </ul>
                     </div>
 
-                    <div class="tab-content pt-3">
-                        {{-- Month View --}}
-                        <div class="tab-pane fade show active" id="pills-month" role="tabpanel" aria-labelledby="tab-month">
-                            <div class="row">
-                                <div class="col-md-6 text-center border-end">
-                                    <span class="badge bg-light text-dark mb-3 px-3 py-2">Revenue Share</span>
+                    <div class="tab-content">
+                        <div class="tab-pane fade show active" id="pills-month">
+                            <div class="row g-4 text-center">
+                                <div class="col-md-6 border-end">
+                                    <span class="badge bg-light text-dark mb-3 px-3">Revenue Share</span>
                                     <div class="chart-wrapper"><canvas id="typeChartMonth"></canvas></div>
                                 </div>
-                                <div class="col-md-6 text-center">
-                                    <span class="badge bg-light text-dark mb-3 px-3 py-2">Booking Volume</span>
+                                <div class="col-md-6">
+                                    <span class="badge bg-light text-dark mb-3 px-3">Booking Volume</span>
                                     <div class="chart-wrapper"><canvas id="typeBookingChartMonth"></canvas></div>
                                 </div>
                             </div>
                         </div>
-
-                        {{-- Year View --}}
-                        <div class="tab-pane fade" id="pills-year" role="tabpanel" aria-labelledby="tab-year">
-                            <div class="row">
-                                <div class="col-md-6 text-center border-end">
-                                    <span class="badge bg-light text-dark mb-3 px-3 py-2">Yearly Revenue Share</span>
+                        <div class="tab-pane fade" id="pills-year">
+                            <div class="row g-4 text-center">
+                                <div class="col-md-6 border-end">
                                     <div class="chart-wrapper"><canvas id="typeChartYear"></canvas></div>
                                 </div>
-                                <div class="col-md-6 text-center">
-                                    <span class="badge bg-light text-dark mb-3 px-3 py-2">Yearly Booking Volume</span>
+                                <div class="col-md-6">
                                     <div class="chart-wrapper"><canvas id="typeBookingChartYear"></canvas></div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
- // --- KPI Trends Chart (Bookings, Guests, Avg.Stay) ---
-        const kpiCtx = document.getElementById('kpiTrendChart');
-        if (kpiCtx) {
-            new Chart(kpiCtx, {
-                type: 'line',
-                data: {
-                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-                    datasets: [{
-                            label: 'Bookings',
-                            data: @json($monthlyBookings),
-                            borderColor: '#7da9d8', // Blue
-                            backgroundColor: 'transparent',
-                            borderWidth: 2,
-                            tension: 0.3,
-                            yAxisID: 'y-count',
-                        },
-                        {
-                            label: 'Guests',
-                            data: @json($monthlyGuests),
-                            borderColor: '#ffcc5c', // Yellow
-                            backgroundColor: 'transparent',
-                            borderWidth: 2,
-                            tension: 0.3,
-                            yAxisID: 'y-count',
-                        },
-                        {
-                            label: 'Avg. Stay (Days)',
-                            data: @json($monthlyAvgStay),
-                            borderColor: '#96ceb4', // Green
-                            backgroundColor: 'transparent',
-                            borderWidth: 2,
-                            borderDash: [5, 5], // 点線にして区別
-                            tension: 0.3,
-                            yAxisID: 'y-stay',
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom'
-                        }
-                    },
-                    scales: {
-                        'y-count': {
-                            type: 'linear',
-                            position: 'left',
-                            beginAtZero: true,
-                            title: {
-                                display: true,
-                                text: 'Count (Bookings/Guests)'
-                            }
-                        },
-                        'y-stay': {
-                            type: 'linear',
-                            position: 'right',
-                            beginAtZero: true,
-                            grid: {
-                                drawOnChartArea: false
-                            },
-                            title: {
-                                display: true,
-                                text: 'Days (Avg. Stay)'
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
-        // 詳細ボタンが押されて表示が完了した時に実行
-        document.getElementById('detailedAnalysis').addEventListener('shown.bs.collapse', function() {
-            // グラフのサイズを再計算させる
-            if (charts['kpiTrendChart']) charts['kpiTrendChart'].resize();
-            if (charts['barChart']) charts['barChart'].resize();
-        });
-
+        // 1. グローバルでチャートインスタンスを管理
+        let hotelCharts = {};
 
         document.addEventListener('DOMContentLoaded', function() {
+            
+            // PHPデータをJS変数に安全に展開
+            const monthlyBookings = @json($monthlyBookings ?? []);
+            const monthlyRevenue = @json($monthlyRevenue ?? []);
+            const monthlyGuests = @json($monthlyGuests ?? []);
+            const heatmapData = @json($heatmapData ?? []);
 
-            let charts = {};
-
-            // 共通ドーナツグラフ作成関数
+            // --- 共通ドーナツグラフ関数 ---
             const createDoughnut = (id, labels, data) => {
                 const el = document.getElementById(id);
                 if (!el) return;
-                if (charts[id]) {
-                    charts[id].destroy();
-                }
+                if (hotelCharts[id]) hotelCharts[id].destroy();
 
-                charts[id] = new Chart(el, {
+                hotelCharts[id] = new Chart(el, {
                     type: 'doughnut',
                     data: {
                         labels: labels,
                         datasets: [{
                             data: data,
-                            backgroundColor: ['#7da9d8', '#ffcc5c', '#96ceb4', '#ffeead',
-                                '#d9a7c7'
-                            ],
+                            backgroundColor: ['#7da9d8', '#ffcc5c', '#96ceb4', '#ffeead', '#d9a7c7'],
                             borderWidth: 0
                         }]
                     },
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
-                        cutout: '75%',
-                        plugins: {
-                            legend: {
-                                position: 'bottom',
-                                labels: {
-                                    boxWidth: 12
-                                }
-                            }
-                        }
+                        cutout: '80%',
+                        plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 10 } } } }
                     }
                 });
             };
 
-            // --- 1. 日次稼働トレンド (折れ線グラフに書き換え) ---
-            const dailyCtx = document.getElementById('dailyOccupancyChart');
-            if (dailyCtx) {
-                const dailyData = @json($heatmapData);
-                new Chart(dailyCtx, {
-                    type: 'line', // lineに変更
+            // --- KPI Trends ---
+            const kpiCtx = document.getElementById('kpiTrendChart');
+            if (kpiCtx) {
+                hotelCharts['kpiTrendChart'] = new Chart(kpiCtx, {
+                    type: 'line',
                     data: {
-                        labels: Object.keys(dailyData).map(day => day + '日'),
-                        datasets: [{
-                            label: 'Active Stays',
-                            data: Object.values(dailyData),
-                            borderColor: '#7da9d8',
-                            backgroundColor: 'rgba(125, 169, 216, 0.2)', // エリア塗りの色
-                            fill: true, // 線の下を塗る
-                            tension: 0.4, // 線の丸み
-                            borderWidth: 3,
-                            pointBackgroundColor: '#7da9d8',
-                            pointRadius: 3
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                display: false
-                            }
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                ticks: {
-                                    stepSize: 1
-                                }
-                            },
-                            x: {
-                                grid: {
-                                    display: false
-                                }
-                            }
-                        }
-                    }
-                });
-            }
-
-            // --- 2. 月別複合グラフ (Bookings & Revenue) ---
-            const barCtx = document.getElementById('barChart');
-            if (barCtx) {
-                new Chart(barCtx, {
-                    data: {
-                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct',
-                            'Nov', 'Dec'
-                        ],
-                        datasets: [{
-                                // 売上 (折れ線グラフ)
-                                type: 'line',
-                                label: 'Total Revenue',
-                                data: @json($monthlyRevenue), // 追加した変数
-                                borderColor: '#ff6384',
-                                backgroundColor: 'rgba(255, 99, 132, 0.1)',
-                                borderWidth: 3,
-                                tension: 0.4,
-                                yAxisID: 'y-revenue', // 右軸を使用
-                                zIndex: 10
-                            },
-                            {
-                                // 予約件数 (棒グラフ)
-                                type: 'bar',
-                                label: 'Bookings',
-                                data: @json($monthlyBookings),
-                                backgroundColor: '#ced6e0',
-                                borderRadius: 4,
-                                yAxisID: 'y-bookings', // 左軸を使用
-                            }
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                        datasets: [
+                            { label: 'Bookings', data: monthlyBookings, borderColor: '#7da9d8', tension: 0.3, yAxisID: 'y' },
+                            { label: 'Revenue', data: monthlyRevenue, borderColor: '#ff6384', tension: 0.3, yAxisID: 'y1' }
                         ]
                     },
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                position: 'bottom'
-                            }
-                        },
                         scales: {
-                            // 左側の軸（予約数）
-                            'y-bookings': {
-                                type: 'linear',
-                                position: 'left',
-                                beginAtZero: true,
-                                title: {
-                                    display: true,
-                                    text: 'Bookings'
-                                },
-                                ticks: {
-                                    stepSize: 1
-                                }
-                            },
-                            // 右側の軸（売上）
-                            'y-revenue': {
-                                type: 'linear',
-                                position: 'right',
-                                beginAtZero: true,
-                                title: {
-                                    display: true,
-                                    text: 'Revenue (₱)'
-                                },
-                                grid: {
-                                    drawOnChartArea: false
-                                }, // グリッド線が重ならないように設定
-                                ticks: {
-                                    callback: function(value) {
-                                        return '₱' + value.toLocaleString();
-                                    }
-                                }
-                            },
-                            x: {
-                                grid: {
-                                    display: false
-                                }
-                            }
+                            y: { display: false },
+                            y1: { display: false }
                         }
                     }
                 });
             }
 
-            // --- 3. 初期表示: Month タブ ---
-            createDoughnut('typeChartMonth', @json($typeStatsMonth->pluck('label_name')), @json($typeStatsMonth->pluck('total_sales')));
-            createDoughnut('typeBookingChartMonth', @json($typeBookingStatsMonth->pluck('label_name')), @json($typeBookingStatsMonth->pluck('booking_count')));
-
-            // --- 4. タブイベント ---
-            const yearTabEl = document.getElementById('tab-year');
-            const monthTabEl = document.getElementById('tab-month');
-
-            if (yearTabEl) {
-                yearTabEl.addEventListener('shown.bs.tab', function() {
-                    createDoughnut('typeChartYear', @json($typeStatsYear->pluck('label_name')),
-                        @json($typeStatsYear->pluck('total_sales')));
-                    createDoughnut('typeBookingChartYear', @json($typeBookingStatsYear->pluck('label_name')),
-                        @json($typeBookingStatsYear->pluck('booking_count')));
+            // --- Daily Trend ---
+            const dailyCtx = document.getElementById('dailyOccupancyChart');
+            if (dailyCtx) {
+                hotelCharts['dailyChart'] = new Chart(dailyCtx, {
+                    type: 'line',
+                    data: {
+                        labels: Object.keys(heatmapData).map(d => d + 'd'),
+                        datasets: [{
+                            label: 'Active Stays',
+                            data: Object.values(heatmapData),
+                            borderColor: '#7da9d8',
+                            backgroundColor: 'rgba(125, 169, 216, 0.1)',
+                            fill: true, tension: 0.4, borderWidth: 2, pointRadius: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: { 
+                            y: { beginAtZero: true, grid: { color: '#f1f5f9' } },
+                            x: { grid: { display: false } }
+                        }
+                    }
                 });
             }
 
-            if (monthTabEl) {
-                monthTabEl.addEventListener('shown.bs.tab', function() {
-                    createDoughnut('typeChartMonth', @json($typeStatsMonth->pluck('label_name')),
-                        @json($typeStatsMonth->pluck('total_sales')));
-                    createDoughnut('typeBookingChartMonth', @json($typeBookingStatsMonth->pluck('label_name')),
-                        @json($typeBookingStatsMonth->pluck('booking_count')));
+            // --- Bar Chart ---
+            const barCtx = document.getElementById('barChart');
+            if (barCtx) {
+                hotelCharts['barChart'] = new Chart(barCtx, {
+                    data: {
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                        datasets: [
+                            { type: 'line', label: 'Revenue', data: monthlyRevenue, borderColor: '#ff6384', yAxisID: 'y-rev', tension: 0.4 },
+                            { type: 'bar', label: 'Bookings', data: monthlyBookings, backgroundColor: '#e2e8f0', yAxisID: 'y-book', borderRadius: 5 }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            'y-rev': { position: 'right', display: false },
+                            'y-book': { position: 'left', display: false },
+                            x: { grid: { display: false } }
+                        }
+                    }
                 });
             }
+
+            // 初期ドーナツ描画
+            createDoughnut('typeChartMonth', @json($typeStatsMonth->pluck('label_name') ?? []), @json($typeStatsMonth->pluck('total_sales') ?? []));
+            createDoughnut('typeBookingChartMonth', @json($typeBookingStatsMonth->pluck('label_name') ?? []), @json($typeBookingStatsMonth->pluck('booking_count') ?? []));
+
+            // タブイベント
+            document.querySelectorAll('button[data-bs-toggle="pill"]').forEach(tab => {
+                tab.addEventListener('shown.bs.tab', (e) => {
+                    if (e.target.id === 'tab-year') {
+                        createDoughnut('typeChartYear', @json($typeStatsYear->pluck('label_name') ?? []), @json($typeStatsYear->pluck('total_sales') ?? []));
+                        createDoughnut('typeBookingChartYear', @json($typeBookingStatsYear->pluck('label_name') ?? []), @json($typeBookingStatsYear->pluck('booking_count') ?? []));
+                    }
+                });
+            });
+
+            // 詳細ボタン開閉時のリサイズ
+            document.getElementById('detailedAnalysis').addEventListener('shown.bs.collapse', function() {
+                if (hotelCharts['kpiTrendChart']) hotelCharts['kpiTrendChart'].resize();
+            });
         });
     </script>
 @endsection

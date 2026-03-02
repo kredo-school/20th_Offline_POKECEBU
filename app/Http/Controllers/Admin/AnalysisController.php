@@ -14,11 +14,8 @@ class AnalysisController extends Controller
 {
  public function hotelAnalysis($hotelId = null)
 {
-    // 1. 月ごとのKPI統計を一括取得 (Bookings, Guests, AvgStay)
-    // Model側でgroupBy('month')してkeyBy('month')したもの
     $monthlyKpis = HotelReservation::getMonthlyKpiStats($hotelId);
 
-    // 2. グラフ用のデータ整形（1月〜12月を0埋めで保証）
     $monthlyBookings = [];
     $monthlyGuests   = [];
     $monthlyAvgStay  = [];
@@ -30,18 +27,15 @@ class AnalysisController extends Controller
         $monthlyAvgStay[]  = $stat ? (float)$stat->avg_stay : 0.0;
     }
 
-    // 3. 売上統計
     $monthlyStats    = HotelReservation::getMonthlyStatsByYear($hotelId);
     $monthlyRevenue  = $monthlyStats['revenue'];
 
-    // 4. その他の統計
     $dayOfWeekData   = HotelReservation::getDayOfWeekComparison($hotelId);
     $typeStatsMonth        = HotelRoomType::getTypeRevenueStats($hotelId, 'month');
     $typeBookingStatsMonth = HotelRoomType::getTypeBookingStats($hotelId, 'month');
     $typeStatsYear         = HotelRoomType::getTypeRevenueStats($hotelId, 'year');
     $typeBookingStatsYear  = HotelRoomType::getTypeBookingStats($hotelId, 'year');
 
-    // --- ヒートマップ用ロジック ---
     $year = now()->year;
     $month = now()->month;
     $daysInMonth = now()->daysInMonth;
@@ -62,8 +56,8 @@ class AnalysisController extends Controller
         })->get();
 
     foreach ($reservations as $res) {
-        $start = \Carbon\Carbon::parse($res->start_at);
-        $end = \Carbon\Carbon::parse($res->end_at);
+        $start = Carbon::parse($res->start_at);
+        $end = Carbon::parse($res->end_at);
         for ($date = $start->copy(); $date->lte($end); $date->addDay()) {
             if ($date->month == $month && $date->year == $year) {
                 $heatmapData[$date->day]++;
@@ -73,7 +67,6 @@ class AnalysisController extends Controller
 
     $hotels = Hotel::all();
 
-    // 画面上部のカードに表示する「今月のKPI」
     $currentKpi = $monthlyKpis->get(now()->month);
 
     return view('adminpage.hotel.analysis-hotel', compact(

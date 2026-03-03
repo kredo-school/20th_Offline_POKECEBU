@@ -54,17 +54,19 @@
                             <div class="post-like">
                                 @if ($hotel->isFavorited())
                                     <form method="POST"
-                                        action="{{ route('user.favorite.destroy', ['hotel', $hotel->id]) }}">
+                                        action="{{ route('user.favorite.destroy', ['hotel', $hotel->id]) }}"
+                                        class="favorite-form">
                                         @csrf
                                         @method('DELETE')
-                                        <button class="btn heat-btn">
+                                        <button type="button" class="btn heat-btn">
                                             <i class="fa-solid fa-heart text-danger"></i>
                                         </button>
                                     </form>
                                 @else
-                                    <form method="POST" action="{{ route('user.favorite.store', ['hotel', $hotel->id]) }}">
+                                    <form method="POST" action="{{ route('user.favorite.store', ['hotel', $hotel->id]) }} "
+                                        class="favorite-form">
                                         @csrf
-                                        <button class="btn heat-btn">
+                                        <button type="button" class="btn heat-btn">
                                             <i class="fa-regular fa-heart"></i>
                                         </button>
                                     </form>
@@ -81,8 +83,7 @@
                                 onerror="this.onerror=null;this.src='{{ asset('images/no-image.png') }}';">
 
                             <div class="rank-body">
-                                <a href="{{ route('user.hotels.detail', $hotel->id) }}"
-                                    class="rank-link">
+                                <a href="{{ route('user.hotels.detail', $hotel->id) }}" class="rank-link">
                                     <h5 class="card-title">{{ $hotel->name }}</h5>
                                 </a>
 
@@ -100,7 +101,7 @@
                                         @if ($halfStar)
                                             <i class="fa-solid fa-star-half-stroke"></i>
                                         @endif
-                                        <span class="text-muted ms-1">{{ number_format  ($rating, 1) }}</span>
+                                        <span class="text-muted ms-1">{{ number_format($rating, 1) }}</span>
                                     </p>
                                 </div>
 
@@ -141,18 +142,20 @@
                             <div class="post-like">
                                 @if ($restaurant->isFavorited())
                                     <form method="POST"
-                                        action="{{ route('user.favorite.destroy', ['restaurant', $restaurant->id]) }}">
+                                        action="{{ route('user.favorite.destroy', ['restaurant', $restaurant->id]) }}"
+                                        class="favorite-form">
                                         @csrf
                                         @method('DELETE')
-                                        <button class="btn heat-btn">
+                                        <button type="button" class="btn heat-btn">
                                             <i class="fa-solid fa-heart text-danger"></i>
                                         </button>
                                     </form>
                                 @else
                                     <form method="POST"
-                                        action="{{ route('user.favorite.store', ['restaurant', $restaurant->id]) }}">
+                                        action="{{ route('user.favorite.store', ['restaurant', $restaurant->id]) }}"
+                                        class="favorite-form">
                                         @csrf
-                                        <button class="btn heat-btn">
+                                        <button type="button" class="btn heat-btn">
                                             <i class="fa-regular fa-heart"></i>
                                         </button>
                                     </form>
@@ -165,8 +168,7 @@
                                 alt="{{ $restaurant->name }}" class="rank-image">
 
                             <div class="rank-body">
-                                <a href="{{ route('user.restaurants.detail', $restaurant->id) }}"
-                                    class="rank-link">
+                                <a href="{{ route('user.restaurants.detail', $restaurant->id) }}" class="rank-link">
                                     <h5 class="card-title">{{ $restaurant->name }}</h5>
                                 </a>
                                 <div class="rank-star">
@@ -182,7 +184,7 @@
                                         @if ($halfStar)
                                             <i class="fa-solid fa-star-half-stroke"></i>
                                         @endif
-                                        <span class="text-muted ms-1">{{ number_format  ($rating, 1) }}</span>
+                                        <span class="text-muted ms-1">{{ number_format($rating, 1) }}</span>
                                     </p>
                                 </div>
                                 <p class="card-city">
@@ -213,9 +215,8 @@
                                     alt="{{ $hotel->name }}" class="rank-image">
 
                                 <div class="rank-body">
-                                    <a href="{{ route('user.hotels.detail', $hotel->id) }}"
-                                    class="rank-link">
-                                    <h5 class="card-title">{{ $hotel->name }}</h5>
+                                    <a href="{{ route('user.hotels.detail', $hotel->id) }}" class="rank-link">
+                                        <h5 class="card-title">{{ $hotel->name }}</h5>
                                     </a>
                                     <div class="rank-star">
                                         @php
@@ -230,7 +231,7 @@
                                             @if ($halfStar)
                                                 <i class="fa-solid fa-star-half-stroke"></i>
                                             @endif
-                                            <span class="text-muted ms-1">{{ number_format  ($rating, 1) }}</span>
+                                            <span class="text-muted ms-1">{{ number_format($rating, 1) }}</span>
                                         </p>
                                     </div>
                                     <p class="card-city">
@@ -272,18 +273,19 @@
                                 <div class="post-like">
 
                                     @if ($post->isliked())
-                                        <form method="POST" action="{{ route('user.like.destroy', $post->id) }}">
+                                        <form method="POST" action="{{ route('user.like.destroy', $post->id) }}"
+                                            class="favorite-form">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="heat-btn">
-
+                                            <button type="button" class="btn heat-btn">
                                                 <i class="fa-solid fa-heart text-danger"></i>
                                             </button>
                                         </form>
                                     @else
-                                        <form method="POST" action="{{ route('user.like.store', $post->id) }}">
+                                        <form method="POST" action="{{ route('user.like.store', $post->id) }}"
+                                            class="favorite-form">
                                             @csrf
-                                            <button type="submit" class="heat-btn">
+                                            <button type="button" class="btn heat-btn">
                                                 <i class="fa-regular fa-heart"></i>
                                             </button>
                                     @endif
@@ -358,11 +360,73 @@
         </div>
 
 
+<script>
+document.addEventListener('DOMContentLoaded', function() {
 
+    document.querySelectorAll('.favorite-form').forEach(form => {
 
+        const button = form.querySelector('button');
+        if (!button) return;
 
+        button.addEventListener('click', function(e) {
 
+            e.preventDefault();
+            e.stopPropagation();
 
+            const token = form.querySelector('input[name="_token"]').value;
+            const methodInput = form.querySelector('input[name="_method"]');
+            const isDelete = methodInput && methodInput.value === 'DELETE';
+
+            fetch(form.action, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': token,
+                    'Accept': 'application/json'
+                },
+                body: new URLSearchParams({
+                    _method: isDelete ? 'DELETE' : 'POST'
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+
+                const icon = form.querySelector('i');
+
+                if (data.status === 'added') {
+
+                    icon.classList.remove('fa-regular');
+                    icon.classList.add('fa-solid','text-danger');
+
+                    if (!methodInput) {
+                        const input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = '_method';
+                        input.value = 'DELETE';
+                        form.appendChild(input);
+                    }
+
+                } else if (data.status === 'removed') {
+
+                    icon.classList.remove('fa-solid','text-danger');
+                    icon.classList.add('fa-regular');
+
+                    const m = form.querySelector('input[name="_method"]');
+                    if (m) m.remove();
+                }
+
+            })
+            .catch(error => {
+                console.error(error);
+                alert('通信エラー');
+            });
+
+        });
+
+    });
+
+});
+</script>
+        
 
         {{-- CSS --}}
         <style>

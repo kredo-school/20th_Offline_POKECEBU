@@ -39,7 +39,9 @@ class FavoriteController extends Controller
             'target_type'   => $type,
             'target_id'     => $id
        ]);
-       return back();
+       return response()->json([
+         'status' => 'added'
+       ]);
     }
 
     // お気に入り解除
@@ -49,6 +51,8 @@ class FavoriteController extends Controller
             'target_type'   => $type,
             'target_id'     => $id
        ])->delete();
-       return back();
+       return response()->json([
+        'status' => 'removed'
+       ]);
     }
 }

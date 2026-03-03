@@ -21,7 +21,7 @@
             {{-- 1. Sidebar --}}
             <div class="col-lg-2">
                 <div class="sticky-top" style="top: 20px;">
-                    <h5 class="fw-bold mb-4 ps-2">Admin Console</h5>
+                    <h5 class="fw-bold mb-4 ps-2 text-dark">Admin Console</h5>
                     <a href="{{ route('admin.analysis.hotel') }}" class="btn btn-sidebar shadow-sm">
                         <i class="fa-solid fa-hotel me-2"></i>Hotel
                     </a>
@@ -46,12 +46,13 @@
 
             {{-- 2. Main Content --}}
             <div class="col-lg-10">
+                {{-- KPI Cards --}}
                 <div class="row g-4 mb-4">
                     <div class="col-md-4">
                         <div class="card kpi-card shadow-sm p-4">
                             <p class="text-muted small fw-bold mb-1">RESERVATIONS</p>
                             <h2 class="fw-black m-0">{{ number_format($kpi->total_bookings ?? 0) }}</h2>
-                            <span class="badge bg-light text-muted mt-2 border">This Month</span>
+                            <span class="badge bg-light text-muted mt-2 border">Current Month</span>
                         </div>
                     </div>
                     <div class="col-md-4">
@@ -102,17 +103,31 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="row">
-                    <div class="col-md-7">
-                        <div class="analysis-card shadow-sm">
+                {{-- Daily Reservations Chart (NEW Section) --}}
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="analysis-card shadow-sm h-100">
                             <h6 class="chart-title"><i class="fa-solid fa-clock me-2 text-warning"></i>Peak Hours (Arrivals)</h6>
                             <div class="chart-wrapper mt-3"><canvas id="hourlyPeakChart"></canvas></div>
                         </div>
                     </div>
-                    <div class="col-md-5">
+                </div>
+
+
+                <div class="row">
+                    <div class="col-md-7">
                         <div class="analysis-card shadow-sm">
-                            <h6 class="chart-title"><i class="fa-solid fa-chart-line me-2 text-warning"></i>Monthly Growth</h6>
+                            <h6 class="chart-title">
+                                <i class="fa-solid fa-calendar-day me-2 text-warning"></i>Daily Reservation Count ({{ now()->format('F Y') }})
+                            </h6>
+                            <div class="chart-wrapper"style="height: 350px;">
+                                <canvas id="dailyStatsChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <div class="analysis-card shadow-sm h-100">
+                            <h6 class="chart-title"><i class="fa-solid fa-chart-line me-2 text-warning"></i>Monthly Booking Trend</h6>
                             <div class="chart-wrapper mt-3"><canvas id="monthlyTrendChart"></canvas></div>
                         </div>
                     </div>
@@ -125,11 +140,38 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const monthlyBookings = @json($monthlyBookings);
-        const hourlyStats = @json($hourlyStats);
-        const labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        // --- 1. Daily Reservations Bar Chart ---
+        const dailyDataRaw = @json($dailyData);
+        const dailyLabels = Object.keys(dailyDataRaw);
+        const dailyValues = Object.values(dailyDataRaw);
 
-        // 1. Hourly Chart
+        new Chart(document.getElementById('dailyStatsChart'), {
+            type: 'bar',
+            data: {
+                labels: dailyLabels.map(day => day + '日'),
+                datasets: [{
+                    label: 'Reservations',
+                    data: dailyValues,
+                    backgroundColor: '#f59e0b',
+                    borderRadius: 6,
+                    hoverBackgroundColor: '#ea580c'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: { beginAtZero: true, ticks: { precision: 0 } },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+
+        // --- 2. Hourly Line Chart ---
+        const hourlyStats = @json($hourlyStats);
         new Chart(document.getElementById('hourlyPeakChart'), {
             type: 'line',
             data: {
@@ -140,25 +182,36 @@
                     borderColor: '#f59e0b',
                     backgroundColor: 'rgba(245, 158, 11, 0.1)',
                     fill: true,
-                    tension: 0.4
+                    tension: 0.4,
+                    pointRadius: 3
                 }]
             },
-            options: { responsive: true, maintainAspectRatio: false }
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } }
+            }
         });
 
-        // 2. Monthly Trend Chart
+        // --- 3. Monthly Bar Chart ---
+        const monthlyBookings = @json($monthlyBookings);
+        const monthLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
         new Chart(document.getElementById('monthlyTrendChart'), {
             type: 'bar',
             data: {
-                labels: labels,
+                labels: monthLabels,
                 datasets: [{
                     label: 'Bookings',
                     data: monthlyBookings,
                     backgroundColor: '#fbbf24',
-                    borderRadius: 5
+                    borderRadius: 4
                 }]
             },
-            options: { responsive: true, maintainAspectRatio: false }
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } }
+            }
         });
     });
 </script>

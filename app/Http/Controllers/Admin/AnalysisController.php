@@ -139,53 +139,50 @@ public function userAnalysis()
         'hotelId', 'hotels', 'heatmapData'
     ));
 }
-
-public function restaurantAnalysis($restaurantId = null)
-{
-    // 1. 今月のKPI（上部カード用）
-    $kpi = RestaurantReservation::getKpiStats($restaurantId); 
-    $avgStayTime = RestaurantReservation::getAverageStayTime($restaurantId); 
-
-    // 2. 1年分の月次KPI（表と詳細グラフ用）
-    $monthlyKpis = RestaurantReservation::getMonthlyKpiStats($restaurantId);
+    public function restaurantAnalysis($restaurantId = null)
+    {
+        // 今月のKPI、平均滞在時間の取得
+        $kpi = RestaurantReservation::getKpiStats($restaurantId); 
+        $avgStayTime = RestaurantReservation::getAverageStayTime($restaurantId); 
     
-    $monthlyBookings = [];
-    $monthlyGuests   = [];
-    $monthlyAvgStay  = [];
+        // 月次の統計データ（表用）
+        $monthlyKpis = RestaurantReservation::getMonthlyKpiStats($restaurantId);
+        $monthlyBookings = []; $monthlyGuests = []; $monthlyAvgStay = [];
+        for ($m = 1; $m <= 12; $m++) {
+            $stat = $monthlyKpis->get($m);
+            $monthlyBookings[] = $stat ? $stat->total_bookings : 0;
+            $monthlyGuests[]   = $stat ? $stat->total_guests : 0;
+            $monthlyAvgStay[]  = $stat ? (float)$stat->avg_stay : 0.0;
+        }
     
-    for ($m = 1; $m <= 12; $m++) {
-        $stat = $monthlyKpis->get($m);
-        $monthlyBookings[] = $stat ? $stat->total_bookings : 0;
-        $monthlyGuests[]   = $stat ? $stat->total_guests : 0;
-        $monthlyAvgStay[]  = $stat ? (float)$stat->avg_stay : 0.0;
+        // 時間帯別の統計データ
+        $hourlyStats = RestaurantReservation::getHourlyStats($restaurantId);
+        
+        // --- 日次データ作成 (今月のカレンダー通り 1日〜末日まで) ---
+        $year = now()->year;
+        $month = now()->month;
+        $daysInMonth = now()->daysInMonth;
+        // 1日から末日までを 0 で初期化した配列を作成
+        $dailyData = array_fill(1, $daysInMonth, 0);
+        
+        $reservations = RestaurantReservation::whereMonth('reserved_at', $month)
+            ->whereYear('reserved_at', $year)
+            ->when($restaurantId, function($query) use ($restaurantId) {
+                return $query->where('restaurant_id', $restaurantId);
+            })->get();
+    
+        foreach ($reservations as $res) {
+            $day = Carbon::parse($res->reserved_at)->day;
+            if (isset($dailyData[$day])) {
+                $dailyData[$day]++;
+            }
+        }
+    
+        $restaurants = Restaurant::all();
+    
+        return view('adminpage.analysis.restaurant', compact(
+            'kpi', 'avgStayTime', 'monthlyBookings', 'monthlyGuests', 
+            'monthlyAvgStay', 'dailyData', 'restaurantId', 'restaurants', 'hourlyStats'
+        ));
     }
-
-    // 3. その他の統計
-    $hourlyStats = RestaurantReservation::getHourlyStats($restaurantId);
-    
-    // 日次データ（折れ線グラフ用）
-    $year = now()->year;
-    $month = now()->month;
-    $daysInMonth = now()->daysInMonth;
-    $dailyData = array_fill(1, $daysInMonth, 0);
-    
-    $reservations = RestaurantReservation::whereMonth('reserved_at', $month)
-        ->whereYear('reserved_at', $year)
-        ->when($restaurantId, function($query) use ($restaurantId) {
-            return $query->where('restaurant_id', $restaurantId);
-        })->get();
-
-    foreach ($reservations as $res) {
-        $day = Carbon::parse($res->reserved_at)->day;
-        $dailyData[$day]++;
-    }
-
-    $restaurants = Restaurant::all();
-    $currentKpi = $monthlyKpis->get(now()->month);
-
-    return view('adminpage.analysis.restaurant', compact(
-        'kpi', 'avgStayTime', 'monthlyBookings', 'monthlyGuests', 'monthlyAvgStay', 
-        'dailyData', 'restaurantId', 'restaurants', 'hourlyStats', 'currentKpi'
-    ));
-}
 }

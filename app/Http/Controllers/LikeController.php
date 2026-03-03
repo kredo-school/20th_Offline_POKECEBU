@@ -19,8 +19,9 @@ class LikeController extends Controller
        $this->like->post_id =$post_id;
        $this->like->save();
 
-       return redirect()->back();
+       return response()->json(['status' => 'added']);
     }
+    
 
     public function destroy($post_id) {
        $this->like
@@ -28,6 +29,6 @@ class LikeController extends Controller
             ->where('post_id',$post_id)
             ->delete();
         
-        return redirect()->back();
+        return response()->json(['status' => 'removed']);
     }
 }

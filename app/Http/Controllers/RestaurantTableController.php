@@ -6,8 +6,10 @@ use App\Models\Category;
 use App\Models\RestaurantTable;
 use App\Models\RestaurantTableType;
 use App\Models\Status;
+use App\Models\TableImage;
 use App\Models\Type;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class RestaurantTableController extends Controller
 {
@@ -30,8 +32,10 @@ class RestaurantTableController extends Controller
         $this->target_all = config('app.target_type_all');
     }
     
-    public function index($restaurant_id)
+    public function tableOverview()
     {
+        $restaurant_id = Auth::user()->id;
+        
         $all_types = $this->type->where('target_type', $this->target_restaurant)->get();
         $all_categories = $this->category->whereIn('target_type', [$this->target_restaurant, $this->target_all])->get();
         $all_statuses = $this->status->whereIn('target_type', [$this->target_restaurant, $this->target_all])->get();
@@ -41,20 +45,22 @@ class RestaurantTableController extends Controller
             ->withCount([
                 'tables as reserved_cnt' => fn($query) => $query->where('status_id', 3),
                 'tables as available_cnt' => fn($query) => $query->where('status_id', 1),
-                'tables as tmpUnavailable_cnt' => fn($query) => $query->where('status_id', 2),
-                'tables as unavailable_cnt' => fn($query) => $query->where('status_id', 4),
+                'tables as tmpUnavailable_cnt' => fn($query) => $query->where('status_id', 4),
+                'tables as unavailable_cnt' => fn($query) => $query->where('status_id', 2),
             ])
             ->with('type')
             ->get();
         
-        $all_tables = $this->restaurantTable->where('restaurant_id', $restaurant_id)->with(['type', 'status', 'categories'])->get();
+        $all_tables = $this->restaurantTable->where('restaurant_id', $restaurant_id)->orderBy('table_number')->with(['type', 'status', 'categories'])->get();
 
         return view('staffpage.tabletype.tabletype',
             compact('all_types', 'all_categories', 'all_statuses', 'all_table_types', 'all_tables'));
     }
 
-    public function storeTableType(Request $request, int $restaurant_id)
+    public function storeTableType(Request $request)
     {
+        $restaurant_id = Auth::user()->id;
+
         $request->validate(
             [
                 'table_type' => 'required',
@@ -113,7 +119,8 @@ class RestaurantTableController extends Controller
         return redirect()->back();
     }
 
-    public function destroyTableType($id) {
+    public function destroyTableType($id) 
+    {
         $table_type = $this->restaurantTableType->findOrFail($id);
 
         $table_type->Delete();
@@ -121,13 +128,28 @@ class RestaurantTableController extends Controller
         return redirect()->back();
     }
 
-    public function storeTable(Request $request, int $restaurant_id)
+    public function createTable() 
     {
+        $restaurant_id = Auth::user()->id;
+
+        $all_categories = $this->category->whereIn('target_type', [$this->target_restaurant, $this->target_all])->get();
+        $all_table_types = $this->restaurantTableType->where('restaurant_id', $restaurant_id)->with('type')->get();
+        
+        return view('staffpage.tabletype.table-create', compact('all_categories', 'all_table_types'));
+    }
+
+    public function storeTable(Request $request)
+    {
+        $restaurant_id = Auth::user()->id;
+
         $request->validate([
             'table_num' => 'required',
             'type_id' => 'required',
             'guests' => 'required',
-            'charges' => 'required' 
+            'charges' => 'required',
+            'detail' => 'required',
+
+            'images.*' => 'nullable|mimes:jpeg,jpg,png,gif|max:1048'
         ]);
 
         $this->restaurantTable->restaurant_id = $restaurant_id;
@@ -135,17 +157,40 @@ class RestaurantTableController extends Controller
         $this->restaurantTable->type_id = $request->type_id;
         $this->restaurantTable->max_guests = $request->guests;
         $this->restaurantTable->charges = $request->charges;
-        $this->restaurantTable->status_id = 1; // priparing
+        $this->restaurantTable->detail = $request->detail;
+        $this->restaurantTable->status_id = 4; // preparing
 
         $this->restaurantTable->save();
 
-        foreach ($request->category as $category_id) {
-            $category_table[] = ['category_id' => $category_id];
+        if ($request->filled('category')) {
+            $this->restaurantTable->categories()->attach($request->category);
         }
 
-        $this->restaurantTable->categories()->attach($category_table);
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $imageFile) {
+                $base64 = 'data:image/' . $imageFile->extension() . ';base64,' .
+                          base64_encode(file_get_contents($imageFile));
 
-        return redirect()->back();
+                TableImage::create([
+                    'table_id' => $this->restaurantTable->id,
+                    'image'   => $base64
+                ]);
+            }
+        }
+
+        return redirect()->route('restaurant.tableOverview');
+    }
+
+    public function editTable($id) 
+    {
+        $restaurant_id = Auth::user()->id;
+
+        $table = $this->restaurantTable->findOrFail($id);
+
+        $all_categories = $this->category->whereIn('target_type', [$this->target_restaurant, $this->target_all])->get();
+        $all_table_types = $this->restaurantTableType->where('restaurant_id', $restaurant_id)->with('type')->get();
+        
+        return view('staffpage.tabletype.table-update', compact('table', 'all_categories', 'all_table_types'));
     }
 
     public function updateTable(Request $request, string $id)
@@ -154,7 +199,10 @@ class RestaurantTableController extends Controller
             'table_num' => 'required',
             'type_id' => 'required',
             'guests' => 'required',
-            'charges' => 'required' 
+            'charges' => 'required',
+            'detail' => 'required',
+
+            'images.*' => 'nullable|mimes:jpeg,jpg,png,gif|max:1048'
         ]);
 
         $table = $this->restaurantTable->findOrFail($id);
@@ -163,13 +211,30 @@ class RestaurantTableController extends Controller
         $table->type_id = $request->type_id;
         $table->max_guests = $request->guests;
         $table->charges = $request->charges;
+        $table->detail = $request->detail;
 
         $table->save();
 
-        return redirect()->back();
+        $table->categories()->sync($request->category ?? []);
+    
+        if ($request->filled('delete_images')) {
+            $table->images()->whereIn('id', $request->delete_images)->delete();
+        }
+
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $uploadedImage) {
+                $table->images()->create([
+                    'image' => 'data:image/' . $uploadedImage->extension() . ';base64,' 
+                                . base64_encode(file_get_contents($uploadedImage))
+                ]);
+            }
+        }
+
+        return redirect()->back()->with('success', 'Table updated successfully.');
     }
 
-    public function destroyTable($id) {
+    public function destroyTable($id) 
+    {
         $table = $this->restaurantTable->findOrFail($id);
         
         $table->Delete();
@@ -189,5 +254,12 @@ class RestaurantTableController extends Controller
         $table->save();
 
         return redirect()->back();
+    }
+
+    public function viewTable($id) 
+    {
+        $table = $this->restaurantTable->with(['categories', 'type', 'status'])->findOrFail($id);
+        
+        return view('staffpage.tabletype.table-detail', compact('table'));
     }
 }

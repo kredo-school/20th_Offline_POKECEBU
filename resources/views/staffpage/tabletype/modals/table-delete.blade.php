@@ -17,7 +17,7 @@
                             Table Number: {{ $table->table_number }}<br>
                             Table Type: {{ $table->type->name }}<br>
                             Max Guests: {{ $table->max_guests }}<br>
-                            Charges: {{ $table->charges }}<br>
+                            Charges: ₱{{ number_format($table->charges) }}<br>
                         </p>
 
                         <div class="text-end">
@@ -32,7 +32,7 @@
                             Table Number: {{ $table->table_number }}<br>
                             Table Type: {{ $table->type->name }}<br>
                             Max Guests: {{ $table->max_guests }}<br>
-                            Charges: {{ $table->charges }}<br>
+                            Charges: ₱{{ number_format($table->charges) }}<br>
                         </p>
 
                         <div class="modal-footer">

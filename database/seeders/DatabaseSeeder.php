@@ -83,7 +83,10 @@ class DatabaseSeeder extends Seeder
         $familyTypeId = DB::table('types')->insertGetId(['name' => 'Family Table', 'target_type' => 'restaurant', 'created_at' => $now]);
 
         $availableStatusId = DB::table('statuses')->insertGetId(['name' => 'Available', 'target_type' => 'all', 'created_at' => $now]);
+        $unavailableStatusId = DB::table('statuses')->insertGetId(['name' => 'Unavailable', 'target_type' => 'all', 'created_at' => $now]);
         $bookedStatusId = DB::table('statuses')->insertGetId(['name' => 'Booked', 'target_type' => 'all', 'created_at' => $now]);
+        $preparingStatusId = DB::table('statuses')->insertGetId(['name' => 'Preparing', 'target_type' => 'all', 'created_at' => $now]);
+        $cancelledStatusId = DB::table('statuses')->insertGetId(['name' => 'Cancelled', 'target_type' => 'all', 'created_at' => $now]);
 
         $categoryId = DB::table('categories')->insertGetId(['name' => 'Free Wi-Fi', 'target_type' => 'all', 'created_at' => $now]);
 
@@ -287,6 +290,45 @@ class DatabaseSeeder extends Seeder
                 'soft_order' => $f,
                 'created_at' => $now,
                 'updated_at' => $now,
+            ]);
+        }
+
+                /*
+        |--------------------------------------------------------------------------
+        | 7. 一般ユーザー (role_id: 1) を100名追加生成
+        |--------------------------------------------------------------------------
+        | 分析画面でグラフが表示されるよう、作成日を過去12ヶ月間でバラけさせる
+        */
+        for ($u = 1; $u <= 100; $u++) {
+            // 過去0ヶ月〜11ヶ月前までのランダムな日時を生成
+            $randomDate = Carbon::now()
+                ->subMonths(rand(0, 11))
+                ->subDays(rand(0, 28))
+                ->subHours(rand(0, 23))
+                ->subMinutes(rand(0, 59));
+        
+            $uId = DB::table('users')->insertGetId([
+                'name' => $faker->userName,
+                'email' => "user_{$u}_{$faker->unique()->safeEmail}",
+                'password' => Hash::make('12345678'),
+                'role_id' => 1, // 一般ユーザー
+                'created_at' => $randomDate,
+                'updated_at' => $randomDate,
+            ]);
+        
+            DB::table('user_details')->insert([
+                'first_name' => $faker->firstName,
+                'last_name' => $faker->lastName,
+                'birthday' => $faker->date('Y-m-d', '2005-01-01'),
+                'phone' => $faker->phoneNumber,
+                'street_address' => $faker->streetAddress,
+                'city' => $faker->city,
+                'state' => $faker->state,
+                'postal_code' => $faker->postcode,
+                'avatar' => 'default-avatar.png',
+                'user_id' => $uId,
+                'created_at' => $randomDate,
+                'updated_at' => $randomDate,
             ]);
         }
     }

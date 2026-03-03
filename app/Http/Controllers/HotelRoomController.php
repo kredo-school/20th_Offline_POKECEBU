@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\HotelRoom;
 use App\Models\HotelRoomType;
+use App\Models\RoomImage;
 use App\Models\Status;
 use App\Models\Type;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class HotelRoomController extends Controller
 {
@@ -30,9 +32,10 @@ class HotelRoomController extends Controller
         $this->target_all = config('app.target_type_all');
     }
     
-    public function index($hotel_id)
+    public function roomOverview()
     {
-        $all_types = $this->type->where('target_type', $this->target_hotel)->get();
+        $hotel_id = Auth::user()->id;
+        $all_types = $this->type->whereIn('target_type', [$this->target_hotel, $this->target_all])->get();
         $all_categories = $this->category->whereIn('target_type', [$this->target_hotel, $this->target_all])->get();
         $all_statuses = $this->status->whereIn('target_type', [$this->target_hotel, $this->target_all])->get();
 
@@ -41,20 +44,22 @@ class HotelRoomController extends Controller
             ->withCount([
                 'rooms as reserved_cnt' => fn($query) => $query->where('status_id', 3),
                 'rooms as available_cnt' => fn($query) => $query->where('status_id', 1),
-                'rooms as tmpUnavailable_cnt' => fn($query) => $query->where('status_id', 2),
-                'rooms as unavailable_cnt' => fn($query) => $query->where('status_id', 4),
+                'rooms as tmpUnavailable_cnt' => fn($query) => $query->where('status_id', 4),
+                'rooms as unavailable_cnt' => fn($query) => $query->where('status_id', 2),
             ])
             ->with('type')
             ->get();
         
-        $all_rooms = $this->hotelRoom->where('hotel_id', $hotel_id)->with(['type', 'status', 'categories'])->get();
+        $all_rooms = $this->hotelRoom->where('hotel_id', $hotel_id)->orderBy('room_number')->with(['type', 'status', 'categories'])->get();
 
         return view('staffpage.roomtype.roomtype',
             compact('all_types', 'all_categories', 'all_statuses', 'all_room_types', 'all_rooms'));
     }
 
-    public function storeRoomType(Request $request, int $hotel_id)
+    public function storeRoomType(Request $request)
     {
+        $hotel_id = Auth::user()->id;
+
         $request->validate(
             [
                 'room_type' => 'required',
@@ -113,7 +118,8 @@ class HotelRoomController extends Controller
         return redirect()->back();
     }
 
-    public function destroyRoomType($id) {
+    public function destroyRoomType($id) 
+    {
         $room_type = $this->hotelRoomType->findOrFail($id);
 
         $room_type->Delete();
@@ -121,14 +127,29 @@ class HotelRoomController extends Controller
         return redirect()->back();
     }
 
-    public function storeRoom(Request $request, int $hotel_id)
+    public function createRoom() 
     {
+        $hotel_id = Auth::user()->id;
+
+        $all_categories = $this->category->whereIn('target_type', [$this->target_hotel, $this->target_all])->get();
+        $all_room_types = $this->hotelRoomType->where('hotel_id', $hotel_id)->with('type')->get();
+        
+        return view('staffpage.roomtype.room-create', compact('all_categories', 'all_room_types'));
+    }
+
+    public function storeRoom(Request $request)
+    {
+        $hotel_id = Auth::user()->id;
+
         $request->validate([
             'room_num' => 'required',
             'type_id' => 'required',
             'floor_num' => 'required',
             'guests' => 'required',
-            'charges' => 'required' 
+            'charges' => 'required', 
+            'detail' => 'required',
+
+            'images.*' => 'nullable|mimes:jpeg,jpg,png,gif|max:1048'
         ]);
 
         $this->hotelRoom->hotel_id = $hotel_id;
@@ -137,17 +158,40 @@ class HotelRoomController extends Controller
         $this->hotelRoom->floor_number = $request->floor_num;
         $this->hotelRoom->max_guests = $request->guests;
         $this->hotelRoom->charges = $request->charges;
-        $this->hotelRoom->status_id = 1; // priparing
+        $this->hotelRoom->detail = $request->detail;
+        $this->hotelRoom->status_id = 4; // preparing
 
         $this->hotelRoom->save();
 
-        foreach ($request->category as $category_id) {
-            $category_room[] = ['category_id' => $category_id];
+        if ($request->filled('category')) {
+            $this->hotelRoom->categories()->attach($request->category);
         }
 
-        $this->hotelRoom->categories()->attach($category_room);
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $imageFile) {
+                $base64 = 'data:image/' . $imageFile->extension() . ';base64,' .
+                          base64_encode(file_get_contents($imageFile));
 
-        return redirect()->back();
+                RoomImage::create([
+                    'room_id' => $this->hotelRoom->id,
+                    'image'   => $base64
+                ]);
+            }
+        }
+
+        return redirect()->route('hotel.roomOverview');
+    }
+
+    public function editRoom($id) 
+    {
+        $hotel_id = Auth::user()->id;
+
+        $room = $this->hotelRoom->findOrFail($id);
+
+        $all_categories = $this->category->whereIn('target_type', [$this->target_hotel, $this->target_all])->get();
+        $all_room_types = $this->hotelRoomType->where('hotel_id', $hotel_id)->with('type')->get();
+        
+        return view('staffpage.roomtype.room-update', compact('room', 'all_categories', 'all_room_types'));
     }
 
     public function updateRoom(Request $request, string $id)
@@ -157,7 +201,10 @@ class HotelRoomController extends Controller
             'type_id' => 'required',
             'floor_num' => 'required',
             'guests' => 'required',
-            'charges' => 'required' 
+            'charges' => 'required',
+            'detail' => 'required',
+
+            'images.*' => 'nullable|mimes:jpeg,jpg,png,gif|max:1048'
         ]);
 
         $room = $this->hotelRoom->findOrFail($id);
@@ -167,13 +214,30 @@ class HotelRoomController extends Controller
         $room->floor_number = $request->floor_num;
         $room->max_guests = $request->guests;
         $room->charges = $request->charges;
+        $room->detail = $request->detail;
 
         $room->save();
+    
+        $room->categories()->sync($request->category ?? []);
+    
+        if ($request->filled('delete_images')) {
+            $room->images()->whereIn('id', $request->delete_images)->delete();
+        }
 
-        return redirect()->back();
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $uploadedImage) {
+                $room->images()->create([
+                    'image' => 'data:image/' . $uploadedImage->extension() . ';base64,' 
+                                . base64_encode(file_get_contents($uploadedImage))
+                ]);
+            }
+        }
+
+        return redirect()->back()->with('success', 'Room updated successfully.');
     }
 
-    public function destroyRoom($id) {
+    public function destroyRoom($id) 
+    {
         $room = $this->hotelRoom->findOrFail($id);
         
         $room->Delete();
@@ -181,7 +245,8 @@ class HotelRoomController extends Controller
         return redirect()->back();
     }
 
-    public function updateStatus(Request $request, string $id) {
+    public function updateStatus(Request $request, string $id) 
+    {
         $request->validate([
             'status' => 'required'
         ]);
@@ -193,5 +258,12 @@ class HotelRoomController extends Controller
         $room->save();
 
         return redirect()->back();
+    }
+
+    public function viewRoom($id) 
+    {
+        $room = $this->hotelRoom->with(['categories', 'type', 'status'])->findOrFail($id);
+        
+        return view('staffpage.roomtype.room-detail', compact('room'));
     }
 }

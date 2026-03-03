@@ -1,45 +1,32 @@
-.restaurant-images,
-.table-images {
-  display: flex;
-  gap: 12px;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  padding-bottom: 8px;
-}
+ .restaurant-images, .table-images {
+        display: flex;
+        overflow-x: auto;
+        gap: 15px;
+        padding-bottom: 10px;
+    }
+    .restaurant-images img, .table-images img {
+        height: 280px;
+        width: 400px;
+        object-fit: cover;
+        border-radius: 15px;
+        flex-shrink: 0;
+    }
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-.hide-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-.hide-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
+    /* お気に入りボタンのホバー演出 */
+    .favorite-btn {
+        font-size: 1.5rem;
+        transition: transform 0.2s ease;
+        padding: 0;
+    }
+    .favorite-btn:hover { transform: scale(1.1); }
 
-.restaurant-images img,
-.table-images img {
-  width: 280px;
-  height: 180px;
-  object-fit: cover;
-  border-radius: 12px;
-  scroll-snap-align: start;
-  flex-shrink: 0;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-}
-
-.star-rating {
-    font-size: 1.2rem;
-    letter-spacing: 2px;
-}
-
-.table-card {
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.table-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
-}
-
-.ls-1 {
-    letter-spacing: 1px;
-}
+    /* テーブルカードのホバー演出 */
+    .table-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .table-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
+    }

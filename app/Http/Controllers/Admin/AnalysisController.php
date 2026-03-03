@@ -8,17 +8,77 @@ use App\Models\HotelReservation;
 use App\Models\HotelRoomType;
 use App\Models\Restaurant;
 use App\Models\RestaurantReservation;
+use App\Models\User;
 use Carbon\Carbon;
 
 class AnalysisController extends Controller
 {
+public function userAnalysis()
+{
+    // 1. 全一般ユーザー数 (Role 1)
+    $totalUsers = User::where('role_id', 1)->count();
+    
+    // 2. 今月の新規登録者数
+    $newThisMonth = User::where('role_id', 1)
+        ->whereMonth('created_at', now()->month)
+        ->whereYear('created_at', now()->year)
+        ->count();
+
+    // 3. 過去12ヶ月の登録推移
+    $monthlyUserStats = collect();
+    $monthLabels = [];
+    $growthData = [];
+
+    $rawStats = User::where('role_id', 1)
+        ->selectRaw("DATE_FORMAT(created_at, '%Y-%m') as month_key, COUNT(*) as signups")
+        ->where('created_at', '>=', now()->subMonths(11)->startOfMonth())
+        ->groupBy('month_key')
+        ->orderBy('month_key')
+        ->get()
+        ->keyBy('month_key');
+
+    for ($i = 11; $i >= 0; $i--) {
+        $month = now()->subMonths($i);
+        $keyMonth = $month->format('Y-m');
+        $count = $rawStats->get($keyMonth)->signups ?? 0;
+
+        $monthlyUserStats->push((object)[
+            'month_name' => $month->format('M Y'),
+            'signups' => $count
+        ]);
+        $monthLabels[] = $month->format('M');
+        $growthData[] = $count;
+    }
+
+    // 4. 【新指標】予約アクティビティ率 (モデルのリレーションを利用)
+    // hotelReservations または restaurantReservations を持っているユーザーを抽出
+    $activeUsersCount = User::where('role_id', 1)
+        ->where(function($query) {
+            $query->has('hotelReservations')
+                  ->orHas('restaurantReservations');
+        })->count();
+
+    $inactiveUsersCount = max(0, $totalUsers - $activeUsersCount);
+
+    $activityData = [
+        'active' => $activeUsersCount,
+        'inactive' => $inactiveUsersCount
+    ];
+
+    return view('adminpage.analysis.user', compact(
+        'totalUsers', 
+        'newThisMonth', 
+        'growthData', 
+        'monthLabels', 
+        'monthlyUserStats',
+        'activityData'
+    ));
+}
+
  public function hotelAnalysis($hotelId = null)
 {
-    // 1. 月ごとのKPI統計を一括取得 (Bookings, Guests, AvgStay)
-    // Model側でgroupBy('month')してkeyBy('month')したもの
     $monthlyKpis = HotelReservation::getMonthlyKpiStats($hotelId);
 
-    // 2. グラフ用のデータ整形（1月〜12月を0埋めで保証）
     $monthlyBookings = [];
     $monthlyGuests   = [];
     $monthlyAvgStay  = [];
@@ -30,18 +90,15 @@ class AnalysisController extends Controller
         $monthlyAvgStay[]  = $stat ? (float)$stat->avg_stay : 0.0;
     }
 
-    // 3. 売上統計
     $monthlyStats    = HotelReservation::getMonthlyStatsByYear($hotelId);
     $monthlyRevenue  = $monthlyStats['revenue'];
 
-    // 4. その他の統計
     $dayOfWeekData   = HotelReservation::getDayOfWeekComparison($hotelId);
     $typeStatsMonth        = HotelRoomType::getTypeRevenueStats($hotelId, 'month');
     $typeBookingStatsMonth = HotelRoomType::getTypeBookingStats($hotelId, 'month');
     $typeStatsYear         = HotelRoomType::getTypeRevenueStats($hotelId, 'year');
     $typeBookingStatsYear  = HotelRoomType::getTypeBookingStats($hotelId, 'year');
 
-    // --- ヒートマップ用ロジック ---
     $year = now()->year;
     $month = now()->month;
     $daysInMonth = now()->daysInMonth;
@@ -62,8 +119,8 @@ class AnalysisController extends Controller
         })->get();
 
     foreach ($reservations as $res) {
-        $start = \Carbon\Carbon::parse($res->start_at);
-        $end = \Carbon\Carbon::parse($res->end_at);
+        $start = Carbon::parse($res->start_at);
+        $end = Carbon::parse($res->end_at);
         for ($date = $start->copy(); $date->lte($end); $date->addDay()) {
             if ($date->month == $month && $date->year == $year) {
                 $heatmapData[$date->day]++;
@@ -73,10 +130,9 @@ class AnalysisController extends Controller
 
     $hotels = Hotel::all();
 
-    // 画面上部のカードに表示する「今月のKPI」
     $currentKpi = $monthlyKpis->get(now()->month);
 
-    return view('adminpage.hotel.analysis-hotel', compact(
+    return view('adminpage.analysis.hotel', compact(
         'currentKpi', 'monthlyBookings', 'monthlyRevenue', 'monthlyGuests', 'monthlyAvgStay',
         'dayOfWeekData', 'typeStatsMonth', 'typeBookingStatsMonth',
         'typeStatsYear', 'typeBookingStatsYear',
@@ -127,7 +183,7 @@ public function restaurantAnalysis($restaurantId = null)
     $restaurants = Restaurant::all();
     $currentKpi = $monthlyKpis->get(now()->month);
 
-    return view('adminpage.restaurant.analysis-restaurant', compact(
+    return view('adminpage.analysis.restaurant', compact(
         'kpi', 'avgStayTime', 'monthlyBookings', 'monthlyGuests', 'monthlyAvgStay', 
         'dailyData', 'restaurantId', 'restaurants', 'hourlyStats', 'currentKpi'
     ));

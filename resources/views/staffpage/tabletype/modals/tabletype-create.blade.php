@@ -8,7 +8,7 @@
             </div>
             
             <div class="modal-body">
-                <form action="{{ route('restaurant.storeTableType', Auth::user()->id) }}" method="post">
+                <form action="{{ route('restaurant.storeTableType') }}" method="post">
                     @csrf
 
                     <div class="row mb-3">

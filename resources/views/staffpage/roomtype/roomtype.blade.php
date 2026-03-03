@@ -100,7 +100,7 @@
             <h2>Room Management</h2>
         </div>
         <div class="mb-2 text-end text-white">
-                    <a href="{{ route('hotel.createRoom', Auth::user()->id) }}" class="btn btn-dark">
+                    <a href="{{ route('hotel.createRoom') }}" class="btn btn-dark">
                         <i class="fa-solid fa-plus"></i> Add Room
                     </a>
                 </div>
@@ -165,12 +165,12 @@
                             </td>
                             <td>
                                 <div class="text-end">
-                                    <a href="{{ route('hotel.viewRoom', [$room->id, Auth::user()->id]) }}" class="btn btn-sm btn-outline-secondary"><i class="fa-solid fa-eye"></i></a>
+                                    <a href="{{ route('hotel.viewRoom', $room->id) }}" class="btn btn-sm btn-outline-secondary"><i class="fa-solid fa-eye"></i></a>
                                     
                                     @if ($room->status_id == 2 || $room->status_id == 3)
                                         <button class="btn btn-sm btn-outline-warning ms-1" data-bs-toggle="modal" data-bs-target="#updateRoomModal-{{ $room->id }}"><i class="fa-solid fa-pen"></i></button>
                                     @else
-                                        <a href="{{ route('hotel.editRoom', [$room->id, Auth::user()->id]) }}" class="btn btn-sm btn-outline-warning ms-1"><i class="fa-solid fa-pen"></i></a>
+                                        <a href="{{ route('hotel.editRoom', $room->id) }}" class="btn btn-sm btn-outline-warning ms-1"><i class="fa-solid fa-pen"></i></a>
                                     @endif
                                     
                                     <button class="btn btn-sm btn-outline-danger ms-1" data-bs-toggle="modal" data-bs-target="#deleteRoomModal-{{ $room->id }}"><i class="fa-solid fa-trash"></i></button>

@@ -10,10 +10,27 @@
         .chart-title { font-size: 1rem; font-weight: 700; color: #333; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; }
         .chart-wrapper { position: relative; height: 300px !important; width: 100%; }
         .btn-detail { border-radius: 20px; padding: 8px 25px; font-weight: bold; }
+
+        /* ヒートマップのデザイン */
+        .heatmap-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
+        .calendar-day-head { text-align: center; font-size: 0.7rem; font-weight: bold; color: #999; padding-bottom: 5px; }
+        .heat-tile { aspect-ratio: 1/1; border-radius: 6px; display: flex; align-items: center; justify-content: center; border: 1px solid #f0f0f0; position: relative; transition: transform 0.2s; }
+        .heat-tile:hover { transform: scale(1.05); }
+        .day-number { font-size: 0.7rem; font-weight: 800; color: rgba(0, 0, 0, 0.25); }
+        .empty-tile { aspect-ratio: 1/1; }
+
+        .level-0 { background-color: #f8f9fa; }
+        .level-1 { background-color: #fff3e0; }
+        .level-2 { background-color: #ffcc80; }
+        .level-3 { background-color: #ef6c00; } 
+        .level-3 .day-number { color: white; }
+
+        .btn-month-nav { border: 1px solid #f0f0f0; background: white; color: #666; }
+        .btn-month-nav:hover { background: #f8f9fa; }
     </style>
 
     <div class="container py-4">
-        {{-- 今月のKPIカード --}}
+        {{-- KPI Section --}}
         <div class="analysis-container shadow-sm">
             <div class="d-flex justify-content-center gap-3 flex-wrap">
                 <div class="kpi-box shadow-sm border-0">
@@ -41,10 +58,9 @@
             </button>
         </div>
 
-        {{-- 詳細エリア (デフォルトは非表示) --}}
+        {{-- 詳細エリア --}}
         <div class="collapse" id="detailedAnalysis">
             <div class="row">
-                {{-- KPI推移グラフ --}}
                 <div class="col-12 mb-4">
                     <div class="analysis-container shadow-sm">
                         <h6 class="chart-title border-bottom pb-3">Monthly KPI Trends</h6>
@@ -53,7 +69,6 @@
                         </div>
                     </div>
                 </div>
-                {{-- 月次パフォーマンス表 --}}
                 <div class="col-12 mb-4">
                     <div class="analysis-container shadow-sm">
                         <h6 class="chart-title border-bottom pb-3">Monthly KPI Table</h6>
@@ -71,9 +86,9 @@
                                     @foreach (['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'] as $i => $monthName)
                                         <tr class="{{ (now()->month - 1) == $i ? 'table-warning' : '' }}">
                                             <td class="text-start ps-4 fw-bold">{{ $monthName }}</td>
-                                            <td>{{ number_format($monthlyBookings[$i]) }}</td>
-                                            <td>{{ number_format($monthlyGuests[$i]) }}</td>
-                                            <td>{{ number_format($monthlyAvgStay[$i], 1) }}</td>
+                                            <td>{{ number_format($monthlyBookings[$i] ?? 0) }}</td>
+                                            <td>{{ number_format($monthlyGuests[$i] ?? 0) }}</td>
+                                            <td>{{ number_format($monthlyAvgStay[$i] ?? 0, 1) }}</td>
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -84,21 +99,43 @@
             </div>
         </div>
 
-        {{-- 既存のグラフセクション --}}
         <div class="row mb-4">
-            <div class="col-12">
-                <div class="analysis-container shadow-sm">
-                    <h6 class="chart-title border-bottom pb-3"><i class="fa-solid fa-clock me-2 text-warning"></i>Peak Hours Analysis</h6>
-                    <div class="chart-wrapper" style="height: 300px;"><canvas id="hourlyPeakChart"></canvas></div>
+            {{-- ヒートマップ: 月切り替え機能付き --}}
+            <div class="col-md-5">
+                <div class="analysis-container shadow-sm h-100">
+                    <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-3">
+                        <h6 class="chart-title m-0">
+                            <i class="fa-solid fa-calendar-days me-2 text-warning"></i>Booking Heatmap
+                        </h6>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-sm btn-month-nav" id="prevMonth"><i class="fa-solid fa-chevron-left"></i></button>
+                            <button type="button" class="btn btn-sm btn-white border-top border-bottom fw-bold" id="currentMonthLabel" style="min-width: 110px;"></button>
+                            <button type="button" class="btn btn-sm btn-month-nav" id="nextMonth"><i class="fa-solid fa-chevron-right"></i></button>
+                        </div>
+                    </div>
+
+                    <div class="heatmap-grid" id="heatmapGrid">
+                        {{-- JSで生成 --}}
+                    </div>
+
+                    <div class="d-flex justify-content-end mt-3 gap-2 align-items-center opacity-75">
+                        <small class="text-muted small">Low</small>
+                        <div class="heat-tile level-0" style="width:12px; height:12px;"></div>
+                        <div class="heat-tile level-1" style="width:12px; height:12px;"></div>
+                        <div class="heat-tile level-2" style="width:12px; height:12px;"></div>
+                        <div class="heat-tile level-3" style="width:12px; height:12px;"></div>
+                        <small class="text-muted small">High</small>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="row">
-            <div class="col">
+            {{-- 混雑時間帯グラフ --}}
+            <div class="col-md-7">
                 <div class="analysis-container shadow-sm h-100">
-                    <h6 class="chart-title border-bottom pb-3"><i class="fa-solid fa-chart-line me-2 text-warning"></i>Daily Booking Volume</h6>
-                    <div class="chart-wrapper"><canvas id="dailyBookingChart"></canvas></div>
+                    <h6 class="chart-title border-bottom pb-3">Hourly Busy Levels</h6>
+                    <div class="chart-wrapper mt-3">
+                        <canvas id="hourlyChart"></canvas>
+                    </div>
                 </div>
             </div>
         </div>
@@ -107,49 +144,108 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            let charts = {};
+            // --- KPI Trend Chart ---
+            const kpiCtx = document.getElementById('kpiTrendChart');
+            if (kpiCtx) {
+                new Chart(kpiCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                        datasets: [
+                            { label: 'Bookings', data: @json($monthlyBookings), borderColor: '#ffcc5c', tension: 0.3, fill: false },
+                            { label: 'Guests', data: @json($monthlyGuests), borderColor: '#96ceb4', tension: 0.3, fill: false }
+                        ]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false }
+                });
+            }
 
-            // 1. KPI Trends Chart (詳細エリア内)
-            charts['kpiTrendChart'] = new Chart(document.getElementById('kpiTrendChart'), {
-                type: 'line',
-                data: {
-                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-                    datasets: [
-                        { label: 'Bookings', data: @json($monthlyBookings), borderColor: '#f39c12', tension: 0.3, yAxisID: 'y' },
-                        { label: 'Guests', data: @json($monthlyGuests), borderColor: '#e67e22', tension: 0.3, yAxisID: 'y' },
-                        { label: 'Avg. Stay', data: @json($monthlyAvgStay), borderColor: '#2ecc71', borderDash: [5,5], tension: 0.3, yAxisID: 'y1' }
-                    ]
-                },
-                options: {
-                    responsive: true, maintainAspectRatio: false,
-                    scales: { y: { beginAtZero: true, position: 'left' }, y1: { beginAtZero: true, position: 'right', grid: { drawOnChartArea: false } } }
+            // --- Hourly Chart ---
+            const hourlyCtx = document.getElementById('hourlyChart');
+            if (hourlyCtx) {
+                new Chart(hourlyCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: @json(array_keys($hourlyStats ?? [])),
+                        datasets: [{
+                            label: 'Reservations',
+                            data: @json(array_values($hourlyStats ?? [])),
+                            backgroundColor: '#ffcc5c',
+                            borderRadius: 5
+                        }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false }
+                });
+            }
+
+            // --- Dynamic Heatmap Logic ---
+            const allDailyData = @json($allDailyData);
+            let viewDate = new Date(); // 表示基準日
+            const grid = document.getElementById('heatmapGrid');
+            const label = document.getElementById('currentMonthLabel');
+
+            function renderHeatmap(date) {
+                grid.innerHTML = '';
+                const year = date.getFullYear();
+                const month = date.getMonth();
+
+                const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+                label.innerText = `${monthNames[month]} ${year}`;
+
+                // Header
+                ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].forEach(d => {
+                    const head = document.createElement('div');
+                    head.className = 'calendar-day-head';
+                    head.innerText = d;
+                    grid.appendChild(head);
+                });
+
+                const firstDay = new Date(year, month, 1).getDay();
+                const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+                // Empty slots
+                for (let i = 0; i < firstDay; i++) {
+                    const empty = document.createElement('div');
+                    empty.className = 'empty-tile';
+                    grid.appendChild(empty);
                 }
+
+                // Day tiles
+                for (let day = 1; day <= daysInMonth; day++) {
+                    const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                    const count = allDailyData[dateStr] || 0;
+                    
+                    let level = 0;
+                    if (count >= 10) level = 3;
+                    else if (count >= 5) level = 2;
+                    else if (count >= 1) level = 1;
+
+                    const tile = document.createElement('div');
+                    tile.className = `heat-tile level-${level}`;
+                    tile.innerHTML = `<span class="day-number">${day}</span>`;
+                    tile.setAttribute('data-bs-toggle', 'tooltip');
+                    tile.setAttribute('title', `${dateStr}: ${count} reservations`);
+                    
+                    grid.appendChild(tile);
+                }
+
+                // Re-init tooltips
+                const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+                tooltipTriggerList.map(el => new bootstrap.Tooltip(el));
+            }
+
+            document.getElementById('prevMonth').addEventListener('click', () => {
+                viewDate.setMonth(viewDate.getMonth() - 1);
+                renderHeatmap(viewDate);
             });
 
-            // 2. Daily Chart
-            new Chart(document.getElementById('dailyBookingChart'), {
-                type: 'line',
-                data: {
-                    labels: Object.keys(@json($dailyData)).map(d => d + 'd'),
-                    datasets: [{ label: 'Reservations', data: Object.values(@json($dailyData)), borderColor: '#f39c12', fill: true, backgroundColor: 'rgba(243, 156, 18, 0.1)', tension: 0.4 }]
-                },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
-            });
-            
-            // 4. Hourly Peak Chart
-            new Chart(document.getElementById('hourlyPeakChart'), {
-                type: 'line',
-                data: {
-                    labels: Array.from({ length: 24 }, (_, i) => i + ':00'),
-                    datasets: [{ label: 'Reservations', data: @json($hourlyStats), borderColor: '#f39c12', backgroundColor: 'rgba(243, 156, 18, 0.1)', fill: true, tension: 0.4 }]
-                },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+            document.getElementById('nextMonth').addEventListener('click', () => {
+                viewDate.setMonth(viewDate.getMonth() + 1);
+                renderHeatmap(viewDate);
             });
 
-            // Collapse表示時にグラフをリサイズ
-            document.getElementById('detailedAnalysis').addEventListener('shown.bs.collapse', function () {
-                charts['kpiTrendChart'].resize();
-            });
+            // Initial Render
+            renderHeatmap(viewDate);
         });
     </script>
 @endsection

@@ -8,10 +8,47 @@ use App\Models\HotelReservation;
 use App\Models\HotelRoomType;
 use App\Models\Restaurant;
 use App\Models\RestaurantReservation;
+use App\Models\User;
 use Carbon\Carbon;
 
 class AnalysisController extends Controller
 {
+public function userAnalysis()
+{
+    // 1. 全一般ユーザー数 (role_id: 1)
+    $totalUsers = User::where('role_id', 1)->count();
+
+    // 2. 今月の新規登録者数
+    $newThisMonth = User::where('role_id', 1)
+        ->whereMonth('created_at', now()->month)
+        ->whereYear('created_at', now()->year)
+        ->count();
+
+    // 3. 直近12ヶ月の月別登録者数 (グラフ・テーブル用)
+    // 登録された月ごとにカウントを取得
+    $monthlyStats = User::where('role_id', 1)
+        ->selectRaw("DATE_FORMAT(created_at, '%Y-%m') as month_key, DATE_FORMAT(created_at, '%b') as month_name, COUNT(*) as signups")
+        ->where('created_at', '>=', now()->subMonths(11)->startOfMonth())
+        ->groupBy('month_key', 'month_name')
+        ->orderBy('month_key')
+        ->get();
+
+    // グラフ用の配列 (件数のみ)
+    $growthData = $monthlyStats->pluck('signups');
+    // グラフ用のラベル (Jan, Feb... など)
+    $monthLabels = $monthlyStats->pluck('month_name');
+
+    $monthlyUserStats = $monthlyStats;
+
+    return view('adminpage.analysis.user', compact(
+        'totalUsers', 
+        'newThisMonth', 
+        'growthData', 
+        'monthLabels',
+        'monthlyUserStats'
+    ));
+}
+
  public function hotelAnalysis($hotelId = null)
 {
     $monthlyKpis = HotelReservation::getMonthlyKpiStats($hotelId);
@@ -69,7 +106,7 @@ class AnalysisController extends Controller
 
     $currentKpi = $monthlyKpis->get(now()->month);
 
-    return view('adminpage.hotel.analysis-hotel', compact(
+    return view('adminpage.analysis.hotel', compact(
         'currentKpi', 'monthlyBookings', 'monthlyRevenue', 'monthlyGuests', 'monthlyAvgStay',
         'dayOfWeekData', 'typeStatsMonth', 'typeBookingStatsMonth',
         'typeStatsYear', 'typeBookingStatsYear',
@@ -120,7 +157,7 @@ public function restaurantAnalysis($restaurantId = null)
     $restaurants = Restaurant::all();
     $currentKpi = $monthlyKpis->get(now()->month);
 
-    return view('adminpage.restaurant.analysis-restaurant', compact(
+    return view('adminpage.analysis.restaurant', compact(
         'kpi', 'avgStayTime', 'monthlyBookings', 'monthlyGuests', 'monthlyAvgStay', 
         'dailyData', 'restaurantId', 'restaurants', 'hourlyStats', 'currentKpi'
     ));

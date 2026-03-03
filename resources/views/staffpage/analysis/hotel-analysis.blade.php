@@ -3,7 +3,6 @@
 @section('title', 'Analysis of Hotel')
 
 @section('content')
-
     <style>
         .analysis-container { background: white; padding: 25px; margin-bottom: 25px; border-radius: 15px; }
         .kpi-box { border-radius: 15px; padding: 25px; text-align: center; flex: 1; min-width: 200px; background: #ffffff; border: 1px solid #f0f0f0; }
@@ -73,7 +72,7 @@
                                         <table class="table table-hover align-middle text-center">
                                             <thead class="table-light">
                                                 <tr>
-                                                    <th class="text-start">Month</th>
+                                                    <th class="text-start ps-3">Month</th>
                                                     <th>Bookings</th>
                                                     <th>Guests</th>
                                                     <th>Avg. Stay</th>
@@ -83,7 +82,7 @@
                                             <tbody>
                                                 @foreach (['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'] as $i => $monthName)
                                                     <tr class="{{ now()->month - 1 == $i ? 'table-primary' : '' }}">
-                                                        <td class="text-start fw-bold">{{ $monthName }}</td>
+                                                        <td class="text-start ps-3 fw-bold">{{ $monthName }}</td>
                                                         <td>{{ number_format($monthlyBookings[$i]) }}</td>
                                                         <td>{{ number_format($monthlyGuests[$i]) }}</td>
                                                         <td>{{ number_format($monthlyAvgStay[$i], 1) }}</td>
@@ -106,7 +105,7 @@
                 </div>
 
                 <div class="row mb-4">
-                    {{-- Daily Occupancy Heatmap with Navigation --}}
+                    {{-- Daily Occupancy Heatmap --}}
                     <div class="col-md-5">
                         <div class="analysis-container shadow-sm h-100">
                             <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-3">
@@ -119,19 +118,7 @@
                                     <button type="button" class="btn btn-sm btn-month-nav" id="nextMonth"><i class="fa-solid fa-chevron-right"></i></button>
                                 </div>
                             </div>
-
-                            <div class="heatmap-grid" id="heatmapGrid">
-                                {{-- JSで動的生成 --}}
-                            </div>
-
-                            <div class="d-flex justify-content-end mt-3 gap-2 align-items-center opacity-75">
-                                <small class="text-muted small">Low</small>
-                                <div class="heat-tile level-0" style="width:12px; height:12px;"></div>
-                                <div class="heat-tile level-1" style="width:12px; height:12px;"></div>
-                                <div class="heat-tile level-2" style="width:12px; height:12px;"></div>
-                                <div class="heat-tile level-3" style="width:12px; height:12px;"></div>
-                                <small class="text-muted small">High</small>
-                            </div>
+                            <div class="heatmap-grid" id="heatmapGrid"></div>
                         </div>
                     </div>
 
@@ -150,12 +137,12 @@
                 <div class="analysis-container shadow-sm rounded-4">
                     <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
                         <h6 class="chart-title m-0"><i class="fa-solid fa-door-open me-2 text-primary"></i>Room Type Insights</h6>
-                        <ul class="nav nav-pills" id="pills-tab" role="tablist">
+                        <ul class="nav nav-pills" id="pills-tab">
                             <li class="nav-item">
-                                <button class="nav-link active btn-sm" id="tab-month" data-bs-toggle="pill" data-bs-target="#pills-month" type="button">This Month</button>
+                                <button class="nav-link active btn-sm" id="tab-month" data-bs-toggle="pill" data-bs-target="#pills-month">This Month</button>
                             </li>
                             <li class="nav-item">
-                                <button class="nav-link btn-sm" id="tab-year" data-bs-toggle="pill" data-bs-target="#pills-year" type="button">This Year</button>
+                                <button class="nav-link btn-sm" id="tab-year" data-bs-toggle="pill" data-bs-target="#pills-year">This Year</button>
                             </li>
                         </ul>
                     </div>
@@ -194,6 +181,8 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // 文字列を数値に確実に変換するヘルパー
+            const parseNumericData = (data) => Array.isArray(data) ? data.map(v => Number(v || 0)) : [];
             let charts = {};
 
             // --- 1. KPI Trends Chart ---
@@ -204,12 +193,12 @@
                     data: {
                         labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
                         datasets: [
-                            { label: 'Bookings', data: @json($monthlyBookings), borderColor: '#7da9d8', tension: 0.3, yAxisID: 'y-count' },
-                            { label: 'Guests', data: @json($monthlyGuests), borderColor: '#ffcc5c', tension: 0.3, yAxisID: 'y-count' },
-                            { label: 'Avg. Stay', data: @json($monthlyAvgStay), borderColor: '#96ceb4', borderDash: [5,5], tension: 0.3, yAxisID: 'y-stay' }
+                            { label: 'Bookings', data: parseNumericData(@json($monthlyBookings)), borderColor: '#7da9d8', tension: 0.3, yAxisID: 'y' },
+                            { label: 'Guests', data: parseNumericData(@json($monthlyGuests)), borderColor: '#ffcc5c', tension: 0.3, yAxisID: 'y' },
+                            { label: 'Avg. Stay', data: parseNumericData(@json($monthlyAvgStay)), borderColor: '#96ceb4', borderDash: [5,5], tension: 0.3, yAxisID: 'y-stay' }
                         ]
                     },
-                    options: { responsive: true, maintainAspectRatio: false, scales: { 'y-count': { beginAtZero: true }, 'y-stay': { position: 'right', beginAtZero: true } } }
+                    options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true }, 'y-stay': { position: 'right', beginAtZero: true } } }
                 });
             }
 
@@ -220,26 +209,79 @@
                     data: {
                         labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
                         datasets: [
-                            { type: 'line', label: 'Revenue', data: @json($monthlyRevenue), borderColor: '#ff6384', yAxisID: 'y-revenue' },
-                            { type: 'bar', label: 'Bookings', data: @json($monthlyBookings), backgroundColor: '#ced6e0', yAxisID: 'y-bookings' }
+                            { type: 'line', label: 'Revenue', data: parseNumericData(@json($monthlyRevenue)), borderColor: '#ff6384', yAxisID: 'y-revenue', tension: 0.4 },
+                            { type: 'bar', label: 'Bookings', data: parseNumericData(@json($monthlyBookings)), backgroundColor: '#ced6e0', yAxisID: 'y-bookings', borderRadius: 5 }
                         ]
                     },
-                    options: { responsive: true, maintainAspectRatio: false, scales: { 'y-bookings': { beginAtZero: true }, 'y-revenue': { position: 'right', beginAtZero: true } } }
+                    options: { 
+                        responsive: true, 
+                        maintainAspectRatio: false, 
+                        scales: { 
+                            'y-bookings': { beginAtZero: true, position: 'left' }, 
+                            'y-revenue': { beginAtZero: true, position: 'right', grid: { display: false } } 
+                        } 
+                    }
                 });
             }
 
-            // --- 3. Dynamic Heatmap Logic ---
+            // --- 3. Doughnut Charts (Admin形式を移植) ---
+            const createDoughnut = (id, labels, data, unit = '') => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                if (charts[id]) charts[id].destroy();
+
+                charts[id] = new Chart(el, {
+                    type: 'doughnut',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            data: parseNumericData(data),
+                            backgroundColor: ['#7da9d8', '#ffcc5c', '#96ceb4', '#ffeead', '#d9a7c7'],
+                            borderWidth: 2,
+                            borderColor: '#ffffff'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        cutout: '75%',
+                        plugins: {
+                            legend: { position: 'bottom', labels: { boxWidth: 12 } },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        const val = context.parsed || 0;
+                                        const sum = context.dataset.data.reduce((a, b) => a + b, 0);
+                                        const pct = sum > 0 ? (val * 100 / sum).toFixed(1) : 0;
+                                        return ` ${context.label}: ${val.toLocaleString()}${unit} (${pct}%)`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            };
+
+            // 初期化
+            createDoughnut('typeChartMonth', @json($typeStatsMonth->pluck('label_name')), @json($typeStatsMonth->pluck('total_sales')), '₱');
+            createDoughnut('typeBookingChartMonth', @json($typeBookingStatsMonth->pluck('label_name')), @json($typeBookingStatsMonth->pluck('booking_count')), '件');
+
+            // タブ切り替えイベント
+            document.getElementById('tab-year').addEventListener('shown.bs.tab', function() {
+                createDoughnut('typeChartYear', @json($typeStatsYear->pluck('label_name')), @json($typeStatsYear->pluck('total_sales')), '₱');
+                createDoughnut('typeBookingChartYear', @json($typeBookingStatsYear->pluck('label_name')), @json($typeBookingStatsYear->pluck('booking_count')), '件');
+            });
+
+            // --- 4. Heatmap ---
             const allDailyData = @json($allDailyData);
             let viewDate = new Date();
-            const grid = document.getElementById('heatmapGrid');
-            const label = document.getElementById('currentMonthLabel');
-
             function renderHeatmap(date) {
+                const grid = document.getElementById('heatmapGrid');
                 grid.innerHTML = '';
                 const year = date.getFullYear();
                 const month = date.getMonth();
                 const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-                label.innerText = `${monthNames[month]} ${year}`;
+                document.getElementById('currentMonthLabel').innerText = `${monthNames[month]} ${year}`;
 
                 ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].forEach(d => {
                     const head = document.createElement('div');
@@ -259,7 +301,6 @@
                     const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
                     const count = allDailyData[dateStr] || 0;
                     let level = count >= 5 ? 3 : (count >= 3 ? 2 : (count >= 1 ? 1 : 0));
-
                     const tile = document.createElement('div');
                     tile.className = `heat-tile level-${level}`;
                     tile.innerHTML = `<span class="day-number">${day}</span>`;
@@ -267,7 +308,6 @@
                     tile.setAttribute('title', `${dateStr}: ${count} stays`);
                     grid.appendChild(tile);
                 }
-
                 const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
                 tooltipTriggerList.map(el => new bootstrap.Tooltip(el));
             }
@@ -276,33 +316,9 @@
             document.getElementById('nextMonth').addEventListener('click', () => { viewDate.setMonth(viewDate.getMonth() + 1); renderHeatmap(viewDate); });
             renderHeatmap(viewDate);
 
-            // --- 4. Doughnut Charts ---
-            const createDoughnut = (id, labels, data) => {
-                const el = document.getElementById(id);
-                if (!el) return;
-                charts[id] = new Chart(el, {
-                    type: 'doughnut',
-                    data: { labels: labels, datasets: [{ data: data, backgroundColor: ['#7da9d8', '#ffcc5c', '#96ceb4', '#ffeead', '#d9a7c7'], borderWidth: 0 }] },
-                    options: { responsive: true, maintainAspectRatio: false, cutout: '75%', plugins: { legend: { position: 'bottom' } } }
-                });
-            };
-
-            createDoughnut('typeChartMonth', @json($typeStatsMonth->pluck('label_name')), @json($typeStatsMonth->pluck('total_sales')));
-            createDoughnut('typeBookingChartMonth', @json($typeBookingStatsMonth->pluck('label_name')), @json($typeBookingStatsMonth->pluck('booking_count')));
-
-            document.querySelectorAll('button[data-bs-toggle="pill"]').forEach(tabEl => {
-                tabEl.addEventListener('shown.bs.tab', function() {
-                    if (this.id === 'tab-year') {
-                        createDoughnut('typeChartYear', @json($typeStatsYear->pluck('label_name')), @json($typeStatsYear->pluck('total_sales')));
-                        createDoughnut('typeBookingChartYear', @json($typeBookingStatsYear->pluck('label_name')), @json($typeBookingStatsYear->pluck('booking_count')));
-                    }
-                });
-            });
-
-            // Handle collapse resize
-            document.getElementById('detailedAnalysis').addEventListener('shown.bs.collapse', function() {
+            // Collapseリサイズ対応
+            document.getElementById('detailedAnalysis').addEventListener('shown.bs.collapse', () => {
                 if (charts['kpiTrendChart']) charts['kpiTrendChart'].resize();
-                if (charts['barChart']) charts['barChart'].resize();
             });
         });
     </script>

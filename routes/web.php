@@ -137,6 +137,7 @@ Route::group(['middleware' => 'auth'], function () {
         #For Analysis
         Route::get('/analysis/hotel/{id?}', [AnalysisController::class, 'hotelAnalysis'])->name('analysis.hotel');
         Route::get('/analysis/restaurant/{id?}',[AnalysisController::class, 'restaurantAnalysis'])->name('analysis.restaurant');
+        Route::get('/analysis/user',[AnalysisController::class, 'userAnalysis'])->name('analysis.user');
     });
 
     # Staff

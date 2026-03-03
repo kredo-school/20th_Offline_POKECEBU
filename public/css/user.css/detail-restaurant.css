@@ -1,5 +1,4 @@
- /* 画像スライダーの共通スタイル */
-    .restaurant-images, .table-images {
+ .restaurant-images, .table-images {
         display: flex;
         overflow-x: auto;
         gap: 15px;

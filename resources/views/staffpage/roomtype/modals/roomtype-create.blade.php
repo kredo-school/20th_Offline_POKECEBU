@@ -8,7 +8,7 @@
             </div>
             
             <div class="modal-body">
-                <form action="{{ route('hotel.storeRoomType', Auth::user()->id) }}" method="post">
+                <form action="{{ route('hotel.storeRoomType') }}" method="post">
                     @csrf
 
                     <div class="row mb-3">

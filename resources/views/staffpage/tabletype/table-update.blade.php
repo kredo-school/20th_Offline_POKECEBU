@@ -23,7 +23,7 @@
         @endif
 
         <div class="mb-2">
-            <a href="{{ route('restaurant.overview', Auth::user()->id) }}">◀︎ Table overview</a>
+            <a href="{{ route('restaurant.tableOverview') }}">◀︎ Table overview</a>
         </div>
 
         <div class="col-md-10 p-4">

@@ -3,7 +3,7 @@
 @section('content')
 <div class="container-fluid">
     <div class="row justify-content-center">
-        <div class="mb-2"><a href="{{ route('hotel.overview', Auth::user()->id) }}">◀︎ Room overview</a></div>
+        <div class="mb-2"><a href="{{ route('hotel.roomOverview') }}">◀︎ Room overview</a></div>
 
         <div class="col-md-10 p-4">
             <div class="bg-light"><h2 class="mb-1">View Details</h2></div>

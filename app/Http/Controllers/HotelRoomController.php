@@ -9,6 +9,7 @@ use App\Models\RoomImage;
 use App\Models\Status;
 use App\Models\Type;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class HotelRoomController extends Controller
 {
@@ -31,8 +32,9 @@ class HotelRoomController extends Controller
         $this->target_all = config('app.target_type_all');
     }
     
-    public function index($hotel_id)
+    public function roomOverview()
     {
+        $hotel_id = Auth::user()->id;
         $all_types = $this->type->whereIn('target_type', [$this->target_hotel, $this->target_all])->get();
         $all_categories = $this->category->whereIn('target_type', [$this->target_hotel, $this->target_all])->get();
         $all_statuses = $this->status->whereIn('target_type', [$this->target_hotel, $this->target_all])->get();
@@ -54,8 +56,10 @@ class HotelRoomController extends Controller
             compact('all_types', 'all_categories', 'all_statuses', 'all_room_types', 'all_rooms'));
     }
 
-    public function storeRoomType(Request $request, int $hotel_id)
+    public function storeRoomType(Request $request)
     {
+        $hotel_id = Auth::user()->id;
+
         $request->validate(
             [
                 'room_type' => 'required',
@@ -114,7 +118,8 @@ class HotelRoomController extends Controller
         return redirect()->back();
     }
 
-    public function destroyRoomType($id) {
+    public function destroyRoomType($id) 
+    {
         $room_type = $this->hotelRoomType->findOrFail($id);
 
         $room_type->Delete();
@@ -122,15 +127,20 @@ class HotelRoomController extends Controller
         return redirect()->back();
     }
 
-    public function createRoom($hotel_id) {
+    public function createRoom() 
+    {
+        $hotel_id = Auth::user()->id;
+
         $all_categories = $this->category->whereIn('target_type', [$this->target_hotel, $this->target_all])->get();
         $all_room_types = $this->hotelRoomType->where('hotel_id', $hotel_id)->with('type')->get();
         
         return view('staffpage.roomtype.room-create', compact('all_categories', 'all_room_types'));
     }
 
-    public function storeRoom(Request $request, $hotel_id)
+    public function storeRoom(Request $request)
     {
+        $hotel_id = Auth::user()->id;
+
         $request->validate([
             'room_num' => 'required',
             'type_id' => 'required',
@@ -169,10 +179,13 @@ class HotelRoomController extends Controller
             }
         }
 
-        return redirect()->route('hotel.overview', $hotel_id);
+        return redirect()->route('hotel.roomOverview');
     }
 
-    public function editRoom($id, $hotel_id) {
+    public function editRoom($id) 
+    {
+        $hotel_id = Auth::user()->id;
+
         $room = $this->hotelRoom->findOrFail($id);
 
         $all_categories = $this->category->whereIn('target_type', [$this->target_hotel, $this->target_all])->get();
@@ -223,7 +236,8 @@ class HotelRoomController extends Controller
         return redirect()->back()->with('success', 'Room updated successfully.');
     }
 
-    public function destroyRoom($id) {
+    public function destroyRoom($id) 
+    {
         $room = $this->hotelRoom->findOrFail($id);
         
         $room->Delete();
@@ -231,7 +245,8 @@ class HotelRoomController extends Controller
         return redirect()->back();
     }
 
-    public function updateStatus(Request $request, string $id) {
+    public function updateStatus(Request $request, string $id) 
+    {
         $request->validate([
             'status' => 'required'
         ]);
@@ -245,7 +260,8 @@ class HotelRoomController extends Controller
         return redirect()->back();
     }
 
-    public function viewRoom($id) {
+    public function viewRoom($id) 
+    {
         $room = $this->hotelRoom->with(['categories', 'type', 'status'])->findOrFail($id);
         
         return view('staffpage.roomtype.room-detail', compact('room'));

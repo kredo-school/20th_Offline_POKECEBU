@@ -14,11 +14,11 @@
             </div>
         @endif
 
-        <div class="mb-2"><a href="{{ route('restaurant.overview', Auth::user()->id) }}">◀︎ Table overview</a></div>
+        <div class="mb-2"><a href="{{ route('restaurant.tableOverview') }}">◀︎ Table overview</a></div>
 
         <div class="col-md-10 p-4">
             <div class="bg-light"><h2 class="mb-1">Add Table</h2></div>
-            <form action="{{ route('restaurant.storeTable', Auth::user()->id) }}" method="post" enctype="multipart/form-data">
+            <form action="{{ route('restaurant.storeTable') }}" method="post" enctype="multipart/form-data">
                 @csrf
 
                 <div class="row">

@@ -45,7 +45,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/', [HomeController::class, 'index'])->name('home');
     Route::get('/faq', [FaqController::class, 'index'])->name('faq.index');
 
-    # Admin
+    #################### Admin ####################
     Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'admin'], function () {
         Route::get('/', [AdminController::class, 'index'])->name('home');
 
@@ -67,7 +67,6 @@ Route::group(['middleware' => 'auth'], function () {
         ### All Users
         Route::get('/all-users', [AdminController::class, 'showAllUsers'])->name('showAllUsers');
         # For Customer
-        Route::get('/all-users', [AdminController::class, 'showAllUsers'])->name('showAllUsers');
         Route::get('/customer', [AdminController::class, 'customer'])->name('customer');
         Route::get('/customer/add', [AdminController::class, 'addCustomer'])->name('customer.add');
         Route::post('/customer/add', [AdminController::class, 'storeCustomer'])->name('customers.store');
@@ -103,9 +102,9 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/hotels', [HotelController::class, 'roomInfo'])->name('hotels.index');
         Route::get('/reservation/confirmation', [HotelReservationController::class, 'confirmation'])->name('reservation.confirmation');
         Route::post('/reservation/confirm', [HotelReservationController::class, 'confirmReservation'])->name('reservation.confirm');
-       Route::match(['get', 'post'], '/reservation/payment-form', [HotelReservationController::class, 'payment'])->name('reservation.payment.form');
+        Route::match(['get', 'post'], '/reservation/payment-form', [HotelReservationController::class, 'payment'])->name('reservation.payment.form');
         Route::post('/reservation/payment', [HotelReservationController::class, 'pay'])->name('reservation.pay');
-            Route::get('/reservation/payment/success', [HotelReservationController::class, 'reservationSuccess'])->name('reservation.success');
+        Route::get('/reservation/payment/success', [HotelReservationController::class, 'reservationSuccess'])->name('reservation.success');
 
         // ホテル予約ユーザー詳細
         Route::get('/mypage/user', [UserDetailController::class, 'show'])->name('mypage.show');
@@ -140,36 +139,36 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/analysis/user',[AnalysisController::class, 'userAnalysis'])->name('analysis.user');
     });
 
-    # Staff
+    #################### Hotel ####################
     Route::group(['prefix' => 'hotel', 'as' => 'hotel.', 'middleware' => 'hotel'], function () {
-        # Hotel
+        Route::get('/', [HotelStaffController::class, 'index'])->name('home');
         
-    Route::get('/mypage/hotel', [StaffMypageController::class, 'index'])->name('mypage.hotel');
-   Route::get('/mypage/hotel/edit', [StaffMypageController::class, 'editStaffMypage'])->name('staff.mypage.hotel.edit');   
-    Route::post('/mypage/hotel/store', [StaffMypageController::class, 'storeHotel'])->name('mypage.hotel.store');
-Route::get('/mypage/hotel/complete', [StaffMypageController::class, 'complete'])->name('mypage.hotel.complete');
+        Route::get('/mypage/hotel', [StaffMypageController::class, 'index'])->name('mypage.hotel');
+        Route::get('/mypage/hotel/edit', [StaffMypageController::class, 'editStaffMypage'])->name('staff.mypage.hotel.edit');   
+        Route::post('/mypage/hotel/store', [StaffMypageController::class, 'storeHotel'])->name('mypage.hotel.store');
+        Route::get('/mypage/hotel/complete', [StaffMypageController::class, 'complete'])->name('mypage.hotel.complete');
 
         Route::get('/reservations', [HotelReservationController::class, 'hotel'])->name('reservations');
         Route::get('/reservations/{id}', [HotelReservationController::class, 'show'])->name('reservations.show');
 
-        Route::get('/analysis/{id}',[StaffAnalysisController::class,'hotelAnalysis'])->name('analysis');
+        Route::get('/analysis',[StaffAnalysisController::class,'hotelAnalysis'])->name('analysis');
 
-        #Hotel - Room
-        Route::get('/{hotel_id}/overview', [HotelRoomController::class, 'index'])->name('overview');
-        Route::post('/{hotel_id}/storeRoomType', [HotelRoomController::class, 'storeRoomType'])->name('storeRoomType');
+        #Hotel - Room overview
+        Route::get('/roomOverview', [HotelRoomController::class, 'roomOverview'])->name('roomOverview');
+        Route::post('/storeRoomType', [HotelRoomController::class, 'storeRoomType'])->name('storeRoomType');
         Route::patch('/{id}/updateRoomType', [HotelRoomController::class, 'updateRoomType'])->name('updateRoomType');
         Route::delete('/{id}/destroyRoomType', [HotelRoomController::class, 'destroyRoomType'])->name('destroyRoomType');
-        Route::get('/{hotel_id}/createRoom', [HotelRoomController::class, 'createRoom'])->name('createRoom');
-        Route::post('/{hotel_id}/storeRoom', [HotelRoomController::class, 'storeRoom'])->name('storeRoom');
-        Route::get('/{hotel_id}/{id}/editRoom', [HotelRoomController::class, 'editRoom'])->name('editRoom');
+        Route::get('/createRoom', [HotelRoomController::class, 'createRoom'])->name('createRoom');
+        Route::post('/storeRoom', [HotelRoomController::class, 'storeRoom'])->name('storeRoom');
+        Route::get('/{id}/editRoom', [HotelRoomController::class, 'editRoom'])->name('editRoom');
         Route::patch('/{id}/updateRoom', [HotelRoomController::class, 'updateRoom'])->name('updateRoom');
         Route::delete('/{id}/destroyRoom', [HotelRoomController::class, 'destroyRoom'])->name('destroyRoom');
         Route::patch('/{id}/updateStatus', [HotelRoomController::class, 'updateStatus'])->name('updateStatus');
         Route::get('/{id}/viewRoom', [HotelRoomController::class, 'viewRoom'])->name('viewRoom');
     });
 
+    #################### Restaurant ####################
     Route::group(['prefix' => 'restaurant', 'as' => 'restaurant.', 'middleware' => 'restaurant'], function () {
-        # Restaurant
         Route::get('/', [RestaurantStaffController::class, 'index'])->name('home');
         Route::get('/mypage', [StaffMypageController::class, 'indexRestaurant'])->name('mypage');
         Route::get('/mypage/edit', [StaffMypageController::class, 'editStaffMypagerestaurant'])->name('restaurant.edit');
@@ -178,23 +177,23 @@ Route::get('/mypage/hotel/complete', [StaffMypageController::class, 'complete'])
         Route::get('/reservations', [RestaurantStaffController::class, 'reservations'])->name('reservations');
         Route::get('/reservations/{id}', [RestaurantReservationController::class, 'show'])->name('reservations.show');
 
-        route::get('/analysis/{id}',[StaffAnalysisController::class,'restaurantAnalysis'])->name('analysis');
+        Route::get('/analysis',[StaffAnalysisController::class,'restaurantAnalysis'])->name('analysis');
 
-        #Restaurant - Table
-        Route::get('/{rest_id}/overview', [RestaurantTableController::class, 'index'])->name('overview');
-        Route::post('/{rest_id}/storeTableType', [RestaurantTableController::class, 'storeTableType'])->name('storeTableType');
+        #Restaurant - Table overview
+        Route::get('/tableOverview', [RestaurantTableController::class, 'tableOverview'])->name('tableOverview');
+        Route::post('/storeTableType', [RestaurantTableController::class, 'storeTableType'])->name('storeTableType');
         Route::patch('/{id}/updateTableType', [RestaurantTableController::class, 'updateTableType'])->name('updateTableType');
         Route::delete('/{id}/destroyTableType', [RestaurantTableController::class, 'destroyTableType'])->name('destroyTableType');
-        Route::get('/{rest_id}/createTable', [RestaurantTableController::class, 'createTable'])->name('createTable');
-        Route::post('/{rest_id}/storeTable', [RestaurantTableController::class, 'storeTable'])->name('storeTable');
-        Route::get('/{rest_id}/{id}/editTable', [RestaurantTableController::class, 'editTable'])->name('editTable');
+        Route::get('/createTable', [RestaurantTableController::class, 'createTable'])->name('createTable');
+        Route::post('/storeTable', [RestaurantTableController::class, 'storeTable'])->name('storeTable');
+        Route::get('/{id}/editTable', [RestaurantTableController::class, 'editTable'])->name('editTable');
         Route::patch('/{id}/updateTable', [RestaurantTableController::class, 'updateTable'])->name('updateTable');
         Route::delete('/{id}/destroyTable', [RestaurantTableController::class, 'destroyTable'])->name('destroyTable');
         Route::patch('/{id}/updateStatus', [RestaurantTableController::class, 'updateStatus'])->name('updateStatus');
         Route::get('/{id}/viewTable', [RestaurantTableController::class, 'viewTable'])->name('viewTable');
     });
 
-    # User
+    #################### User ####################
     Route::group(['prefix' => 'user', 'as' => 'user.'], function () {
         # User Home
         Route::get('/posts', [PostController::class, 'index'])->name('posts.index');

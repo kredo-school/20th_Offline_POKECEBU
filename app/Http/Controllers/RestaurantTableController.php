@@ -9,6 +9,7 @@ use App\Models\Status;
 use App\Models\TableImage;
 use App\Models\Type;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class RestaurantTableController extends Controller
 {
@@ -31,8 +32,10 @@ class RestaurantTableController extends Controller
         $this->target_all = config('app.target_type_all');
     }
     
-    public function index($restaurant_id)
+    public function tableOverview()
     {
+        $restaurant_id = Auth::user()->id;
+        
         $all_types = $this->type->where('target_type', $this->target_restaurant)->get();
         $all_categories = $this->category->whereIn('target_type', [$this->target_restaurant, $this->target_all])->get();
         $all_statuses = $this->status->whereIn('target_type', [$this->target_restaurant, $this->target_all])->get();
@@ -54,8 +57,10 @@ class RestaurantTableController extends Controller
             compact('all_types', 'all_categories', 'all_statuses', 'all_table_types', 'all_tables'));
     }
 
-    public function storeTableType(Request $request, int $restaurant_id)
+    public function storeTableType(Request $request)
     {
+        $restaurant_id = Auth::user()->id;
+
         $request->validate(
             [
                 'table_type' => 'required',
@@ -114,7 +119,8 @@ class RestaurantTableController extends Controller
         return redirect()->back();
     }
 
-    public function destroyTableType($id) {
+    public function destroyTableType($id) 
+    {
         $table_type = $this->restaurantTableType->findOrFail($id);
 
         $table_type->Delete();
@@ -122,15 +128,20 @@ class RestaurantTableController extends Controller
         return redirect()->back();
     }
 
-    public function createTable($restaurant_id) {
+    public function createTable() 
+    {
+        $restaurant_id = Auth::user()->id;
+
         $all_categories = $this->category->whereIn('target_type', [$this->target_restaurant, $this->target_all])->get();
         $all_table_types = $this->restaurantTableType->where('restaurant_id', $restaurant_id)->with('type')->get();
         
         return view('staffpage.tabletype.table-create', compact('all_categories', 'all_table_types'));
     }
 
-    public function storeTable(Request $request, $restaurant_id)
+    public function storeTable(Request $request)
     {
+        $restaurant_id = Auth::user()->id;
+
         $request->validate([
             'table_num' => 'required',
             'type_id' => 'required',
@@ -167,10 +178,13 @@ class RestaurantTableController extends Controller
             }
         }
 
-        return redirect()->route('restaurant.overview', $restaurant_id);
+        return redirect()->route('restaurant.tableOverview');
     }
 
-    public function editTable($id, $restaurant_id) {
+    public function editTable($id) 
+    {
+        $restaurant_id = Auth::user()->id;
+
         $table = $this->restaurantTable->findOrFail($id);
 
         $all_categories = $this->category->whereIn('target_type', [$this->target_restaurant, $this->target_all])->get();
@@ -219,7 +233,8 @@ class RestaurantTableController extends Controller
         return redirect()->back()->with('success', 'Table updated successfully.');
     }
 
-    public function destroyTable($id) {
+    public function destroyTable($id) 
+    {
         $table = $this->restaurantTable->findOrFail($id);
         
         $table->Delete();
@@ -241,7 +256,8 @@ class RestaurantTableController extends Controller
         return redirect()->back();
     }
 
-    public function viewTable($id) {
+    public function viewTable($id) 
+    {
         $table = $this->restaurantTable->with(['categories', 'type', 'status'])->findOrFail($id);
         
         return view('staffpage.tabletype.table-detail', compact('table'));

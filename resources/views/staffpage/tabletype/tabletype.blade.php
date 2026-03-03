@@ -100,7 +100,7 @@
             <h2>Table Management</h2>
         </div>
         <div class="mb-2 text-end text-white">
-                    <a href="{{ route('restaurant.createTable', Auth::user()->id) }}" class="btn btn-dark">
+                    <a href="{{ route('restaurant.createTable') }}" class="btn btn-dark">
                         <i class="fa-solid fa-plus"></i> Add Table
                     </a>
                 </div>
@@ -163,12 +163,12 @@
                             </td>
                             <td>
                                 <div class="text-end">
-                                    <a href="{{ route('restaurant.viewTable', [$table->id, Auth::user()->id]) }}" class="btn btn-sm btn-outline-secondary"><i class="fa-solid fa-eye"></i></a>
+                                    <a href="{{ route('restaurant.viewTable', $table->id) }}" class="btn btn-sm btn-outline-secondary"><i class="fa-solid fa-eye"></i></a>
                                     
                                     @if ($table->status_id == 2 || $table->status_id == 3)
                                         <button class="btn btn-sm btn-outline-warning ms-1" data-bs-toggle="modal" data-bs-target="#updateTableModal-{{ $table->id }}"><i class="fa-solid fa-pen"></i></button>
                                     @else
-                                        <a href="{{ route('restaurant.editTable', [$table->id, Auth::user()->id]) }}" class="btn btn-sm btn-outline-warning ms-1"><i class="fa-solid fa-pen"></i></a>
+                                        <a href="{{ route('restaurant.editTable', $table->id) }}" class="btn btn-sm btn-outline-warning ms-1"><i class="fa-solid fa-pen"></i></a>
                                     @endif
                                     
                                     <button class="btn btn-sm btn-outline-danger ms-1" data-bs-toggle="modal" data-bs-target="#deleteTableModal-{{ $table->id }}"><i class="fa-solid fa-trash"></i></button>

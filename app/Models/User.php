@@ -8,9 +8,11 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use App\Models\UserDetail;
 use App\Models\HotelReservation;
-use App\Models\Post; // Postクラスも必要なので追加しました
+use App\Models\RestaurantReservation; // 追加
+use App\Models\Post;
 use App\Models\Favorite;
-
+use App\Models\Hotel;
+use App\Models\Restaurant;
 
 class User extends Authenticatable
 {
@@ -27,8 +29,6 @@ class User extends Authenticatable
      *
      * @var list<string>
      */
-
-    // （2/6 User クラス内の protected $fillable を次のように変更）
     protected $fillable = [
         'name',
         'email',
@@ -59,73 +59,86 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
     
+    // --- リレーションシップ ---
+
     public function hotel()
     {
         return $this->hasOne(Hotel::class, 'id', 'id');
     }
 
-    // （User クラス内に restaurant() を追加）
     public function restaurant()
     {
         return $this->hasOne(Restaurant::class, 'id', 'id');
     }
 
- 
-
-    # ポストの取得
     public function posts() 
     {
         return $this->hasMany(Post::class);
     }
 
-    # ユーザー詳細の取得
     public function detail() 
     {
         return $this->hasOne(UserDetail::class);
     }
 
-    # ホテル予約一覧の取得
+    /**
+     * ホテル予約のリレーション (分析で使用)
+     */
+    public function hotelReservations() 
+    {
+        return $this->hasMany(HotelReservation::class);
+    }
+
+    /**
+     * レストラン予約のリレーション (分析で使用)
+     */
+    public function restaurantReservations()
+    {
+        return $this->hasMany(RestaurantReservation::class);
+    }
+    
+    // 旧来のメソッド名維持用
     public function reservations() 
     {
         return $this->hasMany(HotelReservation::class);
     }
-    
 
-    public static function getNewUserStats($hotelId = null)
-{
-    $query = self::where('role_id', 1);
-
-    if ($hotelId) {
-        $query->where('hotel_id', $hotelId);
-    }
-
-    $currentMonthCount = (clone $query)
-        ->whereMonth('created_at', now()->month)
-        ->whereYear('created_at', now()->year)
-        ->count();
-
-    $labels = [];
-    $counts = [];
-    for ($i = 5; $i >= 0; $i--) {
-        $month = now()->subMonths($i);
-        $labels[] = $month->format('M');
-        $counts[] = (clone $query)
-            ->whereMonth('created_at', $month->month)
-            ->whereYear('created_at', $month->year)
-            ->count();
-    }
-
-    return [
-        'count' => $currentMonthCount,
-        'chart' => [
-            'labels' => $labels,
-            'data' => $counts
-        ]
-    ];
-}
-
-    // お気に入り
     public function favorites() {
        return $this->hasMany(Favorite::class);
+    }
+
+    // --- 分析用スタティックメソッド ---
+
+    public static function getNewUserStats($hotelId = null)
+    {
+        $query = self::where('role_id', 1);
+
+        if ($hotelId) {
+            $query->where('hotel_id', $hotelId);
+        }
+
+        $currentMonthCount = (clone $query)
+            ->whereMonth('created_at', now()->month)
+            ->whereYear('created_at', now()->year)
+            ->count();
+
+        $labels = [];
+        $counts = [];
+        for ($i = 5; $i >= 0; $i--) {
+            $month = now()->subMonths($i);
+            $labels[] = $month->format('M');
+            $counts[] = (clone $query)
+                ->whereMonth('created_at', $month->month)
+                ->whereYear('created_at', $month->year)
+                ->count();
+        }
+
+        return [
+            'count' => $currentMonthCount,
+            'chart' => [
+                'labels' => $labels,
+                'data' => $counts
+            ]
+        ];
     }
 }

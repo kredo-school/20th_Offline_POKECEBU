@@ -15,37 +15,63 @@ class AnalysisController extends Controller
 {
 public function userAnalysis()
 {
-    // 1. 全一般ユーザー数 (role_id: 1)
+    // 1. 全一般ユーザー数 (Role 1)
     $totalUsers = User::where('role_id', 1)->count();
-
+    
     // 2. 今月の新規登録者数
     $newThisMonth = User::where('role_id', 1)
         ->whereMonth('created_at', now()->month)
         ->whereYear('created_at', now()->year)
         ->count();
 
-    // 3. 直近12ヶ月の月別登録者数 (グラフ・テーブル用)
-    // 登録された月ごとにカウントを取得
-    $monthlyStats = User::where('role_id', 1)
-        ->selectRaw("DATE_FORMAT(created_at, '%Y-%m') as month_key, DATE_FORMAT(created_at, '%b') as month_name, COUNT(*) as signups")
+    // 3. 過去12ヶ月の登録推移
+    $monthlyUserStats = collect();
+    $monthLabels = [];
+    $growthData = [];
+
+    $rawStats = User::where('role_id', 1)
+        ->selectRaw("DATE_FORMAT(created_at, '%Y-%m') as month_key, COUNT(*) as signups")
         ->where('created_at', '>=', now()->subMonths(11)->startOfMonth())
-        ->groupBy('month_key', 'month_name')
+        ->groupBy('month_key')
         ->orderBy('month_key')
-        ->get();
+        ->get()
+        ->keyBy('month_key');
 
-    // グラフ用の配列 (件数のみ)
-    $growthData = $monthlyStats->pluck('signups');
-    // グラフ用のラベル (Jan, Feb... など)
-    $monthLabels = $monthlyStats->pluck('month_name');
+    for ($i = 11; $i >= 0; $i--) {
+        $month = now()->subMonths($i);
+        $keyMonth = $month->format('Y-m');
+        $count = $rawStats->get($keyMonth)->signups ?? 0;
 
-    $monthlyUserStats = $monthlyStats;
+        $monthlyUserStats->push((object)[
+            'month_name' => $month->format('M Y'),
+            'signups' => $count
+        ]);
+        $monthLabels[] = $month->format('M');
+        $growthData[] = $count;
+    }
+
+    // 4. 【新指標】予約アクティビティ率 (モデルのリレーションを利用)
+    // hotelReservations または restaurantReservations を持っているユーザーを抽出
+    $activeUsersCount = User::where('role_id', 1)
+        ->where(function($query) {
+            $query->has('hotelReservations')
+                  ->orHas('restaurantReservations');
+        })->count();
+
+    $inactiveUsersCount = max(0, $totalUsers - $activeUsersCount);
+
+    $activityData = [
+        'active' => $activeUsersCount,
+        'inactive' => $inactiveUsersCount
+    ];
 
     return view('adminpage.analysis.user', compact(
         'totalUsers', 
         'newThisMonth', 
         'growthData', 
-        'monthLabels',
-        'monthlyUserStats'
+        'monthLabels', 
+        'monthlyUserStats',
+        'activityData'
     ));
 }
 

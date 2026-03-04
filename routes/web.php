@@ -63,6 +63,9 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('/category-type/store', [TypeController::class, 'store'])->name('category-type.store');
         Route::delete('/category-type/delete/{id}', [TypeController::class, 'destroy'])->name('category-type.destroy');
         Route::patch('/category-type/update/{id}', [TypeController::class, 'update'])->name('category-type.update');
+        Route::get('/category-post', [PostsController::class, 'index'])->name('category.post-index');  
+        Route::delete('/category-post/deactive/{id}', [PostsController::class, 'deactivate'])->name('category-post.deactivate');
+        Route::patch('/category-post/activate/{id}', [PostsController::class, 'activate'])->name('category-post.activate');
 
         ### All Users
         Route::get('/all-users', [AdminController::class, 'showAllUsers'])->name('showAllUsers');

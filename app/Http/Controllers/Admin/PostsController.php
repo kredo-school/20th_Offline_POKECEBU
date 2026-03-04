@@ -16,7 +16,7 @@ class PostsController extends Controller
 
     public function index() {
        $all_posts = $this->post->withTrashed()->latest()->paginate(10);
-       return view('adminpage.post')->with('all_posts', $all_posts);
+       return view('adminpage.category.post-index')->with('all_posts', $all_posts);
     }
 
     public function deactivate($id) {

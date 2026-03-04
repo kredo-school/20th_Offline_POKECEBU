@@ -140,19 +140,29 @@
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        @php $prevSignups = null; @endphp
+
                                         @foreach ($monthlyUserStats as $data)
                                             <tr>
                                                 <td class="text-start ps-4 fw-bold text-dark">{{ $data->month_name }}</td>
                                                 <td><span class="fw-bold">{{ number_format($data->signups) }}</span></td>
                                                 <td class="text-end pe-4">
-                                                    @if ($data->signups > 0)
+                                                    @if (!is_null($prevSignups) && $data->signups > $prevSignups)
                                                         <span
-                                                            class="badge rounded-pill bg-success bg-opacity-10 text-success px-3 border border-success border-opacity-25">Growing</span>
+                                                            class="badge rounded-pill bg-success bg-opacity-10 text-success px-3 border border-success border-opacity-25">
+                                                            <i class="fa-solid fa-arrow-up me-1 small"></i>Growing
+                                                        </span>
+                                                    @elseif (!is_null($prevSignups) && $data->signups < $prevSignups)
+                                                        <span
+                                                            class="badge rounded-pill bg-danger bg-opacity-10 text-danger px-3 border border-danger border-opacity-25">
+                                                            <i class="fa-solid fa-arrow-down me-1 small"></i>Decreasing
+                                                        </span>
                                                     @else
                                                         <span class="text-muted small">Stable</span>
                                                     @endif
                                                 </td>
                                             </tr>
+                                            @php $prevSignups = $data->signups; @endphp 
                                         @endforeach
                                     </tbody>
                                 </table>

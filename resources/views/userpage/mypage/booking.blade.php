@@ -1,165 +1,258 @@
-@extends('layouts.app')
+@extends('layouts.user')
 
 @push('styles')
-<link rel="stylesheet" href="{{ asset('css/user.css/mypage/booking.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/user.css/mypage/mypage.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/user.css/mypage/booking.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:wght@500&display=swap" rel="stylesheet">
 @endpush
 
-@section('navbar')
-<nav class="navbar navbar-expand-md shadow-sm" style="background-color:#6FA9DE; height:80px;">
-    <div class="container">
-        <span class="navbar-brand fw-bold">My Account</span>
-    </div>
-</nav>
-@endsection
-
 @section('content')
-<div class="container mt-5">
-    <div class="row">
+<div class="mypage-wrapper">
 
-        {{-- 左メニュー --}}
-        <div class="col-3 d-flex flex-column mb-4">
-            <a href="{{ route('mypage') }}" class="text-decoration-none text-dark px-3 py-2 rounded menu-item mb-1">Profile</a>
-            <a href="{{ route('booking') }}" class="text-decoration-none text-dark px-3 py-2 rounded menu-item mb-1 active">My Booking</a>
-            <a href="{{ route('favorite') }}" class="text-decoration-none text-dark px-3 py-2 rounded menu-item mb-1">Favorite</a>
+    {{-- ── 左サイドバー（mypageと同一構造） ── --}}
+    <aside class="ig-sidebar">
+        <div class="ig-sidebar-profile">
+            <div class="ig-sidebar-avatar">
+                <div class="ig-sidebar-avatar-inner">
+                    @if ($user->detail?->avatar)
+                        <img src="{{ $user->detail->avatar }}" alt="avatar">
+                    @else
+                        <i class="fa-solid fa-user"></i>
+                    @endif
+                </div>
+            </div>
+            <div class="ig-sidebar-name">
+                {{ $user->detail?->first_name ?? '' }} {{ $user->detail?->last_name ?? 'ユーザー' }}
+            </div>
+            <div class="ig-sidebar-email">{{ $user->email }}</div>
         </div>
 
-        {{-- 右コンテンツ --}}
-        <div class="col-9">
-            <div class="card mb-4 shadow-sm">
-                <div class="card-body">
+        <nav class="ig-sidebar-nav">
+            <a href="{{ route('mypage') }}" class="ig-nav-item">
+                <i class="fa-regular fa-user"></i> Profile
+            </a>
+            <a href="{{ route('user.mypage.post') }}" class="ig-nav-item">
+                <i class="fa-regular fa-images"></i> Posts
+            </a>
+            <a href="{{ route('booking') }}" class="ig-nav-item active">
+                <i class="fa-regular fa-calendar"></i> Bookings
+            </a>
+            <a href="{{ route('favorite') }}" class="ig-nav-item">
+                <i class="fa-regular fa-heart"></i> Favorite
+            </a>
+        </nav>
+    </aside>
 
-                    {{-- タブ --}}
-                    <ul class="nav nav-tabs nav-justified mb-3">
-                        <li class="nav-item">
-                            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#hotel">
-                                Hotel Reservations
-                            </button>
-                        </li>
-                        <li class="nav-item">
-                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#restaurant">
-                                Restaurant Reservations
-                            </button>
-                        </li>
-                    </ul>
+    {{-- ── 右コンテンツ ── --}}
+    <main class="ig-content">
 
-                    <div class="tab-content">
-
-                        {{-- =========================
-                            HOTEL
-                        ========================== --}}
-                        <div class="tab-pane fade show active" id="hotel">
-
-                            {{-- Upcoming --}}
-                            <h5 class="mb-3">Upcoming</h5>
-                            @forelse($upcomingHotels as $res)
-                                <div class="border rounded p-3 mb-3 shadow-sm">
-                                    <p><strong>Reservation ID:</strong> {{ $res->reservation_id }}</p>
-                                    <p><strong>Hotel:</strong> {{ $res->hotel->name ?? 'N/A' }}</p>
-                                    <p><strong>Guests:</strong> {{ $res->guests }}</p>
-                                    <p><strong>Check-in:</strong> {{ \Carbon\Carbon::parse($res->start_at)->format('Y-m-d H:i') }}</p>
-                                    <p><strong>Check-out:</strong> {{ \Carbon\Carbon::parse($res->end_at)->format('Y-m-d H:i') }}</p>
-                                    <p><strong>Total:</strong> ₱{{ number_format($res->total_price,2) }}</p>
-                                    <span class="badge bg-success">Active</span>
-                                </div>
-                            @empty
-                                <p>No upcoming hotel reservations.</p>
-                            @endforelse
-
-                            {{-- Past --}}
-                            <h5 class="mt-4 mb-3">Past</h5>
-                            @forelse($pastHotels as $res)
-                                <div class="border rounded p-3 mb-3 shadow-sm bg-light">
-                                    <p><strong>Reservation ID:</strong> {{ $res->reservation_id }}</p>
-                                    <p><strong>Hotel:</strong> {{ $res->hotel->name ?? 'N/A' }}</p>
-                                    <p><strong>Check-in:</strong> {{ \Carbon\Carbon::parse($res->start_at)->format('Y-m-d H:i') }}</p>
-                                    <p><strong>Total:</strong> ₱{{ number_format($res->total_price,2) }}</p>
-                                    <span class="badge bg-secondary">Completed</span>
-
-                                    {{-- 評価ボタン --}}
-                                    @php
-                                    $review = $res->hotel->reviewBy(auth()->id());
-                                    @endphp
-                                        <button class="btn {{ $review ?  'btn-secondary' : 'btn-primary'}}" data-bs-toggle="modal" data-bs-target="#reviewModal{{ $res->hotel->id }}">{{ $review ? '投稿済み' : 'Write Review' }}</button>
-                                        @include('userpage.mypage.modals.review', [
-                                        'target' => $res->hotel,
-                                        'type' => 'hotel'
-                                     ])
-        
-                                </div>
-                            @empty
-                                <p>No past hotel reservations.</p>
-                            @endforelse
-
-                            {{-- Cancelled --}}
-                            <h5 class="mt-4 mb-3">Cancelled</h5>
-                            @forelse($cancelledHotels as $res)
-                                <div class="border rounded p-3 mb-3 shadow-sm bg-light">
-                                    <p><strong>Reservation ID:</strong> {{ $res->reservation_id }}</p>
-                                    <p><strong>Hotel:</strong> {{ $res->hotel->name ?? 'N/A' }}</p>
-                                    <p><strong>Total:</strong> ₱{{ number_format($res->total_price,2) }}</p>
-                                    <span class="badge bg-danger">Cancelled</span>
-                                </div>
-                            @empty
-                                <p>No cancelled hotel reservations.</p>
-                            @endforelse
-                        </div>
-
-
-                        {{-- =========================
-                            RESTAURANT
-                        ========================== --}}
-                        <div class="tab-pane fade" id="restaurant">
-
-                            {{-- Upcoming --}}
-                            <h5 class="mb-3">Upcoming</h5>
-                            @forelse($upcomingRestaurants as $res)
-                                <div class="border rounded p-3 mb-3 shadow-sm">
-                                    <p><strong>Reservation ID:</strong> {{ $res->reservation_id }}</p>
-                                    <p><strong>Restaurant:</strong> {{ $res->restaurant->name ?? 'N/A' }}</p>
-                                    <p><strong>Guests:</strong> {{ $res->guests }}</p>
-                                    <p><strong>Date:</strong> {{ \Carbon\Carbon::parse($res->start_at)->format('Y-m-d H:i') }}</p>
-                                    <p><strong>Total:</strong> ₱{{ number_format($res->total_price,2) }}</p>
-                                    <span class="badge bg-success">Active</span>
-                                </div>
-                            @empty
-                                <p>No upcoming restaurant reservations.</p>
-                            @endforelse
-
-                            {{-- Past --}}
-                            <h5 class="mt-4 mb-3">Past</h5>
-                            @forelse($pastRestaurants as $res)
-                                <div class="border rounded p-3 mb-3 shadow-sm bg-light">
-                                    <p><strong>Reservation ID:</strong> {{ $res->reservation_id }}</p>
-                                    <p><strong>Restaurant:</strong> {{ $res->restaurant->name ?? 'N/A' }}</p>
-                                    <p><strong>Date:</strong> {{ \Carbon\Carbon::parse($res->start_at)->format('Y-m-d H:i') }}</p>
-                                    <p><strong>Total:</strong> ₱{{ number_format($res->total_price,2) }}</p>
-                                    <span class="badge bg-secondary">Completed</span>
-                                </div>
-                            @empty
-                                <p>No past restaurant reservations.</p>
-                            @endforelse
-
-                            {{-- Cancelled --}}
-                            <h5 class="mt-4 mb-3">Cancelled</h5>
-                            @forelse($cancelledRestaurants as $res)
-                                <div class="border rounded p-3 mb-3 shadow-sm bg-light">
-                                    <p><strong>Reservation ID:</strong> {{ $res->reservation_id }}</p>
-                                    <p><strong>Restaurant:</strong> {{ $res->restaurant->name ?? 'N/A' }}</p>
-                                    <p><strong>Total:</strong> ₱{{ number_format($res->total_price,2) }}</p>
-                                    <span class="badge bg-danger">Cancelled</span>
-                                </div>
-                            @empty
-                                <p>No cancelled restaurant reservations.</p>
-                            @endforelse
-                        </div>
-
-                    </div>
+        {{-- プロフィールヘッダー（mypageと同一構造） --}}
+        <div class="ig-profile-card">
+            <div class="ig-avatar-ring">
+                <div class="ig-avatar-inner">
+                    @if ($user->detail?->avatar)
+                        <img src="{{ $user->detail->avatar }}" alt="avatar">
+                    @else
+                        <i class="fa-solid fa-user"></i>
+                    @endif
                 </div>
+            </div>
+            <div class="ig-profile-info">
+                <div class="ig-username">
+                    <span>{{ $user->detail?->first_name ?? '' }} {{ $user->detail?->last_name ?? 'ユーザー' }}</span>
+                </div>
+                <div class="ig-email">{{ $user->email }}</div>
             </div>
         </div>
 
-    </div>
+        {{-- ── タブ ── --}}
+        <div class="bk-tabs">
+            <button class="bk-tab-btn active" onclick="switchTab('hotel', this)">
+                <i class="fa-regular fa-building"></i> Hotel
+            </button>
+            <button class="bk-tab-btn" onclick="switchTab('restaurant', this)">
+                <i class="fa-regular fa-utensils"></i> Restaurant
+            </button>
+        </div>
+
+        {{-- ════════════════════════
+             HOTEL タブ
+        ════════════════════════ --}}
+        <div class="bk-tab-pane active" id="tab-hotel">
+
+            {{-- Upcoming --}}
+            <div class="bk-section-title"><i class="fa-regular fa-clock me-1"></i> Upcoming</div>
+            @forelse($upcomingHotels as $res)
+                <div class="bk-card">
+                    <div class="bk-card-body">
+                        <div class="bk-card-icon"><i class="fa-regular fa-building"></i></div>
+                        <div class="bk-card-info">
+                            <div class="bk-card-name">{{ $res->hotel->name ?? 'N/A' }}</div>
+                            <div class="bk-card-meta">
+                                <span><i class="fa-regular fa-calendar"></i> {{ \Carbon\Carbon::parse($res->start_at)->format('M d, Y') }}</span>
+                                <span><i class="fa-solid fa-arrow-right"></i> {{ \Carbon\Carbon::parse($res->end_at)->format('M d, Y') }}</span>
+                                <span><i class="fa-regular fa-user"></i> {{ $res->guests }} guests</span>
+                            </div>
+                            <div class="bk-res-id mt-1"># {{ $res->reservation_id }}</div>
+                        </div>
+                        <div class="bk-card-right">
+                            <div class="bk-price">₱{{ number_format($res->total_price, 2) }}</div>
+                            <span class="bk-badge active"><i class="fa-solid fa-circle" style="font-size:6px;"></i> Active</span>
+                        </div>
+                    </div>
+                </div>
+            @empty
+                <div class="bk-empty"><i class="fa-regular fa-calendar-xmark"></i>No upcoming hotel reservations.</div>
+            @endforelse
+
+            {{-- Past --}}
+            <div class="bk-section-title"><i class="fa-regular fa-clock-rotate-left me-1"></i> Past</div>
+            @forelse($pastHotels as $res)
+                @php $review = $res->hotel->reviewBy(auth()->id()); @endphp
+                <div class="bk-card">
+                    <div class="bk-card-body">
+                        <div class="bk-card-icon" style="background:#f5f5f5;color:#9e9e9e;">
+                            <i class="fa-regular fa-building"></i>
+                        </div>
+                        <div class="bk-card-info">
+                            <div class="bk-card-name">{{ $res->hotel->name ?? 'N/A' }}</div>
+                            <div class="bk-card-meta">
+                                <span><i class="fa-regular fa-calendar"></i> {{ \Carbon\Carbon::parse($res->start_at)->format('M d, Y') }}</span>
+                            </div>
+                            <div class="bk-res-id mt-1"># {{ $res->reservation_id }}</div>
+                        </div>
+                        <div class="bk-card-right">
+                            <div class="bk-price">₱{{ number_format($res->total_price, 2) }}</div>
+                            <span class="bk-badge completed"><i class="fa-solid fa-check" style="font-size:9px;"></i> Completed</span>
+                            <button class="bk-review-btn {{ $review ? 'done' : '' }}"
+                                {{ $review ? '' : "data-bs-toggle=modal data-bs-target=#reviewModal{$res->hotel->id}" }}>
+                                <i class="fa-{{ $review ? 'solid' : 'regular' }} fa-star"></i>
+                                {{ $review ? '投稿済み' : 'Write Review' }}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                @include('userpage.mypage.modals.review', ['target' => $res->hotel, 'type' => 'hotel'])
+            @empty
+                <div class="bk-empty"><i class="fa-regular fa-calendar-xmark"></i>No past hotel reservations.</div>
+            @endforelse
+
+            {{-- Cancelled --}}
+            <div class="bk-section-title"><i class="fa-regular fa-ban me-1"></i> Cancelled</div>
+            @forelse($cancelledHotels as $res)
+                <div class="bk-card">
+                    <div class="bk-card-body">
+                        <div class="bk-card-icon" style="background:#fdecea;color:#c62828;">
+                            <i class="fa-regular fa-building"></i>
+                        </div>
+                        <div class="bk-card-info">
+                            <div class="bk-card-name">{{ $res->hotel->name ?? 'N/A' }}</div>
+                            <div class="bk-res-id mt-1"># {{ $res->reservation_id }}</div>
+                        </div>
+                        <div class="bk-card-right">
+                            <div class="bk-price">₱{{ number_format($res->total_price, 2) }}</div>
+                            <span class="bk-badge cancelled"><i class="fa-solid fa-xmark" style="font-size:9px;"></i> Cancelled</span>
+                        </div>
+                    </div>
+                </div>
+            @empty
+                <div class="bk-empty"><i class="fa-regular fa-calendar-xmark"></i>No cancelled hotel reservations.</div>
+            @endforelse
+
+        </div>{{-- /tab-hotel --}}
+
+
+        {{-- ════════════════════════
+             RESTAURANT タブ
+        ════════════════════════ --}}
+        <div class="bk-tab-pane" id="tab-restaurant">
+
+            {{-- Upcoming --}}
+            <div class="bk-section-title"><i class="fa-regular fa-clock me-1"></i> Upcoming</div>
+            @forelse($upcomingRestaurants as $res)
+                <div class="bk-card">
+                    <div class="bk-card-body">
+                        <div class="bk-card-icon" style="background:#fff8e1;color:#f9a825;">
+                            <i class="fa-regular fa-utensils"></i>
+                        </div>
+                        <div class="bk-card-info">
+                            <div class="bk-card-name">{{ $res->restaurant->name ?? 'N/A' }}</div>
+                            <div class="bk-card-meta">
+                                <span><i class="fa-regular fa-calendar"></i> {{ \Carbon\Carbon::parse($res->start_at)->format('M d, Y H:i') }}</span>
+                                <span><i class="fa-regular fa-user"></i> {{ $res->guests }} guests</span>
+                            </div>
+                            <div class="bk-res-id mt-1"># {{ $res->reservation_id }}</div>
+                        </div>
+                        <div class="bk-card-right">
+                            <div class="bk-price">₱{{ number_format($res->total_price, 2) }}</div>
+                            <span class="bk-badge active"><i class="fa-solid fa-circle" style="font-size:6px;"></i> Active</span>
+                        </div>
+                    </div>
+                </div>
+            @empty
+                <div class="bk-empty"><i class="fa-regular fa-calendar-xmark"></i>No upcoming restaurant reservations.</div>
+            @endforelse
+
+            {{-- Past --}}
+            <div class="bk-section-title"><i class="fa-regular fa-clock-rotate-left me-1"></i> Past</div>
+            @forelse($pastRestaurants as $res)
+                <div class="bk-card">
+                    <div class="bk-card-body">
+                        <div class="bk-card-icon" style="background:#f5f5f5;color:#9e9e9e;">
+                            <i class="fa-regular fa-utensils"></i>
+                        </div>
+                        <div class="bk-card-info">
+                            <div class="bk-card-name">{{ $res->restaurant->name ?? 'N/A' }}</div>
+                            <div class="bk-card-meta">
+                                <span><i class="fa-regular fa-calendar"></i> {{ \Carbon\Carbon::parse($res->start_at)->format('M d, Y H:i') }}</span>
+                            </div>
+                            <div class="bk-res-id mt-1"># {{ $res->reservation_id }}</div>
+                        </div>
+                        <div class="bk-card-right">
+                            <div class="bk-price">₱{{ number_format($res->total_price, 2) }}</div>
+                            <span class="bk-badge completed"><i class="fa-solid fa-check" style="font-size:9px;"></i> Completed</span>
+                        </div>
+                    </div>
+                </div>
+            @empty
+                <div class="bk-empty"><i class="fa-regular fa-calendar-xmark"></i>No past restaurant reservations.</div>
+            @endforelse
+
+            {{-- Cancelled --}}
+            <div class="bk-section-title"><i class="fa-regular fa-ban me-1"></i> Cancelled</div>
+            @forelse($cancelledRestaurants as $res)
+                <div class="bk-card">
+                    <div class="bk-card-body">
+                        <div class="bk-card-icon" style="background:#fdecea;color:#c62828;">
+                            <i class="fa-regular fa-utensils"></i>
+                        </div>
+                        <div class="bk-card-info">
+                            <div class="bk-card-name">{{ $res->restaurant->name ?? 'N/A' }}</div>
+                            <div class="bk-res-id mt-1"># {{ $res->reservation_id }}</div>
+                        </div>
+                        <div class="bk-card-right">
+                            <div class="bk-price">₱{{ number_format($res->total_price, 2) }}</div>
+                            <span class="bk-badge cancelled"><i class="fa-solid fa-xmark" style="font-size:9px;"></i> Cancelled</span>
+                        </div>
+                    </div>
+                </div>
+            @empty
+                <div class="bk-empty"><i class="fa-regular fa-calendar-xmark"></i>No cancelled restaurant reservations.</div>
+            @endforelse
+
+        </div>{{-- /tab-restaurant --}}
+
+    </main>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+function switchTab(name, btn) {
+    // タブボタン
+    document.querySelectorAll('.bk-tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    // タブパネル
+    document.querySelectorAll('.bk-tab-pane').forEach(p => p.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+}
+</script>
 @endsection

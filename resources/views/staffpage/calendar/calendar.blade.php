@@ -8,7 +8,7 @@
 
 {{-- 右上のAll reservations リンク --}}
 <div class="d-flex justify-content-end mt-3">
-    <a href="{{ route('reservations.hotel') }}" class="btn btn-primary">
+    <a href="{{ route('hotel.reservations') }}" class="btn btn-primary">
         All reservations
     </a>
 </div>

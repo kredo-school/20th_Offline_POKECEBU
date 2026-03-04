@@ -247,7 +247,7 @@
         {{-- 1. KPI Cards Row (col-md-6) --}}
         <div class="row g-4 mb-5 justify-content-center">
             {{-- All Users --}}
-            <div class="col-md-6 col-xl-5">
+            <div class="col-4">
                 <div class="card kpi-card">
                     <div class="card-body">
                         <div class="kpi-icon-wrapper bg-icon-all-users">
@@ -266,7 +266,7 @@
             </div>
 
             {{-- New Registrations --}}
-            <div class="col-md-6 col-xl-5">
+            <div class="col-4">
                 <div class="card kpi-card">
                     <div class="card-body">
                         <div class="kpi-icon-wrapper bg-icon-new-reg">
@@ -281,6 +281,26 @@
                         </div>
                     </div>
                 </div>
+            </div>
+
+            {{-- User Insights / Analysis Link --}}
+            <div class="col-2">
+                <a href="{{ route('admin.analysis.user') }}" class="text-decoration-none">
+                    <div class="card kpi-card border-0 shadow-sm" style="transition: transform 0.2s; height: 100%;">
+                        <div
+                            class="card-body d-flex flex-column justify-content-center align-items-center text-center py-4">
+                            <div class="kpi-icon-wrapper mb-3"
+                                style="background: rgba(59, 130, 246, 0.1); color: #3b82f6; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+                                <i class="fa-solid fa-magnifying-glass-chart"></i>
+                            </div>
+                            <div class="kpi-label fw-bold text-dark mb-1">View Analytics</div>
+                            <div class="small text-muted mb-3">User Growth & Activity</div>
+                            <div class="btn btn-sm btn-outline-primary rounded-pill px-3 fw-bold">
+                                Open Report <i class="fa-solid fa-arrow-right ms-1"></i>
+                            </div>
+                        </div>
+                    </div>
+                </a>
             </div>
         </div>
 
@@ -349,7 +369,6 @@
                             </a>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>

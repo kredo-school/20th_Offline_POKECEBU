@@ -113,7 +113,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/showList/{name}', [AdminController::class, 'showList'])->name('showList');
 
         // ホテル予約
-        Route::get('/hotels', [HotelController::class, 'roomInfo'])->name('hotels.index');
+        Route::get('/hotels/reservation', [HotelController::class, 'roomInfo'])->name('hotels.index');
         Route::get('/reservation/confirmation', [HotelReservationController::class, 'confirmation'])->name('reservation.confirmation');
         Route::post('/reservation/confirm', [HotelReservationController::class, 'confirmReservation'])->name('reservation.confirm');
         Route::match(['get', 'post'], '/reservation/payment-form', [HotelReservationController::class, 'payment'])->name('reservation.payment.form');
@@ -205,6 +205,9 @@ Route::group(['middleware' => 'auth'], function () {
         Route::delete('/{id}/destroyTable', [RestaurantTableController::class, 'destroyTable'])->name('destroyTable');
         Route::patch('/{id}/updateStatus', [RestaurantTableController::class, 'updateStatus'])->name('updateStatus');
         Route::get('/{id}/viewTable', [RestaurantTableController::class, 'viewTable'])->name('viewTable');
+        // カレンダー
+         Route::get('/store/calendar', [RestaurantReservationController::class, 'calendar'])->name('store.carendar');
+         Route::get('/store/calendar/data', [RestaurantReservationController::class, 'calendarData'])->name('store.calendar.data');
     });
 
     #################### User ####################
@@ -233,12 +236,13 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/mypage', [MyPageController::class, 'index'])->name('mypage');
         Route::get('/mypage/edit', [MyPageController::class, 'editPersonal'])->name('mypage.edit');
         Route::post('/mypage/updateProfile', [MyPageController::class, 'updatePersonal'])->name('mypage.updateProfile');
+        Route::get('mypage/post',[MypageController::class,'post'])->name('mypage.post');
 
         Route::post('/user/mypage/delete-avatar', [MyPageController::class, 'deleteAvatar'])->name('delete.avatar');
 
         Route::get('/mypage/edit/adress', [MyPageController::class, 'editAdress'])->name('edit.adress');
         Route::post('/mypage/edit/updateAdress', [MyPageController::class, 'updateAdress'])->name('update.adress');
-        Route::get('/mypage/edit/profile', [MyPageController::class, 'editProfile'])->name('edit.profile');
+        Route::get('/mypage/edit/profile', [MyPageController::class,'editProfile'])->name('edit.profile');
         Route::post('/mypage/edit/updateProfile', [MyPageController::class, 'updateProfile'])->name('update.profile');
         Route::get('/mypage/booking', [BookingController::class, 'index'])->name('booking');
         Route::get('/mypage/favorite', [FavoriteController::class, 'index'])->name('favorite');

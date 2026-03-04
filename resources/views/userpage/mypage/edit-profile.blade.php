@@ -29,15 +29,20 @@
 
                         {{-- 2. プロフィール画像セクション --}}
                         <div class="text-center mb-4">
-                            <img src="{{ $user->detail?->avatar ?? 'https://via.placeholder.com/100' }}"
-                                class="rounded-circle mb-2" alt="Profile Image"
-                                style="width: 100px; height: 100px; object-fit: cover; border: 2px solid #ddd;">
-                            
+                            @if ($user->detail?->avatar && str_starts_with($user->detail->avatar, 'data:'))
+                                <img src="{{ $user->detail->avatar }}" class="rounded-circle mb-2" alt="Profile Image"
+                                    style="width: 100px; height: 100px; object-fit: cover; border: 2px solid #ddd;">
+                            @else
+                                <div class="rounded-circle mb-2 mx-auto d-flex align-items-center justify-content-center bg-light"
+                                    style="width:100px;height:100px;border:2px solid #ddd;">
+                                    <i class="fa-solid fa-user" style="font-size:36px;color:#c0c0c0;"></i>
+                                </div>
+                            @endif
                             {{-- 写真がある時だけ削除ボタンを表示。ルート名は user. を付与 --}}
-                            @if($user->detail?->avatar)
+                            @if ($user->detail?->avatar)
                                 <div class="mb-2">
-                                    <button type="button" class="btn btn-sm text-danger fw-bold" 
-                                            onclick="if(confirm('Are you sure you want to remove your photo?')) { document.getElementById('delete-avatar-form').submit(); }">
+                                    <button type="button" class="btn btn-sm text-danger fw-bold"
+                                        onclick="if(confirm('Are you sure you want to remove your photo?')) { document.getElementById('delete-avatar-form').submit(); }">
                                         Remove Photo
                                     </button>
                                 </div>
@@ -93,7 +98,8 @@
                         </form>
 
                         {{-- 4. 写真削除用の隠しフォーム（名前を user.delete.avatar に修正） --}}
-                        <form id="delete-avatar-form" action="{{ route('user.delete.avatar') }}" method="POST" style="display: none;">
+                        <form id="delete-avatar-form" action="{{ route('user.delete.avatar') }}" method="POST"
+                            style="display: none;">
                             @csrf
                         </form>
 

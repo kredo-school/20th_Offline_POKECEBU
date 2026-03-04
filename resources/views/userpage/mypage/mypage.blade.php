@@ -2,140 +2,157 @@
 
 @push('styles')
     <link rel="stylesheet" href="{{ asset('css/user.css/mypage/mypage.css') }}">
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:wght@500&display=swap"
+        rel="stylesheet">
 @endpush
-
-
 @section('content')
-    <div class="container mt-5">
-        <div class="row">
-            {{-- 左メニュー --}}
-            <div class="col-3 d-flex flex-column mb-4">
-                <a href="{{ route('mypage') }}"
-                    class="text-decoration-none text-dark px-3 py-2 rounded menu-item mb-1">Profile</a>
-                <a href="{{ route('booking') }}"
-                    class="text-decoration-none text-dark px-3 py-2 rounded menu-item mb-1">Bookings</a>
-                <a href="{{ route('favorite') }}"
-                    class="text-decoration-none text-dark px-3 py-2 rounded menu-item mb-1">Favorite</a>
+    <div class="mypage-wrapper">
+
+        {{-- 左サイドバー --}}
+        <aside class="ig-sidebar">
+
+            {{-- サイドバー内アバター＋名前 --}}
+            <div class="ig-sidebar-profile">
+                <div class="ig-sidebar-avatar">
+                    <div class="ig-sidebar-avatar-inner">
+                        {{-- 変更後 --}}
+                        @if ($user->detail?->avatar && str_starts_with($user->detail->avatar, 'data:'))
+                            <img src="{{ $user->detail->avatar }}" alt="avatar">
+                        @else
+                            <i class="fa-solid fa-user"></i>
+                        @endif
+                    </div>
+                </div>
+                <div class="ig-sidebar-name">
+                    {{ $user->detail?->first_name ?? '' }} {{ $user->detail?->last_name ?? 'ユーザー' }}
+                </div>
+                <div class="ig-sidebar-email">{{ $user->email }}</div>
             </div>
 
-            {{-- 右コンテンツ --}}
-            <div class="col-9">
-                <div class="card mb-4">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <span>Profile</span>
-                        <a href="{{ route('edit.profile') }}" class="btn btn-primary btn-sm">Edit Profile</a>
-                    </div>
+            {{-- ナビゲーション --}}
+            <nav class="ig-sidebar-nav">
+                <a href="{{ route('mypage') }}" class="ig-nav-item active">
+                    <i class="fa-regular fa-user"></i> Profile
+                </a>
+                <a href="{{ route('user.mypage.post') }}" class="ig-nav-item">
+                    <i class="fa-regular fa-images"></i> Posts
+                </a>
+                <a href="{{ route('booking') }}" class="ig-nav-item">
+                    <i class="fa-regular fa-calendar"></i> Bookings
+                </a>
+                <a href="{{ route('favorite') }}" class="ig-nav-item">
+                    <i class="fa-regular fa-heart"></i> Favorite
+                </a>
+            </nav>
+        </aside>
 
-                    <div class="card-body">
-                        <div class="row">
-                            {{-- プロフィール画像セクション修正 --}}
-                            <div class="d-flex flex-column align-items-center mb-3 col-2">
-                                <div class="avatar-wrapper">
-                                    @if ($user->detail?->avatar)
-                                        {{-- 画像がある場合 --}}
-                                        <img src="{{ $user->detail->avatar }}" class="rounded-circle" alt="Profile Image"
-                                            style="width: 100px; height: 100px; object-fit: cover; border: 1px solid #ddd;">
-                                    @else
-                                        {{-- 画像がない場合：初期設定アイコン (インスタ風) --}}
-                                        <div class="rounded-circle bg-light d-flex align-items-center justify-content-center"
-                                            style="width: 100px; height: 100px; border: 1px solid #ddd;">
-                                            <i class="fa-solid fa-user text-secondary" style="font-size: 50px;"></i>
-                                        </div>
-                                        {{-- 右下の＋ボタン --}}
-                                        <a href="{{ route('user.edit.profile') }}" class="avatar-add-badge shadow-sm">
-                                            <i class="fa-solid fa-plus"></i>
-                                        </a>
-                                    @endif
-                                </div>
-                            </div>
-                            <div class="col-10">
+        {{-- 右コンテンツ --}}
+        <main class="ig-content">
 
-                                <h5>{{ $user->detail->first_name ?? '苗字' }} {{ $user->detail->last_name ?? '名前' }}</h5>
-                                <p class="mb-0 text-muted">{{ $user->email }}</p>
-
-                                <p class="mb-0 text-muted">{{ $user->detail->phone ?? '電話番号' }}</p>
-                            </div>
-
-                        </div>
+            {{-- プロフィールヘッダー --}}
+            <div class="ig-profile-card">
+                <div class="ig-avatar-ring">
+                    <div class="ig-avatar-inner">
+                        {{-- 変更後 --}}
+                        @if ($user->detail?->avatar && str_starts_with($user->detail->avatar, 'data:'))
+                            <img src="{{ $user->detail->avatar }}" alt="avatar">
+                        @else
+                            <i class="fa-solid fa-user"></i>
+                        @endif
                     </div>
                 </div>
-
-                {{-- Personal Information --}}
-                <div class="card mb-4">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <span>Personal Information</span>
-                        <a href="{{ route('mypage.edit') }}" class="btn btn-primary btn-sm">Edit Personal Information</a>
+                <div class="ig-profile-info">
+                    <div class="ig-username">
+                        <span>{{ $user->detail->first_name ?? '' }} {{ $user->detail->last_name ?? 'ユーザー' }}</span>
                     </div>
-                    <div class="card-body">
-                        <div class="row mb-3">
-                            <div class="col-6">
-                                <label class="form-label text-muted">First Name</label>
-                                <input type="text" class="form-control" value="{{ $user->detail->first_name ?? '' }}"
-                                    readonly>
-                            </div>
-                            <div class="col-6">
-                                <label class="form-label text-muted">Last Name</label>
-                                <input type="text" class="form-control" value="{{ $user->detail->last_name ?? '' }}"
-                                    readonly>
-                            </div>
-                        </div>
-                        <div class="row mb-3">
-                            <div class="col-6">
-                                <label class="form-label text-muted">Email</label>
-                                <input type="text" class="form-control" value="{{ $user->email }}" readonly>
-                            </div>
-                            <div class="col-6">
-                                <label class="form-label text-muted">Phone</label>
-                                <input type="text" class="form-control" value="{{ $user->detail->phone ?? '' }}"
-                                    readonly>
-                            </div>
-                        </div>
-                        <div class="row mb-3">
-                            <div class="col-6">
-                                <label class="form-label text-muted">Date of Birth</label>
-                                <input type="text" class="form-control" value="{{ $user->detail->birthday ?? '' }}"
-                                    readonly>
-                            </div>
-                        </div>
-                    </div>
+                    <div class="ig-email">{{ $user->email }}</div>
+                    <a href="{{ route('edit.profile') }}" class="ig-edit-btn">Edit Profile</a>
                 </div>
+            </div>
 
-                {{-- Address Information (こちらも同様に detail 経由にします) 🏠 --}}
-                <div class="card mb-4">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <span>Address Information</span>
-                        <a href="{{ route('edit.adress') }}" class="btn btn-primary btn-sm">Edit Adress</a>
+            {{-- Personal Information --}}
+            <div class="ig-info-card">
+                <div class="ig-card-header">
+                    <span>Personal Information</span>
+                    <a href="{{ route('mypage.edit') }}" class="ig-card-edit-btn">Edit</a>
+                </div>
+                <div class="ig-card-body">
+                    <div class="ig-field-group">
+                        <div class="ig-field">
+                            <label>First Name</label>
+                            <div class="ig-field-value {{ !$user->detail?->first_name ? 'ig-field-empty' : '' }}">
+                                {{ $user->detail?->first_name ?: '—' }}
+                            </div>
+                        </div>
+                        <div class="ig-field">
+                            <label>Last Name</label>
+                            <div class="ig-field-value {{ !$user->detail?->last_name ? 'ig-field-empty' : '' }}">
+                                {{ $user->detail?->last_name ?: '—' }}
+                            </div>
+                        </div>
                     </div>
-                    <div class="card-body">
-                        <div class="row mb-3">
-                            <div class="col-12">
-                                <label class="form-label text-muted">Street Address</label>
-                                <input type="text" class="form-control"
-                                    value="{{ $user->detail->street_address ?? '' }}" readonly>
+                    <div class="ig-field-group">
+                        <div class="ig-field">
+                            <label>Email</label>
+                            <div class="ig-field-value">{{ $user->email }}</div>
+                        </div>
+                        <div class="ig-field">
+                            <label>Phone</label>
+                            <div class="ig-field-value {{ !$user->detail?->phone ? 'ig-field-empty' : '' }}">
+                                {{ $user->detail?->phone ?: '—' }}
                             </div>
-                            <div class="col-4">
-                                <label class="form-label text-muted">City</label>
-                                <input type="text" class="form-control" value="{{ $user->detail->city ?? '' }}"
-                                    readonly>
+                        </div>
+                    </div>
+                    <div class="ig-field-group" style="grid-template-columns: 1fr 1fr; max-width: 50%;">
+                        <div class="ig-field">
+                            <label>Date of Birth</label>
+                            <div class="ig-field-value {{ !$user->detail?->birthday ? 'ig-field-empty' : '' }}">
+                                {{ $user->detail?->birthday ?: '—' }}
                             </div>
-                            <div class="col-4">
-                                <label class="form-label text-muted">State / Province</label>
-                                <input type="text" class="form-control" value="{{ $user->detail->state ?? '' }}"
-                                    readonly>
-                            </div>
-                            <div class="col-4">
-                                <label class="form-label text-muted">Postal Code</label>
-                                <input type="text" class="form-control" value="{{ $user->detail->postal_code ?? '' }}"
-                                    readonly>
-                            </div>
-                            {{-- <div class="col-12">
-                                <label class="form-label text-muted">Country</label>
-                                <input type="text" class="form-control" value="{{ $user->detail->country ?? '' }}" readonly>
-                            </div> --}}
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+
+            {{-- Address Information --}}
+            <div class="ig-info-card">
+                <div class="ig-card-header">
+                    <span>Address Information</span>
+                    <a href="{{ route('edit.adress') }}" class="ig-card-edit-btn">Edit</a>
+                </div>
+                <div class="ig-card-body">
+                    <div class="ig-field-group single">
+                        <div class="ig-field">
+                            <label>Street Address</label>
+                            <div class="ig-field-value {{ !$user->detail?->street_address ? 'ig-field-empty' : '' }}">
+                                {{ $user->detail?->street_address ?: '—' }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ig-field-group triple">
+                        <div class="ig-field">
+                            <label>City</label>
+                            <div class="ig-field-value {{ !$user->detail?->city ? 'ig-field-empty' : '' }}">
+                                {{ $user->detail?->city ?: '—' }}
+                            </div>
+                        </div>
+                        <div class="ig-field">
+                            <label>State / Province</label>
+                            <div class="ig-field-value {{ !$user->detail?->state ? 'ig-field-empty' : '' }}">
+                                {{ $user->detail?->state ?: '—' }}
+                            </div>
+                        </div>
+                        <div class="ig-field">
+                            <label>Postal Code</label>
+                            <div class="ig-field-value {{ !$user->detail?->postal_code ? 'ig-field-empty' : '' }}">
+                                {{ $user->detail?->postal_code ?: '—' }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
     </div>
 @endsection

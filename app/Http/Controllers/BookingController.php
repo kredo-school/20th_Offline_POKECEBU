@@ -51,10 +51,12 @@ class BookingController extends Controller
     $cancelledRestaurants = $restaurantReservations->filter(function ($res) {
         return $res->status_id == 3;
     });
+    $user = Auth::user()->load('detail'); // ← loadを追加
 
     return view('userpage.mypage.booking', compact(
-        'upcomingHotels', 'pastHotels', 'cancelledHotels',
-        'upcomingRestaurants', 'pastRestaurants', 'cancelledRestaurants'
-    ));
+    'user', // ← これを追加
+    'upcomingHotels', 'pastHotels', 'cancelledHotels',
+    'upcomingRestaurants', 'pastRestaurants', 'cancelledRestaurants'
+));
 }
 }

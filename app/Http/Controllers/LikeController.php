@@ -15,20 +15,30 @@ class LikeController extends Controller
     }
 
     public function store($post_id) {
-       $this->like->user_id = Auth::user()->id;
+       $this->like->user_id = Auth::id();
        $this->like->post_id =$post_id;
        $this->like->save();
 
-       return response()->json(['status' => 'added']);
+       if (request()->wantsJson()) {
+        return response()->json(['status' => 'added']);
+       }
+
+       return back();
+       
     }
     
 
     public function destroy($post_id) {
        $this->like
-            ->where('user_id', Auth::user()->id)
+            ->where('user_id', Auth::id())
             ->where('post_id',$post_id)
             ->delete();
         
-        return response()->json(['status' => 'removed']);
+            if(request()->wantsJson()) {
+             return response()->json(['status' => 'removed']);
+            }
+
+            return back();
+       
     }
 }

@@ -3,40 +3,6 @@
 @section('title', 'Detail Hotel')
 
 @section('content')
-<style>
-    /* 画像スライダーの整形 */
-    .hotel-images, .room-images {
-        display: flex;
-        overflow-x: auto;
-        gap: 15px;
-        padding-bottom: 10px;
-    }
-    .hotel-images img, .room-images img {
-        height: 280px;
-        width: 400px;
-        object-fit: cover;
-        border-radius: 15px;
-        flex-shrink: 0;
-    }
-    .hide-scrollbar::-webkit-scrollbar { display: none; }
-    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
-    /* お気に入りボタン */
-    .btn-favorite {
-        font-size: 1.5rem;
-        transition: transform 0.2s;
-    }
-    .btn-favorite:hover { transform: scale(1.1); }
-
-    /* 部屋カードのホバー */
-    .room-card {
-        transition: transform 0.3s, box-shadow 0.3s;
-    }
-    .room-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
-    }
-</style>
 
 <div class="container py-5">
     <div class="row justify-content-center">
@@ -107,7 +73,10 @@
             </div>
 
             {{-- 2. Room List Section --}}
-            <h3 class="fw-bold mb-4 px-2">Available Rooms</h3>
+            <div class="d-flex align-items-center mb-4 px-2">
+                <div class="bg-primary rounded-pill me-3" style="width: 5px; height: 30px;"></div>
+                <h3 class="fw-bold mb-0">Available Table</h3>
+            </div>
 
             @foreach ($rooms as $room)
                 @php $isAvailable = $room->status->name == 'Available'; @endphp

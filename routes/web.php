@@ -155,7 +155,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     #################### Hotel ####################
     Route::group(['prefix' => 'hotel', 'as' => 'hotel.', 'middleware' => 'hotel'], function () {
-        Route::get('/', [HotelStaffController::class, 'index'])->name('home');
+        Route::get('/', [StaffAnalysisController::class,'hotelAnalysis'])->name('home');
         
         Route::get('/mypage/hotel', [StaffMypageController::class, 'index'])->name('mypage.hotel');
         Route::get('/mypage/hotel/edit', [StaffMypageController::class, 'editStaffMypage'])->name('staff.mypage.hotel.edit');   
@@ -164,8 +164,6 @@ Route::group(['middleware' => 'auth'], function () {
 
         Route::get('/reservations', [HotelReservationController::class, 'hotel'])->name('reservations');
         Route::get('/reservations/{id}', [HotelReservationController::class, 'show'])->name('reservations.show');
-
-        Route::get('/analysis',[StaffAnalysisController::class,'hotelAnalysis'])->name('analysis');
 
         #Hotel - Room overview
         Route::get('/roomOverview', [HotelRoomController::class, 'roomOverview'])->name('roomOverview');
@@ -183,15 +181,13 @@ Route::group(['middleware' => 'auth'], function () {
 
     #################### Restaurant ####################
     Route::group(['prefix' => 'restaurant', 'as' => 'restaurant.', 'middleware' => 'restaurant'], function () {
-        Route::get('/', [RestaurantStaffController::class, 'index'])->name('home');
+        Route::get('/', [StaffAnalysisController::class,'restaurantAnalysis'])->name('home');
         Route::get('/mypage', [StaffMypageController::class, 'indexRestaurant'])->name('mypage');
         Route::get('/mypage/edit', [StaffMypageController::class, 'editStaffMypagerestaurant'])->name('restaurant.edit');
         Route::put('/mypage/update', [StaffMypageController::class, 'updateStaffMypagerestaurant'])->name('update');
 
         Route::get('/reservations', [RestaurantStaffController::class, 'reservations'])->name('reservations');
         Route::get('/reservations/{id}', [RestaurantReservationController::class, 'show'])->name('reservations.show');
-
-        Route::get('/analysis',[StaffAnalysisController::class,'restaurantAnalysis'])->name('analysis');
 
         #Restaurant - Table overview
         Route::get('/tableOverview', [RestaurantTableController::class, 'tableOverview'])->name('tableOverview');

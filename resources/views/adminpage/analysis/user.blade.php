@@ -75,7 +75,7 @@
 
     <div class="analysis-wrapper">
         <div class="container-fluid">
-            <div class="row g-5">
+            <div class="row g-4">
 
                 {{-- 1. Sidebar --}}
                 <div class="col-lg-2">
@@ -90,12 +90,6 @@
                         <a href="{{ route('admin.analysis.user') }}" class="btn btn-sidebar active">
                             <i class="fa-solid fa-users-gear me-2"></i>User Insights
                         </a>
-                    </div>
-                    <div class="mt-4">
-                        <label class="small fw-bold text-muted mb-2 ms-1">Target Role</label>
-                        <div class="p-2 bg-white rounded-3 shadow-sm small text-center text-muted">
-                            General Consumers (Role 1)
-                        </div>
                     </div>
                 </div>
 

@@ -1,429 +1,298 @@
-{{-- resources\views\userpage\mypage\post.blade.php --}}
 @extends('layouts.user')
 
-@section('title', 'Post-show')
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('css/user.css/posts/show.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+@endpush
+
+@section('title', 'Post')
 
 @section('content')
+
+    {{-- Backボタン --}}
+   <div class="back-bar">
+    <a href="{{ route('home') }}" class="back-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"/>
+        </svg>
+        Back
+    </a>
+</div>
     <div class="post-detail">
 
-        {{-- 左：画像 --}}
-        <div class="post-media">
-            @if ($post->images->isNotEmpty())
-                <img src="{{ $post->images->first()->image }}" alt="post id{{ $post->id }}" class="main-image"
-                    id="mainImage">
-            @else
-                <img src="{{ asset('images/Icon.png') }}" class="main-image" id="mainImage">
+        {{-- ── 左：メディア ── --}}
+        <div class="post-media" id="postMediaContainer">
+            <div class="media-slider" id="mediaSlider">
+                @if ($post->images->isNotEmpty())
+                    @foreach ($post->images as $i => $image)
+                        <div class="slide" data-index="{{ $i }}">
+                            <img src="{{ $image->image }}" alt="post-{{ $post->id }}-{{ $i }}">
+                        </div>
+                    @endforeach
+                @else
+                    <div class="slide" data-index="0">
+                        <img src="{{ asset('images/Icon.png') }}" alt="post">
+                    </div>
+                @endif
+            </div>
+
+            @if ($post->images->count() > 1)
+                <button class="nav-arrow nav-prev" id="navPrev" aria-label="Previous">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="15 18 9 12 15 6" />
+                    </svg>
+                </button>
+                <button class="nav-arrow nav-next" id="navNext" aria-label="Next">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="9 18 15 12 9 6" />
+                    </svg>
+                </button>
+                <div class="slide-dots" id="slideDots">
+                    @foreach ($post->images as $i => $image)
+                        <span class="dot {{ $i === 0 ? 'active' : '' }}" data-index="{{ $i }}"></span>
+                    @endforeach
+                </div>
             @endif
         </div>
-        <div class="thumbnail-row">
-            @foreach ($post->images as $image)
-                <img src="{{ $image->image }}" class="thumb img-fluid mb-2" onclick="changeImage(this)">
-            @endforeach
-        </div>
 
-        {{-- 右：情報エリア --}}
+        {{-- ── 右：情報 ── --}}
         <div class="post-info">
+
+            {{-- ヘッダー --}}
+            <div class="post-info-header">
+                <div class="post-info-author">
+                    <div class="post-author-avatar">
+                        @if ($post->user->detail?->avatar && str_starts_with($post->user->detail->avatar, 'data:'))
+                            <img src="{{ $post->user->detail->avatar }}" alt="avatar">
+                        @else
+                            <i class="fa-solid fa-user"></i>
+                        @endif
+                    </div>
+                    <div>
+                        <div class="post-author-name">{{ $post->user->name }}</div>
+                        <div class="post-author-date">{{ $post->created_at->format('M d, Y') }}</div>
+                    </div>
+                </div>
+
+                @auth
+                    @if (Auth::user()->id === $post->user->id)
+                        <div class="dropdown">
+                            <button class="post-dropdown-btn" data-bs-toggle="dropdown">
+                                <i class="fa-solid fa-ellipsis"></i>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-end">
+                                <a href="{{ route('user.posts.edit', $post) }}" class="dropdown-item">
+                                    <i class="fa-regular fa-pen-to-square me-2"></i>Edit
+                                </a>
+                                <button type="button" class="dropdown-item text-danger" data-bs-toggle="modal" data-bs-target="#delete-post-{{ $post->id }}">
+                                    <i class="fa-regular fa-trash-can me-2"></i>Delete
+                                </button>
+                            </div>
+                        </div>
+                        @include('userpage.posts.modals.delete')
+                    @endif
+                @endauth
+            </div>
 
             {{-- スクロールエリア --}}
             <div class="post-info-scroll" id="postInfoScroll">
                 <div class="post-info-inner">
 
-                    {{-- 編集・削除ボタン --}}
-                    @auth
-                        @if (Auth::user()->id === $post->user->id)
-                            <div class="dropdown text-end">
-                                <button class="btn btn-sm shadow-none" data-bs-toggle="dropdown">
-                                    <i class="fa-solid fa-ellipsis"></i>
-                                </button>
-                                <div class="dropdown-menu dropdown-menu-end">
-                                    <a href="{{ route('user.posts.edit', $post) }}" class="dropdown-item">
-                                        Edit
-                                    </a>
-
-                                    <button type="button" class="dropdown-item text-danger" data-bs-toggle="modal"
-                                        data-bs-target="#delete-post-{{ $post->id }}">
-                                        Delete
-                                    </button>
-                                </div>
-                            </div>
-                            @include('userpage.posts.modals.delete')
-                        @endif
-                    @endauth
-
-                    {{-- 内容 --}}
-                    <h2 class="mt-3">{{ $post->title }}</h2>
-
-                    <p class="text-muted small">{{ $post->user->name }} ・ {{ $post->created_at->format('M d, Y') }}</p>
-                    <hr>
-                    <p class="post-body"> {!! nl2br(e(preg_replace('/#[^\s#]+/u', '', $post->body))) !!}
-                    </p>
-
-
-
-
-                    {{-- コメント表示 --}}
-                    <div class="mb-2">
-                        @if ($post->comments->isNotEmpty())
-                            <hr>
-                            <ul class="list-group mt-2">
-                                @foreach ($post->comments as $comment)
-                                    <li class="comment-item border-0 p-0 mb-1">
-                                        <div class="comment-avatar">
-                                            @if ($comment->user->avatar)
-                                                <img src="{{ asset('storage/avatars/' . $comment->user->avatar) }}"
-                                                    alt="Avatar" class="avatar-icon">
-                                            @else
-                                                <span class="avatar-icon">
-                                                    <i class="fa-solid fa-user"></i>
-                                                </span>
-                                            @endif
-
-                                            <div class="comment-content">
-                                                <div class="comment-header">
-                                                    <span class="fw-bold">{{ $comment->user->name }}</span>:
-                                                    {{-- 削除ボタン --}}
-                                                    @auth
-                                                        @if (Auth::user()->id === $post->user->id)
-                                                            <span class="dropdown text-end">
-                                                                <button class="btn btn-sm shadow-none"
-                                                                    data-bs-toggle="dropdown">
-                                                                    <i class="fa-solid fa-ellipsis"></i>
-                                                                </button>
-                                                                <div class="dropdown-menu dropdown-menu-end">
-                                                                    <form
-                                                                        action="{{ route('user.comment.destroy', $comment->id) }}"
-                                                                        method="post" class="d-inline">
-                                                                        @csrf
-                                                                        @method('DELETE')
-                                                                        <button type="submit"
-                                                                            class="btn btn-sm btn-link text-danger p-0 ms-2">
-                                                                            Delete
-                                                                        </button>
-                                                                    </form>
-                                                                </div>
-                                                            </span>
-                                                        @endif
-                                                    @endauth
-                                                </div>
-                                                <span>{{ $comment->body }}</span>
-                                            </div>
-                                        </div>
-                                    </li>
-                                @endforeach
-                            </ul>
-                        @endif
-                        <div id="commentButtom"></div>
+                    {{-- キャプション --}}
+                    <div class="post-caption">
+                        <div class="caption-avatar">
+                            @if ($post->user->detail?->avatar && str_starts_with($post->user->detail->avatar, 'data:'))
+                                <img src="{{ $post->user->detail->avatar }}" alt="avatar">
+                            @else
+                                <i class="fa-solid fa-user"></i>
+                            @endif
+                        </div>
+                        <div class="caption-body">
+                            <span class="caption-username">{{ $post->user->name }}</span>
+                            <span class="caption-title">{{ $post->title }}</span>
+                            <p class="caption-text">{!! nl2br(e(preg_replace('/#[^\s#]+/u', '', $post->body))) !!}</p>
+                        </div>
                     </div>
+
+                    {{-- コメント --}}
+                    @if ($post->comments->isNotEmpty())
+                        <ul class="comment-list">
+                            @foreach ($post->comments as $comment)
+                                <li class="comment-item">
+                                    <div class="comment-avatar">
+                                        @if ($comment->user->detail?->avatar && str_starts_with($comment->user->detail->avatar, 'data:'))
+                                            <img src="{{ $comment->user->detail->avatar }}" alt="avatar">
+                                        @else
+                                            <i class="fa-solid fa-user"></i>
+                                        @endif
+                                    </div>
+                                    <div class="comment-content">
+                                        <div class="comment-header">
+                                            <span class="comment-username">{{ $comment->user->name }}</span>
+                                            @auth
+                                                @if (Auth::user()->id === $post->user->id)
+                                                    <div class="dropdown ms-auto">
+                                                        <button class="comment-dropdown-btn" data-bs-toggle="dropdown">
+                                                            <i class="fa-solid fa-ellipsis"></i>
+                                                        </button>
+                                                        <div class="dropdown-menu dropdown-menu-end">
+                                                            <form action="{{ route('user.comment.destroy', $comment->id) }}" method="POST">
+                                                                @csrf @method('DELETE')
+                                                                <button type="submit" class="dropdown-item text-danger">Delete</button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                @endif
+                                            @endauth
+                                        </div>
+                                        <div class="comment-body-text">{{ $comment->body }}</div>
+                                    </div>
+                                </li>
+                            @endforeach
+                        </ul>
+                    @endif
+                    <div id="commentBottom"></div>
                 </div>
             </div>
 
-            {{-- 固定エリア --}}
+            {{-- 固定フッター --}}
             <div class="post-info-fixed">
 
-
-                {{-- ハート --}}
-                <div class="post-like">
-                    @if ($post->isliked())
-                        <form action="{{ route('user.like.destroy', $post->id) }}" method="post">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="heat-btn">
-                                <i class="fa-solid fa-heart text-danger"></i>
-                            </button>
-                        </form>
-                    @else
-                        <form action="{{ route('user.like.store', $post->id) }}" method="post">
-                            @csrf
-                            <button type="submit" class="heat-btn">
-                                <i class="fa-regular fa-heart"></i>
-                            </button>
-                        </form>
-                    @endif
-                </div>
-
-
-                {{-- コメント入力 --}}
-                <form action="{{ route('user.comment.store', $post->id) }}" method="post" class="comment-form">
-                    @csrf
-                    <div class="comment-input-wrapper">
-                        <textarea name="comment_body{{ $post->id }}" rows="1" placeholder="Add a comment..." required>{{ old('comment_body' . $post->id) }}</textarea>
-                        <button type="submit" class="send-comment-btn">
-                            <i class="fa-regular fa-paper-plane"></i>
+                {{-- アクションバー --}}
+                <div class="action-bar">
+                    <div class="action-left">
+                        <button
+                            class="action-btn {{ $post->isliked() ? 'liked' : '' }}"
+                            id="likeBtn"
+                            data-post-id="{{ $post->id }}"
+                            data-liked="{{ $post->isliked() ? 'true' : 'false' }}"
+                            data-store-url="{{ route('user.like.store', $post->id) }}"
+                            data-destroy-url="{{ route('user.like.destroy', $post->id) }}"
+                            data-csrf="{{ csrf_token() }}"
+                        >
+                            <i class="{{ $post->isliked() ? 'fa-solid' : 'fa-regular' }} fa-heart"></i>
+                        </button>
+                        <button class="action-btn" onclick="document.querySelector('.comment-input-wrapper textarea').focus()">
+                            <i class="fa-regular fa-comment"></i>
                         </button>
                     </div>
-                    @error('comment_body' . $post->id)
-                        <div class="text-danger xsmall mt-1">{{ $message }}</div>
-                    @enderror
-                </form>
+                </div>
 
-                {{-- タグ表示 --}}
-                <div class="post-tags mb-2">
-                    @foreach ($post->tags as $tag)
-                        <a href="{{ route('user.tags.show', $tag->name) }}" class="tag-badge">
-                            #{{ $tag->name }}
-                        </a>
-                    @endforeach
+                <div class="like-count-area">
+                    <span class="like-count">{{ $post->likes->count() }} likes</span>
+                </div>
+
+                @if ($post->tags->isNotEmpty())
+                    <div class="post-tags-bar">
+                        @foreach ($post->tags as $tag)
+                            <a href="{{ route('user.tags.show', $tag->name) }}" class="tag-badge">#{{ $tag->name }}</a>
+                        @endforeach
+                    </div>
+                @endif
+
+                <div class="comment-form-area">
+                    <form action="{{ route('user.comment.store', $post->id) }}" method="POST">
+                        @csrf
+                        <div class="comment-input-wrapper">
+                            <textarea name="comment_body{{ $post->id }}" rows="1" placeholder="Add a comment...">{{ old('comment_body' . $post->id) }}</textarea>
+                            <button type="submit" class="send-comment-btn">Post</button>
+                        </div>
+                    </form>
                 </div>
             </div>
-
         </div>
     </div>
 
-    <hr class="mt-5">
-
-<div>
-    <div>
-        <h3 class="section-title">
-            Related Posts
-        </h3>
-    </div>
-
-    <div class="row justify-content-center g-2 mb-5">
-        @if ($relatedPosts->isNotEmpty())
-            @foreach ($relatedPosts as $post)
-                <div class="col-6 col-md-3 col-sm-4 col-lg-2 d-flex justify-content-center">
-                    <a href="{{ route('user.posts.show', $post->id) }}" class="post-card">
-                        <img src="{{ $post->images->first()->image ?? asset('images/Icon.png') }}" alt="Post Image">
-
-                        {{-- ハート --}}
-                        <div class="post-like">
-                            @if ($post->isliked())
-                                <form method="POST" action="{{ route('user.like.destroy', $post->id) }}">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="heat-btn">
-                                        <i class="fa-solid fa-heart text-danger"></i>
-                                    </button>
-                                </form>
-                            @else
-                                <form method="POST" action="{{ route('user.like.store', $post->id) }}">
-                                    @csrf
-                                    <button type="submit" class="heat-btn">
-                                        <i class="fa-regular fa-heart"></i>
-                                    </button>
-                                </form>
-                            @endif
-                        </div>
-
-                        {{-- テキスト --}}
-                        <div class="post-overlay">
-                            <h5 class="post-title">{{ $post->title }}</h5>
-                            <p class="post-user mb-1">
-                                <i class="fa-regular fa-user"></i>{{ $post->user->name }}
-                            </p>
-                            <p class="post-date">
-                                {{ $post->created_at->format('M d, Y') }}
-                            </p>
-                        </div>
-                    </a>
-                </div>
-            @endforeach
-        @else
-            <h5 class="text-muted text-center">No Related Posts</h5>
-        @endif
-    </div>
-</div>
 @endsection
 
-{{-- JS --}}
+@push('scripts')
 <script>
-    // 選択画像を変える
-    function changeImage(element) {
-        const mainImage = document.getElementById('mainImage');
-        mainImage.src = element.src;
+    document.addEventListener('DOMContentLoaded', function () {
 
-        document.querySelectorAll('.thumb').forEach(img => {
-            img.classList.remove('active');
+        // ── スライダー ──
+        const slider = document.getElementById('mediaSlider');
+        const slides = Array.from(document.querySelectorAll('.slide'));
+        const dots   = Array.from(document.querySelectorAll('.dot'));
+        const prev   = document.getElementById('navPrev');
+        const next   = document.getElementById('navNext');
+
+        if (!slider || slides.length <= 1) {
+            if (prev) prev.style.display = 'none';
+            if (next) next.style.display = 'none';
+        }
+
+        if (!slider || slides.length === 0) return;
+
+        let current = 0;
+
+        function goTo(index) {
+            if (index < 0 || index >= slides.length) return;
+            slider.style.transform = `translateX(${index * -100}%)`;
+            dots.forEach((dot, i) => dot.classList.toggle('active', i === index));
+            current = index;
+            updateArrows();
+        }
+
+        function updateArrows() {
+            if (prev) prev.style.display = current === 0 ? 'none' : 'flex';
+            if (next) next.style.display = current === slides.length - 1 ? 'none' : 'flex';
+        }
+
+        if (prev) prev.addEventListener('click', () => goTo(current - 1));
+        if (next) next.addEventListener('click', () => goTo(current + 1));
+        dots.forEach(d => d.addEventListener('click', () => goTo(parseInt(d.dataset.index))));
+
+        let startX = 0;
+        slider.addEventListener('touchstart', e => { startX = e.touches[0].clientX; }, { passive: true });
+        slider.addEventListener('touchend', e => {
+            const diff = startX - e.changedTouches[0].clientX;
+            if (Math.abs(diff) > 40) goTo(diff > 0 ? current + 1 : current - 1);
         });
 
-        element.classList.add('active');
-    }
+        updateArrows();
 
-    // コメント投稿後にスクロール
-    @if (session('comment_posted'))
-        window.onload = function() {
-            const postInfoScroll = document.getElementById('postInfoScroll');
-            postInfoScroll.scrollTop = postInfoScroll.scrollHeight;
-            if (container) {
-                setTimeout(() => {
-                    container.scrollIntoView({
-                        behavior: 'smooth'
+        @if (session('comment_posted'))
+            const el = document.getElementById('postInfoScroll');
+            if (el) el.scrollTop = el.scrollHeight;
+        @endif
+
+        // ── いいね Ajax ──
+        const likeBtn = document.getElementById('likeBtn');
+        if (likeBtn) {
+            likeBtn.addEventListener('click', async function () {
+                const liked   = this.dataset.liked === 'true';
+                const url     = liked ? this.dataset.destroyUrl : this.dataset.storeUrl;
+                const method  = liked ? 'DELETE' : 'POST';
+                const csrf    = this.dataset.csrf;
+                const icon    = this.querySelector('i');
+                const counter = document.querySelector('.like-count');
+
+                const newLiked = !liked;
+                this.dataset.liked = newLiked ? 'true' : 'false';
+                this.classList.toggle('liked', newLiked);
+                icon.className = newLiked ? 'fa-solid fa-heart' : 'fa-regular fa-heart';
+
+                const currentCount = parseInt(counter.textContent);
+                counter.textContent = (newLiked ? currentCount + 1 : currentCount - 1) + ' likes';
+
+                try {
+                    const res = await fetch(url, {
+                        method,
+                        headers: {
+                            'X-CSRF-TOKEN': csrf,
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json',
+                        }
                     });
-                }, 300);
-            }
+                    if (!res.ok) throw new Error('failed');
+                } catch (e) {
+                    this.dataset.liked = liked ? 'true' : 'false';
+                    this.classList.toggle('liked', liked);
+                    icon.className = liked ? 'fa-solid fa-heart' : 'fa-regular fa-heart';
+                    counter.textContent = currentCount + ' likes';
+                }
+            });
         }
-    @endif
+    });
 </script>
-
-{{-- CSS --}}
-<style>
-    .post-detail {
-        display: flex;
-        height: calc(100vh - 80px);
-        background: #F5f6f7;
-        max-width: 1200px;
-        margin: 0 auto;
-
-    }
-
-    /* 左：画像 */
-    .post-media {
-        flex: 1;
-        background: #000;
-        align-items: center;
-        display: flex;
-        justify-content: center;
-        position: relative;
-    }
-
-    .main-image {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-
-    .thumbnail-row {
-        position: absolute;
-        bottom: 20px;
-        display: flex;
-        gap: 8px;
-    }
-
-    .thumb {
-        width: 60px;
-        height: 60px;
-        object-fit: cover;
-        border-radius: 6px;
-        cursor: pointer;
-        opacity: 0.8;
-    }
-
-    .thumb:hover {
-        opacity: 1;
-    }
-
-    .thumb.active {
-        border: 2px solid #007bff;
-        opacity: 1;
-    }
-
-    /* 左：情報エリア */
-    .post-info {
-        width: 420px;
-        background: #ffffff;
-        border-left: 1px solid #e5e5e5;
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-        overflow: hidden;
-    }
-
-    .post-info-scroll {
-        flex: 1;
-        overflow-y: auto;
-        padding-bottom: 90px;
-        scroll-behavior: smooth;
-    }
-
-    .post-info-fixed {
-        position: sticky;
-        bottom: 0;
-        padding: 12px 24px;
-        border-top: 1px solid #e5e5e5;
-        background: #fff;
-        position: sticky;
-        bottom: 0;
-    }
-
-    .post-info-inner {
-        padding: 24px;
-    }
-
-    .post-body {
-        line-height: 1.7;
-    }
-
-    /* コメント */
-    .comment-item {
-        display: flex;
-        gap: 10px;
-        margin-bottom: 10px;
-    }
-
-    .comment-content {
-        flex: 1;
-    }
-
-    .comment-header {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .comment-body {
-        margin-top: 2px;
-        line-height: 1.5;
-    }
-
-    .avatar-icon {
-        width: 30px;
-        height: 30px;
-        background: #ddd;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 50%;
-        margin-right: 8px;
-    }
-
-    .tag-badge {
-        text-decoration: none;
-        display: inline-block;
-        padding: 4px 10px;
-        margin: 2px;
-        font-size: 12px;
-        border-radius: 20px;
-        background: #e0f2ff;
-        color: #0077cc;
-        font-weight: 600;
-    }
-
-    /* ハート */
-    .heat-btn {
-        background: #ffffff;
-        color: #333;
-        width: 34px;
-        height: 34px;
-        border-radius: 50%;
-        border: 1px solid #ddd;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.10);
-        display: grid;
-        place-items: center;
-    }
-
-    /* コメント入力ボックス */
-    .comment-input-wrapper {
-        flex: 1;
-        display: flex;
-        gap: 8px;
-    }
-
-    .comment-input-wrapper textarea {
-        flex: 1;
-        resize: none;
-        border-radius: 20px;
-        border: 1px solid #ddd;
-        padding: 8px 12px;
-    }
-
-
-    /* 送信ボタン */
-    .send-comment-btn {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        border: none;
-        background: #007bff;
-        color: white;
-    }
-</style>
+@endpush

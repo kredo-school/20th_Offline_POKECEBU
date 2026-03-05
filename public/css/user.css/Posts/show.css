@@ -1,0 +1,409 @@
+/* ============================================
+   show.css — Instagram Web完全準拠
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&display=swap');
+
+:root {
+    --ig-bg:     #fafafa;
+    --ig-white:  #ffffff;
+    --ig-border: #dbdbdb;
+    --ig-text:   #262626;
+    --ig-muted:  #8e8e8e;
+    --ig-blue:   #0095f6;
+    --ig-red:    #ed4956;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    background: var(--ig-bg);
+    font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: var(--ig-text);
+}
+
+/* ═══════════════════════════════
+   Backボタン
+═══════════════════════════════ */
+.back-bar {
+    max-width: 935px;
+    margin: 16px auto 8px;
+    padding: 0 4px;
+}
+
+.back-bar {
+    max-width: 935px;
+    margin: 16px auto 8px;
+    padding: 0 4px;
+}
+
+.back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ig-text);
+    text-decoration: none;
+    padding: 6px 10px 6px 6px;
+    border-radius: 8px;
+    transition: background 0.15s;
+}
+.back-btn:hover {
+    background: #efefef;
+    color: var(--ig-text);
+}
+.back-btn svg {
+    width: 20px;
+    height: 20px;
+}
+
+/* ═══════════════════════════════
+   メインレイアウト
+═══════════════════════════════ */
+.post-detail {
+    display: flex;
+    max-width: 935px;
+    margin: 0 auto 40px;
+    background: var(--ig-white);
+    border: 1px solid var(--ig-border);
+    border-radius: 3px;
+    overflow: hidden;
+    height: 600px;
+}
+
+/* ═══════════════════════════════
+   左：メディア
+═══════════════════════════════ */
+.post-media {
+    flex: 1;
+    background: #000;
+    position: relative;
+    overflow: hidden;
+    min-width: 0;
+}
+
+.media-slider {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.3s ease-out;
+}
+
+.slide {
+    min-width: 100%;
+    height: 100%;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+}
+
+/* 矢印 */
+.nav-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255,255,255,0.85);
+    z-index: 10;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+    transition: background 0.15s, transform 0.15s;
+}
+.nav-arrow:hover {
+    background: #fff;
+    transform: translateY(-50%) scale(1.05);
+}
+.nav-arrow svg { width: 16px; height: 16px; }
+.nav-prev { left: 12px; }
+.nav-next { right: 12px; }
+
+/* ドット */
+.slide-dots {
+    position: absolute;
+    bottom: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 4px;
+    z-index: 10;
+}
+.dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.45);
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+}
+.dot.active {
+    background: #fff;
+    transform: scale(1.3);
+}
+
+/* ═══════════════════════════════
+   右：情報エリア
+═══════════════════════════════ */
+.post-info {
+    width: 405px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    border-left: 1px solid var(--ig-border);
+    background: var(--ig-white);
+    overflow: hidden;
+}
+
+/* ヘッダー */
+.post-info-header {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--ig-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+    min-height: 60px;
+}
+
+.post-info-author {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.post-author-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+    background: #efefef;
+    border: 1px solid var(--ig-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: #c7c7c7;
+}
+.post-author-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+.post-author-name { font-size: 14px; font-weight: 600; line-height: 1.2; }
+.post-author-date { font-size: 12px; color: var(--ig-muted); margin-top: 1px; }
+
+.post-dropdown-btn {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 4px 8px;
+    color: var(--ig-text);
+    border-radius: 4px;
+    line-height: 1;
+    transition: background 0.15s;
+}
+.post-dropdown-btn:hover { background: #f5f5f5; }
+
+/* スクロールエリア */
+.post-info-scroll {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+.post-info-scroll::-webkit-scrollbar { width: 0; }
+
+.post-info-inner { padding: 16px 16px 12px; }
+
+/* キャプション */
+.post-caption {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    margin-bottom: 18px;
+}
+
+.caption-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+    background: #efefef;
+    border: 1px solid var(--ig-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: #c7c7c7;
+}
+.caption-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+.caption-body { flex: 1; font-size: 14px; line-height: 1.65; }
+.caption-username { font-weight: 600; margin-right: 4px; }
+.caption-title    { font-weight: 600; }
+.caption-text     { margin-top: 4px; color: var(--ig-text); word-break: break-word; }
+
+/* コメント */
+.comment-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.comment-item {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+}
+
+.comment-avatar {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    min-height: 32px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+    background: #efefef;
+    border: 1px solid var(--ig-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    color: #c7c7c7;
+}
+.comment-avatar img {
+    width: 32px;
+    height: 32px;
+    object-fit: cover;
+    border-radius: 50%;
+    display: block;
+}
+.comment-avatar i { font-size: 13px; line-height: 1; }
+
+.comment-content  { flex: 1; min-width: 0; }
+.comment-header   { display: flex; align-items: center; gap: 6px; margin-bottom: 2px; }
+.comment-username { font-size: 14px; font-weight: 600; }
+.comment-body-text{ font-size: 14px; line-height: 1.5; word-break: break-word; }
+
+.comment-dropdown-btn {
+    background: none;
+    border: none;
+    font-size: 12px;
+    color: var(--ig-muted);
+    padding: 0 4px;
+    cursor: pointer;
+    margin-left: auto;
+    line-height: 1;
+}
+
+/* ═══════════════════════════════
+   固定フッター
+═══════════════════════════════ */
+.post-info-fixed {
+    border-top: 1px solid var(--ig-border);
+    flex-shrink: 0;
+    background: var(--ig-white);
+}
+
+/* アクションバー */
+.action-bar { padding: 8px 12px 0; }
+.action-left { display: flex; align-items: center; gap: 2px; }
+
+.action-btn {
+    background: none;
+    border: none;
+    font-size: 26px;
+    cursor: pointer;
+    padding: 6px 8px;
+    color: var(--ig-text);
+    line-height: 1;
+    border-radius: 4px;
+    transition: transform 0.1s;
+}
+.action-btn:hover { transform: scale(1.1); }
+.action-btn.liked .fa-heart,
+.action-btn.liked i { color: var(--ig-red); }
+
+/* いいね数 */
+.like-count-area { padding: 4px 16px 2px; }
+.like-count { font-size: 14px; font-weight: 700; }
+
+/* タグ */
+.post-tags-bar {
+    padding: 4px 16px 6px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+.tag-badge {
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ig-blue);
+    transition: opacity 0.15s;
+}
+.tag-badge:hover { opacity: 0.7; }
+
+/* コメント入力 */
+.comment-form-area {
+    padding: 10px 16px 14px;
+    border-top: 1px solid var(--ig-border);
+}
+.comment-input-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.comment-input-wrapper textarea {
+    flex: 1;
+    border: none;
+    outline: none;
+    resize: none;
+    font-size: 14px;
+    font-family: inherit;
+    background: transparent;
+    color: var(--ig-text);
+    line-height: 1.5;
+    max-height: 72px;
+    overflow-y: auto;
+}
+.comment-input-wrapper textarea::placeholder { color: var(--ig-muted); }
+
+.send-comment-btn {
+    color: var(--ig-blue);
+    background: none;
+    border: none;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    flex-shrink: 0;
+    padding: 0;
+    transition: opacity 0.15s;
+}
+.send-comment-btn:hover { opacity: 0.6; }
+
+/* ═══════════════════════════════
+   Responsive
+═══════════════════════════════ */
+@media (max-width: 935px) {
+    .back-bar    { margin: 12px 12px 6px; }
+    .post-detail { flex-direction: column; height: auto; margin: 0 0 40px; border-radius: 0; border-left: none; border-right: none; }
+    .post-media  { aspect-ratio: 1 / 1; height: auto; }
+    .post-info   { width: 100%; }
+    .post-info-scroll { max-height: 420px; }
+}

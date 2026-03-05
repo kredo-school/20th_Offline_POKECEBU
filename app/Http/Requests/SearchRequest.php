@@ -24,4 +24,12 @@ class SearchRequest extends FormRequest
             'sort'        => 'nullable|string|in:recommended,price_asc,price_desc,rating',
         ];
     }
+    protected function prepareForValidation()
+    {
+        if ($this->has('sort')) {
+            $this->merge([
+                'sort' => trim($this->input('sort')),
+            ]);
+        }
+    }
 }

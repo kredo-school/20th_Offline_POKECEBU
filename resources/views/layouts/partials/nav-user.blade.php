@@ -3,18 +3,50 @@
         <img src="{{ asset('images/Icon.png') }}" style="height: 180px; margin-top: -5px; margin-bottom: -5px; width: auto; object-fit: contain;">
     </a>
 
+    @auth
+        <!-- 中央：Hotel〜FAQ -->
+        <ul class="navbar-nav mx-auto d-flex flex-row gap-5">
+            <li class="nav-item">
+                <a href="{{ route('user.hotels.index') }}" class="nav-link text-center">
+                    <i class="fa-solid fa-bed"></i>
+                    <div>Hotel</div>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link text-center">
+                    <i class="fa-solid fa-utensils"></i>
+                    <div>Restaurant</div>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ route('jeepney') }}" class="nav-link text-center">
+                    <i class="fa-solid fa-van-shuttle"></i>
+                    <div>Jeepney</div>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ route('user.posts.index') }}" class="nav-link text-center">
+                    <i class="fa-solid fa-user"></i>
+                    <div>Post</div>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ route('faq.index') }}" class="nav-link text-center">
+                    <i class="fa-regular fa-circle-question"></i>
+                    <div>FAQ</div>
+                </a>
+            </li>
+        </ul>
+    @endauth
+
     <ul class="navbar-nav ms-auto">
         @guest
             <li class="nav-item"><a class="nav-link" href="{{ route('login') }}">Login</a></li>
         @else
-            <li class="nav-item">
-                <a href="{{ route('faq.index') }}" class="nav-link">
-                    <i class="fa-regular fa-circle-question"></i>
-                </a>
-            </li>
+            
             <li class="nav-item dropdown me-4">
                 <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                    {{ Auth::user()->name }}
+                    Hello! {{ Auth::user()->name }}
                 </a>
                 <div class="dropdown-menu dropdown-menu-end">
                     <div id="user-menu" class="create-menu" style="margin-left: 10px;">
@@ -34,6 +66,12 @@
                         @can('restaurant')
                             <a href="{{ route('restaurant.home') }}" class="create-item d-flex align-items-center">
                                 <i class="fa-solid fa-user-gear me-2"></i>Restaurant
+                            </a>
+                        @endcan
+
+                        @can('user')
+                            <a href="{{ route('user.mypage') }}" class="create-item d-flex align-items-center">
+                                <i class="fa-solid fa-user-gear me-2"></i>My Page
                             </a>
                         @endcan
 

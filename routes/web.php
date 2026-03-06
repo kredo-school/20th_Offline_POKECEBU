@@ -186,8 +186,8 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/mypage/edit', [StaffMypageController::class, 'editStaffMypagerestaurant'])->name('restaurant.edit');
         Route::put('/mypage/update', [StaffMypageController::class, 'updateStaffMypagerestaurant'])->name('update');
 
-        Route::get('/reservations', [RestaurantStaffController::class, 'reservations'])->name('reservations');
-        Route::get('/reservations/{id}', [RestaurantReservationController::class, 'show'])->name('reservations.show');
+        // Route::get('/reservations', [RestaurantStaffController::class, 'reservations'])->name('reservations');
+       
 
         #Restaurant - Table overview
         Route::get('/tableOverview', [RestaurantTableController::class, 'tableOverview'])->name('tableOverview');
@@ -202,8 +202,15 @@ Route::group(['middleware' => 'auth'], function () {
         Route::patch('/{id}/updateStatus', [RestaurantTableController::class, 'updateStatus'])->name('updateStatus');
         Route::get('/{id}/viewTable', [RestaurantTableController::class, 'viewTable'])->name('viewTable');
         // カレンダー
-         Route::get('/store/calendar', [RestaurantReservationController::class, 'calendar'])->name('store.carendar');
-         Route::get('/store/calendar/data', [RestaurantReservationController::class, 'calendarData'])->name('store.calendar.data');
+         Route::get('/store/calendar', [RestaurantStaffController::class, 'calendar'])->name('store.calendar');
+         Route::get('/store/calendar/data', [RestaurantStaffController::class, 'calendarData'])->name('store.calendar.data');
+
+        //  予約一覧
+        Route::get('/reservations/{date}', [RestaurantStaffController::class, 'daily'])
+        ->name('reservations.date');
+        // 予約詳細
+        Route::get('/reservations/detail/{id}', [RestaurantStaffController::class, 'show'])->name('reservations.show');
+        
     });
 
     #################### User ####################
@@ -320,8 +327,8 @@ Route::prefix('staff')->middleware('auth')->group(function () {
 
 
     // restaurant
-    Route::get('/restaurant', [RestaurantStaffController::class, 'index'])
-        ->name('staff.homerestaurant');
+    // Route::get('/restaurant', [RestaurantStaffController::class, 'index'])
+    //     ->name('staff.homerestaurant');
 });
 
 

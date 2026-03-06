@@ -25,8 +25,8 @@
       locale: 'ja',
       firstDay: 1, //月開始
 
-      slotMinTime: "0:00",
-      slotMaxTime: "24:00",
+      slotMinTime: "00:00:00",
+      slotMaxTime: "24:00:00",
 
       allDaySlot: false,
 

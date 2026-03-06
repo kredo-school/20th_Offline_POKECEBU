@@ -11,7 +11,7 @@
                 $role_hotel = config('app.role_hotel');
             @endphp
 
-             <li class="nav-item">
+             {{-- <li class="nav-item">
                 @if (Auth::user()->role_id == $role_hotel)
                     <a href="{{ route('hotel.home') }}" class="nav-link">
                         <i class="fa-solid fa-bed"></i>
@@ -21,9 +21,9 @@
                        <i class="fa-solid fa-utensils"></i>
                     </a>
                 @endif
-            </li>
+            </li> --}}
                 
-            {{-- <li class="nav-item">
+            <li class="nav-item">
                 @if (Auth::user()->role_id == $role_hotel)
                     <a href="{{ route('hotel.home') }}" class="nav-link">
                         <i class="fa-solid fa-house"></i>
@@ -33,7 +33,7 @@
                         <i class="fa-solid fa-house"></i>
                     </a>
                 @endif
-            </li> --}}
+            </li>
             <li class="nav-item">
                 @if (Auth::user()->role_id == $role_hotel)
                     <a href="{{ route('hotel.roomOverview') }}" class="nav-link">

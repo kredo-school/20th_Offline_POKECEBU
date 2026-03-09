@@ -6,12 +6,14 @@
 
       <div class="container">
           {{-- Header --}}
-          <div class="d-flex justify-content-between align-items-center mb-4">
+          <div class="d-flex justify-content-between align-items-center m-4">
               <div class="d-flex align-items-center gap-3">
-                  <h3 class="page-title"><i class="fa-regular fa-calendar-check"></i>  Restaurant Gest Details</h3>
+                  <h3 class="page-title">
+                    <i class="fa-regular fa-calendar-check"></i>  Restaurant Gest Details   <span>({{ $reservation->start_at->format('Y-m-d') }})</span>
+                  </h3>
               </div>
               <div class="d-flex gap-2">
-                  <span class="badge date-badge">{{ $reservation->start_at->format('Y-m-d') }}</span>
+                  
                   <button class="but btn-cancel">Cancel Reservation</button>
               </div>
           </div>
@@ -22,7 +24,7 @@
                       <div class="card-header d-flex justify-content-between align-items-center">
                           <div>
                               <strong>Reservation ID:</strong>19840514
-                              <span class="text-muted ms-2">| Start Time 18:00</span>
+                              <span class="text-muted ms-2">| Start Time {{ $reservation->start_at->format('H:i') }}</span>
                           </div>
                           
                       </div>
@@ -50,18 +52,20 @@
                                   <td> {{ $reservation->reservation_id }}</td>
                               </tr>
                               <tr>
-                                  <td><i class="table-icon fa-solid fa-calendar-days"></i> Day & Time</td>
+                                  <td><i class="table-icon fa-solid fa-calendar-days"></i> Day</td>
                                   <td> {{ $reservation->start_at ->format('Y-m-d') }}</td>
                               </tr>
+                              <tr>
+                                  <td><i class="table-icon fa-solid fa-file-pen"></i></i>Time</td>
+                                  <td>{{ $reservation->start_at->format('H:i') }}</td>
+                                  </td>
+                              </tr>
+
                               <tr>
                                   <td><i class="table-icon fa-solid fa-users"></i></i> Number of Guests</td>
                                   <td> {{ $reservation->guests }}</td>
                               </tr>
-                              <tr>
-                                  <td><i class="table-icon fa-solid fa-file-pen"></i></i> Status</td>
-                                  <td>Confirmed</td>
-                              </tr>
-
+                              
                               
 
                           </tbody>
@@ -90,67 +94,4 @@
       </div>
   @endsection
 
-
-  {{-- CSS --}}
-<style>
-  .page-title {
-    font-weight: 600;
-    color: #3b5b6b;
-  }
-
-  .table-icon {
-    color: #3b5b6b;
-  }
-
-  .main-card {
-    border-radius: 16px;
-    overflow: hidden;
-  }
-
-  .notes-card {
-    border-radius: 16px;
-    background: #fff6ee;
-  }
-
-  .badge.date-badge {
-    background: #b7e1da;
-    color: #234;
-    padding: 8px 12px;
-    border-radius: 12px;
-  }
-
- 
-  .btn-cancel {
-    background: #fdbf79;
-    color: #fff;
-    border-radius: 12px;
-    border: none;
-  }
-
-  .btn-print {
-    background: #8dbcda;
-    color: #fff;
-    border-radius: 12px;
-  }
-
-  .btn-send {
-    background: #96ccb9;
-    color: #fff;
-    border-radius: 12px;
-  }
-
-  .btn-add {
-    background: #b7e1da;
-    color: #fff;
-    border-radius: 12px;
-  }
-
-  .btn-edit {
-    background: #6fa9de;
-    color: #fff;
-    border-radius: 12px;
-  }
-
-  </style>
- 
   

@@ -7,21 +7,29 @@
     <style>
         /* 1. 全体のカラーパレットと余白 */
         :root {
-            --admin-bg: #f4f7f6; /* ほんのりグレーの背景 */
+            --admin-bg: #f4f7f6;
+            /* ほんのりグレーの背景 */
             --card-white: #ffffff;
-            --text-main: #1e293b; /* 濃いインディゴグレー */
+            --text-main: #1e293b;
+            /* 濃いインディゴグレー */
             --text-muted: #64748b;
-            --brand-primary: #3b82f6; /* ブルー */
-            --brand-accent: #e76f51; /* テラコッタオレンジ */
-            --brand-warning: #f39c12; /* ゴールド */
-            --brand-danger: #ef4444; /* レッド */
-            --brand-success: #22c55e; /* グリーン */
+            --brand-primary: #3b82f6;
+            /* ブルー */
+            --brand-accent: #e76f51;
+            /* テラコッタオレンジ */
+            --brand-warning: #f39c12;
+            /* ゴールド */
+            --brand-danger: #ef4444;
+            /* レッド */
+            --brand-success: #22c55e;
+            /* グリーン */
         }
 
         body {
             background-color: var(--admin-bg);
             color: var(--text-main);
-            font-family: 'Inter', 'Noto Sans JP', sans-serif; /* モダンなフォント */
+            font-family: 'Inter', 'Noto Sans JP', sans-serif;
+            /* モダンなフォント */
         }
 
         .main-content-wrapper {
@@ -47,8 +55,10 @@
         .kpi-card {
             background: var(--card-white);
             border: none;
-            border-radius: 24px; /* 丸みを強く */
-            box-shadow: 0 10px 40px rgba(29, 52, 54, 0.08); /* 柔らかい影 */
+            border-radius: 24px;
+            /* 丸みを強く */
+            box-shadow: 0 10px 40px rgba(29, 52, 54, 0.08);
+            /* 柔らかい影 */
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             height: 100%;
         }
@@ -73,8 +83,15 @@
             margin-bottom: 20px;
         }
 
-        .bg-icon-all-users { background-color: rgba(59, 130, 246, 0.1); color: var(--brand-primary); }
-        .bg-icon-new-reg { background-color: rgba(231, 111, 81, 0.1); color: var(--brand-accent); }
+        .bg-icon-all-users {
+            background-color: rgba(59, 130, 246, 0.1);
+            color: var(--brand-primary);
+        }
+
+        .bg-icon-new-reg {
+            background-color: rgba(231, 111, 81, 0.1);
+            color: var(--brand-accent);
+        }
 
         .kpi-label {
             font-size: 0.8rem;
@@ -176,13 +193,26 @@
         }
 
         @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
-            70% { box-shadow: 0 0 0 12px rgba(239, 68, 68, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+            0% {
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
+            }
+
+            70% {
+                box-shadow: 0 0 0 12px rgba(239, 68, 68, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+            }
         }
 
-        .text-pending { color: var(--brand-danger); }
-        .text-clear { color: var(--brand-success); }
+        .text-pending {
+            color: var(--brand-danger);
+        }
+
+        .text-clear {
+            color: var(--brand-success);
+        }
 
         .view-list-btn {
             background-color: transparent;
@@ -209,7 +239,7 @@
         <div class="dashboard-header d-flex justify-content-between align-items-center">
             <h1 class="page-title">Admin Dashboard</h1>
             <div class="text-end text-muted">
-                <div class="fw-bold fs-5" style="color: var(--text-main);">{{ now()->format('Y / M / d') }}</div>
+                <div class="fw-bold fs-5" style="color: var(--text-main);">{{ now()->format('Y / m / d') }}</div>
                 <div class="small">{{ now()->format('l, H:i') }}</div>
             </div>
         </div>
@@ -217,7 +247,7 @@
         {{-- 1. KPI Cards Row (col-md-6) --}}
         <div class="row g-4 mb-5 justify-content-center">
             {{-- All Users --}}
-            <div class="col-md-6 col-xl-5">
+            <div class="col-4">
                 <div class="card kpi-card">
                     <div class="card-body">
                         <div class="kpi-icon-wrapper bg-icon-all-users">
@@ -236,20 +266,41 @@
             </div>
 
             {{-- New Registrations --}}
-            <div class="col-md-6 col-xl-5">
+            <div class="col-4">
                 <div class="card kpi-card">
                     <div class="card-body">
                         <div class="kpi-icon-wrapper bg-icon-new-reg">
                             <i class="fa-solid fa-user-plus"></i>
                         </div>
                         <div class="kpi-label">New Users / {{ now()->format('F') }}</div>
-                        <div class="kpi-value" style="color: var(--brand-accent);">{{ number_format($newRegistrationCount) }}</div>
+                        <div class="kpi-value" style="color: var(--brand-accent);">
+                            {{ number_format($newRegistrationCount) }}</div>
                         <div class="kpi-meta">
                             <i class="fa-solid fa-chart-line me-2 text-info"></i>
                             Accounts joined this month
                         </div>
                     </div>
                 </div>
+            </div>
+
+            {{-- User Insights / Analysis Link --}}
+            <div class="col-2">
+                <a href="{{ route('admin.analysis.user') }}" class="text-decoration-none">
+                    <div class="card kpi-card border-0 shadow-sm" style="transition: transform 0.2s; height: 100%;">
+                        <div
+                            class="card-body d-flex flex-column justify-content-center align-items-center text-center py-4">
+                            <div class="kpi-icon-wrapper mb-3"
+                                style="background: rgba(59, 130, 246, 0.1); color: #3b82f6; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+                                <i class="fa-solid fa-magnifying-glass-chart"></i>
+                            </div>
+                            <div class="kpi-label fw-bold text-dark mb-1">View Analytics</div>
+                            <div class="small text-muted mb-3">User Growth & Activity</div>
+                            <div class="btn btn-sm btn-outline-primary rounded-pill px-3 fw-bold">
+                                Open Report <i class="fa-solid fa-arrow-right ms-1"></i>
+                            </div>
+                        </div>
+                    </div>
+                </a>
             </div>
         </div>
 
@@ -269,7 +320,7 @@
                             </div>
                             <div class="item-name">Hotels</div>
                         </div>
-                        
+
                         <div class="item-status text-center">
                             @if ($countTmpHotel > 0)
                                 <div class="text-pending d-flex align-items-center fw-bold">
@@ -298,7 +349,7 @@
                             </div>
                             <div class="item-name">Restaurants</div>
                         </div>
-                        
+
                         <div class="item-status text-center">
                             @if ($countTmpRestaurant > 0)
                                 <div class="text-pending d-flex align-items-center fw-bold">
@@ -318,7 +369,6 @@
                             </a>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>

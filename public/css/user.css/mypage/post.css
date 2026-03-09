@@ -1,0 +1,213 @@
+:root {
+            --ig-bg: #fafafa;
+            --ig-white: #ffffff;
+            --ig-border: #dbdbdb;
+            --ig-text: #262626;
+            --ig-muted: #8e8e8e;
+            --ig-blue: #0095f6;
+            --ig-gradient: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+        }
+
+        body { background: var(--ig-bg); font-family: 'DM Sans', sans-serif; color: var(--ig-text); }
+
+        /* ── Layout（mypageと完全同一） ── */
+        .mypage-wrapper {
+            max-width: 935px;
+            margin: 30px auto;
+            padding: 0 20px;
+            display: flex;
+            gap: 30px;
+        }
+
+        /* ── Sidebar（mypageと完全同一） ── */
+        .ig-sidebar { width: 220px; flex-shrink: 0; }
+
+        .ig-sidebar-profile {
+            background: var(--ig-white);
+            border: 1px solid var(--ig-border);
+            border-radius: 12px;
+            padding: 20px 16px;
+            text-align: center;
+            margin-bottom: 12px;
+        }
+        .ig-sidebar-avatar {
+            width: 64px; height: 64px;
+            border-radius: 50%;
+            background: var(--ig-gradient);
+            padding: 2px;
+            margin: 0 auto 10px;
+        }
+        .ig-sidebar-avatar-inner {
+            width: 100%; height: 100%;
+            border-radius: 50%;
+            border: 2px solid var(--ig-white);
+            overflow: hidden;
+            background: #f0f0f0;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .ig-sidebar-avatar-inner img { width: 100%; height: 100%; object-fit: cover; }
+        .ig-sidebar-avatar-inner i { font-size: 24px; color: #c0c0c0; }
+        .ig-sidebar-name { font-size: 13px; font-weight: 700; color: var(--ig-text); margin-bottom: 2px; word-break: break-word; }
+        .ig-sidebar-email { font-size: 11px; color: var(--ig-muted); word-break: break-all; }
+
+        .ig-sidebar-nav {
+            background: var(--ig-white);
+            border: 1px solid var(--ig-border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .ig-nav-item {
+            display: flex; align-items: center; gap: 10px;
+            padding: 13px 16px;
+            text-decoration: none; color: var(--ig-text);
+            font-size: 13px; font-weight: 500;
+            border-bottom: 1px solid var(--ig-border);
+            transition: background 0.15s;
+        }
+        .ig-nav-item:last-child { border-bottom: none; }
+        .ig-nav-item:hover { background: #f5f5f5; color: var(--ig-text); }
+        .ig-nav-item.active { font-weight: 700; color: var(--ig-blue); background: #f0f8ff; }
+        .ig-nav-item i { width: 18px; text-align: center; font-size: 14px; flex-shrink: 0; }
+
+        /* ── Content ── */
+        .ig-content { flex: 1; min-width: 0; }
+
+        /* ── Posts Header Card（mypageのig-profile-cardと同じ構造） ── */
+        .ig-profile-card {
+            background: var(--ig-white);
+            border: 1px solid var(--ig-border);
+            border-radius: 12px;
+            padding: 24px 28px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+        }
+        .ig-profile-card-left { display: flex; align-items: center; gap: 20px; }
+        .ig-avatar-ring {
+            width: 80px; height: 80px;
+            border-radius: 50%;
+            background: var(--ig-gradient);
+            padding: 3px;
+            flex-shrink: 0;
+        }
+        .ig-avatar-inner {
+            width: 100%; height: 100%;
+            border-radius: 50%;
+            border: 3px solid var(--ig-white);
+            overflow: hidden;
+            background: #f0f0f0;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .ig-avatar-inner img { width: 100%; height: 100%; object-fit: cover; }
+        .ig-avatar-inner i { font-size: 30px; color: #c0c0c0; }
+        .ig-profile-info {}
+        .ig-username { font-size: 18px; font-weight: 300; margin-bottom: 4px; }
+        .ig-username span { font-weight: 600; }
+        .ig-email { color: var(--ig-muted); font-size: 13px; margin-bottom: 10px; }
+        .ig-new-post-btn {
+            background: var(--ig-blue);
+            color: #fff;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 8px 18px;
+            border-radius: 8px;
+            text-decoration: none;
+            display: flex; align-items: center; gap: 6px;
+            white-space: nowrap;
+            transition: background 0.15s;
+        }
+        .ig-new-post-btn:hover { background: #1877f2; color: #fff; }
+
+        /* ── 投稿数 ── */
+        .ig-post-count { font-size: 13px; color: var(--ig-muted); margin-bottom: 12px; }
+
+        /* ── Instagram風グリッド ── */
+        .ig-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 3px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+        .ig-grid-item {
+            position: relative;
+            aspect-ratio: 1 / 1;
+            overflow: hidden;
+            background: #efefef;
+            cursor: pointer;
+        }
+        .ig-grid-item img {
+            width: 100%; height: 100%;
+            object-fit: cover; display: block;
+            transition: transform 0.3s ease;
+        }
+        .ig-grid-item:hover img { transform: scale(1.06); }
+
+        .ig-grid-no-img {
+            width: 100%; height: 100%;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .ig-grid-no-img i { font-size: 32px; color: #ccc; }
+
+        /* Hover Overlay */
+        .ig-grid-overlay {
+            position: absolute; inset: 0;
+            background: rgba(0,0,0,0.42);
+            display: flex; align-items: center; justify-content: center;
+            gap: 24px;
+            opacity: 0; transition: opacity 0.2s;
+            text-decoration: none;
+        }
+        .ig-grid-item:hover .ig-grid-overlay { opacity: 1; }
+        .ig-overlay-stat { color: #fff; font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 7px; }
+        .ig-overlay-stat i { font-size: 19px; }
+
+        /* 編集・削除 */
+        .ig-post-actions {
+            position: absolute; top: 8px; right: 8px;
+            display: flex; gap: 5px;
+            opacity: 0; transition: opacity 0.2s;
+        }
+        .ig-grid-item:hover .ig-post-actions { opacity: 1; }
+        .ig-action-btn {
+            width: 30px; height: 30px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.92);
+            display: flex; align-items: center; justify-content: center;
+            text-decoration: none; font-size: 12px; color: var(--ig-text);
+            border: none; cursor: pointer;
+            transition: background 0.15s, transform 0.1s;
+        }
+        .ig-action-btn:hover { background: #fff; transform: scale(1.1); }
+        .ig-action-btn.delete { color: #ed4956; }
+
+        /* 複数画像バッジ */
+        .ig-multi-badge {
+            position: absolute; top: 8px; left: 8px;
+            color: #fff; font-size: 14px;
+            filter: drop-shadow(0 1px 3px rgba(0,0,0,0.5));
+        }
+
+        /* ── Empty State ── */
+        .ig-empty {
+            background: var(--ig-white);
+            border: 1px solid var(--ig-border);
+            border-radius: 12px;
+            padding: 70px 20px; text-align: center;
+        }
+        .ig-empty-icon {
+            width: 72px; height: 72px;
+            border-radius: 50%;
+            border: 2px solid var(--ig-text);
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 18px;
+        }
+        .ig-empty-icon i { font-size: 30px; }
+        .ig-empty h3 { font-size: 22px; font-weight: 300; margin-bottom: 8px; }
+        .ig-empty p { color: var(--ig-muted); font-size: 14px; margin-bottom: 20px; }
+
+        /* ── Pagination ── */
+        .ig-pagination { display: flex; justify-content: center; padding: 8px 0; }

@@ -33,9 +33,9 @@
                     <td>{{ optional($restaurant->created_at)->format('Y-m-d H:i') }}</td>
                     <td>{{ optional($restaurant->updated_at)->format('Y-m-d H:i') }}</td>
                     <td>
-                        <a href="{{ route('restaurant.edit', $restaurant->id) }}" class="btn btn-warning text-white btn-sm">Edit</a>
+                        <a href="{{ route('admin.restaurant.edit', $restaurant->id) }}" class="btn btn-warning text-white btn-sm">Edit</a>
 
-                        <form action="{{ route('restaurant.delete', $restaurant->id) }}" method="POST" style="display:inline;">
+                        <form action="{{ route('admin.restaurant.delete', $restaurant->id) }}" method="POST" style="display:inline;">
                             @csrf
                             @method('DELETE')
                             <button class="btn btn-danger btn-sm"

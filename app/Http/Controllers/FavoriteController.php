@@ -11,26 +11,24 @@ use App\Models\Favorite;
 class FavoriteController extends Controller
 {
     // ユーザーマイページに表示
-    public function index(){
-        $favorites = Favorite::where('user_id', Auth::id())->get();
-        $hotelIds = $favorites
-        ->where('target_type', 'hotel')
-        ->pluck('target_id');
+   public function index()
+{
+    $user = auth()->user()->load('detail');
 
-        $restaurantIds = $favorites
-            ->where('target_type', 'restaurant')
-            ->pluck('target_id');
+    $favorites = Favorite::where('user_id', Auth::id())->get();
 
-        $favoriteHotels = Hotel::whereIn('id', $hotelIds)->get();
-        $favoriteRestaurants = Restaurant::whereIn('id', $restaurantIds)->get();
+    $hotelIds      = $favorites->where('target_type', 'hotel')->pluck('target_id');
+    $restaurantIds = $favorites->where('target_type', 'restaurant')->pluck('target_id');
 
-        $allFavorites = $favoriteHotels
-            ->merge($favoriteRestaurants)
-            ->sortByDesc('create_at')
-            ->values();
+    $favoriteHotels      = Hotel::whereIn('id', $hotelIds)->get();
+    $favoriteRestaurants = Restaurant::whereIn('id', $restaurantIds)->get();
 
-        return view('userpage.mypage.favorite', compact('allFavorites', 'favoriteHotels', 'favoriteRestaurants'));
-    }
+    return view('userpage.mypage.favorite', compact(
+        'user',
+        'favoriteHotels',
+        'favoriteRestaurants'
+    ));
+}
 
     // お気に入り登録
     public function store($type,$id) {
@@ -39,9 +37,12 @@ class FavoriteController extends Controller
             'target_type'   => $type,
             'target_id'     => $id
        ]);
-       return response()->json([
-         'status' => 'added'
-       ]);
+
+       if (request()->wantsJson()) {
+            return response()->json(['status' => 'added']);
+       }
+
+       return back();
     }
 
     // お気に入り解除
@@ -51,8 +52,11 @@ class FavoriteController extends Controller
             'target_type'   => $type,
             'target_id'     => $id
        ])->delete();
-       return response()->json([
-        'status' => 'removed'
-       ]);
+
+       if (request()->wantsJson()) {
+            return response()->json(['status' => 'removed']);
+       }
+
+       return back();
     }
 }

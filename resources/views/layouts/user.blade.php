@@ -9,8 +9,8 @@
 @endpush
 
 @section('navbar')
-<nav class="navbar navbar-expand-md shadow-sm"
-     style="background-color:#6FA9DE; height:80px;">
+<nav class="navbar navbar-expand-md"
+     style=" height:80px;">
     @include('layouts.partials.nav-user')
 </nav>
 @endsection

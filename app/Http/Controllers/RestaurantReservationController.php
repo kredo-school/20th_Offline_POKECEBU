@@ -3,24 +3,16 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\RestaurantReservation;
-use App\Models\Restaurant;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use App\Models\Restaurant;
+use App\Models\RestaurantReservation;
+use Carbon\Carbon;
+
 
 class RestaurantReservationController extends Controller
-{
-
-    public function show($id) {
-        $reservation = RestaurantReservation::with([
-            'user.detail'
-            
-        ])->findOrFail($id);
-
-        return view('staffpage.reservations.restaurant-detail', compact('reservation')
-        );
-       
-    }
+{   
+    
     /**
      * 特定のレストランを表示（ホテルと同じ ID固定方式）
       */
@@ -64,7 +56,7 @@ class RestaurantReservationController extends Controller
             ]),
         ]);
 
-return view('userpage.booking.restaurant.reservation-success');
-}
+        return view('userpage.booking.restaurant.reservation-success');
+    }
 
 }

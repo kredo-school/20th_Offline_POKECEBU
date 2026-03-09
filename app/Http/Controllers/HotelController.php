@@ -11,6 +11,8 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+use Illuminate\Support\Facades\DB;
+
 
 
 
@@ -57,32 +59,26 @@ class HotelController extends Controller
         $roomsNeeded = (int) $request->input('rooms', 0);
         $amenities = (array) $request->input('amenities', []);
 
-        // -----------------------------
-        // 追加: guestOptions を作成（人数プルダウン用）
-        // -----------------------------
-        $guestOptions = \App\Models\HotelRoom::orderBy('max_guests') // テーブルのカラム名に合わせる
-            ->pluck('max_guests')   // 例: [2,3,4,5,6]
+        // guestOptions
+        $guestOptions = \App\Models\HotelRoom::orderBy('max_guests')
+            ->pluck('max_guests')
             ->unique()
             ->values();
 
-        // -----------------------------
-        // 追加: サーバ側バリデーション（adults が許可値のいずれかであること）
-        // GET リクエストで adults が送られてきた場合のみ検証
-        // -----------------------------
+        // サーバ側バリデーション（adults）
         if ($request->isMethod('get') && $request->filled('adults')) {
-            // in: ルールは文字列で渡す
-            $allowed = $guestOptions->map(fn($v) => (string)$v)->toArray(); // ['2','3','4',...]
+            $allowed = $guestOptions->map(fn($v) => (string)$v)->toArray();
             $request->validate([
                 'adults' => ['nullable', 'in:' . implode(',', $allowed)],
-                // 必要なら他の検索パラメータのルールをここに追加
             ]);
         }
 
+        // ベースクエリ（withCount は残す）
         $query = Hotel::query()
             ->with(['hotelImages', 'rooms.categories', 'rooms.reservations', 'reviews'])
             ->withCount('favorites');
 
-        // destination（既存の処理）
+        // destination
         if ($destination = $request->input('destination')) {
             $query->where(function ($q) use ($destination) {
                 $q->where('city', 'like', "%{$destination}%")
@@ -99,51 +95,111 @@ class HotelController extends Controller
         }
 
         // 日付と部屋数が指定されている場合は空室数で絞る
-        if ($roomsNeeded > 0 && $ci && $co) {
-            $ciCarbon = Carbon::parse($ci)->startOfDay();
-            $coCarbon = Carbon::parse($co)->endOfDay();
+        $ciCarbon = $coCarbon = null;
+        if ($roomsNeeded > 0 && ($ci || $co)) {
+            try {
+                $ciCarbon = $ci ? Carbon::parse($ci)->startOfDay() : null;
+                $coCarbon = $co ? Carbon::parse($co)->endOfDay() : null;
+            } catch (\Exception $e) {
+                session()->flash('error', '日付の形式が正しくありません。');
+                $query->whereRaw('0 = 1'); // 空結果
+            }
 
-            $query->whereHas('rooms', function ($q) use ($ciCarbon, $coCarbon) {
-                $q->whereDoesntHave('reservations', function ($r) use ($ciCarbon, $coCarbon) {
-                    $r->where(function ($s) use ($ciCarbon, $coCarbon) {
-                        $s->whereBetween('start_at', [$ciCarbon, $coCarbon])
-                            ->orWhereBetween('end_at', [$ciCarbon, $coCarbon])
-                            ->orWhere(function ($u) use ($ciCarbon, $coCarbon) {
-                                $u->where('start_at', '<=', $ciCarbon)->where('end_at', '>=', $coCarbon);
-                            });
-                    });
-                });
-            })
-                ->withCount(['rooms as available_rooms_count' => function ($q) use ($ciCarbon, $coCarbon) {
-                    $q->whereDoesntHave('reservations', function ($r) use ($ciCarbon, $coCarbon) {
-                        $r->where(function ($s) use ($ciCarbon, $coCarbon) {
-                            $s->whereBetween('start_at', [$ciCarbon, $coCarbon])
-                                ->orWhereBetween('end_at', [$ciCarbon, $coCarbon])
-                                ->orWhere(function ($u) use ($ciCarbon, $coCarbon) {
-                                    $u->where('start_at', '<=', $ciCarbon)->where('end_at', '>=', $coCarbon);
-                                });
+            if (!empty($ciCarbon) && !empty($coCarbon)) {
+                if ($ciCarbon->gt($coCarbon)) {
+                    session()->flash('error', 'チェックインはチェックアウト以前の日付を指定してください。');
+                    $query->whereRaw('0 = 1');
+                } elseif ($coCarbon->lt(now()->startOfDay())) {
+                    session()->flash('error', '過去の日付での検索はできません。');
+                    $query->whereRaw('0 = 1');
+                } else {
+                    // Booked の status_id を動的に取得
+                    $bookedId = DB::table('statuses')->where('name', 'Booked')->value('id') ?? 3;
+
+                    // rooms のうち「指定期間に Booked の予約が重なっていない部屋」を残す（AND 条件）
+                    $query->whereHas('rooms', function ($q) use ($ciCarbon, $coCarbon, $bookedId) {
+                        $q->whereDoesntHave('reservations', function ($r) use ($ciCarbon, $coCarbon, $bookedId) {
+                            $r->where('status_id', $bookedId)
+                                ->whereRaw('NOT (end_at < ? OR start_at > ?)', [
+                                    $ciCarbon->toDateTimeString(),
+                                    $coCarbon->toDateTimeString()
+                                ]);
                         });
                     });
-                }])
-                ->having('available_rooms_count', '>=', $roomsNeeded);
+
+                    // 相関サブクエリで「期間内に空いている部屋数」を評価して絞る（paginate と相性良し）
+                    $ciStr = $ciCarbon->toDateTimeString();
+                    $coStr = $coCarbon->toDateTimeString();
+
+                    $availableRoomsSub = "
+                    SELECT COUNT(*) FROM hotel_rooms hr
+                    WHERE hr.hotel_id = hotels.id
+                      AND NOT EXISTS (
+                        SELECT 1 FROM hotel_reservations r
+                        WHERE r.room_id = hr.id
+                          AND r.status_id = ?
+                          AND NOT (r.end_at < ? OR r.start_at > ?)
+                      )
+                ";
+
+                    // バインディング順： bookedId, ciStr, coStr, roomsNeeded
+                    $query->whereRaw("({$availableRoomsSub}) >= ?", [
+                        $bookedId,
+                        $ciStr,
+                        $coStr,
+                        $roomsNeeded
+                    ]);
+
+                    // min_price サブクエリ（ビュー表示・ソート用）
+                    $minPriceSub = "(
+                    SELECT MIN(hr2.charges)
+                    FROM hotel_rooms hr2
+                    WHERE hr2.hotel_id = hotels.id
+                      AND NOT EXISTS (
+                        SELECT 1 FROM hotel_reservations r2
+                        WHERE r2.room_id = hr2.id
+                          AND r2.status_id = {$bookedId}
+                          AND NOT (r2.end_at < '{$ciStr}' OR r2.start_at > '{$coStr}')
+                      )
+                )";
+
+                    // addSelect で min_price を追加（select を上書きしない）
+                    $query->addSelect(DB::raw("({$minPriceSub}) as min_price"));
+                }
+            } else {
+                // 片方しか日付がない場合は検索を空にする（要件に応じて緩和可）
+                session()->flash('error', 'チェックインとチェックアウトの両方を指定してください。');
+                $query->whereRaw('0 = 1');
+            }
         }
 
-        // amenities フィルタ
+        // amenities を AND 条件で適用（同じ room が全てのカテゴリを持つ）
         if (!empty($amenities)) {
             $query->whereHas('rooms', function ($q) use ($amenities) {
-                $q->whereHas('categories', function ($q2) use ($amenities) {
-                    $q2->whereIn('categories.id', $amenities);
-                });
+                foreach ($amenities as $amenityId) {
+                    $q->whereHas('categories', function ($q2) use ($amenityId) {
+                        $q2->where('categories.id', $amenityId);
+                    });
+                }
             });
+        }
+
+        // 重複行を防ぐ（JOIN による膨張対策）
+        $query->distinct();
+
+        // 期間がない場合の min_price（まだ付与されていなければ付与）
+        if (!isset($minPriceSub)) {
+            $minPriceSub = "(SELECT MIN(hr.charges) FROM hotel_rooms hr WHERE hr.hotel_id = hotels.id)";
+            $query->addSelect(DB::raw("({$minPriceSub}) as min_price"));
         }
 
         // ソート
         switch ($request->input('sort')) {
             case 'price_asc':
-                $query->orderByRaw('(SELECT MIN(charges) FROM hotel_rooms WHERE hotel_rooms.hotel_id = hotels.id) ASC');
+                $query->orderByRaw("{$minPriceSub} ASC");
                 break;
             case 'price_desc':
-                $query->orderByRaw('(SELECT MIN(charges) FROM hotel_rooms WHERE hotel_rooms.hotel_id = hotels.id) DESC');
+                $query->orderByRaw("{$minPriceSub} DESC");
                 break;
             case 'rating':
                 $query->orderByDesc('star_rating');
@@ -152,19 +208,18 @@ class HotelController extends Controller
                 $query->latest('id');
         }
 
+        // ページネーション
         $hotels = $query->paginate(10)->withQueryString();
 
         $amenitiesList = \App\Models\Category::orderBy('name')->get();
 
-        // -----------------------------
-        // 変更: ビューに guestOptions を渡す
-        // -----------------------------
         return view('userpage.mypage.hotel-search-result', [
             'hotels' => $hotels,
             'amenities' => $amenitiesList,
-            'guestOptions' => $guestOptions, // 追加
+            'guestOptions' => $guestOptions,
         ]);
     }
+
 
     public function show($id)
     {

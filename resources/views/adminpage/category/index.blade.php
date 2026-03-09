@@ -12,6 +12,7 @@
             <div class="list-group">
                 <a href="{{ route('admin.category.index') }}" class="list-group-item">Categories</a>
                 <a href="{{ route('admin.category.type-index') }}" class="list-group-item">Types</a>
+                <a href="{{ route('admin.category.post-index') }}" class="list-group-item">Post</a>
             </div>
         </div>
         <div class="col-9">

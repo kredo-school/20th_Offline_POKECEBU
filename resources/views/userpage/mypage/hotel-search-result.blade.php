@@ -72,6 +72,12 @@
                     </button>
                 </div>
             </form>
+            @if (session('error'))
+                <div class="alert alert-warning">
+                    {{ session('error') }}
+                </div>
+            @endif
+
         </div>
 
         <div class="row">
@@ -128,7 +134,7 @@
 
                         <hr>
 
-                        <div class="mb-2">
+                        {{-- <div class="mb-2">
                             <label class="form-label fw-bold small">Sort by</label>
                             <select class="form-select" name="sort" form="filters-form">
                                 <option value="recommended" {{ request('sort') == 'recommended' ? 'selected' : '' }}>
@@ -138,6 +144,24 @@
                                 <option value="price_desc" {{ request('sort') == 'price_desc' ? 'selected' : '' }}>Price:
                                     High to Low</option>
                                 <option value="rating" {{ request('sort') == 'rating' ? 'selected' : '' }}>Rating</option>
+                            </select>
+                        </div> --}}
+                        <div class="mb-2">
+                            <label class="form-label fw-bold small">Sort by</label>
+                            <select class="form-select" name="sort" form="filters-form"
+                                onchange="document.getElementById('filters-form').submit()">
+                                <option value="recommended" {{ request('sort') == 'recommended' ? 'selected' : '' }}>
+                                    Recommended
+                                </option>
+                                <option value="price_asc" {{ request('sort') == 'price_asc' ? 'selected' : '' }}>
+                                    Price: Low to High
+                                </option>
+                                <option value="price_desc" {{ request('sort') == 'price_desc' ? 'selected' : '' }}>
+                                    Price: High to Low
+                                </option>
+                                <option value="rating" {{ request('sort') == 'rating' ? 'selected' : '' }}>
+                                    Rating
+                                </option>
                             </select>
                         </div>
                     </div>
@@ -177,10 +201,22 @@
                                                 $avg = $reviews->count()
                                                     ? number_format($reviews->avg('rating'), 1)
                                                     : null;
+
+                                                // コントローラで計算した min_price があれば優先して使う
+                                                // なければ rooms の最小料金をフォールバック（null 安全）
                                                 $rooms = $hotel->rooms ?? collect();
-                                                $minPrice = $rooms->count()
-                                                    ? number_format($rooms->min('charges'))
-                                                    : null;
+                                                $minPriceRaw =
+                                                    $hotel->min_price ??
+                                                    ($rooms->count() ? $rooms->min('charges') : null);
+                                                // 表示用にフォーマット（小数点2桁）
+                                                $minPrice =
+                                                    $minPriceRaw !== null
+                                                        ? number_format((float) $minPriceRaw, 2)
+                                                        : null;
+
+                                                // コントローラで available_rooms_count を付与しているならそれを使う
+                                                // 付与していない場合は null（ビューでは rooms の有無で判断）
+                                                $available = $hotel->available_rooms_count ?? null;
                                             @endphp
 
                                             @if ($avg)
@@ -195,13 +231,28 @@
                                                 <div class="h6 mb-0 text-muted">No rooms</div>
                                                 <div class="small text-muted">部屋情報がまだ登録されていません。</div>
                                             @else
-                                                {{-- 部屋がある場合は最安値を表示 --}}
-                                                <div class="h5 mb-0">₱{{ $minPrice }}~</div>
-                                                <div class="small text-muted">per night</div>
+                                                {{-- available_rooms_count がセットされている場合は在庫0なら Sold out 表示 --}}
+                                                @if ($available !== null)
+                                                    @if ((int) $available <= 0)
+                                                        <div class="h5 mb-0 text-danger">Sold out</div>
+                                                        <div class="small text-muted">No available rooms for selected dates
+                                                        </div>
+                                                    @elseif ($minPrice !== null)
+                                                        <div class="h5 mb-0">₱{{ $minPrice }}~</div>
+                                                        <div class="small text-muted">per night</div>
+                                                    @else
+                                                        <div class="h6 mb-0 text-muted">Price unavailable</div>
+                                                    @endif
+                                                @else
+                                                    {{-- available_rooms_count が無ければ日付未指定の表示（従来どおり） --}}
+                                                    @if ($minPrice !== null)
+                                                        <div class="h5 mb-0">₱{{ $minPrice }}~</div>
+                                                        <div class="small text-muted">per night</div>
+                                                    @else
+                                                        <div class="h6 mb-0 text-muted">Price unavailable</div>
+                                                    @endif
+                                                @endif
                                             @endif
-
-
-
                                         </div>
                                     </div>
 

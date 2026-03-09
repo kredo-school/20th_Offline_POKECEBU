@@ -1,6 +1,40 @@
 @extends('layouts.user')
 
 @section('content')
+    <div class="main-card justify-content-center mt-4">
+
+        {{-- --------------- 
+            トップメニュー 
+        --------------- --}}
+        <div class="d-flex justify-content-center p-3">
+            <a href="{{ route('daily.fortune.show') }}" class="menu-btn menu-fortune text-decoration-none">
+                <i class="fa-solid fa-star"></i>
+                <div>Today's Pick</div>
+            </a>
+
+            {{-- ホテルのリンク --}}
+            <a href="{{ route('user.hotels.index') }}" class="menu-btn menu-hotel text-decoration-none">
+                <i class="fa-solid fa-bed"></i>
+                <div>Hotel</div>
+            </a>
+
+            {{-- レストランのリンク --}}
+            <a href="#" class="menu-btn menu-restaurant text-decoration-none">
+                <i class="fa-solid fa-utensils"></i>
+                <div>Restaurant</div>
+            </a>
+
+            {{-- ジプニーのリンク --}}
+            <a href="{{ route('jeepney.index') }}" class="menu-btn menu-jeepney text-decoration-none">
+                <i class="fa-solid fa-van-shuttle"></i>
+                <div>Jeepney</div>
+            </a>
+
+            {{-- ポストのリンク --}}
+            <a href="{{ route('user.posts.index') }}" class="menu-btn menu-mypage text-decoration-none">
+                <i class="fa-solid fa-user"></i>
+                <div>Post</div>
+            </a>
     {{-- 動画ヒーロー --}}
     <div class="hero-video">
         <video autoplay muted loop playsinline class="hero-bg-video">
@@ -382,6 +416,65 @@
         document.addEventListener('DOMContentLoaded', function () {
             document.querySelectorAll('.favorite-form').forEach(form => {
 
+        
+
+                    const button = form.querySelector('button');
+                    if (!button) return;
+
+                    button.addEventListener('click', function(e) {
+
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const token = form.querySelector('input[name="_token"]').value;
+                        const methodInput = form.querySelector('input[name="_method"]');
+                        const isDelete = methodInput && methodInput.value === 'DELETE';
+
+                        fetch(form.action, {
+                                method: 'POST',
+                                headers: {
+                                    'X-CSRF-TOKEN': token,
+                                    'Accept': 'application/json'
+                                },
+                                body: new URLSearchParams({
+                                    _method: isDelete ? 'DELETE' : 'POST'
+                                })
+                            })
+                            .then(res => res.json())
+                            .then(data => {
+
+                                const icon = form.querySelector('i');
+
+                                if (data.status === 'added') {
+
+                                    icon.classList.remove('fa-regular');
+                                    icon.classList.add('fa-solid', 'text-danger');
+
+                                    if (!methodInput) {
+                                        const input = document.createElement('input');
+                                        input.type = 'hidden';
+                                        input.name = '_method';
+                                        input.value = 'DELETE';
+                                        form.appendChild(input);
+                                    }
+
+                                } else if (data.status === 'removed') {
+
+                                    icon.classList.remove('fa-solid', 'text-danger');
+                                    icon.classList.add('fa-regular');
+
+                                    const m = form.querySelector('input[name="_method"]');
+                                    if (m) m.remove();
+                                }
+
+                            })
+                            .catch(error => {
+                                console.error(error);
+                                alert('通信エラー');
+                            });
+
+                    });
+
                 const button = form.querySelector('button');
                 if (!button) return;
 
@@ -440,7 +533,199 @@
                 });
 
             });
+        </script>
 
+
+        {{-- CSS --}}
+        <style>
+            /* メインメニュー */
+            .menu-btn {
+                width: 140px;
+                height: 120px;
+                border-radius: 25px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                font-size: 15px;
+                color: #ffffff;
+                font-weight: bold;
+                box-shadow: 0 3px rgba(0, 0, 0, 0.1);
+                margin: 10px;
+            }
+
+            .menu-restaurant {
+                background: #fdbf79;
+            }
+
+            .menu-hotel {
+                background: #8dbcda;
+            }
+
+            .menu-jeepney {
+                background: #96ccb9;
+            }
+
+            .menu-mypage {
+                background: #e9e3d3;
+            }
+
+            /* セクション */
+            .section-title {
+                text-align: center;
+                color: #4fa3d1;
+                font-weight: bold;
+                font-size: 28px;
+                margin: 40px 0 20px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 15px;
+            }
+
+            .section-title::before,
+            .section-title::after {
+                content: "";
+                flex: 1;
+                height: 2px;
+                background: #b5dbf0;
+                max-width: 80px;
+            }
+
+            /* ランキング */
+            .rank-card {
+                position: relative;
+                border-radius: 16px;
+                overflow: hidden;
+                aspect-ratio: 3 / 3.8;
+                width: 100%;
+                max-width: 260px;
+            }
+
+            .rank-card:hover img {
+                transition: transform 0.4s;
+                transform: scale(1.03);
+            }
+
+            .rank-image {
+                width: 100%;
+                height: 100%;
+                min-height: 200px;
+                object-fit: cover;
+            }
+
+            .rank-card .card-title {
+                font-size: 18px;
+            }
+
+            .rank-card .card-text,
+            .rank-card .card-price {
+                font-size: 13px;
+            }
+
+            .rank-card p {
+                margin-bottom: 4px;
+                line-height: 1.2;
+            }
+
+            .rank-link {
+                text-decoration: none;
+                color: #333;
+            }
+
+            /* ランキングバッジ（共通） */
+            .rank-badge {
+                position: absolute;
+                top: 10px;
+                left: 10px;
+                border-radius: 50%;
+                width: 36px;
+                height: 36px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                font-weight: bold;
+                color: #fff;
+                border: 1px solid white;
+                z-index: 10;
+            }
+
+            /* ランキングバッジ（順位） */
+            .rank-1 {
+                background: gold;
+                box-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+            }
+
+            .rank-2 {
+                background: silver;
+                box-shadow: 0 0 10px rgba(192, 192, 192, 0.8);
+            }
+
+            .rank-3 {
+                background: #cd7f32;
+                box-shadow: 0 0 10px rgba(205, 127, 50, 0.8);
+            }
+
+            /* POST */
+            .post-card {
+                position: relative;
+                display: block;
+                border-radius: 16px;
+                overflow: hidden;
+                aspect-ratio: 3 / 4.2;
+                width: 100%;
+                max-width: 260px;
+                color: #ffffff;
+                text-decoration: none;
+            }
+
+            .post-card img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                transition: transform 0.4s;
+            }
+
+            /* テキスト */
+            .post-overlay {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                padding: 16px;
+                z-index: 1;
+                text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+                background: linear-gradient(to top,
+                        rgba(0, 0, 0, 0.6),
+                        rgba(0, 0, 0, 0));
+                width: 100%;
+            }
+
+            .post-title {
+                font-size: 15px;
+                font-weight: 600;
+                margin-bottom: 6px;
+            }
+
+            .post-user {
+                font-size: 13px;
+            }
+
+            /* ハート */
+            .heat-btn {
+                position: absolute;
+                top: 12px;
+                right: 12px;
+                z-index: 2;
+                background: #ffffff;
+                color: #333;
+                width: 34px;
+                height: 34px;
+                border-radius: 50%;
+                border: 1px solid #ddd;
+                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.10);
+                display: grid;
+                place-items: center;
+            }
             // --- 追加：ヒーローセクションの文字出し ---
             const heroLines = document.querySelectorAll('.hero-line');
             heroLines.forEach((line, index) => {

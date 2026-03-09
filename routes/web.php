@@ -23,6 +23,8 @@ use App\Http\Controllers\CommentController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\RestaurantTableController;
 use App\Http\Controllers\TmpHotelController;
+use App\Http\Controllers\JeepneyController;
+use App\Http\Controllers\DailyFortuneController;
 
 use App\Http\Controllers\RestaurantReservationController;
 use App\Http\Controllers\ReviewController;
@@ -479,8 +481,16 @@ Route::get('staffpage/table-type', function () {
 Route::get('/jeepney', function () {
     return view('jeepney');
 })->name('jeepney');
+Route::get('/jeepney', [JeepneyController::class, 'index'])->name('jeepney.index');
+Route::post('/jeepney/search', [JeepneyController::class, 'search'])->name('jeepney.search');
 Route::get('/admin/analysis/hotel', [AnalysisController::class, 'hotelAnalysis'])->name('admin.analysis.hotel');
 Route::get('/admin/analysis/restaurant', [AnalysisController::class, 'restaurantAnalysis'])->name('admin.analysis.restaurant');
+
+//game
+Route::middleware(['auth'])->group(function () {
+    Route::get('/daily-fortune', [DailyFortuneController::class, 'show'])->name('daily.fortune.show');
+    Route::post('/daily-fortune/draw', [DailyFortuneController::class, 'draw'])->name('daily.fortune.draw');
+});
 
 
 

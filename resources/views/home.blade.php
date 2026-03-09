@@ -30,90 +30,6 @@
                 </defs>
             </svg>
 
-            {{-- ホテルのリンク --}}
-            <a href="{{ route('user.hotels.index') }}" class="menu-btn menu-hotel text-decoration-none">
-                <i class="fa-solid fa-bed"></i>
-                <div>Hotel</div>
-            </a>
-
-            {{-- レストランのリンク --}}
-            <a href="#" class="menu-btn menu-restaurant text-decoration-none">
-                <i class="fa-solid fa-utensils"></i>
-                <div>Restaurant</div>
-            </a>
-
-            {{-- ジプニーのリンク --}}
-            <a href="{{ route('jeepney.index') }}" class="menu-btn menu-jeepney text-decoration-none">
-                <i class="fa-solid fa-van-shuttle"></i>
-                <div>Jeepney</div>
-            </a>
-
-            {{-- ポストのリンク --}}
-            <a href="{{ route('user.posts.index') }}" class="menu-btn menu-mypage text-decoration-none">
-                <i class="fa-solid fa-user"></i>
-                <div>Post</div>
-            </a>
-    {{-- 動画ヒーロー --}}
-    <div class="hero-video">
-        <video autoplay muted loop playsinline class="hero-bg-video">
-            <source src="{{ asset('videos/home-beach.mp4') }}" type="video/mp4">
-        </video>
-
-        <div class="hero-overlay">
-            <h1 class="hero-title">
-                <span class="mb-4 hero-line">Pack Your</span><br>
-                <span class="mb-4 hero-line">Cebu Trip</span><br>
-                <span class="mb-2 hero-line">In A Pocket</span>
-            </h1>
-            <p class="hero-sub">Ready to explore the island?</p>
-        </div>
-    </div>
-
-    <div class="container-fluid">
-        <div class="row mt-4">
-            <!-- メイン -->
-            <div class="col-lg-9">
-                <div class="main-card">
-                    <div class="row g-3 p-3 pt-0">
-                        <div class="col-12 mb-2">
-                            <a href="{{ route('user.hotels.index') }}" class="menu-btn menu-hotel text-decoration-none">
-                                <i class="fa-solid fa-bed"></i>
-                                <div class="menu-text-wrapper">
-                                    <div class="menu-title">Find Your Stay</div>
-                                    <div class="menu-subtitle">Experience comfort in Cebu</div>
-                                </div>
-                            </a>
-                        </div>
-
-                        <div class="col-12 mb-2">
-                            <a href="#" class="menu-btn menu-restaurant text-decoration-none">
-                                <i class="fa-solid fa-utensils"></i>
-                                <div class="menu-text-wrapper">
-                                    <div class="menu-title">Dine & Savor</div>
-                                    <div class="menu-subtitle">Taste the local flavors</div>
-                                </div>
-                            </a>
-                        </div>
-
-                        <div class="col-12 mb-2">
-                            <a href="{{ route('jeepney.index') }}" class="menu-btn menu-jeepney text-decoration-none">
-                                <i class="fa-solid fa-van-shuttle"></i>
-                                <div class="menu-text-wrapper">
-                                    <div class="menu-title">Route & Ride</div>
-                                    <div class="menu-subtitle">Check numbers and destinations</div>
-                                </div>
-                            </a>
-                        </div>
-
-                        <div class="col-12 mb-2">
-                            <a href="{{ route('user.posts.index') }}" class="menu-btn menu-mypage text-decoration-none">
-                                <i class="fa-solid fa-user"></i>
-                                <div class="menu-text-wrapper">
-                                    <div class="menu-title">Share Your Cebu</div>
-                                    <div class="menu-subtitle">Connect through your stories</div>
-                                </div>
-                            </a>
-                        </div>
             <div class="hero-circles">
                 <div class="hero-circle circle-1">
                     <div class="circle-content">
@@ -173,7 +89,7 @@
                         </a>
                     </div>
                     <div class="col-12 mb-3">
-                        <a href="#" class="menu-btn menu-jeepney text-decoration-none">
+                        <a href="{{ route('jeepney.index') }}" class="menu-btn menu-jeepney text-decoration-none">
                             <i class="fa-solid fa-van-shuttle"></i>
                             <div class="menu-text-wrapper">
                                 <div class="menu-title">Route & Ride</div>

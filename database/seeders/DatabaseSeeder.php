@@ -14,6 +14,10 @@ class DatabaseSeeder extends Seeder
     {
         $faker = Faker::create();
         $now = Carbon::now();
+        $this->call([
+        JeepneyStopSeeder::class,
+        JeepneyRouteSeeder::class,
+    ]);
 
         /*
         |--------------------------------------------------------------------------

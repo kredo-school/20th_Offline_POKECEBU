@@ -11,13 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('jeepney_routes', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('code');
-            $table->text('description');
-            $table->timestamps();
-        });
+        Schema::create('jeepney_routes_table', function (Blueprint $table) {
+    $table->id();
+    $table->string('code'); // 17B, 04L など
+    $table->string('name');
+    $table->string('fare')->nullable();
+    $table->text('notes')->nullable();
+    $table->timestamps();
+});
     }
 
     /**

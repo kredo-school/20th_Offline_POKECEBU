@@ -7,6 +7,10 @@
             トップメニュー 
         --------------- --}}
         <div class="d-flex justify-content-center p-3">
+            <a href="{{ route('daily.fortune.show') }}" class="menu-btn menu-fortune text-decoration-none">
+                <i class="fa-solid fa-star"></i>
+                <div>Today's Pick</div>
+            </a>
 
             {{-- ホテルのリンク --}}
             <a href="{{ route('user.hotels.index') }}" class="menu-btn menu-hotel text-decoration-none">
@@ -21,7 +25,7 @@
             </a>
 
             {{-- ジプニーのリンク --}}
-            <a href="{{ route('jeepney') }}" class="menu-btn menu-jeepney text-decoration-none">
+            <a href="{{ route('jeepney.index') }}" class="menu-btn menu-jeepney text-decoration-none">
                 <i class="fa-solid fa-van-shuttle"></i>
                 <div>Jeepney</div>
             </a>
@@ -360,73 +364,73 @@
         </div>
 
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
 
-    document.querySelectorAll('.favorite-form').forEach(form => {
+                document.querySelectorAll('.favorite-form').forEach(form => {
 
-        const button = form.querySelector('button');
-        if (!button) return;
+                    const button = form.querySelector('button');
+                    if (!button) return;
 
-        button.addEventListener('click', function(e) {
+                    button.addEventListener('click', function(e) {
 
-            e.preventDefault();
-            e.stopPropagation();
+                        e.preventDefault();
+                        e.stopPropagation();
 
-            const token = form.querySelector('input[name="_token"]').value;
-            const methodInput = form.querySelector('input[name="_method"]');
-            const isDelete = methodInput && methodInput.value === 'DELETE';
+                        const token = form.querySelector('input[name="_token"]').value;
+                        const methodInput = form.querySelector('input[name="_method"]');
+                        const isDelete = methodInput && methodInput.value === 'DELETE';
 
-            fetch(form.action, {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': token,
-                    'Accept': 'application/json'
-                },
-                body: new URLSearchParams({
-                    _method: isDelete ? 'DELETE' : 'POST'
-                })
-            })
-            .then(res => res.json())
-            .then(data => {
+                        fetch(form.action, {
+                                method: 'POST',
+                                headers: {
+                                    'X-CSRF-TOKEN': token,
+                                    'Accept': 'application/json'
+                                },
+                                body: new URLSearchParams({
+                                    _method: isDelete ? 'DELETE' : 'POST'
+                                })
+                            })
+                            .then(res => res.json())
+                            .then(data => {
 
-                const icon = form.querySelector('i');
+                                const icon = form.querySelector('i');
 
-                if (data.status === 'added') {
+                                if (data.status === 'added') {
 
-                    icon.classList.remove('fa-regular');
-                    icon.classList.add('fa-solid','text-danger');
+                                    icon.classList.remove('fa-regular');
+                                    icon.classList.add('fa-solid', 'text-danger');
 
-                    if (!methodInput) {
-                        const input = document.createElement('input');
-                        input.type = 'hidden';
-                        input.name = '_method';
-                        input.value = 'DELETE';
-                        form.appendChild(input);
-                    }
+                                    if (!methodInput) {
+                                        const input = document.createElement('input');
+                                        input.type = 'hidden';
+                                        input.name = '_method';
+                                        input.value = 'DELETE';
+                                        form.appendChild(input);
+                                    }
 
-                } else if (data.status === 'removed') {
+                                } else if (data.status === 'removed') {
 
-                    icon.classList.remove('fa-solid','text-danger');
-                    icon.classList.add('fa-regular');
+                                    icon.classList.remove('fa-solid', 'text-danger');
+                                    icon.classList.add('fa-regular');
 
-                    const m = form.querySelector('input[name="_method"]');
-                    if (m) m.remove();
-                }
+                                    const m = form.querySelector('input[name="_method"]');
+                                    if (m) m.remove();
+                                }
 
-            })
-            .catch(error => {
-                console.error(error);
-                alert('通信エラー');
+                            })
+                            .catch(error => {
+                                console.error(error);
+                                alert('通信エラー');
+                            });
+
+                    });
+
+                });
+
             });
+        </script>
 
-        });
-
-    });
-
-});
-</script>
-        
 
         {{-- CSS --}}
         <style>

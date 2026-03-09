@@ -127,15 +127,6 @@ class DatabaseSeeder extends Seeder
                 'updated_at' => $now,
             ]);
 
-            for ($img = 1; $img <= 3; $img++) {
-                DB::table('hotel_images')->insert([
-                    'hotel_id' => $hUserId,
-                    'image' => "hotel_{$h}_img_{$img}.jpg",
-                    'created_at' => $now,
-                    'updated_at' => $now,
-                ]);
-            }
-
             DB::table('hotel_room_types')->insert([
                 ['hotel_id' => $hUserId, 'type_id' => $deluxeTypeId, 'total_rooms' => 3, 'created_at' => $now],
                 ['hotel_id' => $hUserId, 'type_id' => $suiteTypeId, 'total_rooms' => 2, 'created_at' => $now],
@@ -194,15 +185,6 @@ class DatabaseSeeder extends Seeder
                 'created_at' => $now,
                 'updated_at' => $now,
             ]);
-
-            for ($img = 1; $img <= 3; $img++) {
-                DB::table('restaurant_images')->insert([
-                    'restaurant_id' => $rUserId,
-                    'image' => "restaurant_{$r}_img_{$img}.jpg",
-                    'created_at' => $now,
-                    'updated_at' => $now,
-                ]);
-            }
 
             for ($t = 1; $t <= 5; $t++) {
                 $typeId = ($t <= 3) ? $windowTypeId : $familyTypeId;
@@ -299,11 +281,11 @@ class DatabaseSeeder extends Seeder
 
                 /*
         |--------------------------------------------------------------------------
-        | 7. 一般ユーザー (role_id: 1) を100名追加生成
+        | 7. 一般ユーザー (role_id: 1) を30名追加生成
         |--------------------------------------------------------------------------
         | 分析画面でグラフが表示されるよう、作成日を過去12ヶ月間でバラけさせる
         */
-        for ($u = 1; $u <= 100; $u++) {
+        for ($u = 1; $u <= 30; $u++) {
             // 過去0ヶ月〜11ヶ月前までのランダムな日時を生成
             $randomDate = Carbon::now()
                 ->subMonths(rand(0, 11))

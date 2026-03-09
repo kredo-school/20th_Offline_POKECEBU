@@ -79,7 +79,6 @@
                             </div>
                         </a>
                     </div>
-
                     <div class="col-12 mb-3">
                         <a href="#" class="menu-btn menu-restaurant text-decoration-none">
                             <i class="fa-solid fa-utensils"></i>
@@ -89,9 +88,8 @@
                             </div>
                         </a>
                     </div>
-
                     <div class="col-12 mb-3">
-                        <a href="{{ route('jeepney') }}" class="menu-btn menu-jeepney text-decoration-none">
+                        <a href="#" class="menu-btn menu-jeepney text-decoration-none">
                             <i class="fa-solid fa-van-shuttle"></i>
                             <div class="menu-text-wrapper">
                                 <div class="menu-title">Route & Ride</div>
@@ -99,13 +97,21 @@
                             </div>
                         </a>
                     </div>
-
                     <div class="col-12 mb-3">
                         <a href="{{ route('user.posts.index') }}" class="menu-btn menu-mypage text-decoration-none">
                             <i class="fa-solid fa-user"></i>
                             <div class="menu-text-wrapper">
                                 <div class="menu-title">Share Your Cebu</div>
                                 <div class="menu-subtitle">Connect through your stories</div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-12 mb-3">
+                        <a href="{{ route('daily.fortune.show') }}" class="menu-btn menu-jeepney text-decoration-none">
+                            <i class="fa-solid fa-star"></i>
+                            <div class="menu-text-wrapper">
+                                <div class="menu-title">Today's Pick</div>
+                                <div class="menu-subtitle">Check numbers and destinations</div>
                             </div>
                         </a>
                     </div>
@@ -532,7 +538,6 @@
         });
     </script>
 
-
     {{-- CSS --}}
     <style>
         .hero-video {
@@ -860,6 +865,7 @@
 
         /* 背後の薄い文字 */
         .section-title::before, .recent-posts::before {
+            content: "TOP 3 SELECTION";
             position: absolute;
             top: 50%;
             left: 50%;
@@ -869,13 +875,6 @@
             z-index: -1;
             white-space: nowrap;
             font-family: 'Arial Black', sans-serif;
-        }
-
-        .section-title::before {
-            content: "TOP 3 SELECTION";
-        }
-        .recent-posts::before {
-            content: "Share your CEBU";
         }
 
         /* 下の装飾ライン */
@@ -893,6 +892,13 @@
             background-size: 20px auto;
             animation: wave-move 3s linear infinite;
             opacity: 0.8;
+        }
+
+        .section-title::before {
+            content: "TOP 3 SELECTION";
+        }     
+        .recent-posts::before {
+            content: "SHARE YOUR CEBU";   
         }
 
         @keyframes wave-move {

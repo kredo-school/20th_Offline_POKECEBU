@@ -1,0 +1,164 @@
+@extends('layouts.app')
+
+@section('content')
+<style>
+    body {
+        background: linear-gradient(180deg, #fffef7 0%, #fff8ee 100%);
+    }
+
+    .fortune-wrapper {
+        max-width: 900px;
+        margin: 30px auto;
+    }
+
+    .fortune-card {
+        border: none;
+        border-radius: 24px;
+        background: #ffffff;
+        box-shadow: 0 18px 40px rgba(20, 40, 60, 0.08);
+        overflow: hidden;
+    }
+
+    .fortune-header {
+        background: linear-gradient(135deg, #ffd36e, #ffb86c);
+        color: #4a3100;
+        padding: 32px;
+        text-align: center;
+    }
+
+    .fortune-header h1 {
+        margin: 0;
+        font-size: 2rem;
+        font-weight: 800;
+    }
+
+    .fortune-header p {
+        margin-top: 10px;
+        margin-bottom: 0;
+        font-size: 1rem;
+    }
+
+    .fortune-body {
+        padding: 32px;
+    }
+
+    .draw-btn {
+        border: none;
+        border-radius: 16px;
+        padding: 14px 24px;
+        font-weight: 800;
+        background: linear-gradient(135deg, #6FA9DE, #51C9D0);
+        color: #102433;
+        box-shadow: 0 10px 20px rgba(81, 201, 208, 0.2);
+    }
+
+    .spot-card {
+        border: 1px solid #ece7da;
+        border-radius: 20px;
+        padding: 24px;
+        background: #fffdf8;
+    }
+
+    .spot-name {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: #1e3447;
+        margin-bottom: 12px;
+    }
+
+    .spot-meta {
+        display: inline-block;
+        padding: 8px 14px;
+        border-radius: 999px;
+        background: #eef9fb;
+        color: #15435a;
+        font-weight: 700;
+        margin-bottom: 14px;
+    }
+
+    .spot-description {
+        color: #5d7181;
+        line-height: 1.8;
+    }
+
+    .spot-image {
+        width: 100%;
+        max-height: 320px;
+        object-fit: cover;
+        border-radius: 18px;
+        margin-bottom: 18px;
+    }
+</style>
+
+<div class="container fortune-wrapper">
+    <div class="fortune-card">
+        <div class="fortune-header">
+            <h1>Today's Cebu Fortune</h1>
+            <p>今日のあなたにおすすめのスポットを引いてみましょう。</p>
+        </div>
+
+        <div class="fortune-body">
+            @if(session('success'))
+                <div class="alert alert-success">{{ session('success') }}</div>
+            @endif
+
+            @if(session('message'))
+                <div class="alert alert-info">{{ session('message') }}</div>
+            @endif
+
+            @if(session('error'))
+                <div class="alert alert-danger">{{ session('error') }}</div>
+            @endif
+
+            @if(!$fortuneLog)
+                <div class="text-center">
+                    <p class="mb-4">まだ今日のおみくじは引いていません。</p>
+
+                    <form action="{{ route('daily.fortune.draw') }}" method="POST">
+                        @csrf
+                        <button type="submit" class="draw-btn">
+                            今日のおすすめを引く
+                        </button>
+                    </form>
+                </div>
+            @else
+                <div class="spot-card">
+                    @if($fortuneLog->fortuneSpot->image)
+                        <img
+                            src="{{ asset('storage/' . $fortuneLog->fortuneSpot->image) }}"
+                            alt="{{ $fortuneLog->fortuneSpot->name }}"
+                            class="spot-image"
+                        >
+                    @endif
+
+                    <div class="spot-name">
+                        {{ $fortuneLog->fortuneSpot->name }}
+                    </div>
+
+                    @if($fortuneLog->fortuneSpot->location)
+                        <div class="spot-meta">
+                            {{ $fortuneLog->fortuneSpot->location }}
+                        </div>
+                    @endif
+
+                    @if($fortuneLog->fortuneSpot->category)
+                        <div class="spot-meta">
+                            {{ $fortuneLog->fortuneSpot->category }}
+                        </div>
+                    @endif
+
+                    @if($fortuneLog->fortuneSpot->description)
+                        <div class="spot-description">
+                            {{ $fortuneLog->fortuneSpot->description }}
+                        </div>
+                    @endif
+                </div>
+
+                <div class="mt-4 text-center text-muted">
+                    今日のおみくじはもう引いています。次の結果は明日のお楽しみです。
+                </div>
+            @endif
+        </div>
+    </div>
+</div>
+@endsection

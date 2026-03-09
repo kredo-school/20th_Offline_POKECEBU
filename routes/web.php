@@ -23,6 +23,8 @@ use App\Http\Controllers\CommentController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\RestaurantTableController;
 use App\Http\Controllers\TmpHotelController;
+use App\Http\Controllers\JeepneyController;
+use App\Http\Controllers\DailyFortuneController;
 
 use App\Http\Controllers\RestaurantReservationController;
 use App\Http\Controllers\ReviewController;
@@ -147,7 +149,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     #################### Hotel ####################
     Route::group(['prefix' => 'hotel', 'as' => 'hotel.', 'middleware' => 'hotel'], function () {
-        Route::get('/', [HotelStaffController::class, 'index'])->name('home');
+        Route::get('/', [StaffAnalysisController::class,'hotelAnalysis'])->name('home');
         
         Route::get('/mypage/hotel', [StaffMypageController::class, 'index'])->name('mypage.hotel');
         Route::get('/mypage/hotel/edit', [StaffMypageController::class, 'editStaffMypage'])->name('staff.mypage.hotel.edit');   
@@ -156,8 +158,6 @@ Route::group(['middleware' => 'auth'], function () {
 
         Route::get('/reservations', [HotelReservationController::class, 'hotel'])->name('reservations');
         Route::get('/reservations/{id}', [HotelReservationController::class, 'show'])->name('reservations.show');
-
-        Route::get('/analysis',[StaffAnalysisController::class,'hotelAnalysis'])->name('analysis');
 
         #Hotel - Room overview
         Route::get('/roomOverview', [HotelRoomController::class, 'roomOverview'])->name('roomOverview');
@@ -175,15 +175,13 @@ Route::group(['middleware' => 'auth'], function () {
 
     #################### Restaurant ####################
     Route::group(['prefix' => 'restaurant', 'as' => 'restaurant.', 'middleware' => 'restaurant'], function () {
-        Route::get('/', [RestaurantStaffController::class, 'index'])->name('home');
+        Route::get('/', [StaffAnalysisController::class,'restaurantAnalysis'])->name('home');
         Route::get('/mypage', [StaffMypageController::class, 'indexRestaurant'])->name('mypage');
         Route::get('/mypage/edit', [StaffMypageController::class, 'editStaffMypagerestaurant'])->name('restaurant.edit');
         Route::put('/mypage/update', [StaffMypageController::class, 'updateStaffMypagerestaurant'])->name('update');
 
-        Route::get('/reservations', [RestaurantStaffController::class, 'reservations'])->name('reservations');
-        Route::get('/reservations/{id}', [RestaurantReservationController::class, 'show'])->name('reservations.show');
-
-        Route::get('/analysis',[StaffAnalysisController::class,'restaurantAnalysis'])->name('analysis');
+        // Route::get('/reservations', [RestaurantStaffController::class, 'reservations'])->name('reservations');
+       
 
         #Restaurant - Table overview
         Route::get('/tableOverview', [RestaurantTableController::class, 'tableOverview'])->name('tableOverview');
@@ -198,8 +196,15 @@ Route::group(['middleware' => 'auth'], function () {
         Route::patch('/{id}/updateStatus', [RestaurantTableController::class, 'updateStatus'])->name('updateStatus');
         Route::get('/{id}/viewTable', [RestaurantTableController::class, 'viewTable'])->name('viewTable');
         // カレンダー
-         Route::get('/store/calendar', [RestaurantReservationController::class, 'calendar'])->name('store.carendar');
-         Route::get('/store/calendar/data', [RestaurantReservationController::class, 'calendarData'])->name('store.calendar.data');
+         Route::get('/store/calendar', [RestaurantStaffController::class, 'calendar'])->name('store.calendar');
+         Route::get('/store/calendar/data', [RestaurantStaffController::class, 'calendarData'])->name('store.calendar.data');
+
+        //  予約一覧
+        Route::get('/reservations/{date}', [RestaurantStaffController::class, 'daily'])
+        ->name('reservations.date');
+        // 予約詳細
+        Route::get('/reservations/detail/{id}', [RestaurantStaffController::class, 'show'])->name('reservations.show');
+        
     });
 
     #################### User ####################
@@ -316,8 +321,8 @@ Route::prefix('staff')->middleware('auth')->group(function () {
 
 
     // restaurant
-    Route::get('/restaurant', [RestaurantStaffController::class, 'index'])
-        ->name('staff.homerestaurant');
+    // Route::get('/restaurant', [RestaurantStaffController::class, 'index'])
+    //     ->name('staff.homerestaurant');
 });
 
 
@@ -468,8 +473,16 @@ Route::get('staffpage/table-type', function () {
 Route::get('/jeepney', function () {
     return view('jeepney');
 })->name('jeepney');
+Route::get('/jeepney', [JeepneyController::class, 'index'])->name('jeepney.index');
+Route::post('/jeepney/search', [JeepneyController::class, 'search'])->name('jeepney.search');
 Route::get('/admin/analysis/hotel', [AnalysisController::class, 'hotelAnalysis'])->name('admin.analysis.hotel');
 Route::get('/admin/analysis/restaurant', [AnalysisController::class, 'restaurantAnalysis'])->name('admin.analysis.restaurant');
+
+//game
+Route::middleware(['auth'])->group(function () {
+    Route::get('/daily-fortune', [DailyFortuneController::class, 'show'])->name('daily.fortune.show');
+    Route::post('/daily-fortune/draw', [DailyFortuneController::class, 'draw'])->name('daily.fortune.draw');
+});
 
 
 

@@ -116,6 +116,7 @@ public static function getKpiStats($restaurantId = null)
 
         return $monthlyData;
     }
+    
 public static function getHourlyStats($restaurantId = null)
 {
     $hourlyData = array_fill(0, 24, 0);

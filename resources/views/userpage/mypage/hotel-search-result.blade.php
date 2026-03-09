@@ -134,7 +134,7 @@
 
                         <hr>
 
-                        <div class="mb-2">
+                        {{-- <div class="mb-2">
                             <label class="form-label fw-bold small">Sort by</label>
                             <select class="form-select" name="sort" form="filters-form">
                                 <option value="recommended" {{ request('sort') == 'recommended' ? 'selected' : '' }}>
@@ -144,6 +144,24 @@
                                 <option value="price_desc" {{ request('sort') == 'price_desc' ? 'selected' : '' }}>Price:
                                     High to Low</option>
                                 <option value="rating" {{ request('sort') == 'rating' ? 'selected' : '' }}>Rating</option>
+                            </select>
+                        </div> --}}
+                        <div class="mb-2">
+                            <label class="form-label fw-bold small">Sort by</label>
+                            <select class="form-select" name="sort" form="filters-form"
+                                onchange="document.getElementById('filters-form').submit()">
+                                <option value="recommended" {{ request('sort') == 'recommended' ? 'selected' : '' }}>
+                                    Recommended
+                                </option>
+                                <option value="price_asc" {{ request('sort') == 'price_asc' ? 'selected' : '' }}>
+                                    Price: Low to High
+                                </option>
+                                <option value="price_desc" {{ request('sort') == 'price_desc' ? 'selected' : '' }}>
+                                    Price: High to Low
+                                </option>
+                                <option value="rating" {{ request('sort') == 'rating' ? 'selected' : '' }}>
+                                    Rating
+                                </option>
                             </select>
                         </div>
                     </div>

@@ -61,7 +61,7 @@
                     {{-- Hotel Image Gallery --}}
                     <div class="hotel-images mb-4 hide-scrollbar">
                         @foreach ($hotel->hotelImages as $image)
-                            <img src="{{ asset('storage/hotels/' . $image->image) }}" alt="hotel image">
+                            <img src="{{ asset('storage/' . $image->image) }}" alt="hotel image">
                         @endforeach
                     </div>
 
@@ -86,7 +86,7 @@
                         <div class="col-md-5 bg-light position-relative border-end">
                             <div class="room-images hide-scrollbar" style="{{ !$isAvailable ? 'filter: grayscale(80%);' : '' }}">
                                 @foreach ($room->images as $image)
-                                    <img src="{{ asset('storage/rooms/' . $image->image) }}" alt="room image">
+                                    <img src="{{ asset('storage/' . $image->image) }}" alt="room image">
                                 @endforeach
                             </div>
 
@@ -155,7 +155,7 @@
                                     <div class="col-md-6 mb-3">
                                         <div class="room-images hide-scrollbar">
                                             @foreach ($room->images as $image)
-                                                <img src="{{ asset('storage/rooms/' . $image->image) }}" class="w-100 rounded-3" alt="Room Image" style="height: 300px; object-fit: cover;">
+                                                <img src="{{ asset('storage/' . $image->image) }}" class="w-100 rounded-3" alt="Room Image" style="height: 300px; object-fit: cover;">
                                             @endforeach
                                         </div>
                                     </div>

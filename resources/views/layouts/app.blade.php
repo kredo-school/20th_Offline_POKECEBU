@@ -25,7 +25,7 @@
 <div id="app">
     @yield('navbar')
 
-    <main>
+    <main class="py-3">
         @yield('content')
     </main>
 </div>

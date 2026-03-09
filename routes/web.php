@@ -69,30 +69,23 @@ Route::group(['middleware' => 'auth'], function () {
 
         ### All Users
         Route::get('/all-users', [AdminController::class, 'showAllUsers'])->name('showAllUsers');
-        # For Customer
-        Route::get('/customer', [AdminController::class, 'customer'])->name('customer');
+        # All Users - Customer
+        Route::get('/customers', [AdminController::class, 'customers'])->name('customers');
         Route::get('/customer/add', [AdminController::class, 'addCustomer'])->name('customer.add');
         Route::post('/customer/add', [AdminController::class, 'storeCustomer'])->name('customers.store');
         Route::get('/customer/edit/{id}', [AdminController::class, 'editCustomer'])->name('customer.edit');
         Route::put('/customer/update/{id}', [AdminController::class, 'updateCustomer'])->name('customer.update');
         Route::delete('/customer/delete/{id}', [AdminController::class, 'deleteCustomer'])->name('customer.delete');
-        Route::get('/admin/customers', [AdminController::class, 'customers'])->name('admin.customers');
-        Route::get('/admin/customers/edit', [AdminController::class, 'editCustomer'])->name('customers.edit');
-        Route::get('/admin/customers/add', [AdminController::class, 'addCustomer'])->name('customers.add');
 
-        # For Hotel
+        # All Users - Hotel
         Route::get('/hotels', [AdminController::class, 'hotels'])->name('hotels');
         Route::get('/hotel/add', [AdminController::class, 'addHotel'])->name('hotel.add');
         Route::post('/hotel/add', [AdminController::class, 'storeHotel'])->name('hotel.store');
         Route::get('/hotel/edit/{id}', [AdminController::class, 'editHotel'])->name('hotel.edit');
         Route::put('/hotel/update/{id}', [AdminController::class, 'updateHotel'])->name('hotel.update');
         Route::delete('/hotel/delete/{id}', [AdminController::class, 'deleteHotel'])->name('hotel.delete');
-        Route::get('/admin/hotels', [AdminController::class, 'hotels'])->name('admin.hotels');
-        Route::get('/admin/hotel/edit', [AdminController::class, 'editHotel'])->name('hotels.edit');
-        Route::get('/admin/hotel/add', [AdminController::class, 'addHotel'])->name('hotel.add');
 
-
-        # For Restaurant
+        # All Users - Restaurant
         Route::get('/restaurants', [AdminController::class, 'restaurants'])->name('restaurants');
         Route::get('/restaurant/add', [AdminController::class, 'addRestaurant'])->name('restaurant.add');
         Route::post('/restaurant/add', [AdminController::class, 'storeRestaurant'])->name('restaurant.store');
@@ -100,14 +93,13 @@ Route::group(['middleware' => 'auth'], function () {
         Route::put('/admin/restaurant/update/{id}', [AdminController::class, 'updateRestaurant'])->name('restaurant.update');
         Route::delete('/admin/restaurant/delete/{id}', [AdminController::class, 'deleteRestaurant'])->name('restaurant.delete');
         // カレンダー
-        # For Admin
+        # All Users- Admin
         Route::get('/admins', [AdminController::class, 'admins'])->name('admins');
         Route::get('/admin/add', [AdminController::class, 'addAdmin'])->name('admin.add');
         Route::post('/admin/add', [AdminController::class, 'storeAdmin'])->name('admin.store');
         Route::get('/admin/edit/{id}', [AdminController::class, 'editAdmin'])->name('admin.edit');
         Route::put('/admin/update/{id}', [AdminController::class, 'updateAdmin'])->name('admin.update');
         Route::delete('/admin/delete/{id}', [AdminController::class, 'deleteAdmin'])->name('admin.delete');
-        Route::get('/admin/restaurants', [AdminController::class, 'restaurants'])->name('admin.restaurants');
 
         # Hotel/Restaurant List
         Route::get('/showList/{name}', [AdminController::class, 'showList'])->name('showList');

@@ -81,7 +81,7 @@ class HomeController extends Controller
 
    // ポスト
    public function getHomePosts() {
-      return $this->post->latest()->take(3)->get();
+      return $this->post->latest()->take(10)->get();
    }
 
    // 人気タグ

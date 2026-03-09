@@ -1,16 +1,34 @@
 @extends('layouts.user')
 
 @section('content')
-    <div class="main-card justify-content-center mt-4">
+    <div class="container">
+        {{-- 動画ヒーロー --}}
+        <div class="hero-wrapper">
+            <div class="hero-video">
+                <video autoplay muted loop playsinline class="hero-bg-video">
+                    <source src="{{ asset('videos/home-beach.mp4') }}" type="video/mp4">
+                </video>
+                <div class="hero-overlay">
+                    <h1 class="hero-title">
+                        <span class="mt-5 mb-4 hero-line">Pack Your</span><br>
+                        <span class="mb-4 hero-line">Cebu Trip</span><br>
+                        <span class="mb-2 hero-line">In A Pocket</span>
+                    </h1>
+                    <p class="hero-sub">Ready to explore the island?</p>
+                </div>
+            </div>
 
-        {{-- --------------- 
-            トップメニュー 
-        --------------- --}}
-        <div class="d-flex justify-content-center p-3">
-            <a href="{{ route('daily.fortune.show') }}" class="menu-btn menu-fortune text-decoration-none">
-                <i class="fa-solid fa-star"></i>
-                <div>Today's Pick</div>
-            </a>
+            <svg class="wave-line" viewBox="0 0 1000 450" preserveAspectRatio="none">
+                <path d="M1000,450 C920,285 660,285 500,440 C340,585 100,585 0,445"
+                    fill="none" stroke="white" stroke-width="6"opacity="0.8"/>
+            </svg>
+            <svg width="0" height="0" style="position:absolute">
+                <defs>
+                    <clipPath id="waveClip" clipPathUnits="objectBoundingBox">
+                        <path d="M0,0 H1 V1 C0.88,0.73 0.66,0.73 0.51,1 C0.30,1.35 0.10,1.35 0,1 V0 Z"/>
+                    </clipPath>
+                </defs>
+            </svg>
 
             {{-- ホテルのリンク --}}
             <a href="{{ route('user.hotels.index') }}" class="menu-btn menu-hotel text-decoration-none">
@@ -96,316 +114,394 @@
                                 </div>
                             </a>
                         </div>
+            <div class="hero-circles">
+                <div class="hero-circle circle-1">
+                    <div class="circle-content">
+                        <span class="circle-label">DATE</span>
+                        <div id="current-date">----/--/--</div>
                     </div>
+                </div>
+                <div class="hero-circle circle-2">
+                    <div class="circle-content">
+                        <span class="circle-label">TIME</span>
+                        <div id="current-time">00:00</div>
+                    </div>
+                </div>
+                <div class="hero-circle circle-3">
+                    <div class="circle-content">
+                        <span class="circle-label">WEATHER</span>
+                        @if (isset($weather['weather'][0]['icon']))
+                            <img class="weather-icon"
+                                src="https://openweathermap.org/img/wn/{{ $weather['weather'][0]['icon'] }}@2x.png">
+                        @endif
+                        <div class="temp">{{ round($weather['main']['temp']) }}°C</div>
+                    </div>
+                </div>
+                <div class="hero-circle circle-4">
+                    <div class="circle-content">
+                        <span class="circle-label">RATE</span>
+                        @if ($rate && $rate > 0)
+                            <div class="rate-text">¥1 = ₱{{ number_format($rate, 2) }}</div>
+                            <div class="rate-text">₱1 = ¥{{ number_format(1 / $rate, 2) }}</div>
+                        @else
+                            <div class="rate-text">Loading</div>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        </div>
 
-                    {{-- ---------------ホテル ランキング--------------- --}}
-                    <div>
-                        <div>
-                            <h3 class="section-title">Hotel Ranking <a href="#"
-                                    class="btn btn-sm btn-outline-primary rounded-pill">View More</a></h3>
-                        </div>
+        <div class="mt-5">
+            <div class="main-card">
+                <div class="row g-3 p-3">
+                    <div class="col-12 mb-3">
+                        <a href="{{ route('user.hotels.index') }}" class="menu-btn menu-hotel text-decoration-none">
+                            <i class="fa-solid fa-bed"></i>
+                            <div class="menu-text-wrapper">
+                                <div class="menu-title">Find Your Stay</div>
+                                <div class="menu-subtitle">Experience comfort in Cebu</div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-12 mb-3">
+                        <a href="#" class="menu-btn menu-restaurant text-decoration-none">
+                            <i class="fa-solid fa-utensils"></i>
+                            <div class="menu-text-wrapper">
+                                <div class="menu-title">Dine & Savor</div>
+                                <div class="menu-subtitle">Taste the local flavors</div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-12 mb-3">
+                        <a href="#" class="menu-btn menu-jeepney text-decoration-none">
+                            <i class="fa-solid fa-van-shuttle"></i>
+                            <div class="menu-text-wrapper">
+                                <div class="menu-title">Route & Ride</div>
+                                <div class="menu-subtitle">Check numbers and destinations</div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-12 mb-3">
+                        <a href="{{ route('user.posts.index') }}" class="menu-btn menu-mypage text-decoration-none">
+                            <i class="fa-solid fa-user"></i>
+                            <div class="menu-text-wrapper">
+                                <div class="menu-title">Share Your Cebu</div>
+                                <div class="menu-subtitle">Connect through your stories</div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-12 mb-3">
+                        <a href="{{ route('daily.fortune.show') }}" class="menu-btn menu-jeepney text-decoration-none">
+                            <i class="fa-solid fa-star"></i>
+                            <div class="menu-text-wrapper">
+                                <div class="menu-title">Today's Pick</div>
+                                <div class="menu-subtitle">Check numbers and destinations</div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
 
-                        <div class="row justify-content-center g-2 mb-3">
-                            @foreach ($hotelRankings as $index => $hotel)
-                                <div class="col-6 col-md-3 col-sm-4 col-lg-2 d-flex justify-content-center">
-                                    <div class="card rank-card">
+                {{-- ---------------ホテル ランキング--------------- --}}
+                <div class="container pt-5 pb-2">
+                    <h3 class="section-title mb-2">
+                        <span class="title-decor">Recommended</span>
+                        Top Rated Hotels
+                        <span class="title-decor">Hotels</span>
+                    </h3>
 
-                                        {{-- お気に入り --}}
-                                        <div class="post-like">
-                                            @if ($hotel->isFavorited())
-                                                <form method="POST"
-                                                    action="{{ route('user.favorite.destroy', ['hotel', $hotel->id]) }}"
-                                                    class="favorite-form">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="button" class="btn heat-btn">
-                                                        <i class="fa-solid fa-heart text-danger"></i>
-                                                    </button>
-                                                </form>
-                                            @else
-                                                <form method="POST"
-                                                    action="{{ route('user.favorite.store', ['hotel', $hotel->id]) }} "
-                                                    class="favorite-form">
-                                                    @csrf
-                                                    <button type="button" class="btn heat-btn">
-                                                        <i class="fa-regular fa-heart"></i>
-                                                    </button>
-                                                </form>
-                                            @endif
-                                        </div>
+                    {{-- トップ3専用コンテナ --}}
+                    <div class="row g-4 justify-content-center top-ranking-wrapper">
+                        @php
+                            $top3 = $hotelRankings->take(3);
+                        @endphp
 
-                                        {{-- ランキングバッジ --}}
-                                        <div class="rank-badge rank-{{ $index + 1 }}">
-                                            {{ $index + 1 }}
-                                        </div>
-
+                        @foreach ($top3 as $index => $hotel)
+                            @php 
+                                $rank = $index + 1;
+                                // 表示アニメーションの遅延時間を設定 (0.1s, 0.2s, 0.3s)
+                                $delay = ($index + 1) * 0.1 . 's';
+                            @endphp
+            
+                            <div class="col-12 col-md-4 animate-card" style="animation-delay: {{ $delay }}">
+                                <div class="card premium-rank-card h-100 border-0 shadow-lg">
+                                    {{-- 画像とオーバーレイエリア --}}
+                                    <div class="rank-image-container">
                                         <img src="{{ $hotel->image_path ? Storage::url($hotel->image_path) : asset('images/no-image.png') }}"
-                                            alt="{{ $hotel->name }}" class="rank-image"
-                                            onerror="this.onerror=null;this.src='{{ asset('images/no-image.png') }}';">
+                                             alt="{{ $hotel->name }}" class="rank-image">
 
-                                        <div class="rank-body">
-                                            <a href="{{ route('user.hotels.detail', $hotel->id) }}" class="rank-link">
-                                                <h5 class="card-title">{{ $hotel->name }}</h5>
-                                            </a>
+                                        {{-- ガラスモーフィズム調のオーバーレイ --}}
+                                        <div class="card-img-overlay d-flex flex-column justify-content-between p-3">
+                                            <div class="d-flex justify-content-between align-items-start">
+                                                {{-- 高級感のあるランキングバッジ --}}
+                                                <div class="rank-badge-premium rank-{{ $rank }}">
+                                                    <span class="rank-num">{{ $rank }}</span>
+                                                    <span class="rank-text">RANK</span>
+                                                </div>
 
-                                            {{-- 星 --}}
+                                                {{-- お気に入り（既存処理を維持） --}}
+                                                <div class="post-like-premium">
+                                                    @if ($hotel->isFavorited())
+                                                        <form method="POST"
+                                                            action="{{ route('user.favorite.destroy', ['hotel', $hotel->id]) }}"
+                                                            class="favorite-form">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="button" class="btn heat-btn">
+                                                                <i class="fa-solid fa-heart text-danger"></i>
+                                                            </button>
+                                                        </form>
+                                                    @else
+                                                        <form method="POST"
+                                                            action="{{ route('user.favorite.store', ['hotel', $hotel->id]) }} "
+                                                            class="favorite-form">
+                                                            @csrf
+                                                            <button type="button" class="btn heat-btn">
+                                                                <i class="fa-regular fa-heart"></i>
+                                                            </button>
+                                                        </form>
+                                                    @endif
+                                                </div>
+                                            </div>
+                            
+                                            {{-- 都市名を画像の上に小さく配置 --}}
+                                            <p class="card-city-premium mb-0">
+                                                <i class="fa-solid fa-location-dot me-1"></i>{{ $hotel->city }}
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    {{-- カード下部の情報エリア --}}
+                                    <div class="rank-body p-4">
+                                        <a href="{{ route('user.hotels.detail', $hotel->id) }}" class="rank-link-premium">
+                                            <h4 class="card-title fw-bold mb-2">{{ $hotel->name }}</h4>
+                                        </a>
+                        
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
                                             <div class="rank-star">
+                                                {{-- 既存の星評価処理 --}}
                                                 @php
                                                     $rating = $hotel->star_rating;
                                                     $fullStars = floor($rating);
                                                     $halfStar = $rating - $fullStars >= 0.5;
                                                 @endphp
-                                                <p class="card-text text-warning">
-                                                    @for ($i = 1; $i <= $fullStars; $i++)
-                                                        <i class="fa-solid fa-star"></i>
+                                                <span class="text-warning small">
+                                                    @for ($i = 1; $i <= 5; $i++)
+                                                        @if ($i <= $fullStars)
+                                                            <i class="fa-solid fa-star"></i>
+                                                        @elseif ($i == $fullStars + 1 && $halfStar)
+                                                            <i class="fa-solid fa-star-half-stroke"></i>
+                                                        @else
+                                                            <i class="fa-regular fa-star text-muted op-5"></i>
+                                                        @endif
                                                     @endfor
-                                                    @if ($halfStar)
-                                                        <i class="fa-solid fa-star-half-stroke"></i>
-                                                    @endif
-                                                    <span class="text-muted ms-1">{{ number_format($rating, 1) }}</span>
-                                                </p>
+                                                    <strong class="text-dark ms-1">{{ number_format($rating, 1) }}</strong>
+                                                </span>
                                             </div>
-
-                                            <p class="card-city">
-                                                <i class="fa-solid fa-location-dot"></i> {{ $hotel->city }}
-                                            </p>
-                                            <p class="card-price">
+                                        </div>
+                        
+                                        <div class="card-footer-premium d-flex justify-content-between align-items-center pt-3 border-top">
+                                            <span class="text-muted small">1泊 / 名</span>
+                                            <p class="card-price-premium mb-0">
                                                 @if ($hotel->rooms->isNotEmpty())
-                                                    ¥{{ $hotel->rooms->min('charge') }}〜
+                                                    <span class="currency">₱</span><span class="price-num">{{ number_format($hotel->rooms->min('charge')) }}</span><span class="tax">〜</span>
                                                 @else
-                                                    <span class="text-muted">価格未設定</span>
+                                                    <span class="text-muted small">価格未設定</span>
                                                 @endif
                                             </p>
                                         </div>
                                     </div>
+
+                                    {{-- ホバー時の光沢エフェクト用フラグメント --}}
+                                    <div class="shine-effect"></div>
                                 </div>
-                            @endforeach
-                        </div>
+                            </div>
+                        @endforeach
                     </div>
+                </div>
 
-                    {{-- ---------------レストラン ランキング--------------- --}}
-                    <div>
-                        <div>
-                            <h3 class="section-title">Restrant Ranking <a href="#"
-                                    class="btn btn-sm btn-outline-primary rounded-pill">View More</a></h3>
-                        </div>
+                {{-- ---------------レストラン ランキング--------------- --}}
+                <div class="container py-2">
+                    <h3 class="section-title mb-2">
+                        <span class="title-decor">Recommended</span>
+                        Top Rated Restaurants
+                        <span class="title-decor">Restaurants</span>
+                    </h3>
 
-                        <div class="row justify-content-center g-2 mb-3">
-                            @foreach ($restaurantRankings as $index => $restaurant)
-                                <div class="col-6 col-md-3 col-sm-4 col-lg-2 d-flex justify-content-center">
-                                    <div class="card rank-card">
+                    {{-- トップ3専用コンテナ --}}
+                    <div class="row g-4 justify-content-center top-ranking-wrapper">
+                        @php
+                            $top3 = $restaurantRankings->take(3);
+                        @endphp
 
-                                        {{-- お気に入り --}}
-                                        <div class="post-like">
-                                            @if ($restaurant->isFavorited())
-                                                <form method="POST"
-                                                    action="{{ route('user.favorite.destroy', ['restaurant', $restaurant->id]) }}"
-                                                    class="favorite-form">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="button" class="btn heat-btn">
-                                                        <i class="fa-solid fa-heart text-danger"></i>
-                                                    </button>
-                                                </form>
-                                            @else
-                                                <form method="POST"
-                                                    action="{{ route('user.favorite.store', ['restaurant', $restaurant->id]) }}"
-                                                    class="favorite-form">
-                                                    @csrf
-                                                    <button type="button" class="btn heat-btn">
-                                                        <i class="fa-regular fa-heart"></i>
-                                                    </button>
-                                                </form>
-                                            @endif
+                        @foreach ($top3 as $index => $restaurant)
+                            @php 
+                                $rank = $index + 1;
+                                // 表示アニメーションの遅延時間を設定 (0.1s, 0.2s, 0.3s)
+                                $delay = ($index + 1) * 0.1 . 's';
+                            @endphp
+            
+                            <div class="col-12 col-md-4 animate-card" style="animation-delay: {{ $delay }}">
+                                <div class="card premium-rank-card h-100 border-0 shadow-lg">
+                                    <div class="rank-image-container">
+                                        <img src="{{ $restaurant->image_path ? Storage::url($restaurant->image_path) : asset('images/no-image.png') }}"
+                                             alt="{{ $restaurant->name }}" class="rank-image">
+
+                                        <div class="card-img-overlay d-flex flex-column justify-content-between p-3">
+                                            <div class="d-flex justify-content-between align-items-start">
+                                                <div class="rank-badge-premium rank-{{ $rank }}">
+                                                    <span class="rank-num">{{ $rank }}</span>
+                                                    <span class="rank-text">RANK</span>
+                                                </div>
+
+                                                <div class="post-like-premium">
+                                                    @if ($hotel->isFavorited())
+                                                        <form method="POST"
+                                                            action="{{ route('user.favorite.destroy', ['restaurant', $restaurant->id]) }}"
+                                                            class="favorite-form">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="button" class="btn heat-btn">
+                                                                <i class="fa-solid fa-heart text-danger"></i>
+                                                            </button>
+                                                        </form>
+                                                    @else
+                                                        <form method="POST"
+                                                            action="{{ route('user.favorite.store', ['restaurant', $restaurant->id]) }} "
+                                                            class="favorite-form">
+                                                            @csrf
+                                                            <button type="button" class="btn heat-btn">
+                                                                <i class="fa-regular fa-heart"></i>
+                                                            </button>
+                                                        </form>
+                                                    @endif
+                                                </div>
+                                            </div>
+                            
+                                            <p class="card-city-premium mb-0">
+                                                <i class="fa-solid fa-location-dot me-1"></i>{{ $restaurant->city }}
+                                            </p>
                                         </div>
+                                    </div>
 
-                                        <div class="rank-badge rank-{{ $index + 1 }}">{{ $index + 1 }}</div>
-
-                                        <img src="{{ $restaurant->image_path ?? asset('images/no-image.png') }}"
-                                            alt="{{ $restaurant->name }}" class="rank-image">
-
-                                        <div class="rank-body">
-                                            <a href="{{ route('user.restaurants.detail', $restaurant->id) }}" class="rank-link">
-                                                <h5 class="card-title">{{ $restaurant->name }}</h5>
-                                            </a>
+                                    <div class="rank-body p-4">
+                                        <a href="{{ route('user.restaurants.detail', $restaurant->id) }}" class="rank-link-premium">
+                                            <h4 class="card-title fw-bold mb-2">{{ $restaurant->name }}</h4>
+                                        </a>
+                        
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
                                             <div class="rank-star">
                                                 @php
                                                     $rating = $restaurant->star_rating;
                                                     $fullStars = floor($rating);
                                                     $halfStar = $rating - $fullStars >= 0.5;
                                                 @endphp
-                                                <p class="card-text text-warning">
-                                                    @for ($i = 1; $i <= $fullStars; $i++)
-                                                        <i class="fa-solid fa-star"></i>
-                                                    @endfor
-                                                    @if ($halfStar)
-                                                        <i class="fa-solid fa-star-half-stroke"></i>
-                                                    @endif
-                                                    <span class="text-muted ms-1">{{ number_format($rating, 1) }}</span>
-                                                </p>
-                                            </div>
-                                            <p class="card-city">
-                                                <i class="fa-solid fa-location-dot"></i> {{ $restaurant->city }}
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
-                    </div>
-
-                    {{-- -----------都市別ホテル-------------- --}}
-                    <div>
-                        @foreach ($hotelsByCity as $city => $hotels)
-                            <div>
-                                <h3 class="section-title">{{ $city }}</h3>
-                            </div>
-
-                            <div class="row justify-content-center g-2 mb-3">
-                                @foreach ($hotels as $index => $hotel)
-                                    <div class="col-6 col-md-3 col-sm-4 col-lg-2 d-flex justify-content-center">
-                                        <div class="card rank-card">
-                                            <img src="{{ $hotel->image_path ?? asset('images/no-image.png') }}"
-                                                alt="{{ $hotel->name }}" class="rank-image">
-
-                                            <div class="rank-body">
-                                                <a href="{{ route('user.hotels.detail', $hotel->id) }}" class="rank-link">
-                                                    <h5 class="card-title">{{ $hotel->name }}</h5>
-                                                </a>
-                                                <div class="rank-star">
-                                                    @php
-                                                        $rating = $hotel->star_rating;
-                                                        $fullStars = floor($rating);
-                                                        $halfStar = $rating - $fullStars >= 0.5;
-                                                    @endphp
-                                                    <p class="card-text text-warning">
-                                                        @for ($i = 0; $i < $fullStars; $i++)
+                                                <span class="text-warning small">
+                                                    @for ($i = 1; $i <= 5; $i++)
+                                                        @if ($i <= $fullStars)
                                                             <i class="fa-solid fa-star"></i>
-                                                        @endfor
-                                                        @if ($halfStar)
+                                                        @elseif ($i == $fullStars + 1 && $halfStar)
                                                             <i class="fa-solid fa-star-half-stroke"></i>
+                                                        @else
+                                                            <i class="fa-regular fa-star text-muted op-5"></i>
                                                         @endif
-                                                        <span class="text-muted ms-1">{{ number_format($rating, 1) }}</span>
-                                                    </p>
-                                                </div>
-                                                <p class="card-city">
-                                                    <i class="fa-solid fa-location-dot"></i> {{ $hotel->city }}
-                                                </p>
-                                                <p class="card-price">
-                                                    @if ($hotel->rooms->isNotEmpty())
-                                                        ¥{{ $hotel->rooms->min('charge') }}〜
-                                                    @else
-                                                        <span class="text-muted">価格未設定</span>
-                                                    @endif
-                                                </p>
+                                                    @endfor
+                                                    <strong class="text-dark ms-1">{{ number_format($rating, 1) }}</strong>
+                                                </span>
                                             </div>
                                         </div>
                                     </div>
-                                @endforeach
+                                    <div class="shine-effect"></div>
+                                </div>
                             </div>
                         @endforeach
                     </div>
+                </div>
 
-                    {{-- ---------------ポスト--------------- --}}
+
+                {{-- -----------都市別ホテル-------------- --}}
+                @foreach ($hotelsByCity as $city => $hotels)
                     <div>
-                        <div>
-                            <h3 class="section-title">Recent Posts <a href="{{ route('user.posts.index') }}"
-                                    class="btn btn-sm btn-outline-primary rounded-pill">View More</a></h3>
-                        </div>
+                        <h3 class="section-title">{{ $city }}</h3>
+                    </div>
 
-                        <div class="row justify-content-center g-2 mb-3">
-                            @if ($home_posts->isNotEmpty())
-                                @foreach ($home_posts as $post)
-                                    <div class="col-6 col-md-3 col-sm-4 col-lg-2 d-flex justify-content-center">
-                                        <a href="{{ route('user.posts.show', $post->id) }}" class="post-card">
-                                            <img src="{{ $post->images->first()->image }}" alt="Post Image">
+                    <div class="row justify-content-center g-2 mb-3">
+                        @foreach ($hotels as $index => $hotel)
+                            <div class="col-6 col-md-3 col-sm-4 col-lg-2 d-flex justify-content-center">
+                                <div class="card rank-card">
+                                    <img src="{{ $hotel->image_path ?? asset('images/no-image.png') }}"
+                                        alt="{{ $hotel->name }}" class="rank-image">
 
-                                            {{-- ハート --}}
-                                            <div class="post-like">
-                                                @if ($post->isliked())
-                                                    <form method="POST" action="{{ route('user.like.destroy', $post->id) }}"
-                                                        class="favorite-form">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="button" class="btn heat-btn">
-                                                            <i class="fa-solid fa-heart text-danger"></i>
-                                                        </button>
-                                                    </form>
-                                                @else
-                                                    <form method="POST" action="{{ route('user.like.store', $post->id) }}"
-                                                        class="favorite-form">
-                                                        @csrf
-                                                        <button type="button" class="btn heat-btn">
-                                                            <i class="fa-regular fa-heart"></i>
-                                                        </button>
-                                                @endif
-                                            </div>
-
-                                            {{-- テキスト --}}
-                                            <div class="post-overlay">
-                                                <h5 class="post-title">{{ $post->title }}</h5>
-                                                <p class="post-user mb-1">
-                                                    <i class="fa-regular fa-user"></i>{{ $post->user->name }}
-                                                </p>
-                                                <p class="post-date">
-                                                    {{ $post->created_at->format('M d, Y') }}
-                                                </p>
-                                            </div>
+                                    <div class="rank-body">
+                                        <a href="{{ route('user.hotels.detail', $hotel->id) }}" class="rank-link">
+                                            <h5 class="card-title">{{ $hotel->name }}</h5>
                                         </a>
+                                        <div class="rank-star">
+                                            @php
+                                                $rating = $hotel->star_rating;
+                                                $fullStars = floor($rating);
+                                                $halfStar = $rating - $fullStars >= 0.5;
+                                            @endphp
+                                            <p class="card-text text-warning">
+                                                @for ($i = 0; $i < $fullStars; $i++)
+                                                    <i class="fa-solid fa-star"></i>
+                                                @endfor
+                                                @if ($halfStar)
+                                                    <i class="fa-solid fa-star-half-stroke"></i>
+                                                @endif
+                                                <span class="text-muted ms-1">{{ number_format($rating, 1) }}</span>
+                                            </p>
+                                        </div>
+                                        <p class="card-city">
+                                            <i class="fa-solid fa-location-dot"></i> {{ $hotel->city }}
+                                        </p>
+                                        <p class="card-price">
+                                            @if ($hotel->rooms->isNotEmpty())
+                                                ¥{{ $hotel->rooms->min('charge') }}〜
+                                            @else
+                                                <span class="text-muted">価格未設定</span>
+                                            @endif
+                                        </p>
                                     </div>
-                                @endforeach
-                            @else
-                                <h3 class="text-muted text-center">No Posts Yet</h3>
-                            @endif
-                        </div>
-
-                        <div class="post-tags">
-                            <h3 class="section-title">人気タグ</h3>
-                            <div class="d-flex flex-wrap gap-2 justify-content-center">
-                                @foreach ($popularTags as $tag)
-                                    <a href="{{ route('user.tags.show', $tag->name) }}" class="tag-badge">
-                                        #{{ $tag->name }}({{ $tag->posts_count }})
-                                    </a>
-                                @endforeach
+                                </div>
                             </div>
-                        </div>
+                        @endforeach
+                    </div>
+                @endforeach
+
+                {{-- ---------------ポスト--------------- --}}
+                <div>
+                    <h3 class="recent-posts mb-2">Recent Posts</h3>
+                </div>
+
+                <div class="post-slider">
+                    <div class="post-track">
+                        @foreach ($home_posts as $post)
+                            <div class="post-item">
+                                <a href="{{ route('user.posts.show', $post->id) }}" class="post-card">
+                                    <img src="{{ $post->images->first()->image }}" alt="Post Image">
+                                </a>
+                            </div>
+                        @endforeach
+
+                        {{-- ループ用に同じものをもう一回 --}}
+                        @foreach ($home_posts as $post)
+                            <div class="post-item">
+                                <a href="{{ route('user.posts.show', $post->id) }}" class="post-card">
+                                    <img src="{{ $post->images->first()->image }}" alt="Post Image">
+                                </a>
+                            </div>
+                        @endforeach
                     </div>
                 </div>
-            </div>
 
-            <!-- サイド -->
-            <div class="col-lg-3">
-                <div class="side-panel">
-                    {{-- 日付・時刻カード --}}
-                    <div class="datetime-card mb-3">
-                        <div class="date-label" id="current-date">--/--/--</div>
-                        <div class="time-label" id="current-time">00:00</div>
-                    </div>
-                    {{-- 天気予報 --}}
-                    <div class="weather-card">
-                        <div class="weather-city">Cebu </div>
-                        <div class="weather-main">
-                            @if (isset($weather['weather'][0]['icon']))
-                                <img src="https://openweathermap.org/img/wn/{{ $weather['weather'][0]['icon'] }}@2x.png"
-                                    alt="weather">
-                            @endif
-                            <div class="temp">{{ round($weather['main']['temp']) }}°C</div>
-                        </div>
-                        <div class="weather-desc">
-                            {{ $weather['weather'][0]['description'] }}
-                        </div>
-                    </div>
-                    <br>
-
-                    {{-- 為替レート --}}
-                    <div class="currency-card">
-                        <div class="currency-title">為替レート</div>
-                        @if ($rate && $rate > 0)
-                            <p>1円 = {{ number_format($rate, 4) }} PHP</p>
-                            <p>1ペソ≒ {{ number_format(1 / $rate, 2) }} 円</p>
-                        @else
-                            <p>レート取得中…</p>
-                        @endif
+                <div class="post-tags">
+                    <h3 class="section-title">人気タグ</h3>
+                    <div class="d-flex flex-wrap gap-2 justify-content-center">
+                        @foreach ($popularTags as $tag)
+                            <a href="{{ route('user.tags.show', $tag->name) }}" class="tag-badge">
+                                #{{ $tag->name }}({{ $tag->posts_count }})
+                            </a>
+                        @endforeach
                     </div>
                 </div>
             </div>
@@ -415,71 +511,10 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             document.querySelectorAll('.favorite-form').forEach(form => {
-
-        
-
-                    const button = form.querySelector('button');
-                    if (!button) return;
-
-                    button.addEventListener('click', function(e) {
-
-                        e.preventDefault();
-                        e.stopPropagation();
-
-                        const token = form.querySelector('input[name="_token"]').value;
-                        const methodInput = form.querySelector('input[name="_method"]');
-                        const isDelete = methodInput && methodInput.value === 'DELETE';
-
-                        fetch(form.action, {
-                                method: 'POST',
-                                headers: {
-                                    'X-CSRF-TOKEN': token,
-                                    'Accept': 'application/json'
-                                },
-                                body: new URLSearchParams({
-                                    _method: isDelete ? 'DELETE' : 'POST'
-                                })
-                            })
-                            .then(res => res.json())
-                            .then(data => {
-
-                                const icon = form.querySelector('i');
-
-                                if (data.status === 'added') {
-
-                                    icon.classList.remove('fa-regular');
-                                    icon.classList.add('fa-solid', 'text-danger');
-
-                                    if (!methodInput) {
-                                        const input = document.createElement('input');
-                                        input.type = 'hidden';
-                                        input.name = '_method';
-                                        input.value = 'DELETE';
-                                        form.appendChild(input);
-                                    }
-
-                                } else if (data.status === 'removed') {
-
-                                    icon.classList.remove('fa-solid', 'text-danger');
-                                    icon.classList.add('fa-regular');
-
-                                    const m = form.querySelector('input[name="_method"]');
-                                    if (m) m.remove();
-                                }
-
-                            })
-                            .catch(error => {
-                                console.error(error);
-                                alert('通信エラー');
-                            });
-
-                    });
-
                 const button = form.querySelector('button');
                 if (!button) return;
 
                 button.addEventListener('click', function (e) {
-
                     e.preventDefault();
                     e.stopPropagation();
 
@@ -499,11 +534,9 @@
                     })
                         .then(res => res.json())
                         .then(data => {
-
                             const icon = form.querySelector('i');
 
                             if (data.status === 'added') {
-
                                 icon.classList.remove('fa-regular');
                                 icon.classList.add('fa-solid', 'text-danger');
 
@@ -516,7 +549,6 @@
                                 }
 
                             } else if (data.status === 'removed') {
-
                                 icon.classList.remove('fa-solid', 'text-danger');
                                 icon.classList.add('fa-regular');
 
@@ -529,203 +561,9 @@
                             console.error(error);
                             alert('通信エラー');
                         });
-
                 });
-
             });
-        </script>
 
-
-        {{-- CSS --}}
-        <style>
-            /* メインメニュー */
-            .menu-btn {
-                width: 140px;
-                height: 120px;
-                border-radius: 25px;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                font-size: 15px;
-                color: #ffffff;
-                font-weight: bold;
-                box-shadow: 0 3px rgba(0, 0, 0, 0.1);
-                margin: 10px;
-            }
-
-            .menu-restaurant {
-                background: #fdbf79;
-            }
-
-            .menu-hotel {
-                background: #8dbcda;
-            }
-
-            .menu-jeepney {
-                background: #96ccb9;
-            }
-
-            .menu-mypage {
-                background: #e9e3d3;
-            }
-
-            /* セクション */
-            .section-title {
-                text-align: center;
-                color: #4fa3d1;
-                font-weight: bold;
-                font-size: 28px;
-                margin: 40px 0 20px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                gap: 15px;
-            }
-
-            .section-title::before,
-            .section-title::after {
-                content: "";
-                flex: 1;
-                height: 2px;
-                background: #b5dbf0;
-                max-width: 80px;
-            }
-
-            /* ランキング */
-            .rank-card {
-                position: relative;
-                border-radius: 16px;
-                overflow: hidden;
-                aspect-ratio: 3 / 3.8;
-                width: 100%;
-                max-width: 260px;
-            }
-
-            .rank-card:hover img {
-                transition: transform 0.4s;
-                transform: scale(1.03);
-            }
-
-            .rank-image {
-                width: 100%;
-                height: 100%;
-                min-height: 200px;
-                object-fit: cover;
-            }
-
-            .rank-card .card-title {
-                font-size: 18px;
-            }
-
-            .rank-card .card-text,
-            .rank-card .card-price {
-                font-size: 13px;
-            }
-
-            .rank-card p {
-                margin-bottom: 4px;
-                line-height: 1.2;
-            }
-
-            .rank-link {
-                text-decoration: none;
-                color: #333;
-            }
-
-            /* ランキングバッジ（共通） */
-            .rank-badge {
-                position: absolute;
-                top: 10px;
-                left: 10px;
-                border-radius: 50%;
-                width: 36px;
-                height: 36px;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                font-weight: bold;
-                color: #fff;
-                border: 1px solid white;
-                z-index: 10;
-            }
-
-            /* ランキングバッジ（順位） */
-            .rank-1 {
-                background: gold;
-                box-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
-            }
-
-            .rank-2 {
-                background: silver;
-                box-shadow: 0 0 10px rgba(192, 192, 192, 0.8);
-            }
-
-            .rank-3 {
-                background: #cd7f32;
-                box-shadow: 0 0 10px rgba(205, 127, 50, 0.8);
-            }
-
-            /* POST */
-            .post-card {
-                position: relative;
-                display: block;
-                border-radius: 16px;
-                overflow: hidden;
-                aspect-ratio: 3 / 4.2;
-                width: 100%;
-                max-width: 260px;
-                color: #ffffff;
-                text-decoration: none;
-            }
-
-            .post-card img {
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-                transition: transform 0.4s;
-            }
-
-            /* テキスト */
-            .post-overlay {
-                position: absolute;
-                bottom: 0;
-                left: 0;
-                padding: 16px;
-                z-index: 1;
-                text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
-                background: linear-gradient(to top,
-                        rgba(0, 0, 0, 0.6),
-                        rgba(0, 0, 0, 0));
-                width: 100%;
-            }
-
-            .post-title {
-                font-size: 15px;
-                font-weight: 600;
-                margin-bottom: 6px;
-            }
-
-            .post-user {
-                font-size: 13px;
-            }
-
-            /* ハート */
-            .heat-btn {
-                position: absolute;
-                top: 12px;
-                right: 12px;
-                z-index: 2;
-                background: #ffffff;
-                color: #333;
-                width: 34px;
-                height: 34px;
-                border-radius: 50%;
-                border: 1px solid #ddd;
-                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.10);
-                display: grid;
-                place-items: center;
-            }
             // --- 追加：ヒーローセクションの文字出し ---
             const heroLines = document.querySelectorAll('.hero-line');
             heroLines.forEach((line, index) => {
@@ -735,7 +573,6 @@
             });
 
             // --- 既存のスクロール監視（Intersection Observer） ---
-            // (そのまま)
             const observerOptions = {
                 root: null,
                 rootMargin: "-20px 0px",
@@ -758,42 +595,41 @@
             function updateDateTime() {
                 const now = new Date();
 
-                // セブ島（フィリピン）の時間に合わせてフォーマット
+                // セブ島（フィリピン）の時間
                 const options = { timeZone: 'Asia/Manila' };
 
-                // 日付を表示 (例: MAR 04, 2026)
-                const dateStr = now.toLocaleDateString('en-US', {
-                    ...options, month: 'short', day: '2-digit', year: 'numeric'
-                }).toUpperCase();
+                // 月/日 (例: 03/09)
+                const year = now.toLocaleDateString('en-US', { ...options, year: 'numeric'});
+                const month = now.toLocaleDateString('en-US', { ...options, month: '2-digit' });
+                const day = now.toLocaleDateString('en-US', { ...options, day: '2-digit' });
+                const dateStr = `${year}/${month}/${day}`;
+                const dateElement = document.getElementById('current-date');
+                if (dateElement) {
+                    dateElement.innerHTML = `${dateStr}`;
+                }
 
-                // 時刻を表示 (例: 17:35)
+                // 時刻 (例: 17:35)
                 const timeStr = now.toLocaleTimeString('en-US', {
                     ...options, hour: '2-digit', minute: '2-digit', hour12: false
                 });
-
-                // HTML要素に反映（IDで指定）
-                const dateElement = document.getElementById('current-date');
                 const timeElement = document.getElementById('current-time');
-
-                if (dateElement) dateElement.textContent = dateStr;
                 if (timeElement) timeElement.textContent = timeStr;
             }
 
-            // 1秒ごとに実行して時計を動かす
+            // 1秒ごとに更新（必要なら）
             setInterval(updateDateTime, 1000);
-            // ページを開いた瞬間にも一度実行（1秒待たせないため）
             updateDateTime();
         });
     </script>
-
 
     {{-- CSS --}}
     <style>
         .hero-video {
             position: relative;
             width: 100%;
-            height: 480px;
-            overflow: hidden;
+            height: 450px;
+            overflow: visible; /* はみ出し部分を見せるためvisibleに */
+            clip-path: url(#waveClip);
         }
 
         /* 背景動画 */
@@ -805,14 +641,6 @@
             min-height: 100%;
             transform: translate(-50%, -50%);
             object-fit: cover;
-        }
-
-        /* 黒レイヤー */
-        .hero-video::after {
-            content: "";
-            position: absolute;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.1);
         }
 
         /* テキスト */
@@ -862,20 +690,113 @@
 
         .hero-sub {
             margin-top: 20px;
-            font-size: 16px;
+            font-size: 20px;
             border-left: 3px solid #fff;
             padding-left: 15px;
         }
 
+        .hero-wrapper {
+            position: relative;
+            margin-bottom: 150px;
+        }
+
+        .wave-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 430px; 
+            pointer-events: none;
+            z-index: 4;
+            overflow: visible; /* 下にはみ出す左側の線を表示 */
+        }
+
+        .wave-line path{
+            stroke-width:4;
+        }
+
+        .hero-circles{
+            position:absolute;
+            bottom:-120px;
+            right:3%;
+            display:flex;
+            gap:15px;
+            z-index:3;
+            align-items:flex-end;
+        }
+
+        .hero-circle{
+            width:120px;
+            height:120px;
+            border-radius:50%;
+            background:white;
+            color:#333;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+            text-align:center;
+        }
+
+        .hero-circle:hover{
+            transform:translateY(-8px) scale(1.05);
+            box-shadow: 0 20px 45px rgba(0,0,0,.25);
+        }
+
+        .circle-1{
+            margin-bottom:20px;
+            animation:float 6s ease-in-out infinite;
+        }
+
+        .circle-2{
+            margin-bottom:70px;
+            animation:float 7s ease-in-out infinite;
+        }
+
+        .circle-3{
+            margin-bottom:67px;
+            animation:float 5.5s ease-in-out infinite;
+        }
+
+        .circle-4{
+            margin-bottom:25px;
+            animation:float 6.5s ease-in-out infinite;
+        }
+        
+        .circle-label{
+            font-size:10px;
+            letter-spacing:.15em;
+            color:#888;
+        }
+
+        .circle-content{
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            justify-content:center;
+            gap:3px;
+        }
+
+        @keyframes float{
+            0%{ transform:translateY(0px); }
+            50%{ transform:translateY(-6px); }
+            100%{ transform:translateY(0px); }
+        }
+
+        #current-date, #current-time, .temp, .rate-text{
+            font-size:14px;
+            font-weight:600;
+        }
+
+        .weather-icon{
+            width:40px;
+        }
+
         /* メインメニュー */
-        /* 既存の .menu-btn に追加・修正 */
-        /* --- 共通設定（既存のものを修正） --- */
         .menu-btn {
             width: 100%;
-            height: 160px;
-            /* border-radius: 28px; ←これは削除 */
+            height: 180px;
             border-radius: 0;
-            /* 一度四角にする */
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -901,7 +822,6 @@
         .menu-btn.show {
             opacity: 1;
             transform: translateX(0);
-            /* 最終的に元の位置へ */
             pointer-events: auto;
         }
 
@@ -912,7 +832,6 @@
         }
 
         /* --- 個別背景オーバーレイ（共通化） --- */
-        /* 全ての menu-btn にオーバーレイをかける */
         .menu-btn::before {
             content: "";
             position: absolute;
@@ -932,23 +851,19 @@
             z-index: 2;
             text-align: center;
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
-            /* 背景に馴染ませつつクッキリ */
         }
 
         .menu-title {
             font-size: 26px;
-            /* 気持ち大きく */
             font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 0.1em;
-            /* 少し広げるのが今のトレンド */
             margin-bottom: 2px;
         }
 
         .menu-subtitle {
             font-size: 14px;
             font-weight: 300;
-            /* 細めのフォントウェイトがあれば最適 */
             letter-spacing: 0.05em;
             opacity: 0.9;
         }
@@ -959,66 +874,42 @@
             margin-bottom: 15px;
             opacity: 0.9;
             transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            /* 弾むような動き */
         }
 
-        /* --- 左から組 (Hotel, Jeepney) のホバー --- */
         .menu-hotel:hover i,
         .menu-jeepney:hover i {
-            /* 右に10度傾けながら、少し大きく */
             transform: scale(1.15) rotate(10deg);
         }
 
-        /* --- 右から組 (Restaurant, Post) のホバー --- */
         .menu-restaurant:hover i,
         .menu-mypage:hover i {
-            /* 左に10度傾けながら、少し大きく */
             transform: scale(1.15) rotate(-10deg);
         }
 
-        /* 初期状態から少しだけ傾けておく */
         .menu-hotel i,
         .menu-jeepney i {
             transform: rotate(-5deg);
-            /* 出てきた時はちょっと左に傾いている */
         }
 
         .menu-restaurant i,
         .menu-mypage i {
             transform: rotate(5deg);
-            /* 出てきた時はちょっと右に傾いている */
         }
 
-        /* --- 【左から生える組】Hotel, Jeepney --- */
         .menu-hotel,
         .menu-jeepney {
-            /* 左側の上下は0、右側の上下は28px */
             border-radius: 0 150px 150px 0;
-
-            /* 初期位置：左に隠す */
             transform: translateX(-100px);
-
-            /* 画面左端にくっつけるための調整（Bootstrapのpaddingを相殺） */
             margin-left: -1rem;
-            /* rowのpadding分だけ左にずらす（調整してください） */
             width: calc(100% + 1rem);
-            /* ずらした分、幅を広げる */
         }
 
-        /* --- 【右から生える組】Restaurant, Post --- */
         .menu-restaurant,
         .menu-mypage {
-            /* 左側の上下は28px、右側の上下は0 */
             border-radius: 150px 0 0 150px;
-
-            /* 初期位置：右に隠す */
             transform: translateX(100px);
-
-            /* 画面右端にくっつけるための調整 */
             margin-right: -1rem;
-            /* rowのpadding分だけ右にずらす */
             width: calc(100% + 1rem);
-            /* ずらした分、幅を広げる */
         }
 
         .menu-hotel {
@@ -1041,291 +932,348 @@
             background-position: center 12%;
         }
 
-        /* セクション */
-        .section-title {
-            text-align: center;
-            color: #4fa3d1;
-            font-weight: bold;
-            font-size: 28px;
-            margin: 40px 0 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
+        body {
+            background-color: #f8fafc; /* カードが映える薄いグレーの背景 */
         }
 
-        .section-title::before,
-        .section-title::after {
-            content: "";
-            flex: 1;
-            height: 2px;
-            background: #b5dbf0;
-            max-width: 80px;
-        }
-
-        /* ランキング */
-        .rank-card {
+        .section-title, .recent-posts {
             position: relative;
-            border-radius: 16px;
-            overflow: hidden;
-            aspect-ratio: 3 / 3.8;
-            width: 100%;
-            max-width: 260px;
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #333;
+            padding: 40px 0;
+            margin-bottom: 30px;
+            letter-spacing: 2px;
         }
 
-        .rank-card:hover img {
-            transition: transform 0.4s;
-            transform: scale(1.03);
+        /* 背後の薄い文字 */
+        .section-title::before, .recent-posts::before {
+            content: "TOP 3 SELECTION";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 4.5rem;
+            color: rgba(79, 163, 209, 0.08); /* 非常に薄い青 */
+            z-index: -1;
+            white-space: nowrap;
+            font-family: 'Arial Black', sans-serif;
+        }
+
+        /* 下の装飾ライン */
+        .section-title::after, .recent-posts::after {
+            content: "";
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 8px;
+            /* 波線を背景画像(SVG)で表現 */
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 4'%3E%3Cpath d='M0 3.5c5 0 5-3 10-3s5 3 10 3' fill='none' stroke='%234fa3d1' stroke-width='1'/%3E%3C/svg%3E");
+            background-repeat: repeat-x;
+            background-size: 20px auto;
+            animation: wave-move 3s linear infinite;
+            opacity: 0.8;
+        }
+
+        .section-title::before {
+            content: "TOP 3 SELECTION";
+        }     
+        .recent-posts::before {
+            content: "SHARE YOUR CEBU";   
+        }
+
+        @keyframes wave-move {
+            0% {
+                background-position: 0 bottom;
+            }
+            100% {
+                background-position: 20px bottom;
+            }
+        }
+
+        .title-decor {
+            display: block;
+            font-size: 12px;
+            color: #4fa3d1;
+            font-weight: 400;
+            letter-spacing: 3px;
+        }
+
+        /* --- カード全体の動きとデザイン --- */
+        .premium-rank-card {
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            background: #fff;
+            transform-style: preserve-3d; /* 3D効果のため */
+        }
+
+        /* ホバー時の挙動：浮き上がりと影の強調 */
+        .premium-rank-card:hover {
+            transform: translateY(-15px) rotateX(3deg) rotateY(1deg);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+        }
+
+        /* ロード時のアニメーション用Keyframes */
+        @keyframes fadeInUpCard {
+            0% {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-card {
+            opacity: 0;
+            animation: fadeInUpCard 0.8s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+        }
+
+        /* --- 画像エリアの動き --- */
+        .rank-image-container {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16 / 11;
+            overflow: hidden;
         }
 
         .rank-image {
             width: 100%;
             height: 100%;
-            min-height: 200px;
             object-fit: cover;
+            transition: transform 1.2s cubic-bezier(0.23, 1, 0.32, 1); /* ゆっくり動かす */
         }
 
-        .rank-card .card-title {
-            font-size: 18px;
+        /* ホバー時の挙動：画像拡大＆スライド */
+        .premium-rank-card:hover .rank-image {
+            transform: scale(1.1) translateX(10px);
         }
 
-        .rank-card .card-text,
-        .rank-card .card-price {
+        /* --- 画像の上のオーバーレイ要素 --- */
+        /* ガラスモーフィズム調の背景グラデーション */
+        .card-img-overlay {
+            background: linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0) 40%, rgba(0,0,0,0.6) 100%);
+            border-radius: 20px 20px 0 0;
+        }
+
+        /* 高級感のあるランキングバッジ */
+        .rank-badge-premium {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(5px);
+            border-radius: 0 0 15px 15px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #333;
+            font-family: 'Georgia', serif; /* 英字でおしゃれに */
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .rank-badge-premium .rank-num {
+            font-size: 28px;
+            font-weight: bold;
+            line-height: 1;
+        }
+
+        .rank-badge-premium .rank-text {
+            font-size: 9px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        /* 順位ごとのテーマカラー（バッジの文字色やボーダーに） */
+        .rank-1 .rank-num { color: #d4af37; /* Gold */ }
+        .rank-2 .rank-num { color: #8a8a8a; /* Silver */ }
+        .rank-3 .rank-num { color: #b08d57; /* Bronze */ }
+
+        /* 都市名の表示 */
+        .card-city-premium {
+            color: rgba(255, 255, 255, 0.9);
             font-size: 13px;
+            font-weight: 500;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.5);
         }
 
-        .rank-card p {
-            margin-bottom: 4px;
-            line-height: 1.2;
+        /* お気に入りボタンの調整 */
+        .post-like-premium .heat-btn {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(5px);
+            border-radius: 50%;
+            width: 38px;
+            height: 38px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            transition: all 0.3s ease;
         }
 
-        .rank-link {
+        .post-like-premium .heat-btn:hover {
+            background: rgba(255, 255, 255, 0.9);
+            color: #e74c3c;
+            transform: scale(1.1);
+        }
+
+        /* --- 情報エリア --- */
+        .rank-link-premium {
             text-decoration: none;
             color: #333;
+            transition: color 0.3s ease;
         }
 
-        /* ランキングバッジ（共通） */
-        .rank-badge {
+        .rank-link-premium:hover {
+            color: #4fa3d1;
+        }
+
+        .premium-rank-card .card-title {
+            font-size: 19px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* 価格の表示 */
+        .card-price-premium {
+            color: #333;
+            font-weight: 800;
+        }
+
+        .card-price-premium .currency {
+            font-size: 16px;
+            vertical-align: super;
+        }
+
+        .card-price-premium .price-num {
+            font-size: 26px;
+            letter-spacing: -1px;
+        }
+
+        .card-price-premium .tax {
+            font-size: 14px;
+            color: #777;
+            font-weight: 400;
+        }
+
+        /* --- ホバー時の光沢エフェクト --- */
+        .shine-effect {
             position: absolute;
-            top: 10px;
-            left: 10px;
-            border-radius: 50%;
-            width: 36px;
-            height: 36px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-weight: bold;
-            color: #fff;
-            border: 1px solid white;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0) 100%);
+            transform: skewX(-25deg);
             z-index: 10;
         }
 
-        /* ランキングバッジ（順位） */
-        .rank-1 {
-            background: gold;
-            box-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+        .premium-rank-card:hover .shine-effect {
+            animation: shine 0.75s;
         }
 
-        .rank-2 {
-            background: silver;
-            box-shadow: 0 0 10px rgba(192, 192, 192, 0.8);
-        }
-
-        .rank-3 {
-            background: #cd7f32;
-            box-shadow: 0 0 10px rgba(205, 127, 50, 0.8);
+        @keyframes shine {
+            100% {
+                left: 125%;
+            }
         }
 
         /* POST */
         .post-card {
             position: relative;
             display: block;
-            border-radius: 16px;
             overflow: hidden;
             aspect-ratio: 3 / 4.2;
             width: 100%;
-            max-width: 260px;
+            max-width: 280px;
             color: #ffffff;
             text-decoration: none;
+            border: 6px solid white;
         }
 
+        /* 画像 */
         .post-card img {
             width: 100%;
             height: 100%;
             object-fit: cover;
             transition: transform 0.4s;
+            filter: brightness(0.9);
         }
 
-        /* テキスト */
-        .post-overlay {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            padding: 16px;
-            z-index: 1;
-            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
-            background: linear-gradient(to top,
-                    rgba(0, 0, 0, 0.6),
-                    rgba(0, 0, 0, 0));
+        /* スライダー */
+        .post-slider {
+            overflow: hidden;
             width: 100%;
+            padding-bottom: 60px;
+            -webkit-mask-image: linear-gradient(
+                to right,
+                transparent,
+                black 12%,
+                black 88%,
+                transparent
+            );
+            mask-image: linear-gradient(
+                to right,
+                transparent,
+                black 12%,
+                black 88%,
+                transparent
+            );
         }
 
-        .post-title {
-            font-size: 15px;
-            font-weight: 600;
-            margin-bottom: 6px;
-        }
-
-        .post-user {
-            font-size: 13px;
-        }
-
-        /* ハート */
-        .heat-btn {
-            position: absolute;
-            top: 12px;
-            right: 12px;
-            z-index: 2;
-            background: #ffffff;
-            color: #333;
-            width: 34px;
-            height: 34px;
-            border-radius: 50%;
-            border: 1px solid #ddd;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.10);
-            display: grid;
-            place-items: center;
-        }
-
-
-        .post-card:hover img {
-            transform: scale(1.05);
-        }
-
-        .tag-badge {
-            text-decoration: none;
-            display: inline-block;
-            padding: 4px 10px;
-            margin: 2px;
-            font-size: 12px;
-            border-radius: 20px;
-            background: #e0f2ff;
-            color: #0077cc;
-            font-weight: 600;
-        }
-
-
-        /* 右固定サイド全体のレイアウト */
-        .right-fixed-panel {
-            position: fixed;
-            right: 24px;
-            top: 140px;
-            width: 260px;
-            /* 少しスリムに */
-            z-index: 50;
+        .post-track {
             display: flex;
-            flex-direction: column;
-            gap: 20px;
+            gap: 15px;
+            width: max-content;
+            animation: scrollPosts 60s linear infinite;
         }
 
-        /* モバイルでは非表示 */
-        @media (max-width: 992px) {
-            .right-fixed-panel {
-                display: none;
+        .post-item {
+            flex: 0 0 auto;
+            width: 280px;
+            padding-top: 20px;
+        }
+
+        /* 写真をランダム回転 */
+        .post-item:nth-child(odd) .post-card {
+            transform: rotate(-4deg);
+        }
+        .post-item:nth-child(even) .post-card {
+            transform: rotate(3deg);
+        }
+        .post-item:nth-child(3n) .post-card {
+            transform: rotate(-6deg);
+        }
+        .post-item:nth-child(4n) .post-card {
+            transform: rotate(5deg);
+        }
+
+        .post-item:nth-child(6n+1){margin-top:20px;}
+        .post-item:nth-child(6n+2){margin-top:0;}
+        .post-item:nth-child(6n+3){margin-top:35px;}
+        .post-item:nth-child(6n+4){margin-top:10px;}
+        .post-item:nth-child(6n+5){margin-top:40px;}
+        .post-item:nth-child(6n+6){margin-top:15px;}
+
+        /* 左に流れる */
+        @keyframes scrollPosts {
+            0% {
+                transform: translateX(0);
             }
-        }
-
-        /* 共通カードスタイル（グラスモーフィズム） */
-        .datetime-card,
-        .weather-card,
-        .currency-card {
-            background: rgba(255, 255, 255, 0.15);
-            /* 透明度のある白 */
-            backdrop-filter: blur(12px);
-            /* 背景をぼかす */
-            -webkit-backdrop-filter: blur(12px);
-            border-radius: 24px;
-            /* メニューボタンに合わせて丸みを強く */
-            padding: 24px;
-            color: rgb(113, 111, 111);
-            /* 文字は白 */
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            /* 縁取りでクッキリさせる */
-            transition: transform 0.3s ease;
-        }
-
-        .datetime-card:hover,
-        .weather-card:hover,
-        .currency-card:hover {
-            transform: translateY(-5px);
-            /* ホバーで少し浮かす */
-        }
-
-        /* 日付・時刻 */
-        .date-label {
-            font-size: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            opacity: 0.8;
-            margin-bottom: 4px;
-        }
-
-        .time-label {
-            font-size: 48px;
-            font-weight: 800;
-            line-height: 1;
-            letter-spacing: -1px;
-        }
-
-        /* 天気予報 */
-        .weather-city {
-            font-size: 14px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 8px;
-        }
-
-        .weather-main {
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
-        }
-
-        .weather-main img {
-            width: 60px;
-            /* アイコンを少し強調 */
-            margin-left: -10px;
-        }
-
-        .temp {
-            font-size: 36px;
-            font-weight: 800;
-        }
-
-        .weather-desc {
-            font-size: 12px;
-            text-transform: capitalize;
-            opacity: 0.9;
-        }
-
-        /* 為替レート */
-        .currency-title {
-            font-size: 14px;
-            font-weight: 700;
-            margin-bottom: 12px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-            padding-bottom: 8px;
-        }
-
-        .currency-card p {
-            margin: 0;
-            font-size: 15px;
-            font-weight: 500;
-            line-height: 1.6;
+            100% {
+                transform: translateX(-50%);
+            }
         }
     </style>
 @endsection

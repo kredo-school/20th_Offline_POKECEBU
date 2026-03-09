@@ -19,7 +19,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a href="{{ route('jeepney') }}" class="nav-link text-center">
+                <a href="{{ route('jeepney.index') }}" class="nav-link text-center">
                     <i class="fa-solid fa-van-shuttle"></i>
                     <div>Jeepney</div>
                 </a>

@@ -78,7 +78,7 @@
                         </div>
 
                         <div class="col-12 mb-2">
-                            <a href="{{ route('jeepney') }}" class="menu-btn menu-jeepney text-decoration-none">
+                            <a href="{{ route('jeepney.index') }}" class="menu-btn menu-jeepney text-decoration-none">
                                 <i class="fa-solid fa-van-shuttle"></i>
                                 <div class="menu-text-wrapper">
                                     <div class="menu-title">Route & Ride</div>

@@ -243,8 +243,11 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/mypage/booking', [BookingController::class, 'index'])->name('booking');
         Route::get('/mypage/favorite', [FavoriteController::class, 'index'])->name('favorite');
 
-        # Hotel searchx
+        # Hotel search
         Route::get('/hotels', [HotelController::class, 'index'])->name('hotels.index');
+
+        # Restaurant search
+        Route::get('restaurants/search', [RestaurantController::class, 'search'])->name('restaurants.search');
 
         # User Booking
         Route::get('/hotels/{id}', [HotelController::class, 'showDetailHotel'])->name('hotels.detail');
@@ -257,6 +260,206 @@ Route::group(['middleware' => 'auth'], function () {
     });
 });
 
+// ホテル予約
+Route::get('/hotels', [HotelController::class, 'roomInfo'])->name('hotels.index');
+Route::get('reservation/confirmation', [HotelReservationController::class, 'confirmation'])
+    ->name('reservation.confirmation');
+Route::post('reservation/confirm', [HotelReservationController::class, 'confirmReservation'])
+    ->name('reservation.confirm');
+Route::match(['get', 'post'], '/reservation/payment-form', [HotelReservationController::class, 'payment'])
+    ->name('reservation.payment.form');
+Route::post('reservation/payment', [HotelReservationController::class, 'pay'])
+    ->name('reservation.pay');
+Route::get('reservation/payment/success', [HotelReservationController::class, 'reservationSuccess'])->name('reservation.success');
+Route::post('reservation/payment', [HotelReservationController::class, 'pay'])->name('reservation.pay');
+
+// ホテル予約ユーザー
+Route::middleware('auth')->group(function () {
+    Route::get('/mypage/user', [UserDetailController::class, 'show'])->name('mypage.show');
+    Route::post('/mypage/userupdate', [UserDetailController::class, 'update'])->name('mypage.update');
+});
+
+
+// レストラン予約
+Route::get('/restaurant/reservation', [RestaurantReservationController::class, 'showInfo'])
+    ->name('restaurant.show');
+
+Route::post('/restaurant/reserve', [RestaurantReservationController::class, 'store'])
+    ->name('restaurant.reserve');
+
+
+// ログイン不要ページ　
+// 　ホテル・レストラン登録
+// 　フォーム表示
+Route::get('signup-for-company', [TmpHotelController::class, 'create'])
+    ->name('company.signup');
+// 　フォーム送信
+Route::post('/user/mypage/signup-for-company', [TmpHotelController::class, 'store'])
+    ->name('user.mypage.signup-for-company.store');
+// 　ホテル検索
+// Route::get('/hotels/search', [App\Http\Controllers\HotelController::class, 'index'])->name('hotels.search');
+
+
+// これ
+Route::prefix('staff')->middleware('auth')->group(function () {
+
+
+    Route::get('/hotel', [HotelStaffController::class, 'index'])->name('staff.homehotel');
+    Route::get('/staff/reservations', [HotelStaffController::class, 'reservations'])->name('staff.reservations');
+
+    Route::get('/staff/mypage/hotel', [StaffMypageController::class, 'index'])->name('staff.mypage.hotel');
+    Route::get('/staff/mypage/hotel/edit', [StaffMypageController::class, 'editStaffMypage'])->name('staff.mypage.hotel.edit');
+    Route::post('/staff/mypage/hotel/store', [StaffMypageController::class, 'storeHotel'])->name('staff.mypage.hotel.store');
+
+    Route::get('/staff/mypage/restaurant', [StaffMypageController::class, 'indexRestaurant'])->name('staff.mypage.restaurant');
+    Route::get('/staff/mypage/restaurant/edit', [StaffMypageController::class, 'editStaffMypagerestaurant'])->name('staff.edit.restaurant');
+    Route::post('/staff/mypage/restaurant/update', [StaffMypageController::class, 'updateStaffMypagerestaurant'])->name('staff.update.restaurant');
+    Route::get('/mypage/restaurant/complete', [StaffMypageController::class, 'restaurantcomplete'])->name('restaurant.complete');
+
+    Route::get('/restaurant', [RestaurantStaffController::class, 'index'])->name('staff.homerestaurant');
+    Route::get('/staff/reservations/restaurant', [RestaurantStaffController::class, 'reservations'])->name('staff.reservations.restaurant');
+
+
+
+    // restaurant
+    Route::get('/restaurant', [RestaurantStaffController::class, 'index'])
+        ->name('staff.homerestaurant');
+});
+
+
+
+
+
+
+Route::get('/staff/reservations/restaurant', [RestaurantStaffController::class, 'reservations'])->name('staff.reservations.restaurant');
+Route::get('/admin', [AdminController::class, 'index'])->name('admin.home');
+
+
+
+
+
+// シオン消してるやつ
+// Route::get('/admin/hotels', [AdminController::class, 'hotels'])->name('admin.hotels');
+// Route::get('/admin/hotel/edit', [AdminController::class, 'editHotel'])->name('hotels.edit');
+// Route::get('/admin/hotel/add', [AdminController::class, 'addHotel'])->name('hotel.add');
+
+// Route::get('/admin/customer', [AdminController::class, 'customer'])->name('admin.customer');
+// // カスタマー
+// Route::get('/admin/customer/add', [AdminController::class, 'addCustomer'])->name('admin.customer.add');
+// Route::post('/admin/customer/add', [AdminController::class, 'storeCustomer'])->name('admin.customers.store');
+// // Uカスタマー
+// Route::get('/admin/customer/edit/{id}', [AdminController::class, 'editCustomer'])->name('admin.customer.edit');
+// Route::put('/admin/customer/update/{id}', [AdminController::class, 'updateCustomer'])->name('admin.customer.update');
+// // 
+// Route::delete('/admin/customer/delete/{id}', [AdminController::class, 'deleteCustomer'])->name('admin.customer.delete');
+// // カスタマー
+// // ホテル一覧
+// Route::get('/admin/hotels', [AdminController::class, 'hotels'])->name('admin.hotels');
+
+// // ホテル追加
+// // ホテル追加画面（GET）
+// Route::get('/admin/hotel/add', [AdminController::class, 'addHotel'])->name('admin.hotel.add');
+
+// // ホテル保存処理（POST）
+// Route::post('/admin/hotel/add', [AdminController::class, 'storeHotel'])->name('admin.hotel.store');
+
+// // ホテル編集
+// Route::get('/admin/hotel/edit/{id}', [AdminController::class, 'editHotel'])->name('admin.hotel.edit');
+// Route::put('/admin/hotel/update/{id}', [AdminController::class, 'updateHotel'])->name('admin.hotel.update');
+
+// // ホテル削除
+// Route::delete('/admin/hotel/delete/{id}', [AdminController::class, 'deleteHotel'])->name('admin.hotel.delete');
+// Route::get('/admin/hotel/approval',  function () {
+//     return view('adminpage.hotel.pending-approval');
+// })->name('hotel.approval');
+// // レストラン一覧
+// Route::get('/admin/restaurants', [AdminController::class, 'restaurants'])->name('admin.restaurants');
+
+// // レストラン追加
+// Route::get('/admin/restaurant/add', [AdminController::class, 'addRestaurant'])->name('restaurant.add');
+// Route::post('/admin/restaurant/add', [AdminController::class, 'storeRestaurant'])->name('restaurant.store');
+// Admin 一覧
+// Route::get('/admin/admins', [AdminController::class, 'admins'])
+//     ->name('admin.admins');
+
+// // Admin 追加
+// Route::get('/admin/admin/add', [AdminController::class, 'addAdmin'])
+//     ->name('admin.admin.add');
+// Route::post('/admin/admin/add', [AdminController::class, 'storeAdmin'])
+//     ->name('admin.admin.store');
+
+// // Admin 編集
+// Route::get('/admin/admin/edit/{id}', [AdminController::class, 'editAdmin'])
+//     ->name('admin.admin.edit');
+// Route::put('/admin/admin/update/{id}', [AdminController::class, 'updateAdmin'])
+//     ->name('admin.admin.update');
+
+// // Admin 削除
+// Route::delete('/admin/admin/delete/{id}', [AdminController::class, 'deleteAdmin'])
+//     ->name('admin.admin.delete');
+
+// レストラン編集
+// Route::get('/admin/restaurant/edit/{id}', [AdminController::class, 'editRestaurant'])->name('restaurant.edit');
+// Route::put('/admin/restaurant/update/{id}', [AdminController::class, 'updateRestaurant'])->name('restaurant.update');
+// Route::delete('/admin/restaurant/delete/{id}', [AdminController::class, 'deleteRestaurant'])->name('restaurant.delete');
+// // カレンダー
+// routes/web.php
+
+
+
+
+Route::get('/mock/calendar', [MockReservationController::class, 'calendar'])->name('mock.calendar');
+Route::get('/mock/day/{day}', [MockReservationController::class, 'dayStatus'])->name('mock.day');
+Route::get('/mock/detail/{day}/{type}', [MockReservationController::class, 'detail'])->name('mock.detail');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// rooms の作成画面（ビュー確認用）
+
+// User
+// User_signup-for-company.blade
+// Route::get('userpage/mypage/signup-for-company', function () {
+//     return view('userpage.mypage.signup-for-company');
+// })->name('userpage.mypage.signup-for-company');
+
+// User_userpage\mypage\hotel-serch-result.blade.php
+// Route::get('userpage/mypage/hotel-serch-result', function () {
+//     return view('userpage.mypage.hotel-serch-result');
+// })->name('userpage.mypage.hotel-serch-result');
+
+
+
+
+//Staff
+//Staff add-for-hotel
+Route::get('staffpage/add-for-hotel', function () {
+    return view('staffpage.add-for-hotel');
+})->name('staffpage.add-for-hotel');
+
+//Staff add-for-restaurant
+Route::get('staffpage/add-for-restaurant', function () {
+    return view('staffpage.add-for-restaurant');
+})->name('staffpage.add-for-restaurant');
+
+//Staff table-type
+Route::get('staffpage/table-type', function () {
+    return view('staffpage.table-type');
+})->name('staffpage.table-type');
 //jeepney
 Route::get('/jeepney', function () {
     return view('jeepney');

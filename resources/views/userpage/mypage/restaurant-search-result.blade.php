@@ -1,0 +1,262 @@
+{{-- resources/views/userpage/mypage/restaurant-search-result.blade.php --}}
+@extends('layouts.user')
+
+@section('content')
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    @php
+        if (!function_exists('restaurant_image_url')) {
+            function restaurant_image_url($restaurant)
+            {
+                $img = optional(optional($restaurant->restaurantImages)->first())->image ?? null;
+                if (!$img) {
+                    return asset('images/placeholder-restaurant.png');
+                }
+                return preg_match('/^https?:\\/\\//', $img) ? $img : asset('storage/' . ltrim($img, '/'));
+            }
+        }
+
+        $restaurants = $restaurants ?? collect();
+        $amenities = $amenities ?? collect();
+        $guestOptions = $guestOptions ?? range(1, 10);
+    @endphp
+
+    <div class="container py-4">
+        <!-- Search Bar -->
+        <div class="mb-4">
+            <form class="row g-2 align-items-center" method="get" action="{{ route('user.restaurants.search') }}">
+                <div class="col-md-3">
+                    <input type="text" name="destination" class="form-control" placeholder="Destination (city)"
+                        value="{{ request('destination') }}">
+                </div>
+
+                <div class="col-md-2">
+                    <input type="date" name="date" class="form-control" value="{{ request('date') }}">
+                </div>
+
+                <div class="col-md-2">
+                    <input type="time" name="time" class="form-control" value="{{ request('time') }}">
+                </div>
+
+                <div class="col-md-2">
+                    <select name="tables" class="form-select">
+                        <option value="">Tables</option>
+                        @for ($i = 1; $i <= 10; $i++)
+                            <option value="{{ $i }}" {{ request('tables') == $i ? 'selected' : '' }}>
+                                {{ $i }} table{{ $i > 1 ? 's' : '' }}</option>
+                        @endfor
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <select id="guests" name="guests" class="form-select">
+                        <option value="">Select number of guests</option>
+                        @foreach ($guestOptions as $g)
+                            <option value="{{ $g }}"
+                                {{ (string) old('guests', request('guests')) === (string) $g ? 'selected' : '' }}>
+                                {{ $g }} {{ $g > 1 ? 'people' : 'person' }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="col-md-1 d-grid">
+                    <button type="submit" class="btn btn-primary" aria-label="Search">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </button>
+                </div>
+            </form>
+
+            @if (session('error'))
+                <div class="alert alert-warning mt-2">
+                    {{ session('error') }}
+                </div>
+            @endif
+        </div>
+
+        <div class="row">
+            <!-- Filter Sidebar -->
+            <aside class="col-md-3 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h6 class="fw-bold mb-3"><i class="fa-solid fa-filter me-2"></i>Filters</h6>
+
+                        <form id="filters-form" method="get" action="{{ route('user.restaurants.search') }}">
+                            <input type="hidden" name="destination" value="{{ request('destination') }}">
+                            <input type="hidden" name="date" value="{{ request('date') }}">
+                            <input type="hidden" name="time" value="{{ request('time') }}">
+                            <input type="hidden" name="tables" value="{{ request('tables') }}">
+                            <input type="hidden" name="guests" value="{{ request('guests') }}">
+
+                            @foreach ($amenities as $amenity)
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="amenity-{{ $amenity->id }}"
+                                        name="amenities[]" value="{{ $amenity->id }}"
+                                        {{ in_array($amenity->id, (array) request('amenities', [])) ? 'checked' : '' }}>
+                                    <label class="form-check-label"
+                                        for="amenity-{{ $amenity->id }}">{{ $amenity->name }}</label>
+                                </div>
+                            @endforeach
+
+                            <hr>
+
+                            <div class="mb-2">
+                                <label class="form-label fw-bold small">Sort by</label>
+                                <select class="form-select" name="sort" form="filters-form"
+                                    onchange="document.getElementById('filters-form').submit()">
+                                    <option value="recommended" {{ request('sort') == 'recommended' ? 'selected' : '' }}>
+                                        Recommended</option>
+                                    <option value="price_asc" {{ request('sort') == 'price_asc' ? 'selected' : '' }}>Price:
+                                        Low to High</option>
+                                    <option value="price_desc" {{ request('sort') == 'price_desc' ? 'selected' : '' }}>
+                                        Price: High to Low</option>
+                                    <option value="rating" {{ request('sort') == 'rating' ? 'selected' : '' }}>Rating
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div class="mt-3 d-grid">
+                                <button type="submit" class="btn btn-outline-primary btn-sm">Apply Filters</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main results -->
+            <main class="col-md-9">
+                <div class="row g-3">
+                    @forelse($restaurants as $restaurant)
+                        {{-- 各カードは col-12 でラップ（1列表示） --}}
+                        <div class="col-12">
+                            <div class="card mb-3 shadow-sm">
+                                <div class="row g-0">
+                                    <div class="col-md-4">
+                                        {{-- 画像を左に --}}
+                                        <img src="{{ restaurant_image_url($restaurant) }}"
+                                            class="img-fluid rounded-start w-100" alt="{{ $restaurant->name }}"
+                                            style="height:220px; object-fit:cover;">
+                                    </div>
+                                    <div class="col-md-8">
+                                        <div class="card-body">
+                                            {{-- 左: 名前・場所 / 右: レビューバッジ（上）と価格（下） --}}
+                                            <div class="d-flex justify-content-between align-items-start">
+                                                <div>
+                                                    <h5 class="card-title mb-1 fw-bold">{{ $restaurant->name }}</h5>
+                                                    <div class="small text-muted">
+                                                        <i class="fa-solid fa-location-dot me-1"></i>{{ $restaurant->city ?? $restaurant->address }}
+                                                    </div>
+
+                                                    {{-- 星評価（star_rating があれば表示） --}}
+                                                    @if (!empty($restaurant->star_rating))
+                                                        <div class="small text-warning mt-1">★ {{ number_format($restaurant->star_rating, 1) }}</div>
+                                                    @endif
+                                                </div>
+
+                                                <div class="text-end">
+                                                    @php
+                                                        $reviews = $restaurant->reviews ?? collect();
+                                                        $avg = $reviews->count() ? number_format($reviews->avg('rating'), 1) : null;
+
+                                                        $minPriceRaw = $restaurant->min_price ?? ($restaurant->tables->count() ? $restaurant->tables->min('charges') : null);
+                                                        $minPrice = $minPriceRaw !== null ? number_format((float) $minPriceRaw, 2) : null;
+                                                        $available = $restaurant->available_tables_count ?? null;
+                                                    @endphp
+
+                                                    @if ($avg)
+                                                        <div class="badge bg-success mb-2"><i class="fa-solid fa-star me-1"></i>{{ $avg }}</div>
+                                                    @else
+                                                        <div class="badge bg-secondary mb-2">No reviews</div>
+                                                    @endif
+
+                                                    @if ($available !== null)
+                                                        @if ((int) $available <= 0)
+                                                            <div class="h6 mb-0 text-danger">Sold out</div>
+                                                            <div class="small text-muted">No available tables for selected time</div>
+                                                        @elseif ($minPrice !== null)
+                                                            <div class="h5 mb-0">₱{{ $minPrice }}~</div>
+                                                            <div class="small text-muted">per booking</div>
+                                                        @else
+                                                            <div class="h6 mb-0 text-muted">Price unavailable</div>
+                                                        @endif
+                                                    @else
+                                                        @if ($minPrice !== null)
+                                                            <div class="h5 mb-0">₱{{ $minPrice }}~</div>
+                                                            <div class="small text-muted">per booking</div>
+                                                        @else
+                                                            <div class="h6 mb-0 text-muted">Price unavailable</div>
+                                                        @endif
+                                                    @endif
+                                                </div>
+                                            </div>
+
+                                            {{-- 下段：説明・ボタン・favorite・合計いいね数 --}}
+                                            <p class="card-text text-muted mt-2 mb-2">
+                                                {{ \Illuminate\Support\Str::limit($restaurant->description ?? '', 140) }}
+                                            </p>
+
+                                            <div class="d-flex gap-2 align-items-center">
+                                                <a href="{{ route('user.restaurants.detail', $restaurant->id) }}" class="btn btn-outline-secondary btn-sm">Details</a>
+
+                                                <div class="ms-3 d-inline-flex align-items-center gap-2">
+                                                    @if ($restaurant->isFavorited())
+                                                        <form method="POST" action="{{ route('user.favorite.destroy', ['restaurant', $restaurant->id]) }}" class="d-inline">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button class="btn btn-favorite btn p-0" type="submit" aria-label="Unfavorite">
+                                                                <i class="fa-solid fa-heart text-danger align-middle" style="font-size:1rem;"></i>
+                                                            </button>
+                                                        </form>
+                                                    @else
+                                                        <form method="POST" action="{{ route('user.favorite.store', ['restaurant', $restaurant->id]) }}" class="d-inline">
+                                                            @csrf
+                                                            <button class="btn btn-favorite btn p-0" type="submit" aria-label="Favorite">
+                                                                <i class="fa-regular fa-heart align-middle" style="font-size:1rem;"></i>
+                                                            </button>
+                                                        </form>
+                                                    @endif
+
+                                                    {{-- 合計いいね数 --}}
+                                                    <div class="favorites-count small text-muted align-middle" data-count="{{ $restaurant->favorites_count ?? 0 }}">
+                                                        <span class="d-inline-block align-middle">{{ $restaurant->favorites_count ?? 0 }}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @empty
+                        <div class="col-12">
+                            <p class="text-muted">該当するレストランが見つかりませんでした。</p>
+                        </div>
+                    @endforelse
+                </div>
+
+                <div class="mt-4">
+                    @if (method_exists($restaurants, 'firstItem'))
+                        <div class="d-flex flex-column flex-sm-row align-items-center justify-content-between">
+                            <div class="mb-2 mb-sm-0 text-muted">
+                                @if ($restaurants->total() > 0)
+                                    Showing <strong>{{ $restaurants->firstItem() }}</strong> to <strong>{{ $restaurants->lastItem() }}</strong> of <strong>{{ $restaurants->total() }}</strong> results
+                                @else
+                                    No results found
+                                @endif
+                            </div>
+
+                            <nav aria-label="Search results pages">
+                                {{ $restaurants->withQueryString()->links('pagination::bootstrap-5') }}
+                            </nav>
+                        </div>
+                    @else
+                        <nav aria-label="Search results pages">
+                            {{ $restaurants->withQueryString()->links('pagination::bootstrap-5') }}
+                        </nav>
+                    @endif
+                </div>
+            </main>
+        </div>
+    </div>
+@endsection

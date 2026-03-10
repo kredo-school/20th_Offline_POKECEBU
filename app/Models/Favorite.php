@@ -13,6 +13,12 @@ class Favorite extends Model
     ];
 
     public function user() {
-        return $this->belongsTo(User::class);
+        // return $this->belongsTo(User::class);
+        return $this->belongsTo(\App\Models\User::class, 'user_id');
+    }
+    
+    public function target()
+    {
+        return $this->morphTo();
     }
 }

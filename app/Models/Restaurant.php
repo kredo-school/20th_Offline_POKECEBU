@@ -72,12 +72,23 @@ class Restaurant extends Model
     }
 
     //お気に入り 
-    public function isFavorited() {
-       return Favorite::where('user_id', Auth::id())
-           ->where('target_type', 'restaurant')
-           ->where('target_id', $this->id)
-           ->exists();
+    // isFavorited をクラス名ベースで判定するように修正
+    public function isFavorited(): bool
+    {
+        $userId = Auth::id();
+        if (!$userId) return false;
+
+        if ($this->relationLoaded('favorites')) {
+            return $this->favorites->contains('user_id', $userId);
+        }
+
+        return \App\Models\Favorite::where('user_id', $userId)
+            ->where('target_type', 'restaurant')   // 短名で照合
+            ->where('target_id', $this->id)
+            ->exists();
     }
+
+
 
     // 評価
     public function reviews() {
@@ -103,5 +114,11 @@ class Restaurant extends Model
     {
         return $this->hasMany(TmpRestaurant::class, 'restaurant_id', 'id');
     }
-  
+
+
+    // Polymorphic favorites relation using target_type / target_id
+    public function favorites()
+    {
+        return $this->morphMany(Favorite::class, 'target');
+    }
 }

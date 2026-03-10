@@ -107,11 +107,11 @@
                         </a>
                     </div>
                     <div class="col-12 mb-3">
-                        <a href="{{ route('daily.fortune.show') }}" class="menu-btn menu-jeepney text-decoration-none">
+                        <a href="{{ route('daily.fortune.show') }}" class="menu-btn menu-fortune text-decoration-none">
                             <i class="fa-solid fa-star"></i>
                             <div class="menu-text-wrapper">
                                 <div class="menu-title">Today's Pick</div>
-                                <div class="menu-subtitle">Check numbers and destinations</div>
+                                <div class="menu-subtitle">Discover your lucky spot</div>
                             </div>
                         </a>
                     </div>
@@ -793,7 +793,7 @@
         }
 
         .menu-hotel:hover i,
-        .menu-jeepney:hover i {
+        .menu-jeepney:hover i, .menu-fortune:hover i  {
             transform: scale(1.15) rotate(10deg);
         }
 
@@ -803,7 +803,7 @@
         }
 
         .menu-hotel i,
-        .menu-jeepney i {
+        .menu-jeepney i, .menu-fortune i {
             transform: rotate(-5deg);
         }
 
@@ -813,7 +813,7 @@
         }
 
         .menu-hotel,
-        .menu-jeepney {
+        .menu-jeepney, .menu-fortune {
             border-radius: 0 150px 150px 0;
             transform: translateX(-100px);
             margin-left: -1rem;
@@ -846,6 +846,11 @@
         .menu-mypage {
             background-image: url("{{ asset('images/home-post.jpg') }}");
             background-position: center 12%;
+        }
+
+        .menu-fortune {
+            background-image: url("{{ asset('images/home-fortune.jpg') }}");
+            background-position: center 60%;
         }
 
         body {

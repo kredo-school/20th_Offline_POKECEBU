@@ -5,7 +5,7 @@
 @endpush
 
 @section('navbar')
-<nav class="navbar navbar-expand-md shadow-sm"
+<nav class="navbar navbar-expand-md"
      style="background-color:#96CCB9; height:80px;">
     @include('layouts.partials.nav-admin')
 </nav>

@@ -230,7 +230,7 @@
                         </div>
                     @empty
                         <div class="col-12">
-                            <p class="text-muted">該当するレストランが見つかりませんでした。</p>
+                            <p class="text-muted">No matching restaurants were found.</p>
                         </div>
                     @endforelse
                 </div>

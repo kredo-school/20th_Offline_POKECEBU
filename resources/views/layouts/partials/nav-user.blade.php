@@ -13,7 +13,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a href="#" class="nav-link text-center">
+                <a href="{{ route('user.restaurants.search') }}" class="nav-link text-center">
                     <i class="fa-solid fa-utensils"></i>
                     <div>Restaurant</div>
                 </a>

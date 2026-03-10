@@ -14,6 +14,7 @@ class SearchRequest extends FormRequest
     public function rules()
     {
         return [
+            // --- search hotel & restaurant ---
             'destination' => 'nullable|string|max:255',
             'checkin'     => 'nullable|date',
             'checkout'    => 'nullable|date|after:checkin',
@@ -22,7 +23,15 @@ class SearchRequest extends FormRequest
             'amenities'   => 'nullable|array',
             'amenities.*' => 'integer|exists:categories,id',
             'sort'        => 'nullable|string|in:recommended,price_asc,price_desc,rating',
-        ];
+
+            // --- search restaurant only ---
+            'date'        => 'nullable|date',
+            'time'        => 'nullable|date_format:H:i',
+            'guests'      => 'nullable|integer|min:1',
+            'tables'      => 'nullable|integer|min:1',
+            'categories'  => 'nullable|array',
+            'categories.*' => 'integer|exists:categories,id',
+        ];  
     }
     protected function prepareForValidation()
     {

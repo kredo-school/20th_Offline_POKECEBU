@@ -247,8 +247,11 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/mypage/booking', [BookingController::class, 'index'])->name('booking');
         Route::get('/mypage/favorite', [FavoriteController::class, 'index'])->name('favorite');
 
-        # Hotel searchx
+        # Hotel search
         Route::get('/hotels', [HotelController::class, 'index'])->name('hotels.index');
+
+        # Restaurant search
+        Route::get('restaurants/search', [RestaurantController::class, 'search'])->name('restaurants.search');
 
         # User Booking
         Route::get('/hotels/{id}', [HotelController::class, 'showDetailHotel'])->name('hotels.detail');
@@ -301,6 +304,19 @@ Route::get('/restaurant/reservation', [RestaurantReservationController::class, '
 
 Route::post('/restaurant/reserve', [RestaurantReservationController::class, 'store'])
     ->name('restaurant.reserve');
+
+
+// ログイン不要ページ　
+// 　ホテル・レストラン登録
+// 　フォーム表示
+Route::get('signup-for-company', [TmpHotelController::class, 'create'])
+    ->name('company.signup');
+// 　フォーム送信
+Route::post('/user/mypage/signup-for-company', [TmpHotelController::class, 'store'])
+    ->name('user.mypage.signup-for-company.store');
+// 　ホテル検索
+// Route::get('/hotels/search', [App\Http\Controllers\HotelController::class, 'index'])->name('hotels.search');
+
 
 // これ
 Route::prefix('staff')->middleware('auth')->group(function () {
@@ -420,16 +436,6 @@ Route::get('/mock/detail/{day}/{type}', [MockReservationController::class, 'deta
 
 
 
-// ログイン不要ページ　
-// 　ホテル・レストラン登録
-// 　フォーム表示
-Route::get('signup-for-company', [TmpHotelController::class, 'create'])
-    ->name('company.signup');
-// 　フォーム送信
-Route::post('/user/mypage/signup-for-company', [TmpHotelController::class, 'store'])
-    ->name('user.mypage.signup-for-company.store');
-// 　ホテル・レストランサーチ
-Route::get('/hotels/search', [App\Http\Controllers\HotelController::class, 'index'])->name('hotels.search');
 
 
 

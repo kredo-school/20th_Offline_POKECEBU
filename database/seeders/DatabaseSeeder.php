@@ -208,19 +208,28 @@ class DatabaseSeeder extends Seeder
 
         /*
         |--------------------------------------------------------------------------
-        | 5. 予約データの生成 (計800件)
+        | 5. 予約データの生成 (計800件：2026年 600件 / 2025年 200件)
         |--------------------------------------------------------------------------
         */
         for ($i = 0; $i < 800; $i++) {
-            $reservedAt = Carbon::now()->subMonths(rand(0, 14))->subDays(rand(0, 28))->setTime(rand(8, 20), 0);
+            // $iが600未満なら2026年、それ以降は2025年の日付を生成
+            if ($i < 600) {
+                // 2026年1月1日 〜 2026年12月31日
+                $reservedAt = Carbon::create(2026, rand(1, 12), rand(1, 28))
+                                    ->setTime(rand(8, 20), 0);
+            } else {
+                // 2025年1月1日 〜 2025年12月31日
+                $reservedAt = Carbon::create(2025, rand(1, 12), rand(1, 28))
+                                    ->setTime(rand(8, 20), 0);
+            }
 
             // ホテル予約
             $roomInfo = $allRoomIds[array_rand($allRoomIds)];
-            $startAt = $reservedAt->copy()->addDays(rand(1, 20));
+            $startAt = $reservedAt->copy()->addDays(rand(1, 10)); // 予約日から1〜10日後
             $endAt = $startAt->copy()->addDays(rand(1, 4));
 
             DB::table('hotel_reservations')->insert([
-                'reservation_id' => 'HRES' . $faker->unique(true)->numberBetween(100000, 9999999),
+                'reservation_id' => 'HRES' . $faker->unique()->numberBetween(100000, 9999999),
                 'user_id' => $userIds['customer'],
                 'hotel_id' => $roomInfo['hotel_id'],
                 'room_id' => $roomInfo['id'],
@@ -237,10 +246,10 @@ class DatabaseSeeder extends Seeder
 
             // レストラン予約
             $tableInfo = $allTableIds[array_rand($allTableIds)];
-            $resStart = $reservedAt->copy()->addDays(rand(1, 20))->setTime(rand(11, 20), 0);
+            $resStart = $reservedAt->copy()->addDays(rand(1, 10))->setTime(rand(11, 20), 0);
 
             DB::table('restaurant_reservations')->insert([
-                'reservation_id' => 'RRES' . $faker->unique(true)->numberBetween(100000, 9999999),
+                'reservation_id' => 'RRES' . $faker->unique()->numberBetween(100000, 9999999),
                 'user_id' => $userIds['customer'],
                 'restaurant_id' => $tableInfo['restaurant_id'],
                 'table_id' => $tableInfo['id'],

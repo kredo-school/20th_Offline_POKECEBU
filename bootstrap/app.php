@@ -14,9 +14,13 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->appendToGroup('admin', [AdminMiddleware::class]);
-        $middleware->appendToGroup('hotel', [HotelMiddleware::class]);
-        $middleware->appendToGroup('restaurant', [RestaurantMiddleware::class]);
+        // ここを alias に書き換えます
+        // これにより、web.phpの 'middleware' => 'admin' 等が正しく機能します
+        $middleware->alias([
+            'admin'      => AdminMiddleware::class,
+            'hotel'      => HotelMiddleware::class,
+            'restaurant' => RestaurantMiddleware::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

@@ -170,7 +170,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/{id}/viewRoom', [HotelRoomController::class, 'viewRoom'])->name('viewRoom');
 
         // カレンダー
-        Route::get('/calendar', [HotelStaffController::class, 'calendar'])->name('calendar');
+        Route::get('/calendar', [HotelStaffController::class, 'calendar'])->name('calendar');t
         Route::get('/calendar/data', [HotelStaffController::class, 'calendarData'])->name('calendar.data');
         // 予約一覧（日毎）
         Route::get('/reservations/{date}', [HotelStaffController::class, 'daily'])->name('reservations.date');

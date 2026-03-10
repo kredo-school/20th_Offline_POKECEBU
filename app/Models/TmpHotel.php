@@ -15,7 +15,7 @@ class TmpHotel extends Model
 
     protected $fillable = [
         'hotel_id',
-        'updated_user',
+        // 'updated_user',
         'name',
         'description',
         'address',
@@ -55,10 +55,10 @@ class TmpHotel extends Model
     /**
      * 更新者（ユーザー）
      */
-    public function updatedBy()
-    {
-        return $this->belongsTo(User::class, 'updated_user');
-    }
+    // public function updatedBy()
+    // {
+    //     return $this->belongsTo(User::class, 'updated_user');
+    // }
 
 
 

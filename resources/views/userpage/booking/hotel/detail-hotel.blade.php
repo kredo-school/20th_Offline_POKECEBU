@@ -3,40 +3,6 @@
 @section('title', 'Detail Hotel')
 
 @section('content')
-<style>
-    /* 画像スライダーの整形 */
-    .hotel-images, .room-images {
-        display: flex;
-        overflow-x: auto;
-        gap: 15px;
-        padding-bottom: 10px;
-    }
-    .hotel-images img, .room-images img {
-        height: 280px;
-        width: 400px;
-        object-fit: cover;
-        border-radius: 15px;
-        flex-shrink: 0;
-    }
-    .hide-scrollbar::-webkit-scrollbar { display: none; }
-    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
-    /* お気に入りボタン */
-    .btn-favorite {
-        font-size: 1.5rem;
-        transition: transform 0.2s;
-    }
-    .btn-favorite:hover { transform: scale(1.1); }
-
-    /* 部屋カードのホバー */
-    .room-card {
-        transition: transform 0.3s, box-shadow 0.3s;
-    }
-    .room-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
-    }
-</style>
 
 <div class="container py-5">
     <div class="row justify-content-center">
@@ -95,7 +61,7 @@
                     {{-- Hotel Image Gallery --}}
                     <div class="hotel-images mb-4 hide-scrollbar">
                         @foreach ($hotel->hotelImages as $image)
-                            <img src="{{ asset('storage/hotels/' . $image->image) }}" alt="hotel image">
+                            <img src="{{ asset('storage/' . $image->image) }}" alt="hotel image">
                         @endforeach
                     </div>
 
@@ -107,7 +73,10 @@
             </div>
 
             {{-- 2. Room List Section --}}
-            <h3 class="fw-bold mb-4 px-2">Available Rooms</h3>
+            <div class="d-flex align-items-center mb-4 px-2">
+                <div class="bg-primary rounded-pill me-3" style="width: 5px; height: 30px;"></div>
+                <h3 class="fw-bold mb-0">Available Table</h3>
+            </div>
 
             @foreach ($rooms as $room)
                 @php $isAvailable = $room->status->name == 'Available'; @endphp
@@ -117,7 +86,7 @@
                         <div class="col-md-5 bg-light position-relative border-end">
                             <div class="room-images hide-scrollbar" style="{{ !$isAvailable ? 'filter: grayscale(80%);' : '' }}">
                                 @foreach ($room->images as $image)
-                                    <img src="{{ asset('storage/rooms/' . $image->image) }}" alt="room image">
+                                    <img src="{{ asset('storage/' . $image->image) }}" alt="room image">
                                 @endforeach
                             </div>
 
@@ -186,7 +155,7 @@
                                     <div class="col-md-6 mb-3">
                                         <div class="room-images hide-scrollbar">
                                             @foreach ($room->images as $image)
-                                                <img src="{{ asset('storage/rooms/' . $image->image) }}" class="w-100 rounded-3" alt="Room Image" style="height: 300px; object-fit: cover;">
+                                                <img src="{{ asset('storage/' . $image->image) }}" class="w-100 rounded-3" alt="Room Image" style="height: 300px; object-fit: cover;">
                                             @endforeach
                                         </div>
                                     </div>
@@ -219,7 +188,7 @@
                             <div class="modal-footer border-0 p-4 pt-0">
                                 <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Close</button>
                                 @if ($isAvailable)
-                                    <a href="#" class="btn btn-primary rounded-pill px-5 fw-bold shadow">Reserve Now</a>
+                                    <a href="{{ route('hotels.index') }}" class="btn btn-primary rounded-pill px-5 fw-bold shadow">Reserve Now</a>
                                 @endif
                             </div>
                         </div>

@@ -11,7 +11,7 @@
                     <h5 class="mb-1">Edit Restaurant's password</h5>
                 </div>
                 <div class="card-body">
-                    <form method="POST" action="{{ route('restaurant.update', $restaurant->id) }}">
+                    <form method="POST" action="{{ route('admin.restaurant.update', $restaurant->id) }}">
                         @csrf
                         @method('PUT')
 

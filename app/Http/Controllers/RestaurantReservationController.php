@@ -3,25 +3,16 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\RestaurantReservation;
-use App\Models\Restaurant;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use App\Models\Restaurant;
+use App\Models\RestaurantReservation;
+use Carbon\Carbon;
+
 
 class RestaurantReservationController extends Controller
-{
-
-    public function show($id) {
-        $reservation = RestaurantReservation::with([
-            'user.detail'
-            
-        ])->findOrFail($id);
-
-        return view('staffpage.reservations.restaurant-detail', compact('reservation')
-        );
-       
-    }
+{   
+    
     /**
      * 特定のレストランを表示（ホテルと同じ ID固定方式）
       */
@@ -66,31 +57,6 @@ class RestaurantReservationController extends Controller
         ]);
 
         return view('userpage.booking.restaurant.reservation-success');
-    }
-
-    // カレンダー
-    public function calendar() {
-        return view('staffpage.calendar.restaurant-calendar');       
-    }
-
-    public function calendarData() {
-        $reservations = RestaurantReservation::all();
-        $events = [];
-        foreach($reservations as $reservation) {
-
-            $events[] = [
-                'title'     =>'1組 / ' .$reservation->guests . '名',
-                'start'     => Carbon::parse($reservation->start_at)->toIso8601String(),
-                'end'       => Carbon::parse($reservation->end_at)->toIso8601String(),
-                // 予約一覧のURLを入れる（まだないので、コメントアウト）
-                // 'url'       => route('store.reservation.index',[
-                //             'date' => Carbon::parse($reservation->start_at)->format('Y-m-d')
-                // ]),
-            ];
-
-        }
-        return response()->json($events);
-       
     }
 
 }

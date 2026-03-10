@@ -84,7 +84,7 @@
             @if ($favoriteHotels->isEmpty() && $favoriteRestaurants->isEmpty())
                 <div class="fav-empty">
                     <i class="fa-regular fa-heart"></i>
-                    <p>まだお気に入りがありません。</p>
+                    <p>No Favorites yet</p>
                 </div>
             @else
 
@@ -135,7 +135,7 @@
                 {{-- フィルター後の空状態 --}}
                 <div class="fav-empty" id="fav-empty-msg" style="display:none;">
                     <i class="fa-regular fa-heart"></i>
-                    <p>該当するお気に入りがありません。</p>
+                    <p>No Favorites yet</p>
                 </div>
 
             @endif

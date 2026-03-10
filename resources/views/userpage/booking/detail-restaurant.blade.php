@@ -62,7 +62,7 @@
                     {{-- Restaurant Gallery --}}
                     <div class="restaurant-images mb-4 hide-scrollbar">
                         @foreach ($restaurant->restaurantImages as $image)
-                            <img src="{{ asset('storage/restaurants/' . $image->image) }}" alt="restaurant image">
+                            <img src="{{ asset('storage/' . $image->image) }}" alt="restaurant image">
                         @endforeach
                     </div>
 
@@ -90,7 +90,7 @@
                         <div class="col-md-5 bg-light position-relative border-end">
                             <div class="table-images hide-scrollbar" style="{{ !$isAvailable ? 'filter: grayscale(100%);' : '' }}">
                                 @foreach ($table->images as $image)
-                                    <img src="{{ asset('storage/tables/' . $image->image) }}" alt="table image">
+                                    <img src="{{ asset('storage/' . $image->image) }}" alt="table image">
                                 @endforeach
                             </div>
 
@@ -132,7 +132,7 @@
                                     <div>
                                         <small class="text-uppercase text-muted fw-bold d-block mb-1" style="font-size: 0.7rem;">Reservation Fee</small>
                                         <div class="h2 fw-bold {{ !$isAvailable ? 'text-muted' : 'text-primary' }} mb-0">
-                                            {{ isset($table->charges) && $table->charges > 0 ? '$' . number_format($table->charges) : 'Free' }}
+                                            {{ isset($table->charges) && $table->charges > 0 ? '₱' . number_format($table->charges) : 'Free' }}
                                         </div>
                                     </div>
                                     <div>
@@ -163,7 +163,7 @@
                                     <div class="col-md-6 mb-4 mb-md-0">
                                         <div class="table-images hide-scrollbar">
                                             @foreach ($table->images as $image)
-                                                <img src="{{ asset('storage/tables/' . $image->image) }}" class="w-100 rounded-3" alt="Table Image" style="height: 300px;">
+                                                <img src="{{ asset('storage/' . $image->image) }}" class="w-100 rounded-3" alt="Table Image" style="height: 300px;">
                                             @endforeach
                                         </div>
                                     </div>
@@ -193,7 +193,7 @@
                                             <div class="col-6">
                                                 <div class="bg-light py-2 rounded-2 border border-primary border-opacity-25">
                                                     <small class="text-muted d-block small">Booking Fee</small>
-                                                    <span class="fw-bold text-primary">{{ $table->charges > 0 ? '$' . number_format($table->charges) : 'Free' }}</span>
+                                                    <span class="fw-bold text-primary">{{ $table->charges > 0 ? '₱' . number_format($table->charges) : 'Free' }}</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -203,7 +203,7 @@
                             <div class="modal-footer border-0 p-4 pt-0">
                                 <button type="button" class="btn btn-link text-decoration-none text-muted fw-bold" data-bs-dismiss="modal">Close</button>
                                 @if ($isAvailable)
-                                    <a href="#" class="btn btn-primary rounded-pill px-5 fw-bold shadow">Confirm & Book Now</a>
+                                    <a href="{{ route('restaurant.show') }}" class="btn btn-primary rounded-pill px-5 fw-bold shadow">Confirm & Book Now</a>
                                 @endif
                             </div>
                         </div>

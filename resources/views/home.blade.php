@@ -89,7 +89,7 @@
                         </a>
                     </div>
                     <div class="col-12 mb-3">
-                        <a href="{{ route('jeepney.index') }}" class="menu-btn menu-jeepney text-decoration-none">
+                        <a href="{{ route('user.jeepney.index') }}" class="menu-btn menu-jeepney text-decoration-none">
                             <i class="fa-solid fa-van-shuttle"></i>
                             <div class="menu-text-wrapper">
                                 <div class="menu-title">Route & Ride</div>
@@ -107,7 +107,7 @@
                         </a>
                     </div>
                     <div class="col-12 mb-3">
-                        <a href="{{ route('daily.fortune.show') }}" class="menu-btn menu-fortune text-decoration-none">
+                        <a href="{{ route('user.daily.fortune.show') }}" class="menu-btn menu-fortune text-decoration-none">
                             <i class="fa-solid fa-star"></i>
                             <div class="menu-text-wrapper">
                                 <div class="menu-title">Today's Pick</div>

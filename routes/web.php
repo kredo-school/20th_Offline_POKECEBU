@@ -165,9 +165,6 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/staff/mypage/hotel/edit', [StaffMypageController::class, 'editStaffMypage'])->name('staff.mypage.hotel.edit');
         Route::post('/staff/mypage/hotel/store', [StaffMypageController::class, 'storeHotel'])->name('staff.mypage.hotel.store');
 
-        Route::get('/reservations', [HotelReservationController::class, 'hotel'])->name('reservations');
-        Route::get('/reservations/{id}', [HotelReservationController::class, 'show'])->name('reservations.show');
-
         #Hotel - Room overview
         Route::get('/roomOverview', [HotelRoomController::class, 'roomOverview'])->name('roomOverview');
         Route::post('/storeRoomType', [HotelRoomController::class, 'storeRoomType'])->name('storeRoomType');

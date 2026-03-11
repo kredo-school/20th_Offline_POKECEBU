@@ -30,15 +30,15 @@
                         value="{{ request('destination') }}">
                 </div>
 
-                <div class="col-md-2">
+                <div class="col-md-3">
                     <input type="date" name="date" class="form-control" value="{{ request('date') }}">
                 </div>
 
-                <div class="col-md-2">
+                <div class="col-md-3">
                     <input type="time" name="time" class="form-control" value="{{ request('time') }}">
                 </div>
 
-                <div class="col-md-2">
+                {{-- <div class="col-md-2">
                     <select name="tables" class="form-select">
                         <option value="">Tables</option>
                         @for ($i = 1; $i <= 10; $i++)
@@ -46,7 +46,7 @@
                                 {{ $i }} table{{ $i > 1 ? 's' : '' }}</option>
                         @endfor
                     </select>
-                </div>
+                </div> --}}
 
                 <div class="col-md-2">
                     <select id="guests" name="guests" class="form-select">
@@ -85,7 +85,7 @@
                             <input type="hidden" name="destination" value="{{ request('destination') }}">
                             <input type="hidden" name="date" value="{{ request('date') }}">
                             <input type="hidden" name="time" value="{{ request('time') }}">
-                            <input type="hidden" name="tables" value="{{ request('tables') }}">
+                            {{-- <input type="hidden" name="tables" value="{{ request('tables') }}"> --}}
                             <input type="hidden" name="guests" value="{{ request('guests') }}">
 
                             @foreach ($amenities as $amenity)
@@ -194,6 +194,7 @@
                                                                 : null;
                                                         $available = $restaurant->available_tables_count ?? null;
                                                     @endphp
+                                                    
 
                                                     @if ($avg)
                                                         <div class="badge bg-success mb-2"><i

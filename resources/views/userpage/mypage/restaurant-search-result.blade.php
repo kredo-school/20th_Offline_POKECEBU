@@ -97,28 +97,49 @@
                                         for="amenity-{{ $amenity->id }}">{{ $amenity->name }}</label>
                                 </div>
                             @endforeach
-
-                            <hr>
-
-                            <div class="mb-2">
-                                <label class="form-label fw-bold small">Sort by</label>
-                                <select class="form-select" name="sort" form="filters-form"
-                                    onchange="document.getElementById('filters-form').submit()">
-                                    <option value="recommended" {{ request('sort') == 'recommended' ? 'selected' : '' }}>
-                                        Recommended</option>
-                                    <option value="price_asc" {{ request('sort') == 'price_asc' ? 'selected' : '' }}>Price:
-                                        Low to High</option>
-                                    <option value="price_desc" {{ request('sort') == 'price_desc' ? 'selected' : '' }}>
-                                        Price: High to Low</option>
-                                    <option value="rating" {{ request('sort') == 'rating' ? 'selected' : '' }}>Rating
-                                    </option>
-                                </select>
-                            </div>
-
                             <div class="mt-3 d-grid">
                                 <button type="submit" class="btn btn-outline-primary btn-sm">Apply Filters</button>
                             </div>
                         </form>
+                         <script>
+                            document.addEventListener('DOMContentLoaded', function() {
+                                try {
+                                    const navEntries = performance.getEntriesByType && performance.getEntriesByType('navigation');
+                                    const isReload = navEntries && navEntries.length && navEntries[0].type === 'reload';
+                                    // 古いブラウザ向けフォールバック
+                                    const perfNav = performance.navigation && performance.navigation.type === 1;
+
+                                    if (isReload || perfNav) {
+                                        const base = location.protocol + '//' + location.host + location.pathname;
+                                        // 履歴を置き換えてからリダイレクト（履歴を汚さない）
+                                        history.replaceState(null, '', base);
+                                        location.replace(base);
+                                    }
+                                } catch (e) {
+                                    // 念のためエラーは無視
+                                    console.warn('Refresh detection failed', e);
+                                }
+                            });
+                        </script>
+
+                        <hr>
+
+                        <div class="mb-2">
+                            <label class="form-label fw-bold small">Sort by</label>
+                            <select class="form-select" name="sort" form="filters-form"
+                                onchange="document.getElementById('filters-form').submit()">
+                                <option value="recommended" {{ request('sort') == 'recommended' ? 'selected' : '' }}>
+                                    Recommended</option>
+                                <option value="price_asc" {{ request('sort') == 'price_asc' ? 'selected' : '' }}>Price:
+                                    Low to High</option>
+                                <option value="price_desc" {{ request('sort') == 'price_desc' ? 'selected' : '' }}>
+                                    Price: High to Low</option>
+                                <option value="rating" {{ request('sort') == 'rating' ? 'selected' : '' }}>Rating
+                                </option>
+                            </select>
+                        </div>
+
+
                     </div>
                 </div>
             </aside>
@@ -144,27 +165,40 @@
                                                 <div>
                                                     <h5 class="card-title mb-1 fw-bold">{{ $restaurant->name }}</h5>
                                                     <div class="small text-muted">
-                                                        <i class="fa-solid fa-location-dot me-1"></i>{{ $restaurant->city ?? $restaurant->address }}
+                                                        <i
+                                                            class="fa-solid fa-location-dot me-1"></i>{{ $restaurant->city ?? $restaurant->address }}
                                                     </div>
 
                                                     {{-- 星評価（star_rating があれば表示） --}}
                                                     @if (!empty($restaurant->star_rating))
-                                                        <div class="small text-warning mt-1">★ {{ number_format($restaurant->star_rating, 1) }}</div>
+                                                        <div class="small text-warning mt-1">★
+                                                            {{ number_format($restaurant->star_rating, 1) }}</div>
                                                     @endif
                                                 </div>
 
                                                 <div class="text-end">
                                                     @php
                                                         $reviews = $restaurant->reviews ?? collect();
-                                                        $avg = $reviews->count() ? number_format($reviews->avg('rating'), 1) : null;
+                                                        $avg = $reviews->count()
+                                                            ? number_format($reviews->avg('rating'), 1)
+                                                            : null;
 
-                                                        $minPriceRaw = $restaurant->min_price ?? ($restaurant->tables->count() ? $restaurant->tables->min('charges') : null);
-                                                        $minPrice = $minPriceRaw !== null ? number_format((float) $minPriceRaw, 2) : null;
+                                                        $minPriceRaw =
+                                                            $restaurant->min_price ??
+                                                            ($restaurant->tables->count()
+                                                                ? $restaurant->tables->min('charges')
+                                                                : null);
+                                                        $minPrice =
+                                                            $minPriceRaw !== null
+                                                                ? number_format((float) $minPriceRaw, 2)
+                                                                : null;
                                                         $available = $restaurant->available_tables_count ?? null;
                                                     @endphp
 
                                                     @if ($avg)
-                                                        <div class="badge bg-success mb-2"><i class="fa-solid fa-star me-1"></i>{{ $avg }}</div>
+                                                        <div class="badge bg-success mb-2"><i
+                                                                class="fa-solid fa-star me-1"></i>{{ $avg }}
+                                                        </div>
                                                     @else
                                                         <div class="badge bg-secondary mb-2">No reviews</div>
                                                     @endif
@@ -172,7 +206,8 @@
                                                     @if ($available !== null)
                                                         @if ((int) $available <= 0)
                                                             <div class="h6 mb-0 text-danger">Sold out</div>
-                                                            <div class="small text-muted">No available tables for selected time</div>
+                                                            <div class="small text-muted">No available tables for selected
+                                                                time</div>
                                                         @elseif ($minPrice !== null)
                                                             <div class="h5 mb-0">₱{{ $minPrice }}~</div>
                                                             <div class="small text-muted">per booking</div>
@@ -196,29 +231,40 @@
                                             </p>
 
                                             <div class="d-flex gap-2 align-items-center">
-                                                <a href="{{ route('user.restaurants.detail', $restaurant->id) }}" class="btn btn-outline-secondary btn-sm">Details</a>
+                                                <a href="{{ route('user.restaurants.detail', $restaurant->id) }}"
+                                                    class="btn btn-outline-secondary btn-sm">Details</a>
 
                                                 <div class="ms-3 d-inline-flex align-items-center gap-2">
                                                     @if ($restaurant->isFavorited())
-                                                        <form method="POST" action="{{ route('user.favorite.destroy', ['restaurant', $restaurant->id]) }}" class="d-inline">
+                                                        <form method="POST"
+                                                            action="{{ route('user.favorite.destroy', ['restaurant', $restaurant->id]) }}"
+                                                            class="d-inline">
                                                             @csrf
                                                             @method('DELETE')
-                                                            <button class="btn btn-favorite btn p-0" type="submit" aria-label="Unfavorite">
-                                                                <i class="fa-solid fa-heart text-danger align-middle" style="font-size:1rem;"></i>
+                                                            <button class="btn btn-favorite btn p-0" type="submit"
+                                                                aria-label="Unfavorite">
+                                                                <i class="fa-solid fa-heart text-danger align-middle"
+                                                                    style="font-size:1rem;"></i>
                                                             </button>
                                                         </form>
                                                     @else
-                                                        <form method="POST" action="{{ route('user.favorite.store', ['restaurant', $restaurant->id]) }}" class="d-inline">
+                                                        <form method="POST"
+                                                            action="{{ route('user.favorite.store', ['restaurant', $restaurant->id]) }}"
+                                                            class="d-inline">
                                                             @csrf
-                                                            <button class="btn btn-favorite btn p-0" type="submit" aria-label="Favorite">
-                                                                <i class="fa-regular fa-heart align-middle" style="font-size:1rem;"></i>
+                                                            <button class="btn btn-favorite btn p-0" type="submit"
+                                                                aria-label="Favorite">
+                                                                <i class="fa-regular fa-heart align-middle"
+                                                                    style="font-size:1rem;"></i>
                                                             </button>
                                                         </form>
                                                     @endif
 
                                                     {{-- 合計いいね数 --}}
-                                                    <div class="favorites-count small text-muted align-middle" data-count="{{ $restaurant->favorites_count ?? 0 }}">
-                                                        <span class="d-inline-block align-middle">{{ $restaurant->favorites_count ?? 0 }}</span>
+                                                    <div class="favorites-count small text-muted align-middle"
+                                                        data-count="{{ $restaurant->favorites_count ?? 0 }}">
+                                                        <span
+                                                            class="d-inline-block align-middle">{{ $restaurant->favorites_count ?? 0 }}</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -240,7 +286,9 @@
                         <div class="d-flex flex-column flex-sm-row align-items-center justify-content-between">
                             <div class="mb-2 mb-sm-0 text-muted">
                                 @if ($restaurants->total() > 0)
-                                    Showing <strong>{{ $restaurants->firstItem() }}</strong> to <strong>{{ $restaurants->lastItem() }}</strong> of <strong>{{ $restaurants->total() }}</strong> results
+                                    Showing <strong>{{ $restaurants->firstItem() }}</strong> to
+                                    <strong>{{ $restaurants->lastItem() }}</strong> of
+                                    <strong>{{ $restaurants->total() }}</strong> results
                                 @else
                                     No results found
                                 @endif

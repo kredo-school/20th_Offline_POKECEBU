@@ -34,7 +34,7 @@ class RestaurantController extends Controller
         $time = $request->input('time');           // 例: 19:00
         $guests = (int) $request->input('guests', 0);
         $tablesNeeded = (int) $request->input('tables', 0);
-        $categories = (array) $request->input('categories', []);
+        $amenities = (array) $request->input('amenities', []);
         $destination = $request->input('destination');
         $sort = $request->input('sort');
 
@@ -149,71 +149,82 @@ class RestaurantController extends Controller
         }
 
         // カテゴリ（料理ジャンル等）を AND 条件で適用
-        if (!empty($categories)) {
-            $query->whereHas('categories', function ($q) use ($categories) {
-                $q->whereIn('categories.id', $categories);
+        // if (!empty($categories)) {
+        //     $query->whereHas('categories', function ($q) use ($categories) {
+        //         $q->whereIn('categories.id', $categories);
+        //     });
+        // }
+        // amenities を AND 条件で適用（同じ room が全てのカテゴリを持つ）
+        if (!empty($amenities)) {
+            $query->whereHas('tables', function ($q) use ($amenities) {
+                foreach ($amenities as $amenityId) {
+                    $q->whereHas('categories', function ($q2) use ($amenityId) {
+                        $q2->where('categories.id', $amenityId);
+                    });
+                }
             });
         }
 
-        // --- デフォルトの minPrice サブクエリ（必ず定義しておく） ---
-        $defaultMinPriceSub = "(
-        SELECT MIN(rt.charges)
-        FROM restaurant_tables rt
-        WHERE rt.restaurant_id = restaurants.id
-    )";
+            // --- デフォルトの minPrice サブクエリ（必ず定義しておく） ---
+            $defaultMinPriceSub = "(
+            SELECT MIN(rt.charges)
+             FROM restaurant_tables rt
+             WHERE rt.restaurant_id = restaurants.id
+            )";
 
-        // ここで select を明示し、min_price を付与する
-        $query->select('restaurants.*');
-        // もし期間指定で上書きした $minPriceSub があればそれを使い、なければデフォルト
-        if (isset($minPriceSub) && !empty($minPriceSub)) {
-            $query->addSelect(DB::raw("({$minPriceSub}) as min_price"));
-        } else {
-            $query->addSelect(DB::raw("({$defaultMinPriceSub}) as min_price"));
+            // ここで select を明示し、min_price を付与する
+            $query->select('restaurants.*');
+            // もし期間指定で上書きした $minPriceSub があればそれを使い、なければデフォルト
+            if (isset($minPriceSub) && !empty($minPriceSub)) {
+                $query->addSelect(DB::raw("({$minPriceSub}) as min_price"));
+            } else {
+                $query->addSelect(DB::raw("({$defaultMinPriceSub}) as min_price"));
+            }
+
+            // ソート
+            switch ($sort) {
+                case 'price_asc':
+                    $query->orderByRaw("({$defaultMinPriceSub}) ASC");
+                    break;
+                case 'price_desc':
+                    $query->orderByRaw("({$defaultMinPriceSub}) DESC");
+                    break;
+                case 'rating':
+                    $query->orderByDesc('star_rating');
+                    break;
+                default:
+                    $query->latest('id');
+            }
+
+            // 必要なリレーションを eager load、合計いいね数を付与、現在ユーザー分の favorites を絞ってロード
+            $query->with(['restaurantImages', 'tables', 'reviews'])
+                ->withCount('favorites')
+                ->with(['favorites' => function ($q) {
+                    if ($userId = Auth::id()) {
+                        $q->where('user_id', $userId);
+                    } else {
+                        $q->whereRaw('0 = 1');
+                    }
+                }]);
+
+
+            // 重複削除（必要なら）
+            $query->distinct();
+
+            // ページネーション（ここで初めて paginate を呼ぶ）
+            $restaurants = $query->paginate(10)->withQueryString();
+
+            // カテゴリ一覧などビュー用データ
+            $categoriesList = \App\Models\Category::orderBy('name')->get();
+
+            $guestOptions = range(1, 10);
+            $amenities = \App\Models\Category::whereIn('target_type', ['restaurant', 'all'])
+                ->orderBy('name', 'asc')
+                ->get();
+
+            return view('userpage.mypage.restaurant-search-result', compact('restaurants', 'amenities', 'guestOptions'));
         }
-
-        // ソート
-        switch ($sort) {
-            case 'price_asc':
-                $query->orderByRaw("({$defaultMinPriceSub}) ASC");
-                break;
-            case 'price_desc':
-                $query->orderByRaw("({$defaultMinPriceSub}) DESC");
-                break;
-            case 'rating':
-                $query->orderByDesc('star_rating');
-                break;
-            default:
-                $query->latest('id');
-        }
-
-        // 必要なリレーションを eager load、合計いいね数を付与、現在ユーザー分の favorites を絞ってロード
-        $query->with(['restaurantImages', 'tables', 'reviews'])
-            ->withCount('favorites')
-            ->with(['favorites' => function ($q) {
-                if ($userId = Auth::id()) {
-                    $q->where('user_id', $userId);
-                } else {
-                    $q->whereRaw('0 = 1');
-                }
-            }]);
-
-
-        // 重複削除（必要なら）
-        $query->distinct();
-
-        // ページネーション（ここで初めて paginate を呼ぶ）
-        $restaurants = $query->paginate(10)->withQueryString();
-
-        // カテゴリ一覧などビュー用データ
-        $categoriesList = \App\Models\Category::orderBy('name')->get();
-
-        $guestOptions = range(1, 10);
-        $amenities = \App\Models\Category::whereIn('target_type', ['restaurant', 'all'])
-            ->orderBy('name', 'asc')
-            ->get();
-
-        return view('userpage.mypage.restaurant-search-result', compact('restaurants', 'amenities', 'guestOptions'));
-    }
+    
 
 
 

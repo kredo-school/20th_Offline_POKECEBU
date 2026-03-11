@@ -4,86 +4,106 @@
     <link rel="stylesheet" href="{{ asset('css/staff.css/mypage/mypage-hotel.css') }}">
 @endpush
 
-
-
 @section('content')
-    <div class="container mt-5">
-        <div class="row">
-
-            {{-- 左メニュー --}}
-            <div class="col-3 d-flex flex-column mb-4">
-                <span class="px-3 py-2 rounded menu-item mb-1">Hotel Profile</span>
+    <div class="ig-main-container">
+        <div class="ig-card">
+            {{-- Header --}}
+            <div class="ig-card-header d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="ig-card-title">Hotel Profile</h2>
+                    <p class="ig-card-subtitle">Public information of your hotel</p>
+                </div>
+                <a href="{{ route('staff.mypage.hotel.edit') }}" class="ig-btn-primary">
+                    Edit / Apply Changes
+                </a>
             </div>
 
-            {{-- 右コンテンツ --}}
-            <div class="col-9">
-                <div class="card mb-4">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <span>Hotel Information</span>
-                        <a href="{{ route('staff.mypage.hotel.edit') }}" class="btn btn-primary btn-sm">
-                            Edit / Apply Changes
-                        </a>
+            {{-- Hotel Visual Section --}}
+            <div class="ig-profile-header mb-5">
+                <div class="ig-avatar-container">
+                    <img src="{{ $hotelImage ? asset('storage/' . $hotelImage->image) : 'https://via.placeholder.com/150' }}"
+                        alt="Hotel Image" class="ig-hotel-img">
+                </div>
+                <div class="ig-hotel-info">
+                    <h3 class="ig-hotel-name">{{ $hotel->name ?? 'Sample Hotel' }}</h3>
+                    <div class="ig-rating">
+                        @for ($i = 0; $i < ($hotel->star_rating ?? 0); $i++)
+                            <i class="fa-solid fa-star" style="color: #ffc107;"></i>
+                        @endfor
                     </div>
+                    <p class="ig-hotel-desc">{{ $hotel->description ?? 'No information provided.' }}</p>
+                </div>
+            </div>
 
-                    <div class="card-body">
-
-                        {{-- ホテル画像と基本情報 --}}
-                        {{-- ホテル画像と基本情報 --}}
-                        {{-- ホテル画像と基本情報 --}}
-                        <div class="d-flex align-items-center mb-4">
-                            <img src="{{ $hotelImage ? asset('storage/' . $hotelImage->image) : 'https://via.placeholder.com/120' }}"
-                                class="rounded me-3" alt="Hotel Image"
-                                style="width: 120px; height: 120px; object-fit: cover;">
-                            <div>
-                                <h5 class="mb-1">{{ $hotel->name ?? 'Sample Hotel' }}</h5>
-                                <p class="mb-0 text-muted">{{ $hotel->description ?? 'No information' }}</p>
-                            </div>
-                        </div>
-                        {{-- 代表者・メール --}}
-                        <div class="row mb-3">
-                            <div class="col-6">
-                                <label class="form-label text-muted">Representative</label>
-                                <input type="text" class="form-control"
-                                    value="{{ $hotel->representative_name ?? 'No information' }}" readonly>
-                            </div>
-                            <div class="col-6">
-                                <label class="form-label text-muted">Email</label>
-                                <input type="text" class="form-control"
-                                    value="{{ $hotel->representative_email ?? 'No information' }}" readonly>
-                            </div>
-                        </div>
-
-                        {{-- 電話・Web --}}
-                        <div class="row mb-3">
-                            <div class="col-6">
-                                <label class="form-label text-muted">Phone</label>
-                                <input type="text" class="form-control" value="{{ $hotel->phone ?? 'No information' }}"
-                                    readonly>
-                            </div>
-                            <div class="col-6">
-                                <label class="form-label text-muted">Website</label>
-                                <input type="text" class="form-control" value="{{ $hotel->website ?? 'No information' }}"
-                                    readonly>
-                            </div>
-                        </div>
-
-                        {{-- 住所 --}}
-                        <div class="mb-3">
-                            <label class="form-label text-muted">Address</label>
-                            <input type="text" class="form-control" value="{{ $hotel->address ?? 'No information' }}"
-                                readonly>
-                        </div>
-
-                        {{-- 市 --}}
-                        <div class="mb-3">
-                            <label class="form-label text-muted">City</label>
-                            <input type="text" class="form-control" value="{{ $hotel->city ?? 'No information' }}"
-                                readonly>
-                        </div>
-
-                    </div>
+            {{-- Information Grid --}}
+            <div class="ig-info-grid">
+                <div class="ig-info-item">
+                    <span class="ig-info-label">Representative</span>
+                    <span class="ig-info-value">{{ $hotel->representative_name ?? 'Not set' }}</span>
+                </div>
+                <div class="ig-info-item">
+                    <span class="ig-info-label">Email</span>
+                    <span class="ig-info-value">{{ $hotel->representative_email ?? 'Not set' }}</span>
+                </div>
+                <div class="ig-info-item">
+                    <span class="ig-info-label">Phone</span>
+                    <span class="ig-info-value">{{ $hotel->phone ?? 'Not set' }}</span>
+                </div>
+                <div class="ig-info-item">
+                    <span class="ig-info-label">Website</span>
+                    <span class="ig-info-value">
+                        @if ($hotel->website)
+                            <a href="{{ $hotel->website }}" target="_blank" class="ig-link">{{ $hotel->website }}</a>
+                        @else
+                            Not set
+                        @endif
+                    </span>
+                </div>
+                <div class="ig-info-item full-width">
+                    <span class="ig-info-label">Address</span>
+                    <span class="ig-info-value">{{ $hotel->address ?? 'Not set' }}, {{ $hotel->city ?? '' }}</span>
                 </div>
             </div>
         </div>
+        <div class="ig-history-card">
+            <h4 class="ig-summary-title mb-4" style="font-size: 18px; font-weight: 700;">Application History</h4>
+            <div class="table-responsive">
+                <table class="table history-table align-middle">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Hotel Name</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($history ?? [] as $item)
+                            <tr>
+                                <td class="text-muted" style="font-size: 13px;">
+                                    {{ $item->created_at->format('Y/m/d H:i') }}</td>
+                                <td class="fw-bold" style="font-size: 14px;">{{ $item->name }}</td>
+                                <td>
+                                    @if ($item->status == 'pending')
+                                        <span class="status-badge status-pending">Pending Review</span>
+                                    @elseif($item->status == 'approved')
+                                        <span class="status-badge status-approved">Approved</span>
+                                    @else
+                                        <span class="status-badge status-rejected">Rejected</span>
+                                    @endif
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="3" class="text-center text-muted py-5">
+                                    <i class="fa-solid fa-clock-rotate-left mb-2" style="font-size: 24px;"></i><br>
+                                    No recent applications found.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
     </div>
 @endsection

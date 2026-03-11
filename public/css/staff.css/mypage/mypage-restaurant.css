@@ -1,2 +1,99 @@
-.menu-item { transition: background-color 0.2s ease, color 0.2s ease; }
-.menu-item:hover { background-color: #f0f4ff; color: #0d6efd; }
+/* 全体の枠組みは edit-hotel と共通 */
+.ig-main-container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.ig-card {
+    background: #fff;
+    border: 1px solid #dbdbdb;
+    border-radius: 12px;
+    padding: 40px;
+}
+
+.ig-card-header {
+    border-bottom: 1px solid #f0f0f0;
+    padding-bottom: 20px;
+    margin-bottom: 30px;
+}
+
+/* ホテル画像と紹介文の部分 */
+.ig-profile-header {
+    display: flex;
+    gap: 30px;
+    align-items: flex-start;
+}
+
+.ig-hotel-img {
+    width: 150px;
+    height: 150px;
+    border-radius: 12px;
+    object-fit: cover;
+    border: 1px solid #efefef;
+}
+
+.ig-hotel-name {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.ig-hotel-desc {
+    margin-top: 15px;
+    color: #4b4b4b;
+    line-height: 1.6;
+}
+
+/* 情報グリッド */
+.ig-info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+    border-top: 1px solid #f0f0f0;
+    padding-top: 30px;
+}
+
+.ig-info-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.ig-info-item.full-width {
+    grid-column: span 2;
+}
+
+.ig-info-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    color: #8e8e8e;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.ig-info-value {
+    font-size: 16px;
+    color: #262626;
+    font-weight: 500;
+}
+
+.ig-link {
+    color: #0095f6;
+    text-decoration: none;
+}
+
+/* ボタン (共通) */
+.ig-btn-primary {
+    background-color: #0095f6;
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 14px;
+    transition: background 0.2s;
+}
+
+.ig-btn-primary:hover {
+    background-color: #1877f2;
+}

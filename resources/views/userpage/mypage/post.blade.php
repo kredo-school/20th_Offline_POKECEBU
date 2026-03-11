@@ -124,9 +124,9 @@
                     <i class="fa-regular fa-camera"></i>
                 </div>
                 <h3>No Posts Yet</h3>
-                <p>投稿をシェアすると、ここに表示されます。</p>
+                <p>When you share a post, each post will be displayed individually.</p>
                 <a href="{{ route('user.posts.create') }}" class="ig-new-post-btn" style="display:inline-flex;">
-                    <i class="fa-solid fa-plus"></i> 最初の投稿をする
+                    <i class="fa-solid fa-plus"></i> Create a new post 
                 </a>
             </div>
         @endif

@@ -14,6 +14,10 @@ class DatabaseSeeder extends Seeder
     {
         $faker = Faker::create();
         $now = Carbon::now();
+        $this->call([
+        JeepneyStopSeeder::class,
+        JeepneyRouteSeeder::class,
+    ]);
 
         /*
         |--------------------------------------------------------------------------
@@ -123,15 +127,6 @@ class DatabaseSeeder extends Seeder
                 'updated_at' => $now,
             ]);
 
-            for ($img = 1; $img <= 3; $img++) {
-                DB::table('hotel_images')->insert([
-                    'hotel_id' => $hUserId,
-                    'image' => "hotel_{$h}_img_{$img}.jpg",
-                    'created_at' => $now,
-                    'updated_at' => $now,
-                ]);
-            }
-
             DB::table('hotel_room_types')->insert([
                 ['hotel_id' => $hUserId, 'type_id' => $deluxeTypeId, 'total_rooms' => 3, 'created_at' => $now],
                 ['hotel_id' => $hUserId, 'type_id' => $suiteTypeId, 'total_rooms' => 2, 'created_at' => $now],
@@ -191,15 +186,6 @@ class DatabaseSeeder extends Seeder
                 'updated_at' => $now,
             ]);
 
-            for ($img = 1; $img <= 3; $img++) {
-                DB::table('restaurant_images')->insert([
-                    'restaurant_id' => $rUserId,
-                    'image' => "restaurant_{$r}_img_{$img}.jpg",
-                    'created_at' => $now,
-                    'updated_at' => $now,
-                ]);
-            }
-
             for ($t = 1; $t <= 5; $t++) {
                 $typeId = ($t <= 3) ? $windowTypeId : $familyTypeId;
                 $tableId = DB::table('restaurant_tables')->insertGetId([
@@ -222,19 +208,28 @@ class DatabaseSeeder extends Seeder
 
         /*
         |--------------------------------------------------------------------------
-        | 5. 予約データの生成 (計800件)
+        | 5. 予約データの生成 (計800件：2026年 600件 / 2025年 200件)
         |--------------------------------------------------------------------------
         */
         for ($i = 0; $i < 800; $i++) {
-            $reservedAt = Carbon::now()->subMonths(rand(0, 14))->subDays(rand(0, 28))->setTime(rand(8, 20), 0);
+            // $iが600未満なら2026年、それ以降は2025年の日付を生成
+            if ($i < 600) {
+                // 2026年1月1日 〜 2026年12月31日
+                $reservedAt = Carbon::create(2026, rand(1, 12), rand(1, 28))
+                                    ->setTime(rand(8, 20), 0);
+            } else {
+                // 2025年1月1日 〜 2025年12月31日
+                $reservedAt = Carbon::create(2025, rand(1, 12), rand(1, 28))
+                                    ->setTime(rand(8, 20), 0);
+            }
 
             // ホテル予約
             $roomInfo = $allRoomIds[array_rand($allRoomIds)];
-            $startAt = $reservedAt->copy()->addDays(rand(1, 20));
+            $startAt = $reservedAt->copy()->addDays(rand(1, 10)); // 予約日から1〜10日後
             $endAt = $startAt->copy()->addDays(rand(1, 4));
 
             DB::table('hotel_reservations')->insert([
-                'reservation_id' => 'HRES' . $faker->unique(true)->numberBetween(100000, 9999999),
+                'reservation_id' => 'HRES' . $faker->unique()->numberBetween(100000, 9999999),
                 'user_id' => $userIds['customer'],
                 'hotel_id' => $roomInfo['hotel_id'],
                 'room_id' => $roomInfo['id'],
@@ -251,10 +246,10 @@ class DatabaseSeeder extends Seeder
 
             // レストラン予約
             $tableInfo = $allTableIds[array_rand($allTableIds)];
-            $resStart = $reservedAt->copy()->addDays(rand(1, 20))->setTime(rand(11, 20), 0);
+            $resStart = $reservedAt->copy()->addDays(rand(1, 10))->setTime(rand(11, 20), 0);
 
             DB::table('restaurant_reservations')->insert([
-                'reservation_id' => 'RRES' . $faker->unique(true)->numberBetween(100000, 9999999),
+                'reservation_id' => 'RRES' . $faker->unique()->numberBetween(100000, 9999999),
                 'user_id' => $userIds['customer'],
                 'restaurant_id' => $tableInfo['restaurant_id'],
                 'table_id' => $tableInfo['id'],
@@ -295,11 +290,11 @@ class DatabaseSeeder extends Seeder
 
                 /*
         |--------------------------------------------------------------------------
-        | 7. 一般ユーザー (role_id: 1) を100名追加生成
+        | 7. 一般ユーザー (role_id: 1) を30名追加生成
         |--------------------------------------------------------------------------
         | 分析画面でグラフが表示されるよう、作成日を過去12ヶ月間でバラけさせる
         */
-        for ($u = 1; $u <= 100; $u++) {
+        for ($u = 1; $u <= 30; $u++) {
             // 過去0ヶ月〜11ヶ月前までのランダムな日時を生成
             $randomDate = Carbon::now()
                 ->subMonths(rand(0, 11))

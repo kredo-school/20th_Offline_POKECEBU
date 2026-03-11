@@ -3,32 +3,20 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Hotel;
-use App\Models\HotelRoomType;
-use App\Models\HotelReservation;
-use App\Models\HotelRoom;
-
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use App\Models\Hotel;
+use App\Models\HotelRoom;
+use App\Models\HotelRoomType;
+use App\Models\HotelReservation;
+
 
 
 class HotelReservationController extends Controller
 {
 
-    // sutffの予約詳細確認用
-    public function show($id)
-    {
-        $reservation = HotelReservation::with([
-            'user.detail',
-            'room'
-        ])->findOrFail($id);
-
-        return view(
-            'staffpage.reservations.hotel-detail',
-            compact('reservation')
-        );
-    }
+   
     public function confirmation()
     {
         $hotelId = session('hotel_id');

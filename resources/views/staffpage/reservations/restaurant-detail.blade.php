@@ -85,7 +85,7 @@
                           <h5 class="mb-0">Notes</h5>
                       </div>
                       <div class="card-body" style="min-height: 120px">
-                        {{ $reservation->note ?? '' }}
+                        {{ $reservation->other ?? '' }}
                       </div>
                     
                   </div>
@@ -94,4 +94,34 @@
       </div>
   @endsection
 
+<style>
   
+  /* 印刷機能 */
+  @media print {
+      /* ヘッダーやナビは非表示 */
+      nav,
+      .btn,
+      .btn-cancel,
+      .btn-print,
+      .btn-send,
+      .btn-add,
+      .btn-edit {
+        display: none !important;
+      }
+
+      /* 紙いっぱいに表示 */
+      .container {
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+
+    th,
+    td {
+      border: 1px solid #999 !important;
+      color: #000 !important;
+    }
+  }
+
+  </style>
+ 

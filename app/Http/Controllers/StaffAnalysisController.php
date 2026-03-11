@@ -72,7 +72,7 @@ class StaffAnalysisController extends Controller
             'currentKpi', 'monthlyBookings', 'monthlyRevenue', 'monthlyGuests', 
             'monthlyAvgStay', 'dayOfWeekData', 'typeStatsMonth', 
             'typeBookingStatsMonth', 'typeStatsYear', 'typeBookingStatsYear', 
-            'hotelId', 'hotels', 'allDailyData' // heatmapDataの代わりにallDailyDataを渡す
+            'hotelId', 'hotels', 'allDailyData'
         ));
     }
         /**

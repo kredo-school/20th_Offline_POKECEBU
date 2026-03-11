@@ -211,12 +211,9 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/{id}/viewTable', [RestaurantTableController::class, 'viewTable'])->name('viewTable');
         
         // カレンダー
-         Route::get('/store/calendar', [RestaurantStaffController::class, 'calendar'])->name('store.calendar');
-         Route::get('/store/calendar/data', [RestaurantStaffController::class, 'calendarData'])->name('store.calendar.data');
-
-        //  予約一覧
-        Route::get('/reservations/{date}', [RestaurantStaffController::class, 'daily'])
-        ->name('reservations.date');
+        Route::get('/store/calendar', [RestaurantStaffController::class, 'calendar'])->name('calendar');
+        Route::get('/store/calendar/data', [RestaurantStaffController::class, 'calendarData'])->name('calendar.data');
+        Route::get('/reservations/{date}', [RestaurantStaffController::class, 'daily'])->name('reservations.date');
         Route::get('/reservations/detail/{id}', [RestaurantStaffController::class, 'show'])->name('reservations.show');
         
     });

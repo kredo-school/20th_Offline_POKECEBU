@@ -59,14 +59,14 @@ class HotelReservation extends Model
         ->when($hotelId, function ($query, $hotelId) {
             return $query->where('hotel_reservations.hotel_id', $hotelId);
         })
-        ->whereYear('hotel_reservations.created_at', now()->year)
+        ->whereYear('hotel_reservations.end_at', now()->year)
         ->where('statuses.name', 'Booked')
         ->selectRaw('
-            MONTH(hotel_reservations.created_at) as month,
+            MONTH(hotel_reservations.end_at) as month,
             COUNT(hotel_reservations.id) as total_bookings, 
             SUM(hotel_reservations.guests) as total_guests,
             AVG(DATEDIFF(hotel_reservations.end_at, hotel_reservations.start_at)) as avg_stay
-        ') // check_out -> end_at, check_in -> start_at に修正
+        ') 
         ->groupBy('month')
         ->orderBy('month')
         ->get()
@@ -157,14 +157,12 @@ class HotelReservation extends Model
     $monthlyRevenue = array_fill(0, 12, 0);
 
     $results = self::select(
-        // ここを hotel_reservations.created_at に修正
-        DB::raw('MONTH(hotel_reservations.created_at) as month'),
+        DB::raw('MONTH(hotel_reservations.end_at) as month'),
         DB::raw('COUNT(*) as count'),
         DB::raw('SUM(total_price) as revenue')
     )
     ->join('statuses', 'hotel_reservations.status_id', '=', 'statuses.id')
-    // ここも hotel_reservations.created_at に修正
-    ->whereYear('hotel_reservations.created_at', $year)
+    ->whereYear('hotel_reservations.end_at', $year)
     ->where('statuses.name', 'Booked')
     ->when($hotelId, function($query) use ($hotelId) {
         return $query->where('hotel_id', $hotelId);

@@ -230,7 +230,7 @@
                                             {{-- 部屋が無い場合は明示的メッセージを出す --}}
                                             @if ($rooms->count() === 0)
                                                 <div class="h6 mb-0 text-muted">No rooms</div>
-                                                <div class="small text-muted">部屋情報がまだ登録されていません。</div>
+                                                <div class="small text-muted">Room information has not yet been registered.</div>
                                             @else
                                                 {{-- available_rooms_count がセットされている場合は在庫0なら Sold out 表示 --}}
                                                 @if ($available !== null)

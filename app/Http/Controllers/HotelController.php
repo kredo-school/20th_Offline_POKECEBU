@@ -211,7 +211,13 @@ class HotelController extends Controller
         // ページネーション
         $hotels = $query->paginate(10)->withQueryString();
 
-        $amenitiesList = \App\Models\Category::orderBy('name')->get();
+        // $amenitiesList = \App\Models\Category::orderBy('name')->get();
+        // ホテル用フィルター項目のみ取得
+        $amenitiesList = \App\Models\Category::whereIn('target_type', ['hotel', 'all'])
+            ->orderBy('name', 'asc')
+            ->get();
+
+
 
         return view('userpage.mypage.hotel-search-result', [
             'hotels' => $hotels,

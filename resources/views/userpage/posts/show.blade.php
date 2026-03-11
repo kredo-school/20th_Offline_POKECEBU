@@ -8,16 +8,16 @@
 @section('title', 'Post')
 
 @section('content')
-
+<div class="post-body">
     {{-- Backボタン --}}
    <div class="back-bar">
-    <a href="{{ route('home') }}" class="back-btn">
+    <a href="{{ route('user.posts.index') }}" class="back-btn">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="15 18 9 12 15 6"/>
         </svg>
         Back
     </a>
-</div>
+    </div>
     <div class="post-detail">
 
         {{-- ── 左：メディア ── --}}
@@ -168,8 +168,7 @@
                             data-liked="{{ $post->isliked() ? 'true' : 'false' }}"
                             data-store-url="{{ route('user.like.store', $post->id) }}"
                             data-destroy-url="{{ route('user.like.destroy', $post->id) }}"
-                            data-csrf="{{ csrf_token() }}"
-                        >
+                            data-csrf="{{ csrf_token() }}">
                             <i class="{{ $post->isliked() ? 'fa-solid' : 'fa-regular' }} fa-heart"></i>
                         </button>
                         <button class="action-btn" onclick="document.querySelector('.comment-input-wrapper textarea').focus()">
@@ -202,7 +201,7 @@
             </div>
         </div>
     </div>
-
+</div>
 @endsection
 
 @push('scripts')
@@ -296,3 +295,12 @@
     });
 </script>
 @endpush
+
+<style>
+    .post-body {
+    background: linear-gradient(180deg,
+        #f0f8fb 0%,
+        #e6f5f8 50%,
+        #ffffff 100%);
+    }
+</style>

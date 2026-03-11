@@ -409,17 +409,6 @@
                         @endforeach
                     </div>
                 </div>
-
-                <div class="post-tags">
-                    <h3 class="section-title">人気タグ</h3>
-                    <div class="d-flex flex-wrap gap-2 justify-content-center">
-                        @foreach ($popularTags as $tag)
-                            <a href="{{ route('user.tags.show', $tag->name) }}" class="tag-badge">
-                                #{{ $tag->name }}({{ $tag->posts_count }})
-                            </a>
-                        @endforeach
-                    </div>
-                </div>
             </div>
         </div>
     </div>
@@ -851,10 +840,6 @@
         .menu-fortune {
             background-image: url("{{ asset('images/home-fortune.jpg') }}");
             background-position: center 60%;
-        }
-
-        body {
-            background-color: #f8fafc; /* カードが映える薄いグレーの背景 */
         }
 
         .section-title, .recent-posts {

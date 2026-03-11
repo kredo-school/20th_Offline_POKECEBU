@@ -4,23 +4,71 @@
 @section('title', 'Show Post')
 
 @section('content')
+<div class="post-body">
   {{-- ヘッダー --}}
   <div class="container">
-    <div class="top-photo">
-      <h1>SHARE YOUR CEBU</h1>
-    </div>
-    <div class="page-header">
-      <div class="header-text">
-        POST
+    {{-- ヘッダー --}}
+    <div class="top-photo"><h1>SHARE YOUR CEBU</h1></div>
+
+    {{-- タグエリア（人気キーワードなど） --}}
+    <div class="keyword-section">
+      <div class="keyword-header">
+        <span class="line"></span>
+        <h3>KEYWORD</h3>
+        <span class="line"></span>
       </div>
-      <a href="{{ route('user.posts.create') }}" class="add-post-btn">
-        + Add new post
-      </a>
+      <div class="keyword-tags">
+        @foreach ($popularTags as $tag)
+          <a href="{{ route('user.posts.index', ['search' => $tag->name]) }}" class="keyword-tag">
+            #{{ $tag->name }}
+          </a>
+        @endforeach
+      </div>
     </div>
 
-    {{-- ポスト --}}
+    {{-- 検索エリア & ヘッダーナビ --}}
+    <div class="search-container mb-4">
+      <div class="d-flex justify-content-between align-items-center">
+
+        {{-- 左側：タイトルエリア（可変） --}}
+        <h2 class="post-title mb-0" style="white-space: nowrap;">
+          @if(isset($search_word) && $search_word !== '')
+            #{{ $search_word }}
+          @else
+            All posts
+          @endif
+          <span class="post-count text-muted">({{ $posts->count() }})</span>
+        </h2>
+
+        {{-- 右側：操作エリア（固定・右寄せ） --}}
+        <div class="d-flex align-items-center gap-3">
+
+          {{-- 検索ボックスとリセット --}}
+          <div class="d-flex align-items-center">
+            <form action="{{ route('user.posts.index') }}" method="GET" class="position-relative mb-0"
+              style="width: 250px;">
+              <input type="text" name="search" class="form-control search-input" placeholder="Search for tags..."
+                value="{{ $search_word ?? '' }}" style="border-radius: 25px; padding-right: 40px; font-size: 0.9rem;">
+              <button type="submit" class="btn position-absolute end-0 top-50 translate-middle-y border-0 bg-transparent">
+                <i class="fas fa-search text-muted"></i>
+              </button>
+            </form>
+            <a href="{{ route('user.posts.index') }}" class="ms-2 text-muted small text-decoration-none" title="reset">
+              <i class="fas fa-times-circle fa-lg"></i>
+            </a>
+          </div>
+
+          {{-- 投稿ボタン --}}
+          <a href="{{ route('user.posts.create') }}" class="add-post-btn mb-0" style="white-space: nowrap;">
+            + Add Post
+          </a>
+        </div>
+      </div>
+    </div>
+
+    {{-- ポスト一覧（検索結果） --}}
     <div class="row">
-      @foreach ($posts as $post)
+      @forelse ($posts as $post)
         <div class="col-md-6 col-lg-4 mb-4">
           <a href="{{ route('user.posts.show', $post->id) }}" class="post-link">
             <div class="card post-card h-100">
@@ -28,58 +76,42 @@
                 <img src="{{ $post->images->first()->image }}" alt="Post Image" class="card-img-top img-fluid">
               @endif
 
-              <div class="card-body">
-                {{-- ポスト内容：上 --}}
+              <div class="card-body pb-1">
                 <div class="post-main">
-                  <h5 class="card-title">{{ $post->title }}</h5>
+                  <h5 class="card-title fw-bold">{{ $post->title }}</h5>
                   <p class="card-text">
                     {!! nl2br(e(preg_replace('/#[^\s#]+/u', '', $post->body))) !!}
-
                   </p>
                 </div>
 
-                {{-- ポスト内容：下 --}}
                 <div class="post-meta">
                   <p class="post-user mb-1">{{ $post->user->name }}</p>
                   <p class="post-date">{{ $post->created_at->format('M d, Y') }}</p>
                   <div class="post-tags mb-2">
                     @foreach ($post->tags as $tag)
-                      <a href="{{ route('user.tags.show', $tag->name) }}" class="tag-badge">
-                        #{{ $tag->name }}
-                      </a>
+                      <span class="tag-badge">#{{ $tag->name }}</span>
                     @endforeach
                   </div>
                 </div>
-
-
-                {{-- <div>
-                  <i class="far fa-heart"></i> {{ $post->likes->count() }}
-                </div> --}}
-                {{-- @if ($post->comments->isNotEmpty())
-                <ul class="list-group mt-2">
-                  @foreach ($post->comments as $comment)
-                  <li class="list-group-item border-0 p-0 mb-1">
-                    <span class="fw-bold">{{ $comment->user->name }}</span>:
-                    <span>{{ $comment->body }}</span>
-                  </li>
-                  @endforeach
-                </ul>
-                @endif --}}
               </div>
             </div>
           </a>
         </div>
-      @endforeach
+      @empty
+        <div class="col-12 text-center py-5">
+          <p class="text-muted">No posts found.</p>
+        </div>
+      @endforelse
     </div>
-
   </div>
+</div>
 @endsection
 
 
 
 {{-- CSS --}}
 <style>
-  body {
+  .post-body {
     background: linear-gradient(180deg,
         #f0f8fb 0%,
         #e6f5f8 50%,
@@ -87,56 +119,33 @@
   }
 
   /* ヘッダー */
-  .page-header {
-    width: 100%;
-    height: 440px;
-    background-image: url("{{ asset('images/post-header.png') }}");
-    background-size: cover;
-    background-position: center;
-    position: relative;
-    overflow: hidden;
+  .post-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 40px 0 20px;
   }
 
-  .page-header::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.25)
-  }
-
-  .header-text {
-    position: absolute;
-    top: 55%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: #ffffff;
-    font-size: 42px;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
-    text-align: center;
-    white-space: nowrap;
+  .post-title {
+    font-size: 22px;
+    letter-spacing: 3px;
+    font-weight: 600;
   }
 
   .add-post-btn {
-    position: absolute;
-    right: 24px;
-    bottom: 24px;
-    padding: 12px 20px;
-    background: #fdbf79;
-    color: #ffffff;
+    padding: 10px 20px;
+    border-radius: 999px;
+    background: #f4a261;
+    color: white;
     text-decoration: none;
     font-weight: 600;
-    border-radius: 999px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-    transition: all 0.2s ease;
+    transition: all .2s;
   }
 
   .add-post-btn:hover {
+    background: #e76f51;
     transform: translateY(-2px);
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2);
   }
-
 
   /* カード */
   .post-card {
@@ -188,6 +197,14 @@
     display: block;
   }
 
+  .post-tags {
+    height: 63px;
+    overflow: hidden;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: flex-start;
+  }
+
   .tag-badge {
     text-decoration: none;
     display: inline-block;
@@ -224,5 +241,96 @@
     margin: 0;
     position: relative;
     z-index: 2;
+  }
+
+  /* ===== KEYWORDエリア ===== */
+  .keyword-section {
+    text-align: center;
+    margin: 50px 0 40px;
+  }
+
+  /* タイトル */
+  .keyword-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 25px;
+  }
+
+  .keyword-header h3 {
+    font-weight: 600;
+    letter-spacing: 4px;
+    font-size: 20px;
+    color: #444;
+  }
+
+  /* 左右ライン */
+  .keyword-header .line {
+    height: 2px;
+    width: 120px;
+    background: #6c757d;
+  }
+
+  /* タグエリア */
+  .keyword-tags {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px 16px;
+
+    height: 97px;
+    overflow: hidden;
+  }
+
+  /* タグデザイン */
+  .keyword-tag {
+    padding: 8px 18px;
+    border-radius: 30px;
+    border: 1px solid #ccc;
+    text-decoration: none;
+    color: #555;
+    font-size: 14px;
+    transition: all .25s ease;
+  }
+
+  /* hover */
+  .keyword-tag:hover {
+    background: #5bc0de;
+    border-color: #5bc0de;
+    color: white;
+  }
+
+  /* 検索ボックスのスタイル */
+  .search-input {
+    border-radius: 20px 0 0 20px;
+    border: 1px solid #ced4da;
+    padding-left: 20px;
+  }
+
+  .btn-search {
+    border-radius: 0 20px 20px 0;
+    background-color: #2c7da0;
+    color: white;
+    border: none;
+    padding: 0 20px;
+  }
+
+  .btn-search:hover {
+    background-color: #1a5c7a;
+    color: white;
+  }
+
+  .post-count {
+    font-size: 1.2rem;
+  }
+
+  /* レスポンシブ調整 */
+  @media (max-width: 768px) {
+    .search-box {
+      order: 3;
+      /* スマホ時は検索ボックスを一番下に */
+      width: 100%;
+    }
   }
 </style>

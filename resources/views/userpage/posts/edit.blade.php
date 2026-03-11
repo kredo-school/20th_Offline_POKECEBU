@@ -5,7 +5,7 @@
 @section('title', 'Edit Post')
 
 @section('content')
-  <form action="{{ route('user.posts.update',$post->id) }}" method="post" enctype="multipart/form-data">
+    <form action="{{ route('user.posts.update',$post->id) }}" method="post" enctype="multipart/form-data">
         @csrf
         @method('PATCH')
 
@@ -76,9 +76,10 @@
                 </div>
 
                 <button type="submit" class="btn post-btn">Post</button>
+                <a href="{{ route('user.posts.index') }}" class="btn border ms-3">Cancel</a>
             </div>
         </div>
-  </form>
+    </form>
 @endsection
 
 

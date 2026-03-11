@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use App\Models\RestaurantReservation;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class RestaurantTable extends Model
 {
@@ -52,5 +54,11 @@ class RestaurantTable extends Model
     public function status()
     {
         return $this->belongsTo(Status::class, 'status_id');
+    }
+
+    public function reservations(): HasMany
+    {
+
+        return $this->hasMany(RestaurantReservation::class, 'table_id', 'id');
     }
 }

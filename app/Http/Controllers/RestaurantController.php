@@ -33,13 +33,12 @@ class RestaurantController extends Controller
         $date = $request->input('date');           // 例: 2026-03-10
         $time = $request->input('time');           // 例: 19:00
         $guests = (int) $request->input('guests', 0);
-        $tablesNeeded = (int) $request->input('tables', 0);
-        $categories = (array) $request->input('categories', []);
+        $amenities = (array) $request->input('amenities', []);
         $destination = $request->input('destination');
         $sort = $request->input('sort');
 
         // guestOptions（テーブルの max_guests を一覧化）
-        $guestOptions = \App\Models\RestaurantTable::orderBy('max_guests')
+        $guestOptions = RestaurantTable::orderBy('max_guests')
             ->pluck('max_guests')
             ->unique()
             ->values();
@@ -73,12 +72,12 @@ class RestaurantController extends Controller
 
         // 日付と時間が指定されている場合は空席（空テーブル）で絞る
         $startDateTime = $endDateTime = null;
-        if ($tablesNeeded > 0 && ($date || $time)) {
+        if ($date || $time) {
             try {
                 $dt = $date ? \Carbon\Carbon::parse($date) : \Carbon\Carbon::today();
                 $t = $time ? \Carbon\Carbon::parse($time)->format('H:i:s') : '19:00:00';
                 $startDateTime = \Carbon\Carbon::parse($dt->toDateString() . ' ' . $t);
-                $endDateTime = (clone $startDateTime)->addHours(2);
+                $endDateTime = (clone $startDateTime)->addHours(2); // 滞在時間は必要に応じて調整
             } catch (\Exception $e) {
                 session()->flash('error', 'Please enter a valid date and time format.');
                 $query->whereRaw('0 = 1');
@@ -92,42 +91,21 @@ class RestaurantController extends Controller
                     session()->flash('error', 'Searches for past dates and times are not possible.');
                     $query->whereRaw('0 = 1');
                 } else {
+                    // Booked ステータス ID（なければデフォルト 3）
                     $bookedId = DB::table('statuses')->where('name', 'Booked')->value('id') ?? 3;
 
-                    // テーブルに予約が重なっていないレストランを残す
-                    $query->whereHas('tables', function ($q) use ($startDateTime, $endDateTime, $bookedId) {
-                        $q->whereDoesntHave('reservations', function ($r) use ($startDateTime, $endDateTime, $bookedId) {
-                            $r->where('status_id', $bookedId)
-                                ->whereRaw('NOT (end_at < ? OR start_at > ?)', [
-                                    $startDateTime->toDateTimeString(),
-                                    $endDateTime->toDateTimeString()
-                                ]);
-                        });
-                    });
-
-                    // 相関サブクエリで空きテーブル数を評価して絞る
                     $sStr = $startDateTime->toDateTimeString();
                     $eStr = $endDateTime->toDateTimeString();
 
-                    $availableTablesSub = "
-                    SELECT COUNT(*) FROM restaurant_tables rt
-                    WHERE rt.restaurant_id = restaurants.id
-                      AND NOT EXISTS (
-                        SELECT 1 FROM restaurant_reservations r
-                        WHERE r.table_id = rt.id
-                          AND r.status_id = ?
-                          AND NOT (r.end_at < ? OR r.start_at > ?)
-                      )
-                ";
+                    // 「期間内に予約が重なっていないテーブルが1つでもあるレストラン」を残す
+                    $query->whereHas('tables', function ($q) use ($sStr, $eStr, $bookedId) {
+                        $q->whereDoesntHave('reservations', function ($r) use ($sStr, $eStr, $bookedId) {
+                            $r->where('status_id', $bookedId)
+                                ->whereRaw('NOT (end_at < ? OR start_at > ?)', [$sStr, $eStr]);
+                        });
+                    });
 
-                    $query->whereRaw("({$availableTablesSub}) >= ?", [
-                        $bookedId,
-                        $sStr,
-                        $eStr,
-                        $tablesNeeded
-                    ]);
-
-                    // min_price サブクエリ（期間指定時）
+                    // 期間指定時の min_price を相関サブクエリで上書き（任意）
                     $minPriceSub = "(
                     SELECT MIN(rt2.charges)
                     FROM restaurant_tables rt2
@@ -139,8 +117,6 @@ class RestaurantController extends Controller
                           AND NOT (r2.end_at < '{$sStr}' OR r2.start_at > '{$eStr}')
                       )
                 )";
-
-                    // addSelect は後でまとめて行うためここで変数に保持
                 }
             } else {
                 session()->flash('error', 'Please specify both the date and time.');
@@ -148,23 +124,26 @@ class RestaurantController extends Controller
             }
         }
 
-        // カテゴリ（料理ジャンル等）を AND 条件で適用
-        if (!empty($categories)) {
-            $query->whereHas('categories', function ($q) use ($categories) {
-                $q->whereIn('categories.id', $categories);
+        // amenities を AND 条件で適用（各テーブルが全てのカテゴリを持つ）
+        if (!empty($amenities)) {
+            $query->whereHas('tables', function ($q) use ($amenities) {
+                foreach ($amenities as $amenityId) {
+                    $q->whereHas('categories', function ($q2) use ($amenityId) {
+                        $q2->where('categories.id', $amenityId);
+                    });
+                }
             });
         }
 
         // --- デフォルトの minPrice サブクエリ（必ず定義しておく） ---
         $defaultMinPriceSub = "(
         SELECT MIN(rt.charges)
-        FROM restaurant_tables rt
-        WHERE rt.restaurant_id = restaurants.id
+         FROM restaurant_tables rt
+         WHERE rt.restaurant_id = restaurants.id
     )";
 
         // ここで select を明示し、min_price を付与する
         $query->select('restaurants.*');
-        // もし期間指定で上書きした $minPriceSub があればそれを使い、なければデフォルト
         if (isset($minPriceSub) && !empty($minPriceSub)) {
             $query->addSelect(DB::raw("({$minPriceSub}) as min_price"));
         } else {
@@ -197,7 +176,6 @@ class RestaurantController extends Controller
                 }
             }]);
 
-
         // 重複削除（必要なら）
         $query->distinct();
 
@@ -214,6 +192,7 @@ class RestaurantController extends Controller
 
         return view('userpage.mypage.restaurant-search-result', compact('restaurants', 'amenities', 'guestOptions'));
     }
+
 
 
 

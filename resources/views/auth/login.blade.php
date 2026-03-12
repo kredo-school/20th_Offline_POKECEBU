@@ -10,46 +10,37 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@400;600;700&display=swap"
         rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 
     <style>
         :root {
-            /* Secondary */
             --sec-1: #6FA9DE;
             --sec-2: #8DBCDA;
             --sec-3: #51C9D0;
-
-            /* Accent */
             --acc-1: #96CCB9;
             --acc-2: #B7E1DA;
             --acc-3: #FDBF79;
             --acc-4: #FE9978;
-
-            /* Neutral */
             --white: #FFFFFF;
             --cream: #FFFEEF;
             --sand: #FFF6EE;
             --border: #E9E3D3;
-
             --ink: #1f2c3a;
             --muted: #6b7a8a;
             --shadow: 0 18px 55px rgba(20, 40, 60, .10);
             --radius: 18px;
         }
 
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
 
         body {
             margin: 0;
-            font-family: "Poppins", system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, sans-serif;
+            /* font-family: "Poppins", system-ui, sans-serif; */
             color: var(--ink);
             min-height: 100vh;
             display: grid;
             place-items: center;
             padding: 28px 16px;
-
-            /* tropical background */
             background:
                 radial-gradient(900px 500px at 15% 15%, rgba(253, 191, 121, .45), transparent 60%),
                 radial-gradient(700px 420px at 90% 20%, rgba(81, 201, 208, .35), transparent 60%),
@@ -57,125 +48,32 @@
                 linear-gradient(180deg, var(--cream) 0%, var(--sand) 55%, #ffffff 100%);
         }
 
-        .waves {
-            position: fixed;
-            inset: auto 0 0 0;
-            height: 180px;
-            pointer-events: none;
-            opacity: .55;
-            background:
-                radial-gradient(1200px 220px at 50% 0%, rgba(111, 169, 222, .25), transparent 65%),
-                radial-gradient(1200px 220px at 35% 30%, rgba(81, 201, 208, .22), transparent 65%),
-                radial-gradient(1200px 220px at 70% 55%, rgba(150, 204, 185, .20), transparent 65%);
-            filter: blur(1px);
-        }
-
-        .wrap {
-            width: min(980px, 100%);
-            display: grid;
-            grid-template-columns: 1.05fr .95fr;
-            gap: 18px;
-            align-items: stretch;
-        }
-
-        @media (max-width: 900px) {
-            .wrap {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .hero {
-            border-radius: var(--radius);
-            padding: 28px;
-            box-shadow: var(--shadow);
-            background:
-                linear-gradient(135deg, rgba(183, 225, 218, .55), rgba(111, 169, 222, .25)),
-                linear-gradient(180deg, rgba(255, 255, 255, .85), rgba(255, 255, 255, .70));
-            border: 1px solid rgba(233, 227, 211, .75);
-            position: relative;
-            overflow: hidden;
-        }
-
-        /* 右側：透かしヤシの葉（hero内の右寄せ） */
-        .hero::after {
-            content: "";
-            position: absolute;
-            right: -40px;
-            top: 20px;
-            width: 360px;
-            height: 360px;
-            opacity: .16;
-            pointer-events: none;
-            background-repeat: no-repeat;
-            background-size: contain;
-            transform: rotate(10deg);
-            /* SVGをそのまま埋め込み（色は薄いグリーン系） */
-            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='512' height='512' viewBox='0 0 512 512'><path fill='%2396CCB9' d='M468 92c-72 6-129 31-173 75-13 13-24 27-33 42 10-55 9-112-4-171-3-13-22-12-24 1-12 63-12 124 2 183-13-18-28-34-45-49C138 126 83 99 16 92c-14-2-18 18-4 23 58 20 104 50 139 90 27 31 45 68 54 112-26-26-58-47-95-62-10-4-18 9-9 16 45 36 76 82 92 139 8 27 12 56 12 87 0 14 22 14 22 0 0-32-4-62-12-91 32-33 70-58 114-74 30-11 62-18 95-22 14-2 14-23 0-24-63-5-121 3-174 25-18 7-35 16-51 27 6-37 16-70 32-99 33-60 90-98 172-114 14-3 10-24-4-23z'/></svg>");
-            filter: blur(.2px);
-        }
-
-        .badge {
-            display: inline-flex;
-            gap: 10px;
-            align-items: center;
-            padding: 10px 12px;
-            background: rgba(255, 255, 255, .72);
-            border: 1px solid rgba(233, 227, 211, .9);
-            border-radius: 999px;
-            backdrop-filter: blur(8px);
-        }
-
-        .dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 999px;
-            background: linear-gradient(135deg, var(--acc-3), var(--acc-4));
-            box-shadow: 0 0 0 4px rgba(253, 191, 121, .25);
-        }
-
-        .hero h1 {
-            margin: 18px 0 6px;
-            font-family: "Pacifico", cursive;
-            font-size: clamp(34px, 4.2vw, 50px);
-            letter-spacing: .2px;
-            color: #0f2233;
-        }
-
-        .hero p {
-            margin: 0 0 12px;
-            color: var(--muted);
-            line-height: 1.6;
-            max-width: 46ch;
-        }
-
-        .chips {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 16px;
-        }
-
-        .chip {
-            font-size: 13px;
-            padding: 8px 10px;
-            border-radius: 999px;
-            border: 1px solid rgba(233, 227, 211, .9);
-            background: rgba(255, 255, 255, .70);
-        }
-
-        .chip strong {
-            font-weight: 700;
-        }
-
+        /* ── Card ────────────────────────────────────────────── */
         .card {
+            position: relative;
+            width: min(900px, 100%);
+            min-height: 520px;
             border-radius: var(--radius);
-            padding: 26px;
             box-shadow: var(--shadow);
-            background: rgba(255, 255, 255, .85);
+            background: rgba(255, 255, 255, .92);
             border: 1px solid rgba(233, 227, 211, .85);
             backdrop-filter: blur(10px);
+            display: flex;
             overflow: hidden;
-            position: relative;
+        }
+
+        /* ── Two form panels side by side inside card ─────────── */
+        .formsWrap {
+            display: flex;
+            width: 100%;
+        }
+
+        .formPanel {
+            width: 50%;
+            flex-shrink: 0;
+            padding: 32px 36px;
+            display: flex;
+            flex-direction: column;
         }
 
         .cardHead {
@@ -183,89 +81,74 @@
             align-items: flex-end;
             justify-content: space-between;
             gap: 12px;
-            margin-bottom: 14px;
+            margin-bottom: 18px;
         }
 
-        .card h2 {
+        .cardHead h2 {
             margin: 0;
-            font-size: 18px;
+            font-size: 20px;
             font-weight: 800;
         }
 
-        .card .sub {
-            margin: 2px 0 0;
+        .cardHead .sub {
+            margin: 3px 0 0;
             color: var(--muted);
             font-size: 13px;
         }
 
+        /* ── Tabs ─────────────────────────────────────────────── */
         .tabs {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             background: rgba(255, 255, 255, .65);
             border: 1px solid rgba(233, 227, 211, .85);
             border-radius: 999px;
-            padding: 6px;
+            padding: 5px;
+            flex-shrink: 0;
         }
 
         .tab {
             border: 0;
             background: transparent;
-            padding: 8px 12px;
+            padding: 7px 14px;
             border-radius: 999px;
             cursor: pointer;
             font-weight: 800;
             font-size: 13px;
-            color: #0f2233;
-            opacity: .65;
+            color: var(--ink);
+            opacity: .55;
             transition: .15s ease;
+            /* font-family: "Poppins", sans-serif; */
         }
 
         .tab.is-active {
             opacity: 1;
             background: linear-gradient(135deg, rgba(111, 169, 222, .35), rgba(81, 201, 208, .22));
-            box-shadow: 0 10px 18px rgba(111, 169, 222, .18);
+            box-shadow: 0 6px 14px rgba(111, 169, 222, .18);
         }
 
-        .slider {
-            width: 100%;
-            overflow: hidden;
-        }
-
-        .sliderTrack {
-            display: flex;
-            width: 200%;
-            transition: transform .45s cubic-bezier(.2, .9, .2, 1);
-        }
-
-        .panel {
-            width: 50%;
-            padding-top: 6px;
-        }
-
-        .field {
-            margin-bottom: 12px;
-        }
+        /* ── Form fields ──────────────────────────────────────── */
+        .field { margin-bottom: 12px; }
 
         label {
             display: block;
             font-size: 13px;
             font-weight: 700;
-            margin-bottom: 6px;
+            margin-bottom: 5px;
         }
 
-        .req {
-            color: #e24b4b;
-        }
+        .req { color: #e24b4b; }
 
         .input {
             width: 100%;
-            padding: 12px 12px;
+            padding: 11px 13px;
             border-radius: 12px;
             border: 1px solid rgba(233, 227, 211, .95);
             background: rgba(255, 255, 255, .9);
             outline: none;
             transition: .15s ease;
             font-size: 14px;
+            /* font-family: "Poppins", sans-serif; */
         }
 
         .input:focus {
@@ -279,48 +162,42 @@
             gap: 10px;
         }
 
-        @media (max-width: 520px) {
-            .row {
-                grid-template-columns: 1fr;
-            }
-        }
-
+        /* ── Buttons ──────────────────────────────────────────── */
         .btn {
             width: 100%;
             border: 0;
-            border-radius: 14px;
+            border-radius: 13px;
             padding: 12px 14px;
-            font-weight: 900;
+            font-weight: 600;
+            font-size: 14px;
+            /* font-family: "Poppins", sans-serif; */
             cursor: pointer;
             transition: transform .05s ease, filter .15s ease;
         }
 
-        .btn:active {
-            transform: translateY(1px);
-        }
+        .btn:active { transform: translateY(1px); }
 
         .btn-primary {
             color: #0b2233;
             background: linear-gradient(135deg, var(--sec-1), var(--sec-3));
             box-shadow: 0 10px 20px rgba(111, 169, 222, .25);
+            margin-top: 20px;
         }
 
-        .btn-primary:hover {
-            filter: brightness(1.02);
-        }
+        .btn-primary:hover { filter: brightness(1.03); }
 
         .btn-soft {
             color: #0b2233;
             background: linear-gradient(135deg, rgba(253, 191, 121, .75), rgba(255, 238, 239, .55));
             border: 1px solid rgba(233, 227, 211, .85);
-            margin-top: 10px;
+            margin-bottom: 12px;
         }
 
         .divider {
             display: flex;
             align-items: center;
             gap: 10px;
-            margin: 14px 0;
+            margin: 12px 0;
             color: var(--muted);
             font-size: 12px;
         }
@@ -333,30 +210,9 @@
             background: rgba(233, 227, 211, .95);
         }
 
-        .btn-google {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            justify-content: center;
-            background: rgba(255, 255, 255, .9);
-            border: 1px solid rgba(233, 227, 211, .95);
-        }
-
-        .googleG {
-            width: 18px;
-            height: 18px;
-            border-radius: 6px;
-            display: grid;
-            place-items: center;
-            background: linear-gradient(135deg, var(--acc-1), var(--acc-2));
-            font-weight: 900;
-            color: #0b2233;
-            font-size: 12px;
-        }
-
         .linkRow {
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             gap: 10px;
             margin-top: 8px;
             font-size: 13px;
@@ -369,198 +225,314 @@
             font-weight: 800;
         }
 
-        .linkRow a:hover {
-            text-decoration: underline;
-        }
+        .linkRow a:hover { text-decoration: underline; }
 
         .error {
-            margin-top: 6px;
+            margin-top: 5px;
             font-size: 12px;
             color: #e24b4b;
             font-weight: 700;
+        }
+
+        /* ── Overlay: slides over the forms ──────────────────── */
+        /*
+         * Login mode  → overlay is on the RIGHT (covers register form)
+         * Register mode → overlay slides to the LEFT (covers login form)
+         */
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;                /* anchor to left edge */
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--sec-1), var(--sec-3));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            border-radius: var(--radius) 0 0 var(--radius);
+            /* Default (login): sit on the right half */
+            transform: translateX(100%);
+            transition: transform .55s cubic-bezier(.4, 0, .2, 1);
+            z-index: 10;
+        }
+
+        /* Register mode: overlay moves to left half */
+        .card.show-register .overlay {
+            transform: translateX(0%);
+            border-radius: 0 var(--radius) var(--radius) 0;
+        }
+
+        /* "Hello there!" panel — shown in login mode (overlay on right) */
+        .overlay-right {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateX(0);
+        }
+
+        .card.show-register .overlay-right {
+            opacity: 0;
+            pointer-events: none;
+            transform: translateX(20px);
+        }
+
+        /* "Welcome Back!" panel — shown in register mode (overlay on left) */
+        .overlay-left {
+            opacity: 0;
+            pointer-events: none;
+            transform: translateX(-20px);
+        }
+
+        .card.show-register .overlay-left {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateX(0);
+        }
+
+        .overlay-btn {
+            padding: 10px 28px;
+            border-radius: 999px;
+            border: 2px solid white;
+            background: transparent;
+            color: white;
+            font-weight: 800;
+            font-size: 14px;
+            /* font-family: "Poppins", sans-serif; */
+            cursor: pointer;
+            transition: background .15s ease;
+        }
+
+        .overlay-btn:hover {
+            background: rgba(255, 255, 255, .15);
+        }
+
+        /* ── Overlay brand images ─────────────────────────────── */
+        .overlay-panel {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            padding: 32px;
+            transition: opacity .25s ease, transform .25s ease;
+        }
+
+        .overlay-brand {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        .overlay-icon {
+            width: 100%;
+            height: 50%;
+            object-fit: cover;
+            object-position: 70%;
+            opacity: .85;
+        }
+
+        .overlay-text {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            padding-bottom: 150px;
+        }
+
+        .overlay-text h2 {
+            margin: 0 0 8px;
+            font-size: 22px;
+            font-weight: 800;
+        }
+
+        .overlay-text p {
+            margin: 0 0 18px;
+            opacity: .9;
+            font-size: 14px;
+        }
+
+        /* ── Responsive ───────────────────────────────────────── */
+        @media (max-width: 640px) {
+            .formsWrap { flex-direction: column; }
+            .formPanel { width: 100%; padding: 24px 20px; }
+            .overlay { display: none; }
+            .row { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 
 <body>
-    <div class="wrap">
-        <!-- Left: Tropical info panel -->
-        <section class="hero">
-            <div class="badge">
-                <span class="dot"></span>
-                <span style="font-size:13px; font-weight:900;">POKECEBU</span>
-                <span style="font-size:12px; color:var(--muted); font-weight:700;">Cebu Travel Guide</span>
-            </div>
 
-            <h1>Welcome back</h1>
-            <p>
-                ログインして、ホテル・レストランの予約、ジップニーガイド、クーポンなどをまとめて管理しよう。
-            </p>
-
-            <div class="chips">
-                <span class="chip"><strong style="color:var(--sec-3);">✔</strong> Easy booking</span>
-                <span class="chip"><strong style="color:var(--acc-1);">✔</strong> Local tips</span>
-                <span class="chip"><strong style="color:var(--acc-4);">✔</strong> Coupons</span>
-            </div>
-        </section>
-
-        <!-- Right: Auth card (Login + Register) -->
-        <section class="card">
-            <div class="cardHead">
-                <div>
-                    <h2 id="cardTitle">Login</h2>
-                    <p class="sub" id="cardSub">Enter your email and password to continue.</p>
+    <section class="card" id="authCard">
+        <!-- Overlay (slides over forms) -->
+        <div class="overlay" id="overlay">
+            <!-- Login mode: overlay on RIGHT, shows "Hello there!" -->
+            <div class="overlay-panel overlay-right">
+                <div class="overlay-brand">
+                    <img src="{{ asset('images/Icon.png') }}" alt="POKECEBU icon" class="overlay-icon">
                 </div>
-
-                <div class="tabs" aria-label="auth tabs">
-                    <button class="tab is-active" type="button" id="tabLogin">Login</button>
-                    <button class="tab" type="button" id="tabRegister">Register</button>
+                <div class="overlay-text">
+                    <h2>Hello there!</h2>
+                    <p>Don't have an account yet?<br>Join POKECEBU today.</p>
+                    <button class="overlay-btn" id="overlayRegister">Sign Up</button>
                 </div>
             </div>
+            <!-- Register mode: overlay on LEFT, shows "Welcome Back!" -->
+            <div class="overlay-panel overlay-left">
+                <div class="overlay-brand">
+                    <img src="{{ asset('images/Icon.png') }}" alt="POKECEBU icon" class="overlay-icon">
+                </div>
+                <div class="overlay-text">
+                    <h2>Welcome Back!</h2>
+                    <p>Already have an account?<br>Sign in and continue.</p>
+                    <button class="overlay-btn" id="overlayLogin">Sign In</button>
+                </div>
+            </div>
+        </div>
 
-            <div class="slider" id="slider">
-                <div class="sliderTrack" id="track">
-                    <!-- ===== Login Panel ===== -->
-                    <div class="panel" id="loginPanel">
-                        <form method="POST" action="{{ route('login') }}">
-                            @csrf
+        <!-- Both form panels sit side by side -->
+        <div class="formsWrap">
 
-                            <div class="field">
-                                <label>Email <span class="req">*</span></label>
-                                <input class="input" type="email" name="email" value="{{ old('email') }}"
-                                    placeholder="Enter your email" autocomplete="username" required autofocus>
-                                @error('email')
-                                    <div class="error">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <div class="field">
-                                <label>Password <span class="req">*</span></label>
-                                <input class="input" type="password" name="password" placeholder="Password"
-                                    autocomplete="current-password" required>
-                                @error('password')
-                                    <div class="error">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <button class="btn btn-primary" type="submit">Login</button>
-
-                            <div class="linkRow">
-                                @if (Route::has('password.request'))
-                                    <a href="{{ route('password.request') }}">Forgot password?</a>
-                                @else
-                                    <span></span>
-                                @endif
-                                <a href="javascript:void(0)" class="js-to-register">Create account</a>
-                            </div>
-                        </form>
-                    </div>
-
-                    <!-- ===== Register Panel ===== -->
-                    <div class="panel" id="registerPanel">
-                        <form method="POST" action="{{ route('register') }}">
-                            @csrf
-
-                            <div class="field">
-                                <label>Name <span class="req">*</span></label>
-                                <input class="input" type="text" name="name" value="{{ old('name') }}"
-                                    placeholder="Enter your name" autocomplete="name" required>
-                                @error('name')
-                                    <div class="error">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <div class="field">
-                                <label>Email <span class="req">*</span></label>
-                                <input class="input" type="email" name="email" value="{{ old('email') }}"
-                                    placeholder="Enter your email" autocomplete="email" required>
-                                @error('email')
-                                    <div class="error">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <div class="row">
-                                <div class="field">
-                                    <label>Password <span class="req">*</span></label>
-                                    <input class="input" type="password" name="password" placeholder="Password"
-                                        autocomplete="new-password" required>
-                                    @error('password')
-                                        <div class="error">{{ $message }}</div>
-                                    @enderror
-                                </div>
-
-                                <div class="field">
-                                    <label>Confirm <span class="req">*</span></label>
-                                    <input class="input" type="password" name="password_confirmation"
-                                        placeholder="Confirm" autocomplete="new-password" required>
-                                </div>
-                            </div>
-
-                            <button class="btn btn-primary" type="submit">Get started</button>
-                            <button class="btn btn-soft" type="button" onclick="location.href='{{ route('company.signup')}}'">For
-                                Companies</button>
-
-                            <div class="divider">or</div>
-
-                            <button class="btn btn-google" type="button">
-                                <span class="googleG">G</span>
-                                Sign up with Google
-                            </button>
-
-                            <div class="linkRow" style="justify-content:center; margin-top:10px;">
-                                <a href="javascript:void(0)" class="js-to-login">Already have an account? Log in</a>
-                            </div>
-                        </form>
+            <!-- LEFT: Login form -->
+            <div class="formPanel" id="loginPanel">
+                <div class="cardHead">
+                    <div>
+                        <h2>Login</h2>
+                        <p class="sub">Enter your email and password to continue.</p>
                     </div>
                 </div>
+
+                <form method="POST" action="{{ route('login') }}">
+                    @csrf
+
+                    <div class="field">
+                        <label>Email <span class="req">*</span></label>
+                        <input class="input" type="email" name="email" value="{{ old('email') }}"
+                            placeholder="Enter your email" autocomplete="username" required autofocus>
+                        @error('email')
+                            <div class="error">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="field">
+                        <label>Password <span class="req">*</span></label>
+                        <input class="input" type="password" name="password" placeholder="Password"
+                            autocomplete="current-password" required>
+                        @error('password')
+                            <div class="error">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <button class="btn btn-primary" type="submit">Login</button>
+
+                    <div class="linkRow">
+                        @if (Route::has('password.request'))
+                            <a href="{{ route('password.request') }}">Forgot password?</a>
+                        @else
+                            <span></span>
+                        @endif
+                    </div>
+                </form>
             </div>
 
-        </section>
-    </div>
+            <!-- RIGHT: Register form -->
+            <div class="formPanel" id="registerPanel">
+                <div class="cardHead">
+                    <div>
+                        <h2>Register</h2>
+                        <p class="sub">Create your account in a minute.</p>
+                    </div>
+                </div>
+                <button class="btn btn-soft" type="button"
+                    onclick="location.href='{{ route('company.signup') }}'">Register For Companies
+                    <i class="fa-solid fa-angles-right"></i>
+                </button>
+                <div style="height: 2px; background: #E9E3D3; margin: 8px 0 16px;"></div>
+                <form method="POST" action="{{ route('register') }}">
+                    @csrf
 
-    <div class="waves"></div>
+                    <div class="field">
+                        <label>Name <span class="req">*</span></label>
+                        <input class="input" type="text" name="name" value="{{ old('name') }}"
+                            placeholder="Enter your name" autocomplete="name" required>
+                        @error('name')
+                            <div class="error">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="field">
+                        <label>Email <span class="req">*</span></label>
+                        <input class="input" type="email" name="email" value="{{ old('email') }}"
+                            placeholder="Enter your email" autocomplete="email" required>
+                        @error('email')
+                            <div class="error">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="row">
+                        <div class="field">
+                            <label>Password <span class="req">*</span></label>
+                            <input class="input" type="password" name="password" placeholder="Password"
+                                autocomplete="new-password" required>
+                            @error('password')
+                                <div class="error">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="field">
+                            <label>Confirm <span class="req">*</span></label>
+                            <input class="input" type="password" name="password_confirmation"
+                                placeholder="Confirm" autocomplete="new-password" required>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary" type="submit">Get started</button>
+                </form>
+            </div>
+        </div><!-- /formsWrap -->
+    </section>
 
     <script>
-        (function() {
-            const track = document.getElementById('track');
-            const tabLogin = document.getElementById('tabLogin');
-            const tabRegister = document.getElementById('tabRegister');
-            const title = document.getElementById('cardTitle');
-            const sub = document.getElementById('cardSub');
+        (function () {
+            const card     = document.getElementById('authCard');
+            const tabLogin  = document.getElementById('tabLogin');
+            const tabReg    = document.getElementById('tabRegister');
+            const tabLogin2 = document.getElementById('tabLogin2');
+            const tabReg2   = document.getElementById('tabRegister2');
 
-            function setMode(mode, smooth = true) {
-                const x = (mode === 'register') ? -50 : 0; // track is 200%, each panel is 50%
-                track.style.transition = smooth ? 'transform .45s cubic-bezier(.2,.9,.2,1)' : 'none';
-                track.style.transform = 'translateX(' + x + '%)';
-
+            function setMode(mode) {
                 if (mode === 'register') {
-                    tabRegister.classList.add('is-active');
-                    tabLogin.classList.remove('is-active');
-                    title.textContent = 'Register';
-                    sub.textContent = 'Create your account in a minute.';
+                    card.classList.add('show-register');
+                    tabReg.classList.add('is-active');   tabLogin.classList.remove('is-active');
+                    tabReg2.classList.add('is-active');  tabLogin2.classList.remove('is-active');
                 } else {
-                    tabLogin.classList.add('is-active');
-                    tabRegister.classList.remove('is-active');
-                    title.textContent = 'Login';
-                    sub.textContent = 'Enter your email and password to continue.';
+                    card.classList.remove('show-register');
+                    tabLogin.classList.add('is-active');  tabReg.classList.remove('is-active');
+                    tabLogin2.classList.add('is-active'); tabReg2.classList.remove('is-active');
                 }
             }
 
-            tabLogin.addEventListener('click', () => setMode('login'));
-            tabRegister.addEventListener('click', () => setMode('register'));
+            document.getElementById('overlayLogin').addEventListener('click',    () => setMode('login'));
+            document.getElementById('overlayRegister').addEventListener('click', () => setMode('register'));
+            tabLogin.addEventListener('click',  () => setMode('login'));
+            tabReg.addEventListener('click',    () => setMode('register'));
+            tabLogin2.addEventListener('click', () => setMode('login'));
+            tabReg2.addEventListener('click',   () => setMode('register'));
+            document.querySelectorAll('.js-to-login').forEach(el =>
+                el.addEventListener('click', () => setMode('login')));
+            document.querySelectorAll('.js-to-register').forEach(el =>
+                el.addEventListener('click', () => setMode('register')));
 
-            document.querySelectorAll('.js-to-login').forEach(el => el.addEventListener('click', () => setMode(
-                'login')));
-            document.querySelectorAll('.js-to-register').forEach(el => el.addEventListener('click', () => setMode(
-                'register')));
-
-            // /register で開いたら register 側を最初から表示
-            const path = window.location.pathname || '';
+            // Initial mode from URL
+            const path   = window.location.pathname || '';
             const params = new URLSearchParams(window.location.search);
-            const initial = (path.includes('/register') || params.get('mode') === 'register') ? 'register' : 'login';
-            setMode(initial, false);
+            const initial = (path.includes('/register') || params.get('mode') === 'register')
+                ? 'register' : 'login';
+            setMode(initial);
         })();
     </script>
-</body>
 
+</body>
 </html>

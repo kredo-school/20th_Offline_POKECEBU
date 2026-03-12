@@ -1,7 +1,10 @@
 @extends('layouts.app')
 
 @push('styles')
-<link rel="stylesheet" href="{{ asset('css/admin.css/admin.css') }}">
+<link rel="stylesheet" href="{{ asset('css/admin.css/analysis/hotel.css') }}">
+<link rel="stylesheet" href="{{ asset('css/admin.css/analysis/restaurant.css') }}">
+<link rel="stylesheet" href="{{ asset('css/admin.css/analysis/user.css') }}">
+<link rel="stylesheet" href="{{ asset('css/admin.css/home/home.css') }}">
 @endpush
 
 @section('navbar')

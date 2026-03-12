@@ -1,0 +1,33 @@
+    .analysis-wrapper { background: #f4fcf9; min-height: 100vh; padding: 20px; }
+
+    .btn-sidebar {
+        border: none; padding: 12px 20px; border-radius: 12px; color: #64748b;
+        transition: all 0.3s; background: white; width: 100%; display: block;
+        margin-bottom: 10px; text-decoration: none; text-align: left;
+    }
+    .btn-sidebar:hover { background: #ecfdf5; color: #065f46; transform: translateX(5px); }
+    .btn-sidebar.active {
+        background: #96CCB9 !important; /* ナビバーの色に合わせました */
+        color: white !important;
+        box-shadow: 0 4px 12px rgba(150, 204, 185, 0.4);
+    }
+
+    .kpi-box {
+        background: white; padding: 25px; border-radius: 20px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); height: 100%;
+        transition: transform 0.3s;
+    }
+    .kpi-box:hover { transform: translateY(-5px); }
+
+    .analysis-card {
+        background: white; border-radius: 20px; padding: 25px;
+        box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05); margin-bottom: 25px; border: none;
+    }
+
+    .chart-title {
+        font-weight: 700; color: #064e3b; margin-bottom: 15px;
+        display: flex; align-items: center; border-bottom: 1px solid #ecfdf5; padding-bottom: 15px;
+    }
+
+    .chart-wrapper { position: relative; height: 350px; width: 100%; }
+    .fw-extrabold { font-weight: 800; }

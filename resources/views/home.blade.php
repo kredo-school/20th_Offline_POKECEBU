@@ -56,12 +56,12 @@
                 <div class="hero-circle circle-4">
                     <div class="circle-content">
                         <span class="circle-label">RATE</span>
-                        @if ($rate && $rate > 0)
+                        <!-- @if ($rate && $rate > 0)
                             <div class="rate-text">¥1 = ₱{{ number_format($rate, 2) }}</div>
                             <div class="rate-text">₱1 = ¥{{ number_format(1 / $rate, 2) }}</div>
                         @else
                             <div class="rate-text">Loading</div>
-                        @endif
+                        @endif -->
                     </div>
                 </div>
             </div>
@@ -89,7 +89,7 @@
                         </a>
                     </div>
                     <div class="col-12 mb-3">
-                        <a href="{{ route('jeepney.index') }}" class="menu-btn menu-jeepney text-decoration-none">
+                        <a href="{{ route('user.jeepney.index') }}" class="menu-btn menu-jeepney text-decoration-none">
                             <i class="fa-solid fa-van-shuttle"></i>
                             <div class="menu-text-wrapper">
                                 <div class="menu-title">Route & Ride</div>
@@ -107,7 +107,7 @@
                         </a>
                     </div>
                     <div class="col-12 mb-3">
-                        <a href="{{ route('daily.fortune.show') }}" class="menu-btn menu-fortune text-decoration-none">
+                        <a href="{{ route('user.daily.fortune.show') }}" class="menu-btn menu-fortune text-decoration-none">
                             <i class="fa-solid fa-star"></i>
                             <div class="menu-text-wrapper">
                                 <div class="menu-title">Today's Pick</div>
@@ -406,17 +406,6 @@
                                     <img src="{{ $post->images->first()->image }}" alt="Post Image">
                                 </a>
                             </div>
-                        @endforeach
-                    </div>
-                </div>
-
-                <div class="post-tags">
-                    <h3 class="section-title">人気タグ</h3>
-                    <div class="d-flex flex-wrap gap-2 justify-content-center">
-                        @foreach ($popularTags as $tag)
-                            <a href="{{ route('user.tags.show', $tag->name) }}" class="tag-badge">
-                                #{{ $tag->name }}({{ $tag->posts_count }})
-                            </a>
                         @endforeach
                     </div>
                 </div>
@@ -851,10 +840,6 @@
         .menu-fortune {
             background-image: url("{{ asset('images/home-fortune.jpg') }}");
             background-position: center 60%;
-        }
-
-        body {
-            background-color: #f8fafc; /* カードが映える薄いグレーの背景 */
         }
 
         .section-title, .recent-posts {

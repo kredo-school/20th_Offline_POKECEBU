@@ -16,7 +16,7 @@
                      to 
                     {{ $reservation->end_at->format('Y-m-d') }}
                     </span>
-                  <button class="but btn-cancel" type="button">Cancel Reservation</button>
+                  <button type="button" class="btn btn-send btn-outline-danger">Cancel Reservation</button>
               </div>
           </div>
           <div class="row">
@@ -26,9 +26,7 @@
                       <div class="card-header d-flex justify-content-between align-items-center">
                           <div>
                               <strong>Reservation ID:</strong>{{ $reservation->reservation_id }}
-                              <span class="text-muted ms-2">| Check-in 
-                                {{ $reservation->start_at->diffInDays(now()) }}
-                                 days</span>
+                              
                           </div>
                           
                       </div>
@@ -62,23 +60,28 @@
                                 </td>
                               </tr>
                               <tr>
-                                  <td><i class="table-icon fa-solid fa-clipboard-list"></i> Reservation ID</td>
+                                  <td><i class="table-icon fa-solid fa-clipboard-list"></i> Check in</td>
                                   <td>
-                                    {{ $reservation->reservation_id }}
+                                    {{ $reservation->start_at ->format('Y-m-d') }}
                                 </td>
                               </tr>
                               <tr>
-                                  <td><i class="table-icon fa-solid fa-calendar-days"></i> Stay Period</td>
+                                  <td><i class="table-icon fa-solid fa-calendar-days"></i> Check out</td>
                                   <td>
-                                    {{ $reservation->start_at ->format('Y-m-d') }}
-                                     to 
-                                     {{ $reservation->end_at->format('Y-m-d') }}
+                                   {{ $reservation->end_at->format('Y-m-d') }}
+                                    </td>
+                              </tr>
+                              <tr>
+                                  <td><i class="table-icon fa-solid fa-calendar-days"></i> Nights</td>
+                                  <td>
+                                   {{ $reservation->start_at->diffInDays($reservation->end_at) }}
+                                 days
                                     </td>
                               </tr>
                               <tr>
                                   <td><i class="table-icon fa-solid fa-bed"></i> Room & Guests</td>
                                   <td>
-                                    {{ $reservation->room->name }}
+                                    {{ $reservation->room->type->name }}
                                 </td>
                               </tr>
                               <tr>
@@ -100,9 +103,9 @@
 
                           </tbody>
                       </table>
-                      <div class="card-footer d-flex justify-content-between">
-                          <button class="btn btn-print" onclick="window.print()">Print Confirmation</button>
-                          <button class="btn btn-send">Send Confirmation</button>
+                      <div class="card-footer d-flex justify-content-end">
+                          <button class="btn btn-print btn-outline-primary" onclick="window.print()">Print Confirmation</button>
+                          
                       </div>
 
 
@@ -115,7 +118,7 @@
                           <h5 class="mb-0">Notes</h5>
                       </div>
                       <div class="card-body" style="min-height: 120px">
-                        {{ $reservation->note ?? '' }}
+                        {{ $reservation->other ?? '' }}
                       </div>
                       
                   </div>
@@ -126,68 +129,8 @@
 
   @endsection
 
-
-  {{-- CSS --}}
 <style>
-  .page-title {
-    font-weight: 600;
-    color: #3b5b6b;
-  }
-
-  .table-icon {
-    color: #3b5b6b;
-  }
-
-  .main-card {
-    border-radius: 16px;
-    overflow: hidden;
-  }
-
-  .notes-card {
-    border-radius: 16px;
-    background: #fff6ee;
-  }
-
-  .badge.date-badge {
-    background: #b7e1da;
-    color: #234;
-    padding: 8px 12px;
-    border-radius: 12px;
-  }
-
- 
-  .btn-cancel {
-    background: #fdbf79;
-    color: #fff;
-    border-radius: 12px;
-    border: none;
-    outline: none;
-  }
-
-  .btn-print {
-    background: #8dbcda;
-    color: #fff;
-    border-radius: 12px;
-  }
-
-  .btn-send {
-    background: #96ccb9;
-    color: #fff;
-    border-radius: 12px;
-  }
-
-  .btn-add {
-    background: #b7e1da;
-    color: #fff;
-    border-radius: 12px;
-  }
-
-  .btn-edit {
-    background: #6fa9de;
-    color: #fff;
-    border-radius: 12px;
-  }
-
+  
   /* 印刷機能 */
   @media print {
       /* ヘッダーやナビは非表示 */
@@ -201,34 +144,12 @@
         display: none !important;
       }
 
-      body {
-        background: #ffffff !important;
-      }
-
       /* 紙いっぱいに表示 */
       .container {
         max-width: 100% !important;
         margin: 0 !important;
         padding: 0 !important;
       }
-
-      /* カードを印刷向けに */
-      .card {
-        box-shadow: none !important;
-        border: 1px solid #ccc;
-        page-break-inside: avoid;
-      }
-
-    /* Notes を下に配置 */
-    .col-md-8,
-    .col-md-4 {
-      width: 100% !important;
-    }
-
-    /* テーブルをくっきり */
-    table {
-      border-collapse: collapse !important;
-    }
 
     th,
     td {
@@ -239,4 +160,4 @@
 
   </style>
  
-  
+

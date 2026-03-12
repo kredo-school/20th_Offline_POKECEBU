@@ -22,6 +22,8 @@
     <main class="py-3">
         @yield('content')
     </main>
+
+    @yield('footer')
 </div>
 </body>
 </html>

@@ -14,3 +14,7 @@
     @include('layouts.partials.nav-user')
 </nav>
 @endsection
+
+@section('footer')
+    @include('layouts.partials.footer-user')
+@endsection

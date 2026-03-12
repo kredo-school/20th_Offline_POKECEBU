@@ -47,9 +47,9 @@ public static function getMonthlyKpiStats($restaurantId = null)
         ->when($restaurantId, function ($query, $restaurantId) {
             return $query->where('restaurant_id', $restaurantId);
         })
-        ->whereYear('reserved_at', now()->year)
+        ->whereYear('end_at', now()->year)
         ->selectRaw('
-            MONTH(reserved_at) as month,
+            MONTH(end_at) as month,
             COUNT(id) as total_bookings, 
             SUM(guests) as total_guests,
             AVG(TIMESTAMPDIFF(MINUTE, start_at, end_at)) as avg_stay
@@ -67,8 +67,8 @@ public static function getKpiStats($restaurantId = null)
         ->when($restaurantId, function ($query, $restaurantId) {
             return $query->where('restaurant_id', $restaurantId);
         })
-        ->whereMonth('reserved_at', now()->month)
-        ->whereYear('reserved_at', now()->year)
+        ->whereMonth('end_at', now()->month)
+        ->whereYear('end_at', now()->year)
         ->selectRaw('
             COUNT(id) as total_bookings, 
             SUM(guests) as total_guests
@@ -77,8 +77,8 @@ public static function getKpiStats($restaurantId = null)
 }
     public static function getAverageStayTime($restaurantId = null)
     {
-        $query = self::whereMonth('reserved_at', now()->month)
-                     ->whereYear('reserved_at', now()->year)
+        $query = self::whereMonth('end_at', now()->month)
+                     ->whereYear('end_at', now()->year)
                      ->whereNotNull('start_at')
                      ->whereNotNull('end_at');
 
@@ -100,10 +100,10 @@ public static function getKpiStats($restaurantId = null)
         $monthlyData = array_fill(0, 12, 0);
 
         $results = self::select(
-            DB::raw('MONTH(reserved_at) as month'),
+            DB::raw('MONTH(end_at) as month'),
             DB::raw('COUNT(*) as count')
         )
-        ->whereYear('reserved_at', $year)
+        ->whereYear('end_at', $year)
         ->when($restaurantId, function($query) use ($restaurantId) {
             return $query->where('restaurant_id', $restaurantId);
         })
@@ -121,8 +121,8 @@ public static function getHourlyStats($restaurantId = null)
 {
     $hourlyData = array_fill(0, 24, 0);
 
-    $reservations = self::whereMonth('reserved_at', now()->month)
-        ->whereYear('reserved_at', now()->year)
+    $reservations = self::whereMonth('end_at', now()->month)
+        ->whereYear('end_at', now()->year)
         ->whereNotNull('start_at')
         ->whereNotNull('end_at')
         ->when($restaurantId, function ($query) use ($restaurantId) {

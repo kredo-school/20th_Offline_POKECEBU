@@ -56,6 +56,7 @@
                 </div>
 
                 <button type="submit" class="btn post-btn">Post</button>
+                <a href="{{ route('user.posts.index') }}" class="btn border ms-3">Cancel</a>
             </form>
         </div>
     </div>

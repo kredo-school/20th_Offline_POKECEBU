@@ -11,15 +11,28 @@ class PostController extends Controller
 {
 
     // 一覧
-    public function index() {
-        $posts = Post::with('images', 'user','tags')
-            ->latest()
-            ->paginate(10);
+    public function index(Request $request)
+    {
+        $search_word = $request->input('search');
 
-        return view('userpage.posts.post-list')->with('posts',$posts);
-        
+        $query = Post::with('images', 'user', 'tags')->latest();
+
+        if (!empty($search_word)) {
+            $query->where(function ($q) use ($search_word) {
+                $q->where('title', 'like', "%{$search_word}%")
+                    ->orWhere('body', 'like', "%{$search_word}%")
+                    ->orWhereHas('tags', function ($t) use ($search_word) {
+                        $t->where('name', 'like', "%{$search_word}%");
+                    });
+            });
+        }
+
+        $posts = $query->paginate(10);
+        $popularTags = PostTag::withCount('posts')->orderByDesc('posts_count')->limit(30)->get();
+
+        return view('userpage.posts.post-list', compact('posts', 'popularTags', 'search_word'));
     }
-    
+
     // POST作成
     public function create()
     {
@@ -59,17 +72,17 @@ class PostController extends Controller
 
         if($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {
-                $imageData = 'data:image/' 
-                . $image->extension() 
-                . ';base64,' 
-                . base64_encode(file_get_contents($image));
+                $imageData = 'data:image/'
+                    . $image->extension()
+                    . ';base64,'
+                    . base64_encode(file_get_contents($image));
 
                 $post->images()->create([
                 'image' =>$imageData
                 ]);
             }
         }
-        
+
         return redirect()
             ->route('user.posts.index')
             ->with('success','投稿しました');
@@ -85,11 +98,11 @@ class PostController extends Controller
         $relatedPosts = Post::whereHas('tags', function($query) use ($tagIds) {
             $query->whereIn('tag_id', $tagIds);
         })
-        ->where('id', '!=', $post->id)
+            ->where('id', '!=', $post->id)
         ->with(['images','user'])
-        ->latest()
-        ->take(6)
-        ->get();
+            ->latest()
+            ->take(6)
+            ->get();
 
         return view('userpage.posts.show', compact('post', 'relatedPosts'));
     }
@@ -125,11 +138,11 @@ class PostController extends Controller
 
         foreach ($matches[1] as $tagName) {
 
-        $tag = PostTag::firstOrCreate([
-            'name' => mb_strtolower($tagName)
-        ]);
+            $tag = PostTag::firstOrCreate([
+                'name' => mb_strtolower($tagName)
+            ]);
 
-        $tagIds[] = $tag->id;
+            $tagIds[] = $tag->id;
         }
         $post->tags()->sync($tagIds);
 
@@ -139,11 +152,11 @@ class PostController extends Controller
 
             foreach ($request->file('images') as $image) {
 
-            
-                $imageData = 'data:image/' 
-                . $image->extension() 
-                . ';base64,' 
-                . base64_encode(file_get_contents($image));
+
+                $imageData = 'data:image/'
+                    . $image->extension()
+                    . ';base64,'
+                    . base64_encode(file_get_contents($image));
 
                 $post->images()->create([
                 'image' =>$imageData
@@ -151,7 +164,7 @@ class PostController extends Controller
             }
         }
 
-        
+
 
         return redirect()
             ->route('user.posts.show',$post)
@@ -174,8 +187,8 @@ class PostController extends Controller
 
     // タグ検索
     public function tag($tagName) {
-       $tag = PostTag::where('name', $tagName)->firstOrFail();
-       $posts = $tag->posts()
+        $tag = PostTag::where('name', $tagName)->firstOrFail();
+        $posts = $tag->posts()
             ->with('images', 'user', 'tags')
             ->latest()
             ->paginate(12);

@@ -76,7 +76,9 @@ class HotelController extends Controller
         // ベースクエリ（withCount は残す）
         $query = Hotel::query()
             ->with(['hotelImages', 'rooms.categories', 'rooms.reservations', 'reviews'])
-            ->withCount('favorites');
+            ->withCount('favorites')
+            ->withCount('reviews')
+            ->withAvg('reviews', 'rating') ;
 
         // destination
         if ($destination = $request->input('destination')) {
@@ -211,7 +213,12 @@ class HotelController extends Controller
         // ページネーション
         $hotels = $query->paginate(10)->withQueryString();
 
-        $amenitiesList = \App\Models\Category::orderBy('name')->get();
+        // ホテル用フィルター項目のみ取得
+        $amenitiesList = \App\Models\Category::whereIn('target_type', ['hotel', 'all'])
+            ->orderBy('name', 'asc')
+            ->get();
+
+
 
         return view('userpage.mypage.hotel-search-result', [
             'hotels' => $hotels,

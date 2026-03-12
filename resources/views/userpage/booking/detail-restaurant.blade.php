@@ -203,7 +203,7 @@
                             <div class="modal-footer border-0 p-4 pt-0">
                                 <button type="button" class="btn btn-link text-decoration-none text-muted fw-bold" data-bs-dismiss="modal">Close</button>
                                 @if ($isAvailable)
-                                    <a href="{{ route('restaurant.show') }}" class="btn btn-primary rounded-pill px-5 fw-bold shadow">Confirm & Book Now</a>
+                                    <a href="{{ route('user.restaurant.show') }}" class="btn btn-primary rounded-pill px-5 fw-bold shadow">Confirm & Book Now</a>
                                 @endif
                             </div>
                         </div>

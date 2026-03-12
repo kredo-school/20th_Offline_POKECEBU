@@ -188,7 +188,7 @@
                             <div class="modal-footer border-0 p-4 pt-0">
                                 <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Close</button>
                                 @if ($isAvailable)
-                                    <a href="{{ route('hotels.index') }}" class="btn btn-primary rounded-pill px-5 fw-bold shadow">Reserve Now</a>
+                                    <a href="{{ route('user.hotels.reservation') }}" class="btn btn-primary rounded-pill px-5 fw-bold shadow">Reserve Now</a>
                                 @endif
                             </div>
                         </div>

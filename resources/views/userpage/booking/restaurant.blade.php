@@ -35,7 +35,7 @@
             </div>
         @endif
 
-        <form id="reservationForm" action="{{ route('restaurant.reserve') }}" method="POST">
+        <form id="reservationForm" action="{{ route('user.restaurant.reserve') }}" method="POST">
             @csrf
             
             {{-- どのレストランか特定するための隠し項目 --}}

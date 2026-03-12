@@ -29,7 +29,9 @@
     @endphp
 
     <div class="container">
-        <div class="top-photo"><h1>Find Your Perfect Hotel</h1></div>
+        <div class="top-photo">
+            <h1>Find Your Perfect Hotel</h1>
+        </div>
         <!-- Search Bar -->
         <div class="mb-4">
             <form class="row g-2 align-items-center" method="get" action="{{ url()->current() }}">
@@ -198,9 +200,10 @@
 
                                         <div class="text-end">
                                             @php
-                                                $reviews = $hotel->reviews ?? collect();
-                                                $avg = $reviews->count()
-                                                    ? number_format($reviews->avg('rating'), 1)
+                                                // コントローラで withCount / withAvg を付与している前提
+                                                $reviewsCount = $hotel->reviews_count ?? 0;
+                                                $avg = $hotel->reviews_avg_rating
+                                                    ? number_format($hotel->reviews_avg_rating, 1)
                                                     : null;
 
                                                 // コントローラで計算した min_price があれば優先して使う
@@ -220,9 +223,14 @@
                                                 $available = $hotel->available_rooms_count ?? null;
                                             @endphp
 
-                                            @if ($avg)
-                                                <div class="badge bg-success mb-2"><i
-                                                        class="fa-solid fa-star me-1"></i>{{ $avg }}</div>
+                                            @if ($reviewsCount > 0)
+                                                <div class="badge bg-primary mb-2"
+                                                    aria-label="{{ $reviewsCount }}reviews ">
+                                                    @if ($avg)
+                                                        <i class="fa-solid fa-star me-1"></i>{{ $avg }}
+                                                    @endif
+                                                    <span class="ms-2">{{ $reviewsCount }} reviews</span>
+                                                </div>
                                             @else
                                                 <div class="badge bg-secondary mb-2">No reviews</div>
                                             @endif
@@ -230,7 +238,8 @@
                                             {{-- 部屋が無い場合は明示的メッセージを出す --}}
                                             @if ($rooms->count() === 0)
                                                 <div class="h6 mb-0 text-muted">No rooms</div>
-                                                <div class="small text-muted">Room information has not yet been registered.</div>
+                                                <div class="small text-muted">Room information has not yet been registered.
+                                                </div>
                                             @else
                                                 {{-- available_rooms_count がセットされている場合は在庫0なら Sold out 表示 --}}
                                                 @if ($available !== null)
@@ -262,7 +271,7 @@
 
                                     <div class="d-flex gap-2">
                                         <a href="{{ route('user.hotels.detail', ['id' => $hotel->id]) }}"
-                                            class="btn btn-outline-secondary btn-sm">Details</a>
+                                            class="btn btn-outline-primary btn-sm">Details</a>
                                         {{-- 即時予約ボタンはいったんコメントアウト --}}
                                         {{-- <a href="{{ route('booking.create', ['hotel' => $hotel->id]) }}" --}}
                                         {{-- <a href=# class="btn btn-primary btn-sm"><i
@@ -370,7 +379,7 @@
             justify-content: center;
             color: white;
             text-align: center;
-            background-color: rgba(0, 0, 0, 0.1); 
+            background-color: rgba(0, 0, 0, 0.1);
             background-blend-mode: multiply;
         }
 
@@ -379,7 +388,7 @@
             font-weight: bold;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
             margin: 0;
-            position: relative; 
+            position: relative;
             z-index: 2;
         }
     </style>

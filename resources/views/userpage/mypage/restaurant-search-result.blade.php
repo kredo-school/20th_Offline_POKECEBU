@@ -194,6 +194,7 @@
                                                                 : null;
                                                         $available = $restaurant->available_tables_count ?? null;
                                                     @endphp
+                                                    
 
 
                                                     @if ($reviewsCount > 0)

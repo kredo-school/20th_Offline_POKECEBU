@@ -55,6 +55,54 @@
                                             <i class="fa-regular fa-heart text-secondary"></i>
                                         </button>
                                     </form>
+                                    @endif
+                {{-- Modal Section (省略せず構造維持) --}}
+                <div class="modal fade" id="roomModal{{ $room->id }}" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-lg modal-dialog-centered">
+                        <div class="modal-content border-0 rounded-4 overflow-hidden">
+                            <div class="modal-header border-0 pb-0">
+                                <h5 class="modal-title fw-bold">Room Details</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body p-4">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <div class="room-images hide-scrollbar">
+                                            @foreach ($room->images as $image)
+                                                <img src="{{ asset('storage/' . $image->image) }}" class="w-100 rounded-3" alt="Room Image" style="height: 300px; object-fit: cover;">
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="d-flex justify-content-between align-items-start mb-2">
+                                            <h3 class="fw-bold mb-0">{{ $room->type->name }}</h3>
+                                            <span class="badge {{ $isAvailable ? 'bg-success' : 'bg-danger' }} px-3">{{ $room->status->name }}</span>
+                                        </div>
+                                        <p class="text-muted small">Room No. {{ $room->room_number ?? 'N/A' }}</p>
+                                        <h6 class="text-uppercase text-muted small fw-bold mt-4">Description</h6>
+                                        <p class="text-dark small lh-lg">{{ $room->detail }}</p>
+                                        
+                                        <div class="mt-4 p-3 bg-light rounded-3 text-center row g-0">
+                                            <div class="col-4 border-end">
+                                                <small class="text-muted d-block">Floor</small>
+                                                <span class="fw-bold">{{ $room->floor_number }}</span>
+                                            </div>
+                                            <div class="col-4 border-end">
+                                                <small class="text-muted d-block">Max</small>
+                                                <span class="fw-bold">{{ $room->max_guests }}</span>
+                                            </div>
+                                            <div class="col-4">
+                                                <small class="text-muted d-block">Price</small>
+                                                <span class="fw-bold text-primary">₱{{ number_format($room->charges) }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer border-0 p-4 pt-0">
+                                <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Close</button>
+                                @if ($isAvailable)
+                                    <a href="{{ route('user.hotels.reservation') }}" class="btn btn-primary rounded-pill px-5 fw-bold shadow">Reserve Now</a>
                                 @endif
                                 {{-- Modal Section (省略せず構造維持) --}}
                                 <div class="modal fade" id="roomModal{{ $room->id }}" tabindex="-1" aria-hidden="true">

@@ -277,9 +277,8 @@ Route::group(['middleware' => 'auth'], function () {
         Route::match(['get', 'post'], '/reservation/payment-form', [HotelReservationController::class, 'payment'])->name('reservation.payment.form');
         Route::post('/reservation/payment', [HotelReservationController::class, 'pay'])->name('reservation.pay');
         Route::get('/reservation/payment/success', [HotelReservationController::class, 'reservationSuccess'])->name('reservation.success');
-        Route::get('/mypage/user', [UserDetailController::class, 'show'])->name('mypage.show');
-        Route::post('/mypage/userupdate', [UserDetailController::class, 'update'])->name('mypage.update');
 
+        Route::post('/reservation/payment', [HotelReservationController::class, 'pay'])->name('reservation.pay');
 
 
         // レストラン予約

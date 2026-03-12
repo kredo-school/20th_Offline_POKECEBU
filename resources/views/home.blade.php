@@ -56,12 +56,12 @@
                 <div class="hero-circle circle-4">
                     <div class="circle-content">
                         <span class="circle-label">RATE</span>
-                        @if ($rate && $rate > 0)
+                        <!-- @if ($rate && $rate > 0)
                             <div class="rate-text">¥1 = ₱{{ number_format($rate, 2) }}</div>
                             <div class="rate-text">₱1 = ¥{{ number_format(1 / $rate, 2) }}</div>
                         @else
                             <div class="rate-text">Loading</div>
-                        @endif
+                        @endif -->
                     </div>
                 </div>
             </div>

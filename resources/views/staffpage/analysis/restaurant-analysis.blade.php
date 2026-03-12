@@ -27,7 +27,7 @@
         </div>
 
         {{-- 詳細表示ボタン --}}
-        <div class="text-center mb-4">
+        <div class="text-center m-5">
             <button class="btn btn-outline-warning btn-detail shadow-sm" type="button" data-bs-toggle="collapse"
                 data-bs-target="#detailedAnalysis" aria-expanded="false">
                 <i class="fa-solid fa-chart-pie me-2"></i>Show Yearly Detailed Analysis

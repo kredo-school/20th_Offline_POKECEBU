@@ -33,6 +33,13 @@
                         </div>
                     </div>
 
+                    <div class="text-center m-5">
+                        <button class="btn btn-outline-primary rounded-pill px-4" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#detailedAnalysis">
+                            <i class="fa-solid fa-magnifying-glass-chart me-2"></i>Show Detailed Monthly Analysis
+                        </button>
+                    </div>
+
                     {{-- Yearly Detailed Collapse --}}
                     <div class="collapse" id="detailedAnalysis">
                         <div class="row">
@@ -75,13 +82,6 @@
                             </div>
                         </div>
                     </div>
-                </div>
-
-                <div class="text-center mb-4">
-                    <button class="btn btn-outline-primary rounded-pill px-4" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#detailedAnalysis">
-                        <i class="fa-solid fa-magnifying-glass-chart me-2"></i>Show Detailed Monthly Analysis
-                    </button>
                 </div>
 
                 <div class="row mb-4">
@@ -316,7 +316,7 @@
             // 初期化
             createDoughnut('typeChartMonth', @json($typeStatsMonth->pluck('label_name')), @json($typeStatsMonth->pluck('total_sales')), '₱');
             createDoughnut('typeBookingChartMonth', @json($typeBookingStatsMonth->pluck('label_name')), @json($typeBookingStatsMonth->pluck('booking_count')),
-            '件');
+                '件');
 
             // タブ切り替えイベント
             document.getElementById('tab-year').addEventListener('shown.bs.tab', function() {

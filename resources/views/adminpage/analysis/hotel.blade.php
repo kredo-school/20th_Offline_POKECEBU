@@ -68,7 +68,7 @@
                     </div>
 
                     <div class="text-center m-5">
-                        <button class="btn btn-dark rounded-pill px-5 shadow-sm fw-bold" type="button"
+                        <button class="btn btn-outline-primary rounded-pill px-5 shadow-sm fw-bold" type="button"
                             data-bs-toggle="collapse" data-bs-target="#detailedTable">
                             <i class="fa-solid fa-table me-2"></i>Show Full Year Report
                         </button>

@@ -46,8 +46,8 @@
                     </div>
 
                     {{-- Table Toggle --}}
-                    <div class="text-center mb-5">
-                        <button class="btn btn-dark rounded-pill px-5 shadow-sm fw-bold" type="button"
+                    <div class="text-center m-5">
+                        <button class="btn btn-outline-dark rounded-pill px-5 shadow-sm fw-bold" type="button"
                             data-bs-toggle="collapse" data-bs-target="#detailedUserTable">
                             <i class="fa-solid fa-table-list me-2"></i>View Monthly Registration History
                         </button>

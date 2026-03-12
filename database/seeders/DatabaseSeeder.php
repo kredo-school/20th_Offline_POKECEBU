@@ -206,26 +206,29 @@ class DatabaseSeeder extends Seeder
             }
         }
 
-        /*
+                /*
         |--------------------------------------------------------------------------
-        | 5. 予約データの生成 (計800件：2026年 600件 / 2025年 200件)
+        | 5. 予約データの生成 (計1000件：2026年 900件 / 2025年 100件)
         |--------------------------------------------------------------------------
         */
-        for ($i = 0; $i < 800; $i++) {
-            // $iが600未満なら2026年、それ以降は2025年の日付を生成
-            if ($i < 600) {
-                // 2026年1月1日 〜 2026年12月31日
-                $reservedAt = Carbon::create(2026, rand(1, 12), rand(1, 28))
+        for ($i = 0; $i < 1000; $i++) {
+            // $iが900未満なら、宿泊期間が2026年内に収まるように設定
+            if ($i < 900) {
+                // 2026年1月1日 〜 2026年12月15日くらいまでに予約作成日を限定
+                // (後ろに余裕を持たせないと、宿泊期間が2027年に食い込むため)
+                $reservedAt = Carbon::create(2026, rand(1, 12), rand(1, 15))
                                     ->setTime(rand(8, 20), 0);
             } else {
-                // 2025年1月1日 〜 2025年12月31日
-                $reservedAt = Carbon::create(2025, rand(1, 12), rand(1, 28))
+                // 2025年1月1日 〜 2025年12月15日
+                $reservedAt = Carbon::create(2025, rand(1, 12), rand(1, 15))
                                     ->setTime(rand(8, 20), 0);
             }
 
-            // ホテル予約
+            // --- ホテル予約 ---
             $roomInfo = $allRoomIds[array_rand($allRoomIds)];
-            $startAt = $reservedAt->copy()->addDays(rand(1, 10)); // 予約日から1〜10日後
+            // 予約の1日〜10日後に宿泊開始
+            $startAt = $reservedAt->copy()->addDays(rand(1, 10)); 
+            // さらに1〜4日間滞在（これで最大でも予約日の14日後にはチェックアウト＝年内に収まる）
             $endAt = $startAt->copy()->addDays(rand(1, 4));
 
             DB::table('hotel_reservations')->insert([
@@ -244,8 +247,9 @@ class DatabaseSeeder extends Seeder
                 'updated_at' => $reservedAt,
             ]);
 
-            // レストラン予約
+            // --- レストラン予約 ---
             $tableInfo = $allTableIds[array_rand($allTableIds)];
+            // 予約の1日〜10日後に来店
             $resStart = $reservedAt->copy()->addDays(rand(1, 10))->setTime(rand(11, 20), 0);
 
             DB::table('restaurant_reservations')->insert([
@@ -264,7 +268,7 @@ class DatabaseSeeder extends Seeder
                 'updated_at' => $reservedAt,
             ]);
         }
-
+        
         /*
         |--------------------------------------------------------------------------
         | 6. FAQ データの生成

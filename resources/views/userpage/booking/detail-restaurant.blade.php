@@ -106,10 +106,10 @@
                                 </h5>
                                 <div class="d-flex flex-wrap gap-2">
                                     <span class="badge bg-light text-secondary border-0 fw-normal py-2 px-3">
-                                        <i class="fa-solid fa-chair me-1"></i> {{ $table->type->name }}
+                                        <i class="fa-solid fa-chair me-1 text-primary"></i> {{ $table->type->name }}
                                     </span>
                                     <span class="badge bg-light text-secondary border-0 fw-normal py-2 px-3">
-                                        <i class="fa-solid fa-user-group me-1"></i> Max: {{ $table->max_guests }}
+                                        <i class="fa-solid fa-user-group me-1 text-primary"></i> Max: {{ $table->max_guests }}
                                     </span>
                                 </div>
                             </div>

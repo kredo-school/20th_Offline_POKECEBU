@@ -168,6 +168,8 @@ class RestaurantController extends Controller
         // 必要なリレーションを eager load、合計いいね数を付与、現在ユーザー分の favorites を絞ってロード
         $query->with(['restaurantImages', 'tables', 'reviews'])
             ->withCount('favorites')
+            ->withCount('reviews')
+            ->withAvg('reviews', 'rating') 
             ->with(['favorites' => function ($q) {
                 if ($userId = Auth::id()) {
                     $q->where('user_id', $userId);

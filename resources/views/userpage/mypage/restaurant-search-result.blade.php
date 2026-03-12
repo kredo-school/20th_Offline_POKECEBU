@@ -101,7 +101,7 @@
                                 <button type="submit" class="btn btn-outline-primary btn-sm">Apply Filters</button>
                             </div>
                         </form>
-                         <script>
+                        <script>
                             document.addEventListener('DOMContentLoaded', function() {
                                 try {
                                     const navEntries = performance.getEntriesByType && performance.getEntriesByType('navigation');
@@ -178,11 +178,11 @@
 
                                                 <div class="text-end">
                                                     @php
-                                                        $reviews = $restaurant->reviews ?? collect();
-                                                        $avg = $reviews->count()
-                                                            ? number_format($reviews->avg('rating'), 1)
+                                                        // コントローラで withCount / withAvg を付与している前提
+                                                        $reviewsCount = $restaurant->reviews_count ?? 0;
+                                                        $avg = $restaurant->reviews_avg_rating
+                                                            ? number_format($restaurant->reviews_avg_rating, 1)
                                                             : null;
-
                                                         $minPriceRaw =
                                                             $restaurant->min_price ??
                                                             ($restaurant->tables->count()
@@ -194,11 +194,15 @@
                                                                 : null;
                                                         $available = $restaurant->available_tables_count ?? null;
                                                     @endphp
-                                                    
 
-                                                    @if ($avg)
-                                                        <div class="badge bg-success mb-2"><i
-                                                                class="fa-solid fa-star me-1"></i>{{ $avg }}
+
+                                                    @if ($reviewsCount > 0)
+                                                        <div class="badge bg-primary mb-2"
+                                                            aria-label="{{ $reviewsCount }}reviews">
+                                                            @if ($avg)
+                                                                <i class="fa-solid fa-star me-1"></i>{{ $avg }}
+                                                            @endif
+                                                            <span class="ms-2">{{ $reviewsCount }} reviews</span>
                                                         </div>
                                                     @else
                                                         <div class="badge bg-secondary mb-2">No reviews</div>

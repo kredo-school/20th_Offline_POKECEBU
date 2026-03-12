@@ -270,13 +270,13 @@ Route::group(['middleware' => 'auth'], function () {
 
 
         // ホテル予約
+        Route::get('/hotels/{hotel}/reserve', [HotelReservationController::class, 'show'])->name('hotels.show');
         Route::get('/hotels/reservation', [HotelController::class, 'roomInfo'])->name('hotels.reservation');
         Route::get('/reservation/confirmation', [HotelReservationController::class, 'confirmation'])->name('reservation.confirmation');
         Route::post('/reservation/confirm', [HotelReservationController::class, 'confirmReservation'])->name('reservation.confirm');
         Route::match(['get', 'post'], '/reservation/payment-form', [HotelReservationController::class, 'payment'])->name('reservation.payment.form');
         Route::post('/reservation/payment', [HotelReservationController::class, 'pay'])->name('reservation.pay');
         Route::get('/reservation/payment/success', [HotelReservationController::class, 'reservationSuccess'])->name('reservation.success');
-        Route::post('/reservation/payment', [HotelReservationController::class, 'pay'])->name('reservation.pay');
         Route::get('/mypage/user', [UserDetailController::class, 'show'])->name('mypage.show');
         Route::post('/mypage/userupdate', [UserDetailController::class, 'update'])->name('mypage.update');
 
@@ -285,12 +285,14 @@ Route::group(['middleware' => 'auth'], function () {
         // レストラン予約
         Route::get('/restaurant/reservation', [RestaurantReservationController::class, 'showInfo'])->name('restaurant.show');
         Route::post('/restaurant/reserve', [RestaurantReservationController::class, 'store'])->name('restaurant.reserve');
-        Route::get('/reservation/confirmation', [HotelReservationController::class, 'confirmation'])->name('reservation.confirmation');
-        Route::post('/reservation/confirm', [HotelReservationController::class, 'confirmReservation'])->name('reservation.confirm');
-        Route::match(['get', 'post'], '/reservation/payment-form', [HotelReservationController::class, 'payment'])->name('reservation.payment.form');
-        Route::post('/reservation/payment', [HotelReservationController::class, 'pay'])->name('reservation.pay');
-        Route::get('/reservation/payment/success', [HotelReservationController::class, 'reservationSuccess'])->name('reservation.success');
-        Route::post('/reservation/payment', [HotelReservationController::class, 'pay'])->name('reservation.pay');
+
+        // 支払
+        Route::post('/reservation/pay', [HotelReservationController::class, 'confirmReservation'])->name('reservation.pay');
+        Route::get('/reservation/success', [HotelReservationController::class, 'reservationSuccess'])->name('reservation.success');
+
+        // キャンセル関連
+        Route::get('/reservation/{reservation_id}/cancel-confirm', [HotelReservationController::class, 'cancelConfirm'])->name('reservation.cancel.confirm');
+        Route::post('/reservation/{reservation_id}/cancel', [HotelReservationController::class, 'cancel'])->name('reservation.cancel');
 
 
         //jeepney
@@ -300,26 +302,9 @@ Route::group(['middleware' => 'auth'], function () {
         //game
         Route::get('/daily-fortune', [DailyFortuneController::class, 'show'])->name('daily.fortune.show');
         Route::post('/daily-fortune/draw', [DailyFortuneController::class, 'draw'])->name('daily.fortune.draw');
+
     });
 });
-
-
-
-Route::get('/userhotel', function () {
-    return view('userpage.booking.hotel');
-})->name('user.hotel');
-Route::middleware('auth')->group(function () {
-    Route::get('/mypage', [MyPageController::class, 'index'])->name('mypage');
-    Route::get('/mypage/edit', [MyPageController::class, 'editPersonal'])->name('mypage.edit');
-    Route::post('/mypage/updateProfile', [MyPageController::class, 'updatePersonal'])->name('mypage.updateProfile');
-    Route::get('/mypage/edit/adress', [MyPageController::class, 'editAdress'])->name('edit.adress');
-    Route::post('/mypage/edit/updateAdress', [MyPageController::class, 'updateAdress'])->name('update.adress');
-    Route::get('/mypage/edit/profile', [MyPageController::class, 'editProfile'])->name('edit.profile');
-    Route::post('/mypage/edit/updateProfile', [MyPageController::class, 'updateProfile'])->name('update.profile');
-    Route::get('mypage/booking', [BookingController::class, 'index'])->name('booking');
-    Route::get('mypage/favorite', [FavoriteController::class, 'index'])->name('favorite');
-});
-
 
 //Staff
 //Staff add-for-hotel

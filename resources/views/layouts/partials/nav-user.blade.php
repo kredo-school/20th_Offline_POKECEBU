@@ -33,6 +33,12 @@
                 </a>
             </li>
             <li class="nav-item">
+                <a href="{{ route('user.daily.fortune.show') }}" class="nav-link text-center">
+                    <i class="fa-solid fa-star"></i>
+                    <div>Pick</div>
+                </a>
+            </li>
+            <li class="nav-item">
                 <a href="{{ route('faq.index') }}" class="nav-link text-center">
                     <i class="fa-regular fa-circle-question"></i>
                     <div>FAQ</div>
@@ -58,13 +64,15 @@
                             style="font-size: 0.65rem; letter-spacing: 0.5px;">Dashboard</small>
                     </div>
 
-                    <a href="{{ route('user.mypage') }}" class="dropdown-item d-flex align-items-center py-2 rounded-2">
-                        <div class="bg-info bg-opacity-10 text-info rounded-circle d-flex align-items-center justify-content-center me-3"
-                            style="width: 32px; height: 32px;">
-                            <i class="fa-solid fa-user-gear"></i>
-                        </div>
-                        <span class="fw-semibold">My Page</span>
-                    </a>
+                    @can('user')
+                        <a href="{{ route('user.mypage') }}" class="dropdown-item d-flex align-items-center py-2 rounded-2">
+                            <div class="bg-info bg-opacity-10 text-info rounded-circle d-flex align-items-center justify-content-center me-3"
+                                style="width: 32px; height: 32px;">
+                                <i class="fa-solid fa-user-gear"></i>
+                            </div>
+                            <span class="fw-semibold">My Page</span>
+                        </a>
+                    @endcan
 
                     @can('admin')
                         <a href="{{ route('admin.home') }}" class="dropdown-item d-flex align-items-center py-2 rounded-2">

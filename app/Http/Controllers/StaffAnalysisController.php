@@ -101,12 +101,12 @@ class StaffAnalysisController extends Controller
         // --- ヒートマップ用：過去12ヶ月分の日別データを全て取得 ---
         $allDailyData = [];
         $rawReservations = RestaurantReservation::where('restaurant_id', $restaurantId)
-            ->where('reserved_at', '>=', now()->subMonths(11)->startOfMonth())
-            ->select('reserved_at')
+            ->where('end_at', '>=', now()->subMonths(11)->startOfMonth())
+            ->select('end_at')
             ->get();
     
         foreach ($rawReservations as $res) {
-            $dateKey = Carbon::parse($res->reserved_at)->format('Y-m-d');
+            $dateKey = Carbon::parse($res->end_at)->format('Y-m-d');
             if (!isset($allDailyData[$dateKey])) {
                 $allDailyData[$dateKey] = 0;
             }

@@ -1,0 +1,48 @@
+     .analysis-wrapper { background: #fdfcf9; min-height: 100vh; padding: 20px; }
+    
+    .btn-sidebar { 
+        border: none; padding: 12px 20px; border-radius: 12px; color: #64748b; 
+        transition: all 0.3s; background: white; width: 100%; display: block; 
+        margin-bottom: 10px; text-decoration: none; text-align: left;
+    }
+    .btn-sidebar:hover { background: #fff7ed; color: #ea580c; transform: translateX(5px); }
+    .btn-sidebar.active { 
+        background: #f59e0b !important; color: white !important; 
+        box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3); 
+    }
+
+   /* KPIカードのベース */
+    .kpi-card {
+        background: white;
+        padding: 25px;
+        border-radius: 20px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); /* 影を少し柔らかく */
+        height: 100%;
+        transition: all 0.3s ease;
+        border: none; /* デフォルトの線を消す */
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    /* ホバー時の動き */
+    .kpi-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    /* バッジの幅調整 */
+    .w-fit {
+        width: fit-content;
+    }
+
+    /* フォントの太さ強調 */
+    .fw-black {
+        font-weight: 900 !important;
+    }
+    .analysis-card { background: white; border-radius: 20px; padding: 25px; box-shadow: 0 2px 15px rgba(0,0,0,0.05); margin-bottom: 25px; border: none; }
+    
+    .chart-title { font-weight: 700; color: #431407; border-bottom: 1px solid #fdf2f0; padding-bottom: 15px; margin-bottom: 20px; display: flex; align-items: center; }
+    .chart-wrapper { position: relative; height: 350px; width: 100%; }
+    
+    .fw-black { font-weight: 900; }

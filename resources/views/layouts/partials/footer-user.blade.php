@@ -32,13 +32,13 @@
         <style>
             /* フッター */
             .site-footer {
-                background: #f7f8fa;
-                margin: 80px;
+                background: #e7e9ec;
+                margin: 40px;
                 padding: 60px 0 30px;
             }
 
             .footer-inner {
-                max-width: 1200px;
+                max-width: 1000px;
                 margin: auto;
                 padding: 0 20px;
             }

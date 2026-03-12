@@ -1,0 +1,46 @@
+    .analysis-wrapper { background: #f4f7f6; min-height: 100vh; padding: 20px; }
+    
+    .btn-sidebar { 
+        border: none; padding: 12px 20px; border-radius: 12px; color: #64748b; 
+        transition: all 0.3s; background: white; width: 100%; display: block; 
+        margin-bottom: 10px; text-decoration: none; text-align: left;
+    }
+    .btn-sidebar:hover { background: #f1f5f9; color: #1e293b; transform: translateX(5px); }
+    .btn-sidebar.active { 
+        background: #3b82f6 !important; color: white !important; 
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3); 
+    }
+
+    .kpi-box {
+        background: white;
+        padding: 25px;
+        border-radius: 20px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); /* 影を少し柔らかく */
+        height: 100%;
+        transition: all 0.3s ease;
+        border: none; /* デフォルトの線を消す */
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .kpi-box:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .w-fit {
+        width: fit-content;
+    }
+
+    .fw-black {
+        font-weight: 900 !important;
+    }
+    .analysis-card { background: white; border-radius: 20px; padding: 25px; box-shadow: 0 2px 15px rgba(0,0,0,0.05); margin-bottom: 25px; border: none; }
+    
+    .chart-title { font-weight: 700; color: #334155; margin-bottom: 20px; display: flex; align-items: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 15px; }
+    .chart-wrapper { position: relative; height: 350px; width: 100%; }
+    
+    .fw-black { font-weight: 900; }
+    .nav-pills-custom .nav-link { border-radius: 20px; padding: 5px 20px; font-size: 0.8rem; color: #64748b; background: #f1f5f9; margin-left: 5px; }
+    .nav-pills-custom .nav-link.active { background: #3b82f6; color: white; }

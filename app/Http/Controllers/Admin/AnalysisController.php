@@ -141,11 +141,9 @@ public function userAnalysis()
 }
     public function restaurantAnalysis($restaurantId = null)
     {
-        // 今月のKPI、平均滞在時間の取得
         $kpi = RestaurantReservation::getKpiStats($restaurantId); 
         $avgStayTime = RestaurantReservation::getAverageStayTime($restaurantId); 
     
-        // 月次の統計データ（表用）
         $monthlyKpis = RestaurantReservation::getMonthlyKpiStats($restaurantId);
         $monthlyBookings = []; $monthlyGuests = []; $monthlyAvgStay = [];
         for ($m = 1; $m <= 12; $m++) {
@@ -155,24 +153,21 @@ public function userAnalysis()
             $monthlyAvgStay[]  = $stat ? (float)$stat->avg_stay : 0.0;
         }
     
-        // 時間帯別の統計データ
         $hourlyStats = RestaurantReservation::getHourlyStats($restaurantId);
         
-        // --- 日次データ作成 (今月のカレンダー通り 1日〜末日まで) ---
         $year = now()->year;
         $month = now()->month;
         $daysInMonth = now()->daysInMonth;
-        // 1日から末日までを 0 で初期化した配列を作成
         $dailyData = array_fill(1, $daysInMonth, 0);
         
-        $reservations = RestaurantReservation::whereMonth('reserved_at', $month)
-            ->whereYear('reserved_at', $year)
+        $reservations = RestaurantReservation::whereMonth('end_at', $month)
+            ->whereYear('end_at', $year)
             ->when($restaurantId, function($query) use ($restaurantId) {
                 return $query->where('restaurant_id', $restaurantId);
             })->get();
     
         foreach ($reservations as $res) {
-            $day = Carbon::parse($res->reserved_at)->day;
+            $day = Carbon::parse($res->end_at)->day;
             if (isset($dailyData[$day])) {
                 $dailyData[$day]++;
             }

@@ -16,39 +16,55 @@ use App\Models\HotelReservation;
 class HotelReservationController extends Controller
 {
 
-   
-    public function confirmation()
+
+    // HotelReservationController.php
+
+    public function show($hotelId, Request $request)
     {
-        $hotelId = session('hotel_id');
-        $roomTypeId = session('room_type_id'); // ここには HotelRoomType の "id" が入っている想定
-        $guestsCount = session('guests_count', 1);
+        // セッションクリアの処理
+        if ($request->has('clear_reservation_session')) {
+            session()->forget(['hotel_id', 'room_type_id', 'guests_count', 'other_guests']);
+        }
+
+        // ホテル情報と、紐づくルームタイプ・画像を取得
+        $hotel = Hotel::with([
+            'roomTypes.roomType', // room_types テーブルとそのマスタ
+            'images'
+        ])->findOrFail($hotelId);
+
+        // あなたが提示した「ルームタイプ一覧」のBladeを指定
+        return view('userpage.booking.hotel.hotel', compact('hotel'));
+    }
+    public function confirmation(Request $request)
+    {
+        $hotelId = $request->hotel_id ?? session('hotel_id');
+        $roomTypeId = $request->room_type_id ?? session('room_type_id');
+        $guestsCount = $request->guests ?? session('guests_count', 1);
+
+        $checkin = $request->checkin ?? session('checkin');
+        $checkout = $request->checkout ?? session('checkout');
 
         if (!$hotelId || !$roomTypeId) {
-            return redirect()->route('hotels.index');
+            return redirect()->back()->with('error', 'Please select a hotel, room type, and dates.');
         }
 
-        $hotel = Hotel::find($hotelId);
+        session([
+            'hotel_id'     => $hotelId,
+            'room_type_id' => $roomTypeId,
+            'guests_count' => $guestsCount,
+            'checkin'      => $checkin,
+            'checkout'     => $checkout,
+        ]);
 
-        // 1. まず選択された部屋タイプ（HotelRoomType）を確実に取得
-        $roomType = HotelRoomType::find($roomTypeId);
+        $hotel = Hotel::findOrFail($hotelId);
+        $roomType = HotelRoomType::findOrFail($roomTypeId);
 
-        if (!$roomType) {
-            // 部屋タイプが見つからない場合の安全策
-            return redirect()->route('hotels.index')->with('error', 'Room type not found.');
-        }
-
-        // 2. HotelRoom から価格を取得
-        // ポイント：確実に hotel_id と type_id (1=single, 2=doubleなど) で絞り込む
         $roomData = HotelRoom::where('hotel_id', $hotelId)
             ->where('type_id', $roomType->type_id)
             ->first();
 
-        // デバッグ用（もし画面が真っ白になって ID が出たら、その数字をDBと見比べてみて！）
-        // dd('HotelID:'.$hotelId, 'TypeID:'.$roomType->type_id);
-
         $price = $roomData ? $roomData->charges : 0;
-
-        $userDetail = \App\Models\UserDetail::where('user_id', Auth::id())->first();
+        $userDetail = \App\Models\UserDetail::where('user_id', \Auth::id())->first();
         $otherGuests = session('other_guests', []);
 
         return view('userpage.booking.hotel.confirmation', compact(
@@ -57,23 +73,23 @@ class HotelReservationController extends Controller
             'userDetail',
             'otherGuests',
             'guestsCount',
-            'price'
+            'price',
+            'checkin',
+            'checkout'
         ));
     }
 
+    // ↓↓↓ このメソッドが消えていたので復活させます ↓↓↓
     public function payment(Request $request)
     {
-        // 1. Requestになければセッションから探す（ここが404回避のキモ）
         $hotelId = $request->hotel_id ?? session('hotel_id');
         $roomTypeId = $request->room_type_id ?? session('room_type_id');
         $guests = $request->guests ?? session('guests_count', 1);
 
-        // 2. それでもデータがない時は一覧に戻す（404にしない）
         if (!$hotelId || !$roomTypeId) {
             return redirect()->route('hotels.index')->with('error', 'Session timeout. Please select a room again.');
         }
 
-        // 3. findOrFail ではなく find で取得してチェック（安全策）
         $hotel = Hotel::find($hotelId);
         $roomType = HotelRoomType::find($roomTypeId);
 
@@ -90,8 +106,6 @@ class HotelReservationController extends Controller
 
         return view('userpage.booking.hotel.payment', compact('hotel', 'roomType', 'guests', 'price', 'totalPrice'));
     }
-
-    // 予約確定
 
 
     public function confirmReservation(Request $request)
@@ -119,7 +133,7 @@ class HotelReservationController extends Controller
             ->first();
 
         if (! $roomData) {
-            return redirect()->route('hotels.index')->with('error', 'No room available for selected type.');
+            return redirect()->route('hotel.mypage.hotel')->with('error', 'No room available for selected type.');
         }
 
         // Booked の id を動的に取得（存在しなければ 3 を使う）
@@ -147,11 +161,15 @@ class HotelReservationController extends Controller
 
             $reservation->save();
 
+            // App/Http/Controllers/HotelReservationController.php
+
             DB::commit();
 
-            $request->session()->forget(['other_guests']);
+            // セッションを忘れずにクリア
+            session()->forget(['other_guests', 'hotel_id', 'room_type_id', 'guests_count']);
 
-            return redirect()->route('reservation.success', [
+            // 【ここが重要】 user. を必ずつける
+            return redirect()->route('user.reservation.success', [
                 'reservation_id' => $reservation->reservation_id
             ]);
         } catch (\Throwable $e) {
@@ -186,28 +204,125 @@ class HotelReservationController extends Controller
     }
     public function pay(Request $request)
     {
-        // ⚠️ 入力何でもOK
-        $inputs = $request->all();
-        logger($inputs); // 入力をログに残すだけ
+        // 1. バリデーション（Payment画面から送られてくる項目に合わせる）
+        $request->validate([
+            'hotel_id' => 'required|exists:hotels,id',
+            'room_type_id' => 'required|exists:hotel_room_types,id',
+            'guests' => 'required|integer|min:1',
+            'start_at' => 'required|date',
+            'end_at' => 'required|date|after_or_equal:start_at',
+        ]);
 
-        // roomType があれば取得する（無ければ null）
-        $roomType = !empty($request->room_type_id) ? HotelRoomType::find($request->room_type_id) : null;
-        $hotel = !empty($request->hotel_id) ? Hotel::find($request->hotel_id) : null;
-        dd('pay通ってる');
+        $user = Auth::user();
+        $hotel = Hotel::findOrFail($request->hotel_id);
+        $roomType = HotelRoomType::findOrFail($request->room_type_id);
 
-        // 本来のPayPal処理はスキップ、成功画面に飛ばす
-        return view('userpage.booking.hotel.reservation-success', compact('inputs', 'hotel', 'roomType'));
+        // 実際の部屋を取得
+        $roomData = HotelRoom::where('hotel_id', $hotel->id)
+            ->where('type_id', $roomType->type_id)
+            ->first();
+
+        if (!$roomData) {
+            return redirect()->back()->with('error', 'No room available.');
+        }
+
+        DB::beginTransaction();
+        try {
+            $reservation = new HotelReservation();
+            $reservation->reservation_id = 'RES' . time() . rand(100, 999);
+            $reservation->user_id    = $user->id;
+            $reservation->hotel_id   = $hotel->id;
+            $reservation->room_id    = $roomData->id;
+            $reservation->guests     = $request->guests;
+            $reservation->total_price = ($roomData->charges ?? 0) * $request->guests;
+
+            $otherGuests = session('other_guests', []);
+            $reservation->other = json_encode(['additional_guests' => $otherGuests]);
+
+            $reservation->status_id = DB::table('statuses')->where('name', 'Booked')->value('id') ?? 3;
+            $reservation->start_at  = $request->start_at;
+            $reservation->end_at    = $request->end_at;
+
+            $reservation->save();
+            DB::commit();
+
+            // セッションクリア
+            session()->forget(['other_guests', 'hotel_id', 'room_type_id', 'guests_count', 'checkin', 'checkout']);
+
+            // 成功画面へ
+            return redirect()->route('user.reservation.success');
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            \Log::error('Reservation Error: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Failed to process reservation.');
+        }
     }
 
     public function reservationSuccess(Request $request)
     {
-        // セッションやリクエストから入力を取得（なければ空配列）
-        $inputs = $request->all() ?: [];
+        // リクエストパラメータ（URLの ?reservation_id=...）から取得
+        $reservationId = $request->query('reservation_id');
 
-        // ホテル情報なども必要なら取得しますが、一旦エラー回避を優先
-        $hotel = null;
-        $roomType = null;
+        // 予約データを取得
+        $reservation = HotelReservation::where('reservation_id', $reservationId)->first();
+        $hotel = $reservation ? $reservation->hotel : null;
 
-        return view('userpage.booking.hotel.reservation-success', compact('inputs', 'hotel', 'roomType'));
+        return view('userpage.booking.hotel.reservation-success', compact('reservation', 'hotel'));
+    }
+    public function cancelConfirm(string $reservationId)
+    {
+        $reservation = HotelReservation::with(['hotel'])
+            ->where('reservation_id', $reservationId)
+            ->where('user_id', Auth::id()) // 他人の予約は触れない
+            ->firstOrFail();
+
+        // すでにキャンセル済みなら一覧に戻す
+        $canceledId = DB::table('statuses')->where('name', 'Canceled')->value('id');
+        if ($reservation->status_id === $canceledId) {
+            return redirect()->route('user.mypage')
+                ->with('error', 'この予約はすでにキャンセル済みです。');
+        }
+
+        return view('userpage.booking.hotel.cancel-confirm', compact('reservation'));
+    }
+
+    /**
+     * キャンセル実行
+     */
+    public function cancel(Request $request, string $reservationId)
+    {
+        $reservation = HotelReservation::where('reservation_id', $reservationId)
+            ->where('user_id', Auth::id()) // 他人の予約は触れない
+            ->firstOrFail();
+
+        // statuses テーブルから 'Canceled'(id=5) を取得
+        $canceledId = DB::table('statuses')->where('name', 'Canceled')->value('id');
+
+        if (!$canceledId) {
+            return redirect()->route('user.mypage')
+                ->with('error', 'キャンセル処理に失敗しました。管理者にお問い合わせください。');
+        }
+
+        // すでにキャンセル済みなら何もしない
+        if ($reservation->status_id === $canceledId) {
+            return redirect()->route('user.mypage')
+                ->with('error', 'この予約はすでにキャンセル済みです。');
+        }
+
+        DB::beginTransaction();
+        try {
+            $reservation->status_id = $canceledId;
+            $reservation->save();
+
+            DB::commit();
+
+            return redirect()->route('user.mypage')
+                ->with('success', '予約をキャンセルしました。');
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            \Log::error('Reservation cancel failed: ' . $e->getMessage());
+            return redirect()->route('user.mypage')
+                ->with('error', 'キャンセルに失敗しました。もう一度お試しください。');
+        }
     }
 }

@@ -9,7 +9,7 @@
 @section('content')
 <div class="mypage-wrapper">
 
-    {{-- ── 左サイドバー（mypageと同一構造） ── --}}
+    {{-- ── 左サイドバー ── --}}
     <aside class="ig-sidebar">
         <div class="ig-sidebar-profile">
             <div class="ig-sidebar-avatar">
@@ -28,16 +28,16 @@
         </div>
 
         <nav class="ig-sidebar-nav">
-            <a href="{{ route('mypage') }}" class="ig-nav-item">
+            <a href="{{ route('user.mypage') }}" class="ig-nav-item">
                 <i class="fa-regular fa-user"></i> Profile
             </a>
             <a href="{{ route('user.mypage.post') }}" class="ig-nav-item">
                 <i class="fa-regular fa-images"></i> Posts
             </a>
-            <a href="{{ route('booking') }}" class="ig-nav-item active">
+            <a href="{{ route('user.booking') }}" class="ig-nav-item active">
                 <i class="fa-regular fa-calendar"></i> Bookings
             </a>
-            <a href="{{ route('favorite') }}" class="ig-nav-item">
+            <a href="{{ route('user.favorite') }}" class="ig-nav-item">
                 <i class="fa-regular fa-heart"></i> Favorite
             </a>
         </nav>
@@ -46,7 +46,7 @@
     {{-- ── 右コンテンツ ── --}}
     <main class="ig-content">
 
-        {{-- プロフィールヘッダー（mypageと同一構造） --}}
+        {{-- プロフィールヘッダー --}}
         <div class="ig-profile-card">
             <div class="ig-avatar-ring">
                 <div class="ig-avatar-inner">
@@ -64,6 +64,14 @@
                 <div class="ig-email">{{ $user->email }}</div>
             </div>
         </div>
+
+        {{-- フラッシュメッセージ --}}
+        @if(session('success'))
+            <div class="alert alert-success mb-3">{{ session('success') }}</div>
+        @endif
+        @if(session('error'))
+            <div class="alert alert-danger mb-3">{{ session('error') }}</div>
+        @endif
 
         {{-- ── タブ ── --}}
         <div class="bk-tabs">
@@ -98,9 +106,66 @@
                         <div class="bk-card-right">
                             <div class="bk-price">₱{{ number_format($res->total_price, 2) }}</div>
                             <span class="bk-badge active"><i class="fa-solid fa-circle" style="font-size:6px;"></i> Active</span>
+                            {{-- ▼▼▼ キャンセルボタン ▼▼▼ --}}
+                            <button class="bk-cancel-btn"
+                                data-bs-toggle="modal"
+                                data-bs-target="#cancelModal{{ $res->reservation_id }}">
+                                <i class="fa-regular fa-xmark"></i> Cancel
+                            </button>
                         </div>
                     </div>
                 </div>
+
+                {{-- ▼▼▼ キャンセル確認モーダル ▼▼▼ --}}
+                <div class="modal fade" id="cancelModal{{ $res->reservation_id }}" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content" style="border-radius:16px; overflow:hidden;">
+                            <div class="modal-header" style="background:#c62828; color:#fff; border:none;">
+                                <h5 class="modal-title"><i class="fa-regular fa-triangle-exclamation me-2"></i>Cancel Reservation</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body" style="padding:1.5rem;">
+                                <p class="mb-3" style="color:#555;">Are you sure you want to cancel this reservation?</p>
+                                <table class="table table-sm table-bordered mb-0" style="font-size:.9rem;">
+                                    <tr>
+                                        <th class="bg-light" style="width:40%">Hotel</th>
+                                        <td>{{ $res->hotel->name ?? 'N/A' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="bg-light">Check-in</th>
+                                        <td>{{ \Carbon\Carbon::parse($res->start_at)->format('M d, Y') }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="bg-light">Check-out</th>
+                                        <td>{{ \Carbon\Carbon::parse($res->end_at)->format('M d, Y') }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="bg-light">Guests</th>
+                                        <td>{{ $res->guests }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="bg-light">Total</th>
+                                        <td>₱{{ number_format($res->total_price, 2) }}</td>
+                                    </tr>
+                                </table>
+                                <p class="mt-3 mb-0" style="color:#c62828; font-size:.85rem;">
+                                    <i class="fa-solid fa-circle-exclamation me-1"></i>This action cannot be undone.
+                                </p>
+                            </div>
+                            <div class="modal-footer" style="border:none; padding:1rem 1.5rem;">
+                                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Back</button>
+                                <form action="{{ route('reservations.cancel', $res->reservation_id) }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="btn btn-danger btn-sm">
+                                        <i class="fa-regular fa-xmark me-1"></i>Confirm Cancel
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {{-- ▲▲▲ モーダルここまで ▲▲▲ --}}
+
             @empty
                 <div class="bk-empty"><i class="fa-regular fa-calendar-xmark"></i>No upcoming hotel reservations.</div>
             @endforelse
@@ -247,10 +312,8 @@
 
 <script>
 function switchTab(name, btn) {
-    // タブボタン
     document.querySelectorAll('.bk-tab-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-    // タブパネル
     document.querySelectorAll('.bk-tab-pane').forEach(p => p.classList.remove('active'));
     document.getElementById('tab-' + name).classList.add('active');
 }

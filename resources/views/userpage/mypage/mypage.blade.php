@@ -32,16 +32,16 @@
 
             {{-- ナビゲーション --}}
             <nav class="ig-sidebar-nav">
-                <a href="{{ route('mypage') }}" class="ig-nav-item active">
+                <a href="{{ route('user.mypage') }}" class="ig-nav-item active">
                     <i class="fa-regular fa-user"></i> Profile
                 </a>
                 <a href="{{ route('user.mypage.post') }}" class="ig-nav-item">
                     <i class="fa-regular fa-images"></i> Posts
                 </a>
-                <a href="{{ route('booking') }}" class="ig-nav-item">
+                <a href="{{ route('user.booking') }}" class="ig-nav-item">
                     <i class="fa-regular fa-calendar"></i> Bookings
                 </a>
-                <a href="{{ route('favorite') }}" class="ig-nav-item">
+                <a href="{{ route('user.favorite') }}" class="ig-nav-item">
                     <i class="fa-regular fa-heart"></i> Favorite
                 </a>
             </nav>
@@ -67,7 +67,7 @@
                         <span>{{ $user->detail->first_name ?? '' }} {{ $user->detail->last_name ?? 'ユーザー' }}</span>
                     </div>
                     <div class="ig-email">{{ $user->email }}</div>
-                    <a href="{{ route('edit.profile') }}" class="ig-edit-btn">Edit Profile</a>
+                    <a href="{{ route('user.edit.profile') }}" class="ig-edit-btn">Edit Profile</a>
                 </div>
             </div>
 
@@ -75,7 +75,7 @@
             <div class="ig-info-card">
                 <div class="ig-card-header">
                     <span>Personal Information</span>
-                    <a href="{{ route('mypage.edit') }}" class="ig-card-edit-btn">Edit</a>
+                    <a href="{{ route('user.mypage.edit') }}" class="ig-card-edit-btn">Edit</a>
                 </div>
                 <div class="ig-card-body">
                     <div class="ig-field-group">
@@ -119,7 +119,7 @@
             <div class="ig-info-card">
                 <div class="ig-card-header">
                     <span>Address Information</span>
-                    <a href="{{ route('edit.adress') }}" class="ig-card-edit-btn">Edit</a>
+                    <a href="{{ route('user.edit.adress') }}" class="ig-card-edit-btn">Edit</a>
                 </div>
                 <div class="ig-card-body">
                     <div class="ig-field-group single">

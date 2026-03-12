@@ -295,3 +295,27 @@ body {
     font-size: 13px;
 }
 .bk-empty i { font-size: 28px; display: block; margin-bottom: 10px; opacity: 0.35; }
+/* =============================================
+   booking.css に追記するキャンセルボタンのスタイル
+   ============================================= */
+
+.bk-cancel-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 6px;
+    padding: 4px 12px;
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: #c62828;
+    background: #fff;
+    border: 1px solid #c62828;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+}
+
+.bk-cancel-btn:hover {
+    background: #c62828;
+    color: #fff;
+}

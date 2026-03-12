@@ -69,6 +69,7 @@
                             style="font-size: 0.65rem; letter-spacing: 0.5px;">Account</small>
                     </div>
 
+                    {{-- 共通のホーム --}}
                     <a href="{{ route('home') }}" class="dropdown-item d-flex align-items-center py-2 rounded-2 text-dark">
                         <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center me-3"
                             style="width: 32px; height: 32px;">
@@ -76,6 +77,29 @@
                         </div>
                         <span class="fw-bold">User Home</span>
                     </a>
+
+                    {{-- 修正ポイント：role_id と $role_hotel で判定する --}}
+                    @if (Auth::user()->role_id == $role_hotel)
+                        {{-- ホテルの場合 --}}
+                        <a href="{{ route('staff.mypage.hotel') }}"
+                            class="dropdown-item d-flex align-items-center py-2 rounded-2 text-dark">
+                            <div class="bg-secondary bg-opacity-10 text-secondary rounded-circle d-flex align-items-center justify-content-center me-3"
+                                style="width: 32px; height: 32px;">
+                                <i class="fa-solid fa-hotel"></i>
+                            </div>
+                            <span class="fw-bold">Hotel Profile</span>
+                        </a>
+                    @else
+                        {{-- レストランの場合 --}}
+                        <a href="{{ route('staff.mypage.restaurant') }}"
+                            class="dropdown-item d-flex align-items-center py-2 rounded-2 text-dark">
+                            <div class="bg-secondary bg-opacity-10 text-secondary rounded-circle d-flex align-items-center justify-content-center me-3"
+                                style="width: 32px; height: 32px;">
+                                <i class="fa-solid fa-utensils"></i>
+                            </div>
+                            <span class="fw-bold">Restaurant Profile</span>
+                        </a>
+                    @endif
 
                     <hr class="dropdown-divider my-2">
 

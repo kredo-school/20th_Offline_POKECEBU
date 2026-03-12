@@ -7,7 +7,7 @@
     <p class="mb-4">The payment process is for testing purposes only.</p>
 
     <div class="mt-4">
-        <a href="{{ route('mypage') }}" class="btn btn-primary">
+        <a href="{{ route('user.mypage') }}" class="btn btn-primary">
             Back to My Page
         </a>
     </div>

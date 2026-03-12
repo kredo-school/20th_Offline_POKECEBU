@@ -5,6 +5,10 @@ namespace App\Providers;
 use App\Models\User;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use App\Models\Restaurant;
+use App\Models\Hotel;
+
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -22,6 +26,11 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         //
+        Relation::morphMap([
+            'restaurant' => Restaurant::class,
+            'hotel' => Hotel::class,
+        ]);
+
         Gate::define('admin', function($user) {
             //function($user) - a closure, automatically passed by Larvale, represents authenticated user
             return $user->role_id === User::ADMIN_ROLE_ID;

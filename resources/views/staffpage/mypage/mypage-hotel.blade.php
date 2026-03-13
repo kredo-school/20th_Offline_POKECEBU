@@ -13,27 +13,20 @@
                     <h2 class="ig-card-title">Hotel Profile</h2>
                     <p class="ig-card-subtitle">Public information of your hotel</p>
                 </div>
-                <a href="{{ route('staff.mypage.hotel.edit') }}" class="ig-btn-primary">
+                <a href="{{ route('hotel.staff.mypage.hotel.edit') }}" class="ig-btn-primary">
                     Edit / Apply Changes
                 </a>
             </div>
 
             {{-- Hotel Visual Section --}}
             <div class="ig-profile-header mb-5">
-                <div class="ig-avatar-container">
-                    <img src="{{ $hotelImage ? asset('storage/' . $hotelImage->image) : 'https://via.placeholder.com/150' }}"
-                        alt="Hotel Image" class="ig-hotel-img">
-                </div>
-                <div class="ig-hotel-info">
-                    <h3 class="ig-hotel-name">{{ $hotel->name ?? 'Sample Hotel' }}</h3>
-                    <div class="ig-rating">
-                        @for ($i = 0; $i < ($hotel->star_rating ?? 0); $i++)
-                            <i class="fa-solid fa-star" style="color: #ffc107;"></i>
-                        @endfor
-                    </div>
-                    <p class="ig-hotel-desc">{{ $hotel->description ?? 'No information provided.' }}</p>
-                </div>
+                @if ($hotel->images->isNotEmpty())
+                    <img src="{{ Storage::url($hotel->images->first()->image) }}" class="ig-hotel-img">
+                @else
+                    <img src="https://via.placeholder.com/150" class="ig-hotel-img">
+                @endif
             </div>
+            dd($hotel->images->first()->image);
 
             {{-- Information Grid --}}
             <div class="ig-info-grid">

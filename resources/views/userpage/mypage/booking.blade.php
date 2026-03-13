@@ -154,7 +154,7 @@
                             </div>
                             <div class="modal-footer" style="border:none; padding:1rem 1.5rem;">
                                 <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Back</button>
-                                <form action="{{ route('reservations.cancel', $res->reservation_id) }}" method="POST">
+                                <form action="{{ route('user.reservation.cancel', $res->reservation_id) }}" method="POST">
                                     @csrf
                                     <button type="submit" class="btn btn-danger btn-sm">
                                         <i class="fa-regular fa-xmark me-1"></i>Confirm Cancel

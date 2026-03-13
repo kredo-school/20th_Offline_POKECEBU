@@ -14,7 +14,7 @@
             </div>
 
             {{-- Form Section --}}
-            <form action="{{ route('staff.mypage.hotel.store') }}" method="POST" enctype="multipart/form-data"
+            <form action="{{ route('hotel.staff.mypage.hotel.store') }}" method="POST" enctype="multipart/form-data"
                 class="ig-form">
                 @csrf
 
@@ -64,18 +64,7 @@
                     </div>
                 </div>
 
-                <div class="ig-grid-row">
-                    <div class="ig-form-group">
-                        <label>Latitude</label>
-                        <input type="text" name="latitude" class="ig-input"
-                            value="{{ old('latitude', $hotel->latitude) }}">
-                    </div>
-                    <div class="ig-form-group">
-                        <label>Longitude</label>
-                        <input type="text" name="longitude" class="ig-input"
-                            value="{{ old('longitude', $hotel->longitude) }}">
-                    </div>
-                </div>
+
 
                 {{-- Representative Information --}}
                 <div class="ig-grid-row">
@@ -107,7 +96,7 @@
                 {{-- Footer Buttons --}}
                 <div class="ig-form-footer">
                     {{-- 特定のマイページへ飛ばす設定 --}}
-                    <a href="{{ route('staff.mypage.hotel') }}" class="ig-btn-secondary">Back</a>
+                    <a href="{{ route('hotel.staff.mypage.hotel') }}" class="ig-btn-secondary">Back</a>
 
                     <button type="submit" class="ig-btn-primary">Save Changes</button>
                 </div>

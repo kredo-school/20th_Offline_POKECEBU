@@ -19,6 +19,7 @@
             </div>
 
             <svg class="wave-line" viewBox="0 0 1000 450" preserveAspectRatio="none">
+               
                 <path d="M1000,450 C920,285 660,285 500,440 C340,585 100,585 0,445"
                     fill="none" stroke="white" stroke-width="6"opacity="0.8"/>
             </svg>

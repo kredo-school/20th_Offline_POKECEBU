@@ -6,51 +6,47 @@
 
       <div class="container">
           {{-- Header --}}
-          <div class="d-flex justify-content-between align-items-center mb-4">
-              <div class="d-flex align-items-center gap-3">
-                  <h3 class="page-title"><i class="fa-regular fa-calendar-check"></i>  Guest Details</h3>
-              </div>
-              <div class="d-flex gap-2">
-                  <span class="badge date-badge">
-                    {{ $reservation->start_at->format('Y-m-d') }}
+        <div class="card shadow-sm mb-3">
+              <div class="card-body d-flex justify-content-between align-items-center">
+
+                  <div>
+                      <h4 class="mb-1">
+                          <i class="fa-regular fa-calendar-check"></i>
+                          Reservation #{{ $reservation->reservation_id }}
+                      </h4>
+
+                      <small class="text-muted">
+
+                          {{ $reservation->start_at->format('Y-m-d') }}
                      to 
                     {{ $reservation->end_at->format('Y-m-d') }}
-                    </span>
-                  <button type="button" class="btn btn-send btn-outline-danger">Cancel Reservation</button>
+                         
+                      </small>
+                  </div>
+
+                  <button class="btn btn-danger">
+                      Cancel Reservation
+                  </button>
               </div>
           </div>
+
+          
+              
+          {{-- Main Card --}}
           <div class="row">
-              {{-- Main Card --}}
+             
               <div class="col-md-8">
                   <div class="card shadow-sm main-card">
-                      <div class="card-header d-flex justify-content-between align-items-center">
-                          <div>
-                              <strong>Reservation ID:</strong>{{ $reservation->reservation_id }}
-                              
-                          </div>
-                          
-                      </div>
-                      <table class="table table-bordered table-striped mb-0">
-                          <thead>
-                              <tr class="table-head table-primary text-uppercase">
-                                  <th style="width:40%">Item</th>
-                                  <th>Details</th>
-                              </tr>
-                          </thead>
+                       {{-- detail --}}
+                      <table class="table table-bordered mb-0">
                           <tbody>
+                             <tr class="table-primary">
+                                  <td colspan="2"><strong>Guest Information</strong></td>
+                              </tr>
                               <tr>
-
-                                  {{-- detail --}}
                                   <td><i class="table-icon fa-solid fa-user-tie"></i> Guest Name</td>
-                                   
                                   <td>
                                     {{ $reservation->user->name}}
-                                </td>
-                              </tr>
-                              <tr>
-                                  <td><i class="table-icon fa-regular fa-envelope"></i> Email</td>
-                                  <td>
-                                    {{ $reservation->user->email }}
                                 </td>
                               </tr>
                               <tr>
@@ -60,32 +56,41 @@
                                 </td>
                               </tr>
                               <tr>
-                                  <td><i class="table-icon fa-solid fa-clipboard-list"></i> Check in</td>
+                                  <td><i class="table-icon fa-regular fa-envelope"></i> Email</td>
+                                  <td>
+                                    {{ $reservation->user->email }}
+                                </td>
+                              </tr>
+                              <tr class="table-primary">
+                                  <td colspan="2"><strong>Reservation Details</strong></td>
+                              </tr>
+                              <tr>
+                                  <td><i class="fa-solid fa-calendar"></i>Check in</td>
                                   <td>
                                     {{ $reservation->start_at ->format('Y-m-d') }}
                                 </td>
                               </tr>
                               <tr>
-                                  <td><i class="table-icon fa-solid fa-calendar-days"></i> Check out</td>
+                                  <td><i class="fa-solid fa-calendar"></i>Check out</td>
                                   <td>
                                    {{ $reservation->end_at->format('Y-m-d') }}
                                     </td>
                               </tr>
                               <tr>
-                                  <td><i class="table-icon fa-solid fa-calendar-days"></i> Nights</td>
+                                  <td><i class="fa-solid fa-clock"></i> Nights</td>
                                   <td>
                                    {{ $reservation->start_at->diffInDays($reservation->end_at) }}
                                  days
                                     </td>
                               </tr>
                               <tr>
-                                  <td><i class="table-icon fa-solid fa-bed"></i> Room & Guests</td>
+                                  <td><i class="table-icon fa-solid fa-bed"></i> Room</td>
                                   <td>
                                     {{ $reservation->room->type->name }}
                                 </td>
                               </tr>
                               <tr>
-                                  <td><i class="table-icon fa-solid fa-users"></i> Number of Guest</td>
+                                  <td><i class="table-icon fa-solid fa-users"></i> Guests</td>
                                   <td>
                                     {{ $reservation->guests }}
                                 </td>
@@ -95,7 +100,7 @@
                                   <td>{{ number_format($reservation->total_price) }}</td>
                               </tr>
                               <tr>
-                                  <td><i class="table-icon fa-solid fa-money-check-dollar"></i> Cancellation Fee</td>
+                                  <td><i class="fa-regular fa-calendar-xmark"></i> Cancellation Fee</td>
                                   <td>{{ number_format($reservation->hotel->cancellation_fee) }}</td>
                               </tr>
 
@@ -103,9 +108,8 @@
 
                           </tbody>
                       </table>
-                      <div class="card-footer d-flex justify-content-end">
+                      <div class="card-footer d-flex justify-content-end bg-light">
                           <button class="btn btn-print btn-outline-primary" onclick="window.print()">Print Confirmation</button>
-                          
                       </div>
 
 
@@ -113,12 +117,12 @@
               </div>
               {{-- Notes Panel --}}
               <div class="col-md-4">
-                  <div class="card shadow-sm notes-card">
-                      <div class="card-header d-flex justify-content-between align-items-center">
-                          <h5 class="mb-0">Notes</h5>
+                  <div class="card shadow-sm">
+                      <div class="card-header">
+                          <h5 class="mb-0"><i class="fa-solid fa-note-sticky"></i>Notes</h5>
                       </div>
                       <div class="card-body" style="min-height: 120px">
-                        {{ $reservation->other ?? '' }}
+                        {{ $reservation->other ?? 'No notes' }}
                       </div>
                       
                   </div>

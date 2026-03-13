@@ -90,7 +90,7 @@
                         <div class="col-md-5 bg-light position-relative border-end">
                             <div class="table-images hide-scrollbar" style="{{ !$isAvailable ? 'filter: grayscale(100%);' : '' }}">
                                 @foreach ($table->images as $image)
-                                    <img src="{{ asset('storage/' . $image->image) }}" alt="table image">
+                                    <img src="{{$image->image}}" alt="table image">
                                 @endforeach
                             </div>
 
@@ -162,7 +162,7 @@
                                     <div class="col-md-6 mb-4 mb-md-0">
                                         <div class="table-images hide-scrollbar">
                                             @foreach ($table->images as $image)
-                                                <img src="{{ asset('storage/' . $image->image) }}" class="w-100 rounded-3" alt="Table Image" style="height: 300px;">
+                                                <img src="{{ $image->image }}" class="w-100 rounded-3" alt="Table Image" style="height: 300px;">
                                             @endforeach
                                         </div>
                                     </div>

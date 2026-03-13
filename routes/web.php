@@ -72,7 +72,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('/category-type/store', [TypeController::class, 'store'])->name('category-type.store');
         Route::delete('/category-type/delete/{id}', [TypeController::class, 'destroy'])->name('category-type.destroy');
         Route::patch('/category-type/update/{id}', [TypeController::class, 'update'])->name('category-type.update');
-        Route::get('/category-post', [PostsController::class, 'index'])->name('category.post-index');  
+        Route::get('/category-post', [PostsController::class, 'index'])->name('category.post-index');
         Route::delete('/category-post/deactive/{id}', [PostsController::class, 'deactivate'])->name('category-post.deactivate');
         Route::patch('/category-post/activate/{id}', [PostsController::class, 'activate'])->name('category-post.activate');
 
@@ -146,20 +146,21 @@ Route::group(['middleware' => 'auth'], function () {
 
         #For Analysis
         Route::get('/analysis/hotel/{id?}', [AnalysisController::class, 'hotelAnalysis'])->name('analysis.hotel');
-        Route::get('/analysis/restaurant/{id?}',[AnalysisController::class, 'restaurantAnalysis'])->name('analysis.restaurant');
-        Route::get('/analysis/user',[AnalysisController::class, 'userAnalysis'])->name('analysis.user');
+        Route::get('/analysis/restaurant/{id?}', [AnalysisController::class, 'restaurantAnalysis'])->name('analysis.restaurant');
+        Route::get('/analysis/user', [AnalysisController::class, 'userAnalysis'])->name('analysis.user');
     });
 
     #################### Hotel ####################
     Route::group(['prefix' => 'hotel', 'as' => 'hotel.', 'middleware' => 'hotel'], function () {
-        Route::get('/', [StaffAnalysisController::class,'hotelAnalysis'])->name('home');
-        
+        Route::get('/', [StaffAnalysisController::class, 'hotelAnalysis'])->name('home');
+
         Route::get('/hotel', [HotelStaffController::class, 'index'])->name('staff.homehotel');
         Route::get('/staff/reservations', [HotelStaffController::class, 'reservations'])->name('staff.reservations');
 
         Route::get('/staff/mypage/hotel', [StaffMypageController::class, 'index'])->name('staff.mypage.hotel');
         Route::get('/staff/mypage/hotel/edit', [StaffMypageController::class, 'editStaffMypage'])->name('staff.mypage.hotel.edit');
         Route::post('/staff/mypage/hotel/store', [StaffMypageController::class, 'storeHotel'])->name('staff.mypage.hotel.store');
+        Route::get('/staff/mypage/hotel/complete', [StaffMypageController::class, 'complete'])->name('staff.mypage.hotel.complete');
 
         #Hotel - Room overview
         Route::get('/roomOverview', [HotelRoomController::class, 'roomOverview'])->name('roomOverview');
@@ -183,7 +184,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     #################### Restaurant ####################
     Route::group(['prefix' => 'restaurant', 'as' => 'restaurant.', 'middleware' => 'restaurant'], function () {
-        Route::get('/', [StaffAnalysisController::class,'restaurantAnalysis'])->name('home');
+        Route::get('/', [StaffAnalysisController::class, 'restaurantAnalysis'])->name('home');
 
         Route::get('/staff/mypage/restaurant', [StaffMypageController::class, 'indexRestaurant'])->name('staff.mypage.restaurant');
         Route::get('/staff/mypage/restaurant/edit', [StaffMypageController::class, 'editStaffMypagerestaurant'])->name('staff.edit.restaurant');
@@ -205,13 +206,12 @@ Route::group(['middleware' => 'auth'], function () {
         Route::delete('/{id}/destroyTable', [RestaurantTableController::class, 'destroyTable'])->name('destroyTable');
         Route::patch('/{id}/updateStatus', [RestaurantTableController::class, 'updateStatus'])->name('updateStatus');
         Route::get('/{id}/viewTable', [RestaurantTableController::class, 'viewTable'])->name('viewTable');
-        
+
         // カレンダー
         Route::get('/store/calendar', [RestaurantStaffController::class, 'calendar'])->name('calendar');
         Route::get('/store/calendar/data', [RestaurantStaffController::class, 'calendarData'])->name('calendar.data');
         Route::get('/reservations/{date}', [RestaurantStaffController::class, 'daily'])->name('reservations.date');
         Route::get('/reservations/detail/{id}', [RestaurantStaffController::class, 'show'])->name('reservations.show');
-        
     });
 
     #################### User ####################
@@ -240,13 +240,13 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/mypage', [MyPageController::class, 'index'])->name('mypage');
         Route::get('/mypage/edit', [MyPageController::class, 'editPersonal'])->name('mypage.edit');
         Route::post('/mypage/updateProfile', [MyPageController::class, 'updatePersonal'])->name('mypage.updateProfile');
-        Route::get('/mypage/post',[MypageController::class,'post'])->name('mypage.post');
+        Route::get('/mypage/post', [MypageController::class, 'post'])->name('mypage.post');
 
         Route::post('/user/mypage/delete-avatar', [MyPageController::class, 'deleteAvatar'])->name('delete.avatar');
 
         Route::get('/mypage/edit/adress', [MyPageController::class, 'editAdress'])->name('edit.adress');
         Route::post('/mypage/edit/updateAdress', [MyPageController::class, 'updateAdress'])->name('update.adress');
-        Route::get('/mypage/edit/profile', [MyPageController::class,'editProfile'])->name('edit.profile');
+        Route::get('/mypage/edit/profile', [MyPageController::class, 'editProfile'])->name('edit.profile');
         Route::post('/mypage/edit/updateProfile', [MyPageController::class, 'updateProfile'])->name('update.profile');
         Route::get('/mypage/booking', [BookingController::class, 'index'])->name('booking');
         Route::get('/mypage/favorite', [FavoriteController::class, 'index'])->name('favorite');
@@ -301,7 +301,6 @@ Route::group(['middleware' => 'auth'], function () {
         //game
         Route::get('/daily-fortune', [DailyFortuneController::class, 'show'])->name('daily.fortune.show');
         Route::post('/daily-fortune/draw', [DailyFortuneController::class, 'draw'])->name('daily.fortune.draw');
-
     });
 });
 

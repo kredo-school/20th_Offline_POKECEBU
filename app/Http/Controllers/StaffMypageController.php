@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Hotel;
+use App\Models\HotelImage;
 use App\Models\TmpHotel;
 use App\Models\Restaurant;
 use App\Models\TmpRestaurant;
@@ -14,59 +15,55 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class StaffMypageController extends Controller
+
 {
     // ホテルマイページ表示
     public function index()
     {
-        // 1. ホテル情報を取得（画像リレーションも一緒に読み込む）
-        $hotel = Hotel::with('images')->first();
+        // ログインユーザーのホテル情報を取得
+        $hotel = Hotel::with('images')->where('id', Auth::id())->first();
 
-        // 2. 履歴を取得（最新5件）
         $history = [];
-        $hotelImage = null; // 初期化しておく
-
         if ($hotel) {
+            // 最新5件の申請履歴を取得
             $history = TmpHotel::where('hotel_id', $hotel->id)
                 ->latest()
                 ->take(5)
                 ->get();
-
-            // 3. 表示用の画像を取得（最新の1枚）
-            $hotelImage = $hotel->images()->latest()->first();
         }
 
-        // 4. 全ての変数を compact に入れる（ここが重要！）
-        return view('staffpage.mypage.mypage-hotel', compact('hotel', 'history', 'hotelImage'));
+        return view('staffpage.mypage.mypage-hotel', compact('hotel', 'history'));
     }
-    // 編集ページ
+
+    // 編集ページ表示
     public function editStaffMypage()
     {
-        // 1. ログインしているユーザー（あなた）の情報を取得
-        $user = \Illuminate\Support\Facades\Auth::user();
+        $hotel = Hotel::where('id', Auth::id())->first();
 
-        // 2. ホテルの情報も取得
-        $hotel = Hotel::first();
+        if (!$hotel) {
+            return redirect()->route('hotel.staff.mypage.hotel')
+                ->withErrors(['error' => 'ホテル情報が見つかりません。']);
+        }
 
-        // 3. 両方の荷物を Blade に手渡す！ (ここがポイント)
-        return view('staffpage.mypage.edit-hotel', compact('hotel', 'user'));
+        return view('staffpage.mypage.edit-hotel', compact('hotel'));
     }
 
+    // 保存（申請）
     public function storeHotel(Request $request)
     {
-        // 1. バリデーション
-        // 失敗すると自動的に元の画面に戻り、$errorsに中身が入ります
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email',
-            'image_path' => 'nullable|image|max:2048', // 2MBまで
+            'image_path' => 'nullable|image|max:2048',
         ]);
 
-        // 2. トランザクション開始（データの整合性を守るため）
         DB::beginTransaction();
-
         try {
-            // 3. 保存データの作成
-            // モデルの$fillableにない項目（updated_userなど）はあえて外しています
+            $hotel = Hotel::where('id', Auth::id())->first();
+            if (!$hotel) {
+                throw new \Exception('元となるホテルデータが存在しません。');
+            }
+
             $data = $request->only([
                 'name',
                 'description',
@@ -82,19 +79,11 @@ class StaffMypageController extends Controller
                 'email'
             ]);
 
-            // 元となるホテルのIDを取得（ログインユーザーに紐づくものなど、状況に合わせて調整してください）
-            $hotel = Hotel::first();
-            if (!$hotel) {
-                throw new \Exception('元となるホテルデータが存在しません。');
-            }
-
             $data['hotel_id'] = $hotel->id;
             $data['status'] = 'pending';
 
-            // 4. TmpHotelテーブルに保存
             $tmpHotel = TmpHotel::create($data);
 
-            // 5. 画像がある場合、TmpHotelImageテーブルにBase64で保存
             if ($request->hasFile('image_path')) {
                 $imageFile = $request->file('image_path');
                 $imageData = base64_encode(file_get_contents($imageFile->getRealPath()));
@@ -106,43 +95,33 @@ class StaffMypageController extends Controller
                 ]);
             }
 
-            // 6. 全ての保存が成功したらDBを確定させる
             DB::commit();
 
-            // 7. 完了画面へリダイレクト
-            // ※ route名が 'staff.mypage.hotel.complete' の可能性もあるので注意
-            return redirect()->route('hotel.mypage.hotel.complete');
+            // ✅ 完了画面へリダイレクト
+            return redirect()->route('hotel.staff.mypage.hotel.complete');
+
         } catch (\Exception $e) {
-            // 失敗したらここに来る。保存をキャンセルしてエラーを表示
             DB::rollBack();
-
-            // ログに詳細を出す（storage/logs/laravel.log で確認可能）
             Log::error('ホテル保存エラー: ' . $e->getMessage());
-
-            return back()
-                ->withInput()
-                ->withErrors(['error' => '保存に失敗しました：' . $e->getMessage()]);
+            return back()->withInput()->withErrors(['error' => '保存に失敗しました：' . $e->getMessage()]);
         }
     }
 
-
-
-
-    // 申請完了画面// 申請完了画面
+    // 申請完了画面
     public function complete()
     {
-
-
         $tmpHotel = TmpHotel::latest()->first();
 
-
-
         if (!$tmpHotel) {
-            return redirect()->route('staff.mypage.hotel');
+            return redirect()->route('hotel.staff.mypage.hotel');
         }
 
         return view('staffpage.mypage.hotel-complete', compact('tmpHotel'));
     }
+
+
+
+    // レストラン
     public function indexRestaurant()
     {
         $restaurant = Restaurant::first();

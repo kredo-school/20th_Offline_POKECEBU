@@ -16,7 +16,7 @@
 
     <div class="">
       <label for="">to</label>
-      <input id="dateTo" class="form-control">
+      <input type="date" id="dateTo" class="form-control">
     </div>
 
     <div class="align-self-end">
@@ -43,18 +43,24 @@
       locale: 'en',
       firstDay: 1, //月開始
 
-      slotMinTime: "00:00:00",
-      slotMaxTime: "24:00:00",
+      timeZone: 'local',
+
+      slotMinTime: "10:00:00",
+      slotMaxTime: "25:00:00",
 
       allDaySlot: false,
+      nowIndicator: true,  //現在時間ライン
 
       height: "auto",
       events: "{{ route('restaurant.calendar.data') }}",
+
+      //クリックして予約一覧
       eventClick: function(info) {
         if (info.event.url) {
           window.location.href = info.event.url;
         }
-      }
+      },
+
     });
     calendar.render();
 

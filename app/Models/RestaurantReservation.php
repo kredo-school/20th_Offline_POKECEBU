@@ -40,6 +40,11 @@ class RestaurantReservation extends Model
         return $this->belongsTo(Restaurant::class);
     }
 
+    public function table() {
+        return $this->belongsTo(RestaurantTable::class,'table_id');
+       
+    }
+
     // 1年分をまとめて取得するメソッド
 public static function getMonthlyKpiStats($restaurantId = null)
 {

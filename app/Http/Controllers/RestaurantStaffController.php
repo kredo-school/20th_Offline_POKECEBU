@@ -44,8 +44,8 @@ class RestaurantStaffController extends Controller
 
             $events[] = [
                 'title'     => $reservation->groups . 'groups / ' . $reservation->total_guests . 'guests',
-                'start' => $start->toIso8601String(),
-                'end'   => $start->copy()->addHour()->toIso8601String(),
+                'start' => $start->format('Y-m-d H:i:s' ),
+                'end'   => $start->copy()->addHour()->format('Y-m-d H:i:s' ),
                 'url'   => route('restaurant.reservations.date', [
                     'date' => $reservation->date
                 ]),

@@ -363,7 +363,7 @@
     </div>
 
 
-    });
+    
 
     <style>
         .top-photo {

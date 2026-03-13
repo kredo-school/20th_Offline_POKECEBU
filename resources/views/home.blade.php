@@ -81,7 +81,7 @@
                         </a>
                     </div>
                     <div class="col-12 mb-3">
-                        <a href="#" class="menu-btn menu-restaurant text-decoration-none">
+                        <a href="{{ route('user.restaurants.search') }}" class="menu-btn menu-restaurant text-decoration-none">
                             <i class="fa-solid fa-utensils"></i>
                             <div class="menu-text-wrapper">
                                 <div class="menu-title">Dine & Savor</div>
@@ -217,12 +217,12 @@
                                         </div>
                         
                                         <div class="card-footer-premium d-flex justify-content-between align-items-center pt-3 border-top">
-                                            <span class="text-muted small">1泊 / 名</span>
+                                            <span class="text-muted small"></span>
                                             <p class="card-price-premium mb-0">
                                                 @if ($hotel->rooms->isNotEmpty())
                                                     <span class="currency">₱</span><span class="price-num">{{ number_format($hotel->rooms->min('charge')) }}</span><span class="tax">〜</span>
                                                 @else
-                                                    <span class="text-muted small">価格未設定</span>
+                                                    <span class="text-muted small">The price has not been set.</span>
                                                 @endif
                                             </p>
                                         </div>

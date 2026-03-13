@@ -256,6 +256,13 @@
             transform: translateX(100%);
             transition: transform .55s cubic-bezier(.4, 0, .2, 1);
             z-index: 10;
+            background-image: url("{{ asset('images/login.jpg') }}");
+            background-size: cover;
+            background-position: center 40%;
+            
+            /* 135degのグラデーションを画像にブレンドして深みを出す */
+            background-color: rgba(0, 0, 0, 0.1); /* 全体を少し暗くするベース色 */
+            background-blend-mode: multiply;
         }
 
         /* Register mode: overlay moves to left half */
@@ -301,6 +308,9 @@
             /* font-family: "Poppins", sans-serif; */
             cursor: pointer;
             transition: background .15s ease;
+            backdrop-filter: blur(4px);
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
 
         .overlay-btn:hover {
@@ -339,19 +349,22 @@
             position: relative;
             z-index: 2;
             text-align: center;
-            padding-bottom: 150px;
+            padding-bottom: 160px;
         }
 
         .overlay-text h2 {
             margin: 0 0 8px;
-            font-size: 22px;
+            font-size: 30px;
             font-weight: 800;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
         }
 
         .overlay-text p {
             margin: 0 0 18px;
             opacity: .9;
             font-size: 14px;
+            font-weight: 500;
+            text-shadow: 0 1px 5px rgba(0, 0, 0, 0.3);
         }
 
         /* ── Responsive ───────────────────────────────────────── */

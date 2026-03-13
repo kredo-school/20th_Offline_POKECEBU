@@ -2,20 +2,20 @@
             <div class="footer-inner">
                 <div class="footer-columns">
                     <div class="footer-col">
-                        <h4>サポート</h4>
-                        <a href="#">カスタマーサポート</a>
-                        <a href="#">お問い合わせ</a>
-                        <a href="#">よくある質問</a>
+                        <h4>Support</h4>
+                        <a href="#">Customer Support</a>
+                        <a href="#">Contact us</a>
+                        <a href="#">FAQ</a>
                     </div>
 
                     <div class="footer-col">
-                        <h4>このサイトについて</h4>
-                        <a href="#">会社概要</a>
-                        <a href="#">利用規則</a>
-                        <a href="#">プライバシーポリシー</a>
+                        <h4>About</h4>
+                        <a href="#">About us</a>
+                        <a href="#">Terms & Conditions</a>
+                        <a href="#">Privacy Statement</a>
                     </div>
                     <div class="footer-col">
-                        <h4>お支払い方法</h4>
+                        <h4>Payment methods</h4>
                         <div class="payment-icon">
                             <img src="{{ asset('/images/reservation-cards.png') }}">
                         </div>

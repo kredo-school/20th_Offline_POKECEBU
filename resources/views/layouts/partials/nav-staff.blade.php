@@ -81,7 +81,7 @@
                     {{-- 修正ポイント：role_id と $role_hotel で判定する --}}
                     @if (Auth::user()->role_id == $role_hotel)
                         {{-- ホテルの場合 --}}
-                        <a href="{{ route('staff.mypage.hotel') }}"
+                        <a href="{{ route('hotel.staff.mypage.hotel') }}"
                             class="dropdown-item d-flex align-items-center py-2 rounded-2 text-dark">
                             <div class="bg-secondary bg-opacity-10 text-secondary rounded-circle d-flex align-items-center justify-content-center me-3"
                                 style="width: 32px; height: 32px;">
@@ -91,7 +91,7 @@
                         </a>
                     @else
                         {{-- レストランの場合 --}}
-                        <a href="{{ route('staff.mypage.restaurant') }}"
+                        <a href="{{ route('restaurant.staff.mypage.restaurant') }}"
                             class="dropdown-item d-flex align-items-center py-2 rounded-2 text-dark">
                             <div class="bg-secondary bg-opacity-10 text-secondary rounded-circle d-flex align-items-center justify-content-center me-3"
                                 style="width: 32px; height: 32px;">

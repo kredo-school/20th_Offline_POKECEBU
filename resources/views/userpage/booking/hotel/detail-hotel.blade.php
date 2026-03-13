@@ -90,7 +90,7 @@
                         <div class="col-md-5 bg-light position-relative border-end">
                             <div class="room-images hide-scrollbar" style="{{ !$isAvailable ? 'filter: grayscale(100%);' : '' }}">
                                 @foreach ($room->images as $image)
-                                    <img src="{{ asset('storage/' . $image->image) }}" alt="room image">
+                                    <img src="{{ $image->image }}" alt="room image">
                                 @endforeach
                             </div>
 
@@ -162,7 +162,7 @@
                                     <div class="col-md-6 mb-4 mb-md-0">
                                         <div class="room-gallery hide-scrollbar" style="display: flex; overflow-x: auto; gap: 10px;">
                                             @foreach ($room->images as $image)
-                                                <img src="{{ asset('storage/' . $image->image) }}" class="rounded-3" alt="Room Image" style="width: 100%; height: 300px; object-fit: cover; flex-shrink: 0;">
+                                                <img src="{{ $image->image }}" class="rounded-3" alt="Room Image" style="width: 100%; height: 300px; object-fit: cover; flex-shrink: 0;">
                                             @endforeach
                                         </div>
                                     </div>

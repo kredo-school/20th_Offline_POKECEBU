@@ -24,7 +24,7 @@
         </p>
 
         <div class="mt-5">
-            <a href="{{ route('user.mypage.show') }}" class="btn btn-primary btn-round w-100 shadow">
+            <a href="{{ route('user.mypage') }}" class="btn btn-primary btn-round w-100 shadow">
                 Back to My Page
             </a>
         </div>

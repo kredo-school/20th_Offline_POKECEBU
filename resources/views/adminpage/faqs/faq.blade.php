@@ -4,7 +4,7 @@
 
 @section('content')
 
-<div class="bg-light" style="min-height: 100vh;">
+<div class="faq-body pb-5" style="min-height: 100vh;">
     <div class="container">
         <div class="top-photo"><h1>FAQ</h1></div>
         <div class="d-flex justify-content-between align-items-center mb-4">
@@ -157,6 +157,12 @@
 </script>
 
 <style>
+    .faq-body {
+        background: linear-gradient(180deg,
+        #fbfbe9 0%,
+        #f9f9ee 50%,
+        #ffffff 100%);
+    }
     /* アコーディオンの矢印の色などを微調整 */
     .accordion-button:not(.collapsed) {
         background-color: transparent;

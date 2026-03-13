@@ -121,7 +121,6 @@
                                 <div class="mb-3">
                                     <div class="d-flex justify-content-between align-items-center mb-2">
                                         <small class="text-uppercase text-muted fw-bold ls-1">Seating Description</small>
-                                        <span class="text-primary small fw-bold"><i class="fa-solid fa-maximize"></i> Details</span>
                                     </div>
                                     <p class="text-secondary small mb-0" style="line-height: 1.6;">
                                         {{ Str::limit($table->detail, 160) ?? 'Click to see full photos, table location, and seating details.' }}
@@ -137,9 +136,9 @@
                                     </div>
                                     <div>
                                         @if ($isAvailable)
-                                            <a href="#" class="btn btn-primary btn-lg px-5 rounded-pill shadow-sm fw-bold">
-                                                Book Now
-                                            </a>
+                                            <button type="button" class="btn btn-primary btn-lg px-5 rounded-pill shadow-sm fw-bold">
+                                                Show Details
+                                            </button>
                                         @else
                                             <button class="btn btn-secondary btn-lg px-5 rounded-pill disabled border-0">Unavailable</button>
                                         @endif

@@ -21,7 +21,10 @@
         $guestOptions = $guestOptions ?? range(1, 10);
     @endphp
 
-    <div class="container py-4">
+    <div class="container">
+        <div class="top-photo">
+            <h1>Find Your Perfect Restaurant</h1>
+        </div>
         <!-- Search Bar -->
         <div class="mb-4">
             <form class="row g-2 align-items-center" method="get" action="{{ route('user.restaurants.search') }}">
@@ -313,4 +316,32 @@
             </main>
         </div>
     </div>
+
+    <style>
+        .top-photo {
+            width: 100%;
+            height: 200px;
+            margin-bottom: 20px;
+            background-image: url("{{ asset('images/home-restaurant.jpg') }}");
+            background-size: cover;
+            background-position: center 75%;
+            background-repeat: no-repeat;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+            background-color: rgba(0, 0, 0, 0.1);
+            background-blend-mode: multiply;
+        }
+
+        .top-photo h1 {
+            font-size: 3em;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+            margin: 0;
+            position: relative;
+            z-index: 2;
+        }
+    </style>
 @endsection

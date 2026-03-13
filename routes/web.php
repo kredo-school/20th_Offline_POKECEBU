@@ -121,10 +121,6 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('/reservation/payment', [HotelReservationController::class, 'pay'])->name('reservation.pay');
         Route::get('/reservation/payment/success', [HotelReservationController::class, 'reservationSuccess'])->name('reservation.success');
 
-        // ホテル予約ユーザー詳細
-        Route::get('/mypage/user', [UserDetailController::class, 'show'])->name('mypage.show');
-        Route::post('/mypage/userupdate', [UserDetailController::class, 'update'])->name('mypage.update');
-
         # FAQ    
         Route::get('/faq/list', [FaqController::class, 'displayList'])->name('faq.displayList');
         Route::post('/faq/store', [FaqController::class, 'store'])->name('faq.store');
@@ -292,6 +288,10 @@ Route::group(['middleware' => 'auth'], function () {
         // キャンセル関連
         Route::get('/reservation/{reservation_id}/cancel-confirm', [HotelReservationController::class, 'cancelConfirm'])->name('reservation.cancel.confirm');
         Route::post('/reservation/{reservation_id}/cancel', [HotelReservationController::class, 'cancel'])->name('reservation.cancel');
+
+        // ホテル予約ユーザー詳細
+        Route::get('/mypage/user', [UserDetailController::class, 'show'])->name('mypage.show');
+        Route::post('/mypage/userupdate', [UserDetailController::class, 'update'])->name('mypage.update');
 
 
         //jeepney

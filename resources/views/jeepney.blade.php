@@ -235,7 +235,7 @@
 
     <div class="card search-card">
         <div class="card-body">
-            <form action="{{ route('jeepney.search') }}" method="POST">
+            <form action="{{ route('user.jeepney.search') }}" method="POST">
                 @csrf
 
                 <div class="row g-3 align-items-end">

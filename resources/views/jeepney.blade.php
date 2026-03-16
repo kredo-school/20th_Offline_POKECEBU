@@ -228,7 +228,7 @@
         <div class="card-body">
             <div class="hero-title">POKECEBU | Jeepney Finder</div>
             <p class="hero-sub">
-                アヤラセンターや IT Park など、主要な停留所の間をどう移動できるか検索できます。
+                You can search how to travel between major stops such as Ayala Center and IT Park.
             </p>
         </div>
     </div>
@@ -328,7 +328,7 @@
                         </div>
                     @else
                         <div class="empty-box">
-                            該当する直通ルートは見つかりませんでした。
+                            Sorry, no direct route could be found.
                         </div>
                     @endif
                 </div>
@@ -337,7 +337,7 @@
             <div class="card result-card">
                 <div class="card-body">
                     <div class="empty-box">
-                        出発地と到着地を選ぶと、利用できるジプニールートがここに表示されます。
+                        Choose your starting point and destination to see the jeepney routes available.
                     </div>
                 </div>
             </div>

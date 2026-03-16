@@ -83,10 +83,11 @@
 
     .spot-image {
         width: 100%;
-        max-height: 320px;
+        max-height: 600px;
         object-fit: cover;
         border-radius: 18px;
         margin-bottom: 18px;
+        box-shadow: 0 12px 24px rgba(0,0,0,0.25);
     }
 </style>
 
@@ -94,7 +95,7 @@
     <div class="fortune-card">
         <div class="fortune-header">
             <h1>Today's Cebu Fortune</h1>
-            <p>今日のあなたにおすすめのスポットを引いてみましょう。</p>
+            <p>Let's draw today's recommended spot for you.</p>
         </div>
 
         <div class="fortune-body">
@@ -112,12 +113,12 @@
 
             @if(!$fortuneLog)
                 <div class="text-center">
-                    <p class="mb-4">まだ今日のおみくじは引いていません。</p>
+                    <p class="mb-4">You haven't drawn today's fortune yet.</p>
 
                     <form action="{{ route('daily.fortune.draw') }}" method="POST">
                         @csrf
                         <button type="submit" class="draw-btn">
-                            今日のおすすめを引く
+                            Draw today's recommendation
                         </button>
                     </form>
                 </div>
@@ -155,7 +156,7 @@
                 </div>
 
                 <div class="mt-4 text-center text-muted">
-                    今日のおみくじはもう引いています。次の結果は明日のお楽しみです。
+                    You have already drawn today's fortune. Please look forward to tomorrow's result.
                 </div>
             @endif
         </div>

@@ -10,15 +10,16 @@ class JeepneyRoute extends Model
 
     protected $fillable = ['code', 'name', 'fare', 'notes'];
 
-    public function stops()
-    {
-        return $this->belongsToMany(
-            JeepneyStop::class,
-            'route_stop',
-            'route_id',
-            'stop_id'
-        )->withPivot('stop_order')
-         ->orderBy('route_stop.stop_order')
-         ->withTimestamps();
-    }
+    public function routeStops()
+{
+    return $this->hasMany(RouteStop::class, 'route_id');
+}
+
+public function stops()
+{
+    return $this->belongsToMany(JeepneyStop::class, 'route_stop', 'route_id', 'stop_id')
+                ->withPivot('stop_order')
+                ->orderBy('pivot_stop_order');
+}
+
 }

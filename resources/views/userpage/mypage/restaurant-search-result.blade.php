@@ -172,20 +172,45 @@
                                                             class="fa-solid fa-location-dot me-1"></i>{{ $restaurant->city ?? $restaurant->address }}
                                                     </div>
 
-                                                    {{-- 星評価（star_rating があれば表示） --}}
-                                                    @if (!empty($restaurant->star_rating))
-                                                        <div class="small text-warning mt-1">★
-                                                            {{ number_format($restaurant->star_rating, 1) }}</div>
-                                                    @endif
-                                                </div>
-
-                                                <div class="text-end">
                                                     @php
                                                         // コントローラで withCount / withAvg を付与している前提
                                                         $reviewsCount = $restaurant->reviews_count ?? 0;
                                                         $avg = $restaurant->reviews_avg_rating
                                                             ? number_format($restaurant->reviews_avg_rating, 1)
                                                             : null;
+                                                    @endphp
+
+                                                    @if ($reviewsCount > 0)
+                                                        <div class="d-flex align-items-center mt-1" aria-label="{{ $reviewsCount }} reviews">
+                                                            @if ($avg)
+                                                                <span class="me-1 text-dark" style="font-size: 0.8rem;">{{ $avg }}</span>
+                                                                <div class="me-1" style="font-size: 0.8rem;">
+                                                                    @php
+                                                                        $rating = (float)$avg;
+                                                                        $fullStars = floor($rating);
+                                                                        $halfStar = ($rating - $fullStars >= 0.5) ? 1 : 0;
+                                                                        $emptyStars = 5 - $fullStars - $halfStar;
+                                                                    @endphp
+                                                                    @for($i=0; $i<$fullStars; $i++)
+                                                                        <i class="fa-solid fa-star text-warning"></i>
+                                                                    @endfor
+                                                                    @if($halfStar)
+                                                                        <i class="fa-solid fa-star-half-stroke text-warning"></i>
+                                                                    @endif
+                                                                    @for($i=0; $i<$emptyStars; $i++)
+                                                                        <i class="fa-solid fa-star" style="color: #d3d3d3;"></i>
+                                                                    @endfor
+                                                                </div>
+                                                            @endif
+                                                            <span class="text-secondary" style="font-size: 0.9rem;">({{ $reviewsCount }})</span>
+                                                        </div>
+                                                    @else
+                                                        <div class="small text-muted mt-1">No reviews</div>
+                                                    @endif
+                                                </div>
+
+                                                <div class="text-end">
+                                                    @php
                                                         $minPriceRaw =
                                                             $restaurant->min_price ??
                                                             ($restaurant->tables->count()
@@ -197,20 +222,7 @@
                                                                 : null;
                                                         $available = $restaurant->available_tables_count ?? null;
                                                     @endphp
-                                                    
 
-
-                                                    @if ($reviewsCount > 0)
-                                                        <div class="badge bg-primary mb-2"
-                                                            aria-label="{{ $reviewsCount }}reviews">
-                                                            @if ($avg)
-                                                                <i class="fa-solid fa-star me-1"></i>{{ $avg }}
-                                                            @endif
-                                                            <span class="ms-2">{{ $reviewsCount }} reviews</span>
-                                                        </div>
-                                                    @else
-                                                        <div class="badge bg-secondary mb-2">No reviews</div>
-                                                    @endif
 
                                                     @if ($available !== null)
                                                         @if ((int) $available <= 0)

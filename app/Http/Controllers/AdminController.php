@@ -475,13 +475,13 @@ class AdminController extends Controller
             if (! $email) {
                 Log::warning('approveHotel abort: no email', ['tmp_id' => $tmp->id]);
                 DB::rollBack();
-                return redirect()->back()->withErrors(['email' => '代表者のメールアドレスが登録されていません。']);
+                return redirect()->back()->withErrors(['email' => 'The representative\'s email address is not registered.']);
             }
 
             if (User::where('email', $email)->exists()) {
                 Log::warning('approveHotel abort: email exists', ['email' => $email, 'tmp_id' => $tmp->id]);
                 DB::rollBack();
-                return redirect()->back()->withErrors(['email' => 'このメールアドレスは既に登録されています。別のメールアドレスで申請してください。']);
+                return redirect()->back()->withErrors(['email' => 'This email address is already registered. Please apply with another email address.']);
             }
 
             Log::info('approveHotel creating user', ['email' => $email]);

@@ -88,11 +88,11 @@ class TmpHotelController extends Controller
 
             DB::commit();
 
-            return redirect()->back()->with('status', '申請を受け付けました。管理者の承認をお待ちください。');
+            return redirect()->back()->with('status', 'Your application has been received. Please wait for administrator approval.');
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Failed to store tmp application', ['error' => $e->getMessage()]);
-            return redirect()->back()->withErrors('申請の保存中にエラーが発生しました。');
+            return redirect()->back()->withInput()->withErrors('An error occurred while saving the application.');
         }
     }
 }

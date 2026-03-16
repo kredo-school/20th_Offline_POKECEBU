@@ -14,20 +14,9 @@
                 <div>
                     <h3 class="mb-1">
                         <i class="fa-regular fa-calendar-check"></i>
-                        Reservation <span class="fw-bold">{{ $date->format('Y/m/d') }}</span>
+                        Reservation: <span class="fw-bold">{{ $date->format('Y/m/d') }}</span>
                     </h3>
-
-                    <small class="text-muted">
-
-                        {{-- {{ $reservation->start_at->format('Y-m-d') }}
-                     to 
-                    {{ $reservation->end_at->format('Y-m-d') }} --}}
-
-                    </small>
                 </div>
-
-
-
             </div>
             <div class="row text-center m-4">
 
@@ -118,13 +107,13 @@
                             </td>
                         </tr>
                     @endforelse
-
                 </tbody>
-
             </table>
-
+            
         </div>
-
+        <a href="#" class="btn btn-outline-secondary btn-sm mt-4">
+                      <i class="fa-solid fa-arrow-left"></i> Back
+                  </a>
     </div>
 
 @endsection

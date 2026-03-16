@@ -81,9 +81,16 @@ class HotelStaffController extends Controller
             }
             // チェックアウト
             $checkoutDate = Carbon::parse($reservation->end_at)->toDateString();
-            if (isset($days[$checkoutDate])) {
-                $days[$checkoutDate]['checkouts'] += 1;
+            if (!isset($days[$checkoutDate])) {
+                $days[$checkoutDate] = [
+                    'rooms'     => 0,
+                    'guests'    => 0,
+                    'checkins'  => 0,
+                    'checkouts' => 0
+                ];
+                // $days[$checkoutDate]['checkouts'] += 1;
             }
+            $days[$checkoutDate]['checkouts'] += 1;
         }
 
         $events = [];
@@ -112,12 +119,52 @@ class HotelStaffController extends Controller
     {
         $date = Carbon::parse($date);
         $reservations = HotelReservation::where('hotel_id', Auth::id())
-            ->whereDate('start_at', '<=', $date)
-            ->whereDate('end_at', '>', $date)
-            ->orderBy('start_at')
-            ->get();
+            ->where(function ($query) use ($date) {
+                $query->where(function ($q) use ($date) {
+                    $q->whereDate('start_at', '<=', $date)
+                      ->whereDate('end_at', '>', $date);
+                })
+                 ->orWhere(function ($query) use ($date) {
+                    $query->whereDate('end_at', $date);
+                });
+            })
+            ->get()
+            
+            // 並び替え（チェックイン、ステイ、チェックアウト）
+            ->sortBy(function ($r) use ($date) {
+                if ($r->end_at->isSameDay($date)) return 3;
+                if ($r->start_at->isSameDay($date)) return 1;
+                return 2;
+            });
 
-        return view('staffpage.reservations.hotel-index', compact('reservations', 'date'));
+        $totalGuests = $reservations
+            ->filter(function ($r) use ($date) {
+                return !$r->end_at->isSameDay($date);
+            })
+            ->sum('guests');
+
+        $totalRooms = $reservations
+            ->filter(function ($r) use ($date) {
+                return !$r->end_at->isSameDay($date);
+            })
+            ->count();
+
+        $checkins = HotelReservation::where('hotel_id', Auth::id())
+            ->whereDate('start_at', $date->toDateString())
+            ->count();
+
+        $checkouts = HotelReservation::where('hotel_id', Auth::id())
+            ->whereDate('end_at', '=', $date->toDateString())
+            ->count();
+
+        return view('staffpage.reservations.hotel-index', compact(
+            'reservations',
+            'date',
+            'totalGuests',
+            'totalRooms',
+            'checkins',
+            'checkouts'
+        ));
     }
 
     // 予約詳細

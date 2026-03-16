@@ -10,10 +10,10 @@
               <div class="card-body d-flex justify-content-between align-items-center">
 
                   <div>
-                      <h4 class="mb-1">
+                      <h3 class="mb-1">
                           <i class="fa-regular fa-calendar-check"></i>
                           Reservation #{{ $reservation->reservation_id }}
-                      </h4>
+                      </h3>
 
                       <small class="text-muted">
 

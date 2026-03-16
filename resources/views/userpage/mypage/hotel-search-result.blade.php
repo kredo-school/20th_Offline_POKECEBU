@@ -180,7 +180,7 @@
                                 @php
                                     $imgUrl = hotel_image_url($hotel);
                                 @endphp
-                                <img src="{{ $imgUrl }}" alt="{{ $hotel->name }}"
+                                <img src="{{ $hotel->image_path }}" alt="{{ $hotel->name }}"
                                     class="img-fluid rounded-start w-100" style="height:220px; object-fit:cover;">
                             </div>
 

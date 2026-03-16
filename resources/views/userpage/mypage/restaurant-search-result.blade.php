@@ -157,7 +157,7 @@
                                 <div class="row g-0">
                                     <div class="col-md-4">
                                         {{-- 画像を左に --}}
-                                        <img src="{{ restaurant_image_url($restaurant) }}"
+                                        <img src="{{ $restaurant->image_path }}"
                                             class="img-fluid rounded-start w-100" alt="{{ $restaurant->name }}"
                                             style="height:220px; object-fit:cover;">
                                     </div>

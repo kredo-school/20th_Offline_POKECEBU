@@ -36,7 +36,7 @@ class TmpHotelController extends Controller
             'website' => 'nullable|url|max:255',
             'representative_name' => 'nullable|string|max:255',
             'representative_email' => 'nullable|email|max:255',
-            'images.*' => 'nullable|image|mimes:jpeg,png,gif|max:2048',
+            'images.*' => 'nullable|image|mimes:jpeg,jpg,png,gif|max:2048',
         ]);
 
         // どの tmp テーブルに入れるか
@@ -71,19 +71,14 @@ class TmpHotelController extends Controller
             // 画像があれば保存して tmp_hotel_images に登録
             if ($request->hasFile('images')) {
                 foreach ($request->file('images') as $file) {
-                    // 一意なファイル名を作る
-                    $filename = time() . '_' . \Illuminate\Support\Str::random(6) . '.' . $file->getClientOriginalExtension();
-                    // 保存先（tmp 用フォルダ）
-                    $tmpDir = $isHotel ? "tmp/hotels/{$tmpId}" : "tmp/restaurants/{$tmpId}";
-
-                    // public ディスクに保存（戻り値は "tmp/hotels/{id}/{filename}"）
-                    $storedPath = $file->storeAs($tmpDir, $filename, 'public');
+                    $base64 = 'data:image/' . $file->extension() . ';base64,' .
+                              base64_encode(file_get_contents($file));
 
                     // tmp_hotel_images テーブルに登録（テーブル名は tmp_hotel_images / tmp_restaurant_images など）
                     $imageTable = $isHotel ? 'tmp_hotel_images' : 'tmp_restaurant_images';
                     DB::table($imageTable)->insert([
                         $isHotel ? 'tmp_hotel_id' : 'tmp_restaurant_id' => $tmpId,
-                        'image' => $storedPath,
+                        'image' => $base64,
                         'created_at' => now(),
                         'updated_at' => now(),
                     ]);

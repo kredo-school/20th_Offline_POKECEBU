@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Models\HotelReservation;
 use App\Models\RestaurantReservation;
 use Carbon\Carbon;
 
@@ -12,7 +13,29 @@ class RestaurantStaffController extends Controller
 {
     public function index()
     {
-        return view('staffpage.home-restaurant');
+        $today = Carbon::today();
+        $hotelId = Auth::id();
+
+        $todayReservations = HotelReservation::where('hotel_id',$hotelId)
+            ->whereDate('start_at', '<=', $today)
+            ->whereDate('end_at', '>', $today)
+            ->get();
+
+        $totalGuests = $todayReservations->sum('guests');
+        $totalRooms = $todayReservations->count();
+        $checkins = HotelReservation::where('hotel_id', $hotelId)
+            ->whereDate('start_at', $today)
+            ->count();
+        $checkouts = HotelReservation::where('hotel_id', $hotelId)
+            ->whereDate('end_at', $today)
+            ->count();
+
+        return view('staffpage.home-restaurant', compact(
+            'totalGuests',
+            'totalRooms',
+            'checkins',
+            'checkouts'
+        ));
     }
 
     // カレンダー

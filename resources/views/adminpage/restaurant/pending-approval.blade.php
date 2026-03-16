@@ -142,17 +142,8 @@
                             @if ($tmpRestaurant->images && $tmpRestaurant->images->isNotEmpty())
                                 @foreach ($tmpRestaurant->images as $img)
                                     <div class="col-md-6">
-                                        @php
-                                            // 画像パスがフル URL か相対パスかに対応
-                                            $imgUrl = \Illuminate\Support\Str::startsWith($img->image, [
-                                                'http://',
-                                                'https://',
-                                            ])
-                                                ? $img->image
-                                                : \Illuminate\Support\Facades\Storage::url(ltrim($img->image, '/'));
-                                        @endphp
-                                        <a href="{{ $imgUrl }}" target="_blank" rel="noopener noreferrer">
-                                            <img src="{{ $imgUrl }}" class="img-fluid rounded mb-2" alt="Restaurant Image">
+                                        <a href="{{ $img->image }}" target="_blank" rel="noopener noreferrer">
+                                            <img src="{{ $img->image }}" class="img-fluid rounded mb-2" alt="Restaurant Image">
                                         </a>
                                     </div>
                                 @endforeach

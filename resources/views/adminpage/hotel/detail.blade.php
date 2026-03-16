@@ -27,7 +27,7 @@
                         @if ($hotel->images && $hotel->images->isNotEmpty())
                             @foreach ($hotel->images as $img)
                                 <div class="col-md-6">
-                                    <img src="{{ asset('storage/' . $img->image) }}" class="img-fluid rounded mb-2"
+                                    <img src="{{ $img->image }}" class="img-fluid rounded mb-2"
                                         alt="Hotel Image">
                                 </div>
                             @endforeach

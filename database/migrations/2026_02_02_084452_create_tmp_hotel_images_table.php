@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('tmp_hotel_images', function (Blueprint $table) {
             $table->id();
             $table->foreignId('tmp_hotel_id')->constrained('tmp_hotels')->cascadeOnDelete();
-            $table->string('image'); // storage パスを保存
+            $table->longText('image'); // storage パスを保存
             $table->timestamps();
         });
     }

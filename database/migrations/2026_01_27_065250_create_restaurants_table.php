@@ -35,7 +35,7 @@ return new class extends Migration
             // 2/6 updated_user は削除
             // $table->foreignId('updated_user')->nullable()->constrained('users');
 ;
-            $table->string('image_path')->nullable();        // ← 追加
+            $table->longText('image_path')->nullable();        // ← 追加
             $table->string('email', 100)->nullable();       // ← 追加
             $table->timestamps();
         });

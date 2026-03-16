@@ -455,13 +455,13 @@ class AdminController extends Controller
             if (! $email) {
                 Log::warning('approveHotel abort: no email', ['tmp_id' => $tmp->id]);
                 DB::rollBack();
-                return redirect()->back()->withErrors(['email' => '代表者のメールアドレスが登録されていません。']);
+                return redirect()->back()->withErrors(['email' => 'The representative\'s email address is not registered.']);
             }
 
             if (User::where('email', $email)->exists()) {
                 Log::warning('approveHotel abort: email exists', ['email' => $email, 'tmp_id' => $tmp->id]);
                 DB::rollBack();
-                return redirect()->back()->withErrors(['email' => 'このメールアドレスは既に登録されています。別のメールアドレスで申請してください。']);
+                return redirect()->back()->withErrors(['email' => 'This email address is already registered. Please apply with another email address.']);
             }
 
             Log::info('approveHotel creating user', ['email' => $email]);
@@ -622,11 +622,11 @@ class AdminController extends Controller
                 Log::error('Failed to send approval email', ['error' => $e->getMessage(), 'user_id' => $user->id]);
             }
 
-            return redirect()->back()->with('status', 'ホテル申請を承認しました！');
+            return redirect()->back()->with('status', 'Hotel application has been approved!');
         } catch (\Throwable $e) {
             DB::rollBack();
             Log::error('Hotel approval failed', ['error' => $e->getMessage(), 'tmp_id' => $tmp->id, 'trace' => $e->getTraceAsString()]);
-            return redirect()->back()->withErrors('承認処理中にエラーが発生しました。');
+            return redirect()->back()->withErrors('An error occurred during the approval process.');
         }
     }
 
@@ -740,7 +740,7 @@ class AdminController extends Controller
                 */
                 $this->cleanupTmpAfterDecision($tmp);
 
-                return redirect()->back()->with('status', 'ホテル更新申請を承認しました！');
+                return redirect()->back()->with('status', 'Hotel update application has been approved!');
 
         } catch (\Throwable $e) {
             DB::rollBack();
@@ -750,7 +750,7 @@ class AdminController extends Controller
                 'tmp_id' => $tmp->id,
             ]);
 
-            return redirect()->back()->withErrors('更新承認処理中にエラーが発生しました。');
+            return redirect()->back()->withErrors('An error occurred during the update approval process.');
         }
     }
     /**
@@ -826,11 +826,11 @@ class AdminController extends Controller
 
             // 3) ログとフラッシュ
             Log::info('Hotel rejected', ['tmp_id' => $id, 'by' => auth()->id() ?? null]);
-            return redirect()->back()->with('status', 'ホテル申請を却下しました。');
+            return redirect()->back()->with('status', 'Hotel application has been rejected.');
         } catch (\Throwable $e) {
             DB::rollBack();
             Log::error('Hotel reject failed', ['tmp_id' => $id, 'error' => $e->getMessage()]);
-            return redirect()->back()->withErrors('却下処理中にエラーが発生しました。');
+            return redirect()->back()->withErrors('An error occurred during the rejection process.');
         }
     }
 
@@ -919,13 +919,13 @@ class AdminController extends Controller
             if (! $email) {
                 Log::warning('approveRestaurant abort: no email', ['tmp_id' => $tmp->id]);
                 DB::rollBack();
-                return redirect()->back()->withErrors(['email' => '代表者のメールアドレスが登録されていません。']);
+                return redirect()->back()->withErrors(['email' => 'The representative\'s email address is not registered.']);
             }
 
             if (User::where('email', $email)->exists()) {
                 Log::warning('approveRestaurant abort: email exists', ['email' => $email, 'tmp_id' => $tmp->id]);
                 DB::rollBack();
-                return redirect()->back()->withErrors(['email' => 'このメールアドレスは既に登録されています。別のメールアドレスで申請してください。']);
+                return redirect()->back()->withErrors(['email' => 'This email address is already registered. Please apply with another email address.']);
             }
 
             Log::info('approveRestaurant creating user', ['email' => $email]);
@@ -1086,11 +1086,11 @@ class AdminController extends Controller
                 Log::error('Failed to send approval email', ['error' => $e->getMessage(), 'user_id' => $user->id]);
             }
 
-            return redirect()->back()->with('status', 'ホテル申請を承認しました！');
+            return redirect()->back()->with('status', 'Restaurant application has been approved!');
         } catch (\Throwable $e) {
             DB::rollBack();
             Log::error('Restaurant approval failed', ['error' => $e->getMessage(), 'tmp_id' => $tmp->id, 'trace' => $e->getTraceAsString()]);
-            return redirect()->back()->withErrors('承認処理中にエラーが発生しました。');
+            return redirect()->back()->withErrors('An error occurred during the approval process.');
         }
     }
 
@@ -1204,7 +1204,7 @@ class AdminController extends Controller
                 */
                 $this->cleanupTmpAfterDecisionRestaurant($tmp);
 
-                return redirect()->back()->with('status', 'ホテル更新申請を承認しました！');
+                return redirect()->back()->with('status', 'Restaurant update application has been approved!');
 
         } catch (\Throwable $e) {
             DB::rollBack();
@@ -1214,7 +1214,7 @@ class AdminController extends Controller
                 'tmp_id' => $tmp->id,
             ]);
 
-            return redirect()->back()->withErrors('更新承認処理中にエラーが発生しました。');
+            return redirect()->back()->withErrors('An error occurred during the update approval process.');
         }
     }
     /**
@@ -1290,11 +1290,11 @@ class AdminController extends Controller
 
             // 3) ログとフラッシュ
             Log::info('Restaurant rejected', ['tmp_id' => $id, 'by' => auth()->id() ?? null]);
-            return redirect()->back()->with('status', 'ホテル申請を却下しました。');
+            return redirect()->back()->with('status', 'Restaurant application has been rejected.');
         } catch (\Throwable $e) {
             DB::rollBack();
             Log::error('Restaurant reject failed', ['tmp_id' => $id, 'error' => $e->getMessage()]);
-            return redirect()->back()->withErrors('却下処理中にエラーが発生しました。');
+            return redirect()->back()->withErrors('An error occurred during the rejection process.');
         }
     }
 

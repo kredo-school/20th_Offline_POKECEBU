@@ -10,9 +10,26 @@
                         our platform.</p>
                 </div>
 
-                {{-- フラッシュメッセージ --}}
+                {{-- フラッシュメッセージ / エラーメッセージ --}}
                 @if (session('status'))
-                    <div class="alert alert-success">{{ session('status') }}</div>
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <i class="fa-solid fa-circle-check me-2"></i>{{ session('status') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endif
+                
+                @if (session('error'))
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="fa-solid fa-circle-exclamation me-2"></i>{{ session('error') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endif
+
+                @if ($errors->any())
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="fa-solid fa-circle-exclamation me-2"></i>There are input errors. Please review the highlighted fields and try again.
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
                 @endif
 
                 {{-- form --}}
@@ -89,7 +106,8 @@
                                     </div>
                                 </div>
 
-                                {{-- Latitude / Longitude --}}
+                                {{-- Latitude / Longitude (Commented out as requested) --}}
+                                {{-- 
                                 <div class="row g-3 mb-3">
                                     <div class="col-md-6">
                                         <label class="form-label fw-bold">Latitude</label>
@@ -108,9 +126,11 @@
                                         @enderror
                                     </div>
                                 </div>
+                                --}}
 
-                                {{-- Star Rating / Phone / Website --}}
+                                {{-- Star Rating (Commented out as requested) / Phone / Website --}}
                                 <div class="row g-3 mb-3">
+                                    {{-- 
                                     <div class="col-md-4">
                                         <label class="form-label fw-bold">Star Rating</label>
                                         <input type="number" name="star_rating" class="form-control"
@@ -120,8 +140,9 @@
                                             <div class="text-danger small mt-1">{{ $message }}</div>
                                         @enderror
                                     </div>
+                                    --}}
 
-                                    <div class="col-md-4">
+                                    <div class="col-md-6">
                                         <label class="form-label fw-bold">Phone Number</label>
                                         <div class="input-group">
                                             <span class="input-group-text">+63</span>
@@ -133,7 +154,7 @@
                                         @enderror
                                     </div>
 
-                                    <div class="col-md-4">
+                                    <div class="col-md-6">
                                         <label class="form-label fw-bold">Website</label>
                                         <input type="url" name="website" class="form-control"
                                             value="{{ old('website') }}" placeholder="https://example.com">
@@ -155,10 +176,10 @@
                                         @enderror
                                     </div>
                                     <div class="col-md-6">
-                                        <label class="form-label fw-bold">Email Address</label>
+                                        <label class="form-label fw-bold">Email Address <span class="text-danger">*</span></label>
                                         <input type="email" name="representative_email" class="form-control"
                                             value="{{ old('representative_email') }}"
-                                            placeholder="Business contact email">
+                                            placeholder="Business contact email" required>
                                         @error('representative_email')
                                             <div class="text-danger small mt-1">{{ $message }}</div>
                                         @enderror
@@ -167,15 +188,16 @@
                                 {{-- Images --}}
                                 <div class="mb-3">
                                     <label class="form-label fw-bold">Business Images (optional)</label>
+                                    <div class="form-text mb-2 text-muted">対応ファイル形式: JPEG, PNG, GIF, WebP</div>
                                     <div id="imageInputs">
                                         <div class="input-group mb-2 image-input-group">
-                                            <input type="file" name="images[]" class="form-control" accept="image/*">
+                                            <input type="file" name="images[]" class="form-control" accept="image/jpeg, image/png, image/gif, image/webp">
                                             <button type="button"
                                                 class="btn btn-outline-danger btn-sm remove-image-btn">×</button>
                                         </div>
                                     </div>
                                     <button type="button" class="btn btn-outline-secondary btn-sm mt-2"
-                                        onclick="addImageInput()">＋ 画像を追加</button>
+                                        onclick="addImageInput()"><i class="fa-solid fa-plus me-1"></i> Add Image</button>
 
 
                                     {{-- バリデーションエラー --}}
@@ -221,7 +243,7 @@
                 input.type = 'file';
                 input.name = 'images[]';
                 input.className = 'form-control';
-                input.accept = 'image/*';
+                input.accept = 'image/jpeg, image/png, image/gif, image/webp';
                 input.dataset.index = imageInputCounter;
 
                 const button = document.createElement('button');

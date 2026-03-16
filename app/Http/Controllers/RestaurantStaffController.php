@@ -86,7 +86,17 @@ class RestaurantStaffController extends Controller
             ->orderBy('start_at')
             ->get();
 
-        return view('staffpage.reservations.restaurant-index', compact('reservations', 'date'));
+        $totalGuests = $reservations
+            ->sum('guests');
+        
+        $totalTables = $reservations
+            ->count();
+
+        return view('staffpage.reservations.restaurant-index', compact(
+            'reservations', 
+            'date',
+            'totalGuests',
+            'totalTables'));
     }
 
     // 予約詳細

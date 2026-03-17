@@ -15,7 +15,7 @@
         </div>
 
         {{-- Form Section --}}
-        <form action="{{ route('staff.update.restaurant') }}" method="POST" enctype="multipart/form-data" class="ig-form">
+        <form action="{{ route('restaurant.staff.update.restaurant') }}" method="POST" enctype="multipart/form-data" class="ig-form">
             @csrf
 
             {{-- Basic Information --}}
@@ -96,7 +96,7 @@
 
             {{-- Footer Buttons --}}
             <div class="ig-form-footer">
-                <a href="{{ route('staff.mypage.restaurant') }}" class="ig-btn-secondary">Back</a>
+                <a href="{{ route('restaurant.staff.mypage.restaurant') }}" class="ig-btn-secondary">Back</a>
                 <button type="submit" class="ig-btn-primary">Save Changes</button>
             </div>
         </form>

@@ -9,18 +9,53 @@
         .info-label { color: #888; font-size: 0.9rem; font-weight: 500; }
         .info-value { font-weight: 700; color: #333; }
         .total-price-box { background: #f8f9ff; border-radius: 20px; padding: 20px; border: 1px solid #eef0ff; }
+
+        /* プレミアムUI用のアニメーションとホバーエフェクト */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in-up {
+            animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+        }
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+        
+        .res-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .res-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08) !important;
+        }
+        .res-card:active {
+            transform: scale(0.98);
+        }
+        .btn-animated {
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .btn-animated:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(13, 110, 253, 0.3) !important;
+        }
+        .btn-animated:active {
+            transform: scale(0.95);
+            box-shadow: 0 4px 8px rgba(13, 110, 253, 0.2) !important;
+        }
     </style>
 @endpush
 
 @section('content')
 <div class="container py-5" style="max-width: 750px;">
     
-    <div class="text-center mb-5">
+    <div class="text-center mb-5 animate-fade-in-up">
         <h2 class="fw-bold">Confirm Your Reservation</h2>
         <p class="text-muted small text-uppercase letter-spacing-1">Please review your booking details below</p>
     </div>
 
-    <div class="res-card">
+    <div class="res-card animate-fade-in-up delay-1">
         <div class="row g-4 align-items-center">
             <div class="col-md-5">
                 <img src="{{ $hotel->images->first()->image ?? asset('images/default.jpg') }}" 
@@ -39,7 +74,7 @@
         </div>
     </div>
 
-    <div class="res-card">
+    <div class="res-card animate-fade-in-up delay-2">
         <h5 class="fw-bold mb-4"><i class="fa-solid fa-calendar-check me-2 text-primary"></i>Stay Details</h5>
         
         <div class="info-row">
@@ -57,7 +92,7 @@
         </div> --}}
     </div>
 
-    <div class="res-card">
+    <div class="res-card animate-fade-in-up delay-3">
         <h5 class="fw-bold mb-4"><i class="fa-solid fa-id-card me-2 text-primary"></i>Guest Details</h5>
         
         <div class="p-3 bg-light rounded-4 mb-4">
@@ -87,11 +122,11 @@
         <input type="hidden" name="room_type_id" value="{{ $roomType->id }}">
         <input type="hidden" name="guests" value="{{ $guestsCount }}">
         
-        <div class="d-flex gap-3 mt-4">
-            <a href="{{ route('user.mypage.show') }}" class="btn btn-outline-secondary btn-round px-4 py-3">
+        <div class="d-flex gap-3 mt-4 animate-fade-in-up delay-3">
+            <a href="{{ route('user.mypage.show') }}" class="btn btn-outline-secondary btn-round px-4 py-3 btn-animated">
                 <i class="fa-solid fa-chevron-left me-2"></i>Back
             </a>
-            <button type="submit" class="btn btn-primary btn-round flex-grow-1 text-white shadow py-3">
+            <button type="submit" class="btn btn-primary btn-round flex-grow-1 text-white shadow py-3 btn-animated">
                 Proceed to Payment <i class="fa-solid fa-chevron-right ms-2"></i>
             </button>
         </div>

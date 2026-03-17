@@ -187,7 +187,7 @@ class StaffMypageController extends Controller
             }
 
             DB::commit();
-            return redirect()->route('restaurant.complete');
+            return redirect()->route('restaurant.restaurant.complete');
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Restaurant Save Error: ' . $e->getMessage());

@@ -28,16 +28,16 @@
         </div>
 
         <nav class="ig-sidebar-nav">
-            <a href="{{ route('mypage') }}" class="ig-nav-item">
+            <a href="{{ route('user.mypage') }}" class="ig-nav-item">
                 <i class="fa-regular fa-user"></i> Profile
             </a>
             <a href="{{ route('user.mypage.post') }}" class="ig-nav-item">
                 <i class="fa-regular fa-images"></i> Posts
             </a>
-            <a href="{{ route('booking') }}" class="ig-nav-item">
+            <a href="{{ route('user.booking') }}" class="ig-nav-item">
                 <i class="fa-regular fa-calendar"></i> Bookings
             </a>
-            <a href="{{ route('favorite') }}" class="ig-nav-item active">
+            <a href="{{ route('user.favorite') }}" class="ig-nav-item active">
                 <i class="fa-regular fa-heart"></i> Favorite
             </a>
         </nav>

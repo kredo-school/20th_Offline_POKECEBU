@@ -261,6 +261,7 @@
             {{-- Past --}}
             <div class="bk-section-title"><i class="fa-regular fa-clock-rotate-left me-1"></i> Past</div>
             @forelse($pastRestaurants as $res)
+             @php $review = $res->restaurant->reviewBy(auth()->id()); @endphp
                 <div class="bk-card">
                     <div class="bk-card-body">
                         <div class="bk-card-icon" style="background:#f5f5f5;color:#9e9e9e;">
@@ -276,9 +277,15 @@
                         <div class="bk-card-right">
                             <div class="bk-price">₱{{ number_format($res->total_price, 2) }}</div>
                             <span class="bk-badge completed"><i class="fa-solid fa-check" style="font-size:9px;"></i> Completed</span>
+                             <button class="bk-review-btn {{ $review ? 'done' : '' }}"
+                                {{ $review ? '' : "data-bs-toggle=modal data-bs-target=#reviewModal{$res->restaurant->id}" }}>
+                                <i class="fa-{{ $review ? 'solid' : 'regular' }} fa-star"></i>
+                                {{ $review ? '投稿済み' : 'Write Review' }}
+                            </button>
                         </div>
                     </div>
                 </div>
+                @include('userpage.mypage.modals.review', ['target' => $res->restaurant, 'type' => 'restaurant'])
             @empty
                 <div class="bk-empty"><i class="fa-regular fa-calendar-xmark"></i>No past restaurant reservations.</div>
             @endforelse

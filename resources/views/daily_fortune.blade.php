@@ -115,7 +115,7 @@
                 <div class="text-center">
                     <p class="mb-4">You haven't drawn today's fortune yet.</p>
 
-                    <form action="{{ route('daily.fortune.draw') }}" method="POST">
+                    <form action="{{ route('user.daily.fortune.draw') }}" method="POST">
                         @csrf
                         <button type="submit" class="draw-btn">
                             Draw today's recommendation

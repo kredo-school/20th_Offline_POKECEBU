@@ -41,7 +41,7 @@
                 <h2 class="ig-card-title">Restaurant Profile</h2>
                 <p class="ig-card-subtitle">Current public information</p>
             </div>
-            <a href="{{ route('restaurant.restaurant.edit') }}" class="ig-btn-primary">
+            <a href="{{ route('restaurant.staff.edit.restaurant') }}" class="ig-btn-primary">
                 Edit / Apply Changes
             </a>
         </div>

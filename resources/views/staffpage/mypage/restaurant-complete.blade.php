@@ -43,7 +43,7 @@
 
         {{-- Action Button --}}
         <div class="ig-form-footer" style="justify-content: center; border: none;">
-            <a href="{{ route('staff.mypage.restaurant') }}" class="ig-btn-primary" style="width: 200px; text-decoration: none; text-align: center;">
+            <a href="{{ route('restaurant.staff.mypage.restaurant') }}" class="ig-btn-primary" style="width: 200px; text-decoration: none; text-align: center;">
                 Back to My Page
             </a>
         </div>

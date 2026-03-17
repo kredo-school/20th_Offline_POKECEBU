@@ -10,6 +10,44 @@
     <style>
         body { background-color: #f8f9fa; }
         .card { border: none; }
+
+        /* ふわっと表示されるアニメーション */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+        }
+        .delay-1 { animation-delay: 0.15s; }
+        .delay-2 { animation-delay: 0.3s; }
+        .delay-3 { animation-delay: 0.45s; }
+        .delay-4 { animation-delay: 0.6s; }
+
+        /* 画像やカードを触ったときに動くアニメーション */
+        .hover-move {
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .hover-move:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.12) !important;
+        }
+        .hover-move:active {
+            transform: scale(0.97);
+        }
+
+        /* ボタン用のアニメーション */
+        .btn-hover-move {
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .btn-hover-move:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 18px rgba(13, 110, 253, 0.3) !important;
+        }
+        .btn-hover-move:active {
+            transform: scale(0.95);
+        }
     </style>
 </head>
 
@@ -41,17 +79,17 @@
             {{-- どのレストランか特定するための隠し項目 --}}
             <input type="hidden" name="restaurant_id" value="{{ $restaurant->id }}">
 
-            <h2 class="fw-bold mb-4 text-center">{{ $restaurant->name ?? 'Information Not Available' }}</h2>
+            <h2 class="fw-bold mb-4 text-center animate-fade-in">{{ $restaurant->name ?? 'Information Not Available' }}</h2>
 
-            <div class="mb-4 text-center">
+            <div class="mb-4 text-center animate-fade-in delay-1">
                 @if($restaurant->image_path)
-                    <img src="{{ asset('storage/' . $restaurant->image_path) }}" class="img-fluid rounded-4 shadow">
+                    <img src="{{ asset('storage/' . $restaurant->image_path) }}" class="img-fluid rounded-4 shadow hover-move" style="cursor: pointer;">
                 @else
-                    <img src="https://via.placeholder.com/600x400?text=No+Image" class="img-fluid rounded-4 shadow">
+                    <img src="https://via.placeholder.com/600x400?text=No+Image" class="img-fluid rounded-4 shadow hover-move" style="cursor: pointer;">
                 @endif
             </div>
 
-            <div class="card mb-4 shadow-sm rounded-4">
+            <div class="card mb-4 shadow-sm rounded-4 animate-fade-in delay-2 hover-move">
                 <div class="card-header bg-white fw-bold border-bottom-0 pt-3">
                     <i class="fa-solid fa-user me-2 text-primary"></i>Guest Information
                 </div>
@@ -75,7 +113,7 @@
                 </div>
             </div>
 
-            <div class="card mb-4 shadow-sm rounded-4">
+            <div class="card mb-4 shadow-sm rounded-4 animate-fade-in delay-3 hover-move">
                 <div class="card-header bg-white fw-bold border-bottom-0 pt-3">
                     <i class="fa-solid fa-calendar-days me-2 text-primary"></i>Reservation Details
                 </div>
@@ -105,9 +143,9 @@
                 </div>
             </div>
 
-            <div class="d-flex justify-content-end gap-2 mb-5">
-                <button type="button" class="btn btn-outline-secondary px-4 rounded-pill" onclick="history.back()">Back</button>
-                <button type="submit" class="btn btn-primary px-5 rounded-pill shadow-sm" id="reserveBtn">
+            <div class="d-flex justify-content-end gap-2 mb-5 animate-fade-in delay-4">
+                <button type="button" class="btn btn-outline-secondary px-4 rounded-pill btn-hover-move" onclick="history.back()">Back</button>
+                <button type="submit" class="btn btn-primary px-5 rounded-pill shadow-sm btn-hover-move" id="reserveBtn">
                     <span id="btnText">Reserve Now</span>
                     <span class="spinner-border spinner-border-sm d-none" id="btnSpinner" role="status"></span>
                 </button>

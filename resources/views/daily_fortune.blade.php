@@ -4,63 +4,71 @@
 <style>
     body {
         background: linear-gradient(180deg, #fffef7 0%, #fff8ee 100%);
+        font-family: 'Segoe UI', sans-serif;
     }
 
     .fortune-wrapper {
-        max-width: 900px;
-        margin: 30px auto;
+        max-width: 800px;
+        margin: 40px auto;
+        padding: 0 20px;
     }
 
     .fortune-card {
-        border: none;
-        border-radius: 24px;
+        border-radius: 20px;
         background: #ffffff;
-        box-shadow: 0 18px 40px rgba(20, 40, 60, 0.08);
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
         overflow: hidden;
     }
 
     .fortune-header {
         background: linear-gradient(135deg, #ffd36e, #ffb86c);
         color: #4a3100;
-        padding: 32px;
+        padding: 40px 20px;
         text-align: center;
     }
 
     .fortune-header h1 {
-        margin: 0;
-        font-size: 2rem;
+        font-size: 2.2rem;
         font-weight: 800;
+        margin-bottom: 10px;
     }
 
     .fortune-header p {
-        margin-top: 10px;
-        margin-bottom: 0;
         font-size: 1rem;
+        margin: 0;
     }
 
     .fortune-body {
-        padding: 32px;
+        padding: 30px;
     }
 
     .draw-btn {
         border: none;
-        border-radius: 16px;
-        padding: 14px 24px;
-        font-weight: 800;
+        border-radius: 20px;
+        padding: 14px 28px;
+        font-weight: 700;
         background: linear-gradient(135deg, #6FA9DE, #51C9D0);
-        color: #102433;
-        box-shadow: 0 10px 20px rgba(81, 201, 208, 0.2);
+        color: #fff;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .draw-btn:hover {
+        background: linear-gradient(135deg, #51C9D0, #6FA9DE);
+        transform: translateY(-2px);
+        box-shadow: 0 12px 24px rgba(81, 201, 208, 0.3);
     }
 
     .spot-card {
-        border: 1px solid #ece7da;
-        border-radius: 20px;
+        border-radius: 16px;
         padding: 24px;
-        background: #fffdf8;
+        background: #fdfdfd;
+        box-shadow: 0 6px 16px rgba(0,0,0,0.05);
+        margin-top: 20px;
     }
 
     .spot-name {
-        font-size: 1.5rem;
+        font-size: 1.6rem;
         font-weight: 800;
         color: #1e3447;
         margin-bottom: 12px;
@@ -68,22 +76,24 @@
 
     .spot-meta {
         display: inline-block;
-        padding: 8px 14px;
+        padding: 6px 12px;
         border-radius: 999px;
         background: #eef9fb;
         color: #15435a;
-        font-weight: 700;
-        margin-bottom: 14px;
+        font-weight: 600;
+        margin-right: 8px;
+        margin-bottom: 10px;
     }
 
     .spot-description {
         color: #5d7181;
         line-height: 1.8;
+        margin-top: 10px;
     }
 
     .spot-image {
         width: 100%;
-        max-height: 600px;
+        max-height: 500px;
         object-fit: cover;
         border-radius: 18px;
         margin-bottom: 18px;
@@ -114,7 +124,6 @@
             @if(!$fortuneLog)
                 <div class="text-center">
                     <p class="mb-4">You haven't drawn today's fortune yet.</p>
-
                     <form action="{{ route('user.daily.fortune.draw') }}" method="POST">
                         @csrf
                         <button type="submit" class="draw-btn">
@@ -163,3 +172,4 @@
     </div>
 </div>
 @endsection
+

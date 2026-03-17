@@ -33,7 +33,7 @@ class DailyFortuneController extends Controller
             ->first();
 
         if ($existingLog) {
-            return redirect()->route('daily.fortune.show')
+            return redirect()->route('user.daily.fortune.show')
                 ->with('message', '今日はすでにおみくじを引いています。');
         }
 
@@ -52,7 +52,7 @@ class DailyFortuneController extends Controller
             'fortune_date' => $today,
         ]);
 
-        return redirect()->route('daily.fortune.show')
+        return redirect()->route('user.daily.fortune.show')
             ->with('success', '今日のおすすめスポットが決まりました。');
     }
 }

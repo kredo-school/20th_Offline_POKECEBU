@@ -1,12 +1,12 @@
-    .analysis-wrapper { background: #f4f7f6; min-height: 100vh; padding: 20px; }
+    .analysis-wrapper-hotel { background:#eff6fc; min-height: 100vh; padding: 20px; }
     
-    .btn-sidebar { 
+    .btn-sidebar-hotel { 
         border: none; padding: 12px 20px; border-radius: 12px; color: #64748b; 
         transition: all 0.3s; background: white; width: 100%; display: block; 
         margin-bottom: 10px; text-decoration: none; text-align: left;
     }
-    .btn-sidebar:hover { background: #f1f5f9; color: #1e293b; transform: translateX(5px); }
-    .btn-sidebar.active { 
+    .btn-sidebar-hotel:hover { background: #eff6fc; color: #1e293b; transform: translateX(5px); }
+    .btn-sidebar-hotel.active { 
         background: #3b82f6 !important; color: white !important; 
         box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3); 
     }

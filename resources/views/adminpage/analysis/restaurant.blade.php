@@ -4,20 +4,20 @@
 
 @section('content')
 
-    <div class="analysis-wrapper">
+    <div class="analysis-wrapper-restaurant">
         <div class="container-fluid">
             <div class="row g-4">
                 {{-- 1. Sidebar --}}
                 <div class="col-lg-2">
                     <div class="sticky-top" style="top: 20px;">
                         <h5 class="fw-bold mb-4 ps-2 text-dark">Admin Console</h5>
-                        <a href="{{ route('admin.analysis.hotel') }}" class="btn btn-sidebar shadow-sm">
+                        <a href="{{ route('admin.analysis.hotel') }}" class="btn btn-sidebar-restaurant shadow-sm">
                             <i class="fa-solid fa-hotel me-2"></i>Hotel
                         </a>
-                        <a href="{{ route('admin.analysis.restaurant') }}" class="btn btn-sidebar active shadow-sm">
+                        <a href="{{ route('admin.analysis.restaurant') }}" class="btn btn-sidebar-restaurant active shadow-sm">
                             <i class="fa-solid fa-utensils me-2"></i>Restaurant
                         </a>
-                        <a href="{{ route('admin.analysis.user') }}" class="btn btn-sidebar shadow-sm">
+                        <a href="{{ route('admin.analysis.user') }}" class="btn btn-sidebar-restaurant shadow-sm">
                             <i class="fa-solid fa-users-gear me-2"></i>User Insights
                         </a>
 
@@ -41,28 +41,28 @@
                     {{-- KPI Cards --}}
                     <div class="row g-4 mb-4">
                         <div class="col-md-4">
-                            <div class="kpi-card border-start border-dark border-5">
+                            <div class="kpi-card border-start border-dark border-5 text-center">
                                 <p class="text-muted small fw-bold mb-1">RESERVATIONS</p>
                                 <h2 class="fw-black m-0 text-dark">{{ number_format($kpi->total_bookings ?? 0) }}</h2>
-                                <span class="badge bg-light text-muted mt-2 border w-fit">Current Month</span>
+                                <span class="badge bg-light text-muted mt-2 border">Current Month</span>
                             </div>
                         </div>
 
                         <div class="col-md-4">
-                            <div class="kpi-card border-start border-warning border-5">
+                            <div class="kpi-card border-start border-warning border-5 text-center">
                                 <p class="text-warning small fw-bold mb-1">TOTAL GUESTS</p>
                                 <h2 class="fw-black text-warning m-0">{{ number_format($kpi->total_guests ?? 0) }}</h2>
-                                <span class="badge bg-warning bg-opacity-10 text-warning mt-2 w-fit">Current Month</span>
+                                <span class="badge bg-warning bg-opacity-10 text-warning mt-2">Current Month</span>
                             </div>
                         </div>
 
                         <div class="col-md-4">
-                            <div class="kpi-card border-start border-success border-5">
+                            <div class="kpi-card border-start border-success border-5 text-center">
                                 <p class="text-success small fw-bold mb-1">AVG. DINING TIME</p>
                                 <h2 class="fw-black text-success m-0">
                                     {{ number_format($avgStayTime ?? 0) }}<span class="fs-4 ms-1">min</span>
                                 </h2>
-                                <span class="badge bg-success bg-opacity-10 text-success mt-2 w-fit">Per Table</span>
+                                <span class="badge bg-success bg-opacity-10 text-success mt-2">Per Table</span>
                             </div>
                         </div>
                     </div>

@@ -4,20 +4,20 @@
 
 @section('content')
 
-    <div class="analysis-wrapper">
+    <div class="analysis-wrapper-hotel">
         <div class="container-fluid">
             <div class="row g-4">
                 {{-- 1. Sidebar --}}
                 <div class="col-lg-2">
                     <div class="sticky-top" style="top: 20px;">
                         <h5 class="fw-bold mb-4 ps-2">Admin Console</h5>
-                        <a href="{{ route('admin.analysis.hotel') }}" class="btn btn-sidebar active shadow-sm">
+                        <a href="{{ route('admin.analysis.hotel') }}" class="btn btn-sidebar-hotel active shadow-sm">
                             <i class="fa-solid fa-hotel me-2"></i>Hotel
                         </a>
-                        <a href="{{ route('admin.analysis.restaurant') }}" class="btn btn-sidebar shadow-sm">
+                        <a href="{{ route('admin.analysis.restaurant') }}" class="btn btn-sidebar-hotel shadow-sm">
                             <i class="fa-solid fa-utensils me-2"></i>Restaurant
                         </a>
-                        <a href="{{ route('admin.analysis.user') }}" class="btn btn-sidebar shadow-sm">
+                        <a href="{{ route('admin.analysis.user') }}" class="btn btn-sidebar-hotel shadow-sm">
                             <i class="fa-solid fa-users-gear me-2"></i>User Insights
                         </a>
 
@@ -40,7 +40,7 @@
                 <div class="col-lg-10">
                     <div class="row g-4"> {{-- カード同士の隙間を一定にする --}}
                         <div class="col-md-4">
-                            <div class="kpi-box border-start border-dark border-5">
+                            <div class="kpi-box border-start border-dark border-5 text-center">
                                 <p class="text-muted small fw-bold mb-1">TOTAL RESERVATIONS</p>
                                 <h2 class="fw-black m-0 text-dark">{{ number_format($currentKpi->total_bookings ?? 0) }}
                                 </h2>
@@ -49,7 +49,7 @@
                         </div>
 
                         <div class="col-md-4">
-                            <div class="kpi-box border-start border-primary border-5">
+                            <div class="kpi-box border-start border-primary border-5 text-center">
                                 <p class="text-primary small fw-bold mb-1">TOTAL GUESTS</p>
                                 <h2 class="fw-black text-primary m-0">{{ number_format($currentKpi->total_guests ?? 0) }}
                                 </h2>
@@ -58,7 +58,7 @@
                         </div>
 
                         <div class="col-md-4">
-                            <div class="kpi-box border-start border-success border-5">
+                            <div class="kpi-box border-start border-success border-5 text-center">
                                 <p class="text-success small fw-bold mb-1">AVG. STAY</p>
                                 <h2 class="fw-black text-success m-0">{{ number_format($currentKpi->avg_stay ?? 0, 1) }}d
                                 </h2>

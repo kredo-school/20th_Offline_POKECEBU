@@ -1,12 +1,12 @@
-     .analysis-wrapper { background: #fdfcf9; min-height: 100vh; padding: 20px; }
+     .analysis-wrapper-restaurant { background: #fff7ed; min-height: 100vh; padding: 20px; }
     
-    .btn-sidebar { 
+    .btn-sidebar-restaurant { 
         border: none; padding: 12px 20px; border-radius: 12px; color: #64748b; 
         transition: all 0.3s; background: white; width: 100%; display: block; 
         margin-bottom: 10px; text-decoration: none; text-align: left;
     }
-    .btn-sidebar:hover { background: #fff7ed; color: #ea580c; transform: translateX(5px); }
-    .btn-sidebar.active { 
+    .btn-sidebar-restaurant:hover { background: #fff7ed; color: #ea580c; transform: translateX(5px); }
+    .btn-sidebar-restaurant.active { 
         background: #f59e0b !important; color: white !important; 
         box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3); 
     }

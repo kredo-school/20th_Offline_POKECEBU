@@ -171,7 +171,6 @@
                         <div class="modal-dialog modal-lg modal-dialog-centered">
                             <div class="modal-content border-0 rounded-4 overflow-hidden shadow-lg">
 
-                                {{-- Header: ホテルと統一 --}}
                                 <div class="modal-header border-0 pb-0">
                                     <h5 class="modal-title fw-bold text-dark">Table Details</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
@@ -215,13 +214,10 @@
                                             <div class="d-flex justify-content-between align-items-start mb-3">
                                                 <div>
                                                     <h3 class="fw-bold mb-1 text-dark">{{ $table->type->name }}</h3>
-                                                    <p class="text-muted small mb-0"><i
-                                                            class="fa-solid fa-hashtag me-1"></i> Table No.
-                                                        {{ $table->table_number ?? 'N/A' }}</p>
                                                 </div>
                                                 <span
                                                     class="badge {{ $isAvailable ? 'bg-success' : 'bg-danger' }} px-3 py-2 rounded-pill shadow-sm">
-                                                    {{ $isAvailable ? 'Available' : 'Full' }}
+                                                    {{ $isAvailable ? 'Available' : 'Unavailable' }}
                                                 </span>
                                             </div>
 

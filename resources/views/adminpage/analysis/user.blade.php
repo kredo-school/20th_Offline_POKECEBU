@@ -4,7 +4,7 @@
 
 @section('content')
 
-    <div class="analysis-wrapper">
+    <div class="analysis-wrapper-user">
         <div class="container-fluid">
             <div class="row g-4">
 
@@ -12,13 +12,13 @@
                 <div class="col-lg-2">
                     <div class="d-flex flex-column mb-4">
                         <h5 class="fw-bold mb-4 ps-2">Admin Console</h5>
-                        <a href="{{ route('admin.analysis.hotel') }}" class="btn btn-sidebar">
+                        <a href="{{ route('admin.analysis.hotel') }}" class="btn btn-sidebar-user">
                             <i class="fa-solid fa-hotel me-2"></i>Hotel
                         </a>
-                        <a href="{{ route('admin.analysis.restaurant') }}" class="btn btn-sidebar">
+                        <a href="{{ route('admin.analysis.restaurant') }}" class="btn btn-sidebar-user">
                             <i class="fa-solid fa-utensils me-2"></i>Restaurant
                         </a>
-                        <a href="{{ route('admin.analysis.user') }}" class="btn btn-sidebar active">
+                        <a href="{{ route('admin.analysis.user') }}" class="btn btn-sidebar-user active">
                             <i class="fa-solid fa-users-gear me-2"></i>User Insights
                         </a>
                     </div>
@@ -28,26 +28,29 @@
                 <div class="col-lg-10">
 
                     {{-- KPI Section --}}
-                    <div class="row g-4 mb-5">
-                        <div class="col-md-6">
-                            <div class="kpi-box shadow-sm border-start border-primary border-5">
+                    <div class="row g-4 mb-5 justify-content-center">
+                        <div class="col-1"></div>
+                        <div class="col-md-4">
+                            <div class="kpi-box shadow-sm border-start border-primary border-5 text-center">
                                 <p class="text-muted small fw-bold mb-2">TOTAL PLATFORM USERS</p>
                                 <h3 class="fw-extrabold m-0">{{ number_format($totalUsers) }}</h3>
                                 <span class="badge bg-light text-muted mt-2 border">Cumulative Account</span>
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="kpi-box shadow-sm border-start border-info border-5">
+                        <div class="col-1"></div>
+                        <div class="col-md-4">
+                            <div class="kpi-box shadow-sm border-start border-info border-5 text-center">
                                 <p class="text-muted small fw-bold mb-2 text-info">NEW SIGNUPS (MONTHLY)</p>
                                 <h3 class="fw-extrabold text-info m-0">{{ number_format($newThisMonth) }}</h3>
                                 <span class="badge bg-info bg-opacity-10 text-info mt-2">March 2026</span>
                             </div>
                         </div>
+                        <div class="col-1"></div>
                     </div>
 
                     {{-- Table Toggle --}}
                     <div class="text-center m-5">
-                        <button class="btn btn-outline-dark rounded-pill px-5 shadow-sm fw-bold" type="button"
+                        <button class="btn btn-outline-info rounded-pill px-5 shadow-sm fw-bold" type="button"
                             data-bs-toggle="collapse" data-bs-target="#detailedUserTable">
                             <i class="fa-solid fa-table-list me-2"></i>View Monthly Registration History
                         </button>
@@ -87,7 +90,7 @@
                                                     @endif
                                                 </td>
                                             </tr>
-                                            @php $prevSignups = $data->signups; @endphp 
+                                            @php $prevSignups = $data->signups; @endphp
                                         @endforeach
                                     </tbody>
                                 </table>

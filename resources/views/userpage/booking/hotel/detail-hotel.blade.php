@@ -167,7 +167,6 @@
                         <div class="modal-dialog modal-lg modal-dialog-centered">
                             <div class="modal-content border-0 rounded-4 overflow-hidden shadow-lg">
 
-                                {{-- Header: 閉じるボタンをスッキリ配置 --}}
                                 <div class="modal-header border-0 pb-0">
                                     <h5 class="modal-title fw-bold text-dark">Room Details</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
@@ -214,7 +213,7 @@
                                                 </div>
                                                 <span
                                                     class="badge {{ $isAvailable ? 'bg-success' : 'bg-danger' }} px-3 py-2 rounded-pill shadow-sm">
-                                                    {{ $isAvailable ? 'Available' : 'Booked' }}
+                                                    {{ $isAvailable ? 'Available' : 'Unavailable' }}
                                                 </span>
                                             </div>
 

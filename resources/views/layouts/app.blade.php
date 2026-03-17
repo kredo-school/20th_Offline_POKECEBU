@@ -19,7 +19,7 @@
 <div id="app">
     @yield('navbar')
 
-    <main class="py-3">
+    <main>
         @yield('content')
     </main>
 

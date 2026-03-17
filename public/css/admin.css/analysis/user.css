@@ -1,13 +1,13 @@
-    .analysis-wrapper { background: #f4fcf9; min-height: 100vh; padding: 20px; }
+    .analysis-wrapper-user { background: #ecfcfd; min-height: 100vh; padding: 20px; }
 
-    .btn-sidebar {
+    .btn-sidebar-user {
         border: none; padding: 12px 20px; border-radius: 12px; color: #64748b;
         transition: all 0.3s; background: white; width: 100%; display: block;
         margin-bottom: 10px; text-decoration: none; text-align: left;
     }
-    .btn-sidebar:hover { background: #ecfdf5; color: #065f46; transform: translateX(5px); }
-    .btn-sidebar.active {
-        background: #96CCB9 !important; /* ナビバーの色に合わせました */
+    .btn-sidebar-user:hover { background: #ecfcfd; color: #065f46; transform: translateX(5px); }
+    .btn-sidebar-user.active {
+        background: #77b1e0 !important;
         color: white !important;
         box-shadow: 0 4px 12px rgba(150, 204, 185, 0.4);
     }

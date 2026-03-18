@@ -1,25 +1,23 @@
 @extends('layouts.user')
 
 @section('content')
-    <div class="container">
-        {{-- 動画ヒーロー --}}
-        <div class="hero-wrapper">
+<div class="top-video pb-4" style="background-color: #e3f5f9;">
+<div class="hero-wrapper">
             <div class="hero-video">
                 <video autoplay muted loop playsinline class="hero-bg-video">
                     <source src="{{ asset('videos/home-beach.mp4') }}" type="video/mp4">
                 </video>
                 <div class="hero-overlay">
                     <h1 class="hero-title">
-                        <span class="mt-5 mb-4 hero-line">Pack Your</span><br>
-                        <span class="mb-4 hero-line">Cebu Trip</span><br>
-                        <span class="mb-2 hero-line">In A Pocket</span>
+                        <span class="mt-5 mb-3 hero-line">Pack Your</span><br>
+                        <span class="mb-3 hero-line">Cebu Trip</span><br>
+                        <span class="mb-2 hero-line">In Your Pocket</span>
                     </h1>
                     <p class="hero-sub">Ready to explore the island?</p>
                 </div>
             </div>
 
             <svg class="wave-line" viewBox="0 0 1000 450" preserveAspectRatio="none">
-               
                 <path d="M1000,450 C920,285 660,285 500,440 C340,585 100,585 0,445"
                     fill="none" stroke="white" stroke-width="6"opacity="0.8"/>
             </svg>
@@ -67,25 +65,31 @@
                 </div>
             </div>
         </div>
+</div>
 
-        <div class="mt-5">
+        <div class="pt-4" style="background-color: #f8fafc;">
             <div class="row justify-content-center">
-            <div class="main-card col-11">
+            <div class="main-card col-10">
                 <div class="p-3">
+                    <div class="menu-wrapper">
+                        <div class="menu-heading">What will you do?</div>
+                    
                     <div class="row menu-section pb-5">
-                        <div class="col-lg-6 menu-left">
-                            <h2 class="menu-title">Find Your Perfect Stay</h2>
-                            <h5 class="menu-subtitle">Discover comfortable hotels in Cebu</h5>
-                            <p class="menu-text">
-                                From beachfront resorts to cozy city hotels, explore a wide range of 
-                                places to stay in Cebu. Whether you're traveling for relaxation, 
-                                adventure, or business, find the perfect accommodation that suits 
-                                your style and budget.
-                            </p>
-                            <a href="{{ route('user.hotels.index') }}" class="menu-text-btn text-decoration-none">
-                                Find Hotels
-                                <i class="fa-solid fa-bed"></i>
-                            </a>
+                        <div class="col-lg-6 menu-left border">
+                            <div class="ms-3 mt-3 mb-3">
+                                <h2 class="menu-title">Find Your Perfect Stay</h2>
+                                <h5 class="menu-subtitle">Discover comfortable hotels in Cebu</h5>
+                                <p class="menu-text">
+                                    From beachfront resorts to cozy city hotels, explore a wide range of 
+                                    places to stay in Cebu. Whether you're traveling for relaxation, 
+                                    adventure, or business, find the perfect accommodation that suits 
+                                    your style and budget.
+                                </p>
+                                <a href="{{ route('user.hotels.index') }}" class="menu-text-btn text-decoration-none">
+                                    Find Hotels
+                                    <i class="fa-solid fa-bed"></i>
+                                </a>
+                            </div>
                         </div>
                         <div class="col-lg-6 menu-right">
                             <a href="{{ route('user.hotels.index') }}" class="menu-btn menu-hotel text-decoration-none"></a>
@@ -96,38 +100,42 @@
                         <div class="col-lg-6 menu-right">
                             <a href="{{ route('user.restaurants.search') }}" class="menu-btn menu-restaurant text-decoration-none"></a>
                         </div>
-                        <div class="col-lg-6 menu-left ps-5">
-                            <h2 class="menu-title">Discover Cebu's Dining</h2>
-                            <h5 class="menu-subtitle">From local favorites to seaside dining</h5>
-                            <p class="menu-text">
-                                Explore Cebu's vibrant food scene, from beloved local eateries to stylish
-                                restaurants by the sea. Whether you're craving authentic Filipino dishes,
-                                fresh seafood, or international cuisine, find the perfect place to enjoy a
-                                memorable meal.
-                            </p>
-                            <div class="text-end">
-                                <a href="{{ route('user.restaurants.search') }}" class="menu-text-btn text-decoration-none">
-                                    <i class="fa-solid fa-utensils"></i>
-                                    Find Restaurants
-                                </a>
+                        <div class="col-lg-6 menu-left ps-4 border">
+                            <div class="me-3 mt-3 mb-3">
+                                <h2 class="menu-title">Discover Cebu's Dining</h2>
+                                <h5 class="menu-subtitle">From local favorites to seaside dining</h5>
+                                <p class="menu-text">
+                                    Explore Cebu's vibrant food scene, from beloved local eateries to stylish
+                                    restaurants by the sea. Whether you're craving authentic Filipino dishes,
+                                    fresh seafood, or international cuisine, find the perfect place to enjoy a
+                                    memorable meal.
+                                </p>
+                                <div class="text-end">
+                                    <a href="{{ route('user.restaurants.search') }}" class="menu-text-btn text-decoration-none">
+                                        <i class="fa-solid fa-utensils"></i>
+                                        Find Restaurants
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
 
                     <div class="row menu-section pb-5">
-                        <div class="col-lg-6 menu-left">
-                            <h2 class="menu-title">Route & Ride</h2>
-                            <h5 class="menu-subtitle">Explore Cebu like a local</h5>
-                            <p class="menu-text">
-                                Jeepneys are one of the most popular ways locals get around Cebu. 
-                                They run across the city all day, connect many destinations, and cost 
-                                only a few pesos to ride. Learn the routes, hop on like a local, and 
-                                explore Cebu in a fun and affordable way.
-                            </p>
-                            <a href="{{ route('user.jeepney.index') }}" class="menu-text-btn text-decoration-none">
-                                Jeepney
-                                <i class="fa-solid fa-van-shuttle"></i>
-                            </a>
+                        <div class="col-lg-6 menu-left border">
+                            <div class="ms-3 mt-3 mb-3">
+                                <h2 class="menu-title">Route & Ride</h2>
+                                <h5 class="menu-subtitle">Explore Cebu like a local</h5>
+                                <p class="menu-text">
+                                    Jeepneys are one of the most popular ways locals get around Cebu. 
+                                    They run across the city all day, connect many destinations, and cost 
+                                    only a few pesos to ride. Learn the routes, hop on like a local, and 
+                                    explore Cebu in a fun and affordable way.
+                                </p>
+                                <a href="{{ route('user.jeepney.index') }}" class="menu-text-btn text-decoration-none">
+                                    Jeepney
+                                    <i class="fa-solid fa-van-shuttle"></i>
+                                </a>
+                            </div>
                         </div>
                         <div class="col-lg-6 menu-right">
                             <a href="{{ route('user.jeepney.index') }}" class="menu-btn menu-jeepney text-decoration-none"></a>
@@ -139,46 +147,67 @@
                             <a href="{{ route('user.posts.index') }}" class="menu-btn menu-mypage text-decoration-none"></a>
                         </div>
                     
-                        <div class="col-lg-6 menu-left ps-5">
-                            <h2 class="menu-title">Share Your Cebu Moments</h2>
-                            <h5 class="menu-subtitle">Discover experiences from fellow travelers</h5>
-                            <p class="menu-text">
-                                Explore real moments shared by visitors and locals across Cebu. 
-                                From hidden beaches to must-try restaurants and unforgettable adventures, 
-                                get inspired by authentic experiences and share your own journey with the community.
-                            </p>
-                            <div class="text-end">
-                                <a href="{{ route('user.posts.index') }}" class="menu-text-btn text-decoration-none">
-                                    <i class="fa-solid fa-user"></i>
-                                    Posts
-                                </a>
+                        <div class="col-lg-6 menu-left ps-4 border">
+                            <div class="me-3 mt-3 mb-3">
+                                <h2 class="menu-title">Share Your Cebu Moments</h2>
+                                <h5 class="menu-subtitle">Discover experiences from fellow travelers</h5>
+                                <p class="menu-text">
+                                    Explore real moments shared by visitors and locals across Cebu. 
+                                    From hidden beaches to must-try restaurants and unforgettable adventures, 
+                                    get inspired by authentic experiences and share your own journey with the community.
+                                </p>
+                                <div class="text-end">
+                                    <a href="{{ route('user.posts.index') }}" class="menu-text-btn text-decoration-none">
+                                        <i class="fa-solid fa-user"></i>
+                                        Posts
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="row menu-section pb-5">
-                        <div class="col-lg-6 menu-left">
-                            <h2 class="menu-title">Today's Pick</h2>
-                            <h5 class="menu-subtitle">Discover your lucky spot</h5>
-                            <p class="menu-text">
-                                Cebu is full of amazing places to explore, from hidden cafes to beautiful 
-                                beaches and lively local spots. If you're not sure where to go next, try 
-                                your luck and let today's pick decide your destination. You might discover 
-                                a new favorite place you never expected.
-                            </p>
-                            <a href="{{ route('user.daily.fortune.show') }}" class="menu-text-btn text-decoration-none">
-                                Fortune
-                                <i class="fa-solid fa-star"></i>
-                            </a>
+                    <div class="row menu-section">
+                        <div class="col-lg-6 menu-left border">
+                            <div class="ms-3 mt-3 mb-3">
+                                <h2 class="menu-title">Today's Pick</h2>
+                                <h5 class="menu-subtitle">Discover your lucky spot</h5>
+                                <p class="menu-text">
+                                    Cebu is full of amazing places to explore, from hidden cafes to beautiful 
+                                    beaches and lively local spots. If you're not sure where to go next, try 
+                                    your luck and let today's pick decide your destination. You might discover 
+                                    a new favorite place you never expected.
+                                </p>
+                                <a href="{{ route('user.daily.fortune.show') }}" class="menu-text-btn text-decoration-none">
+                                    Fortune
+                                    <i class="fa-solid fa-star"></i>
+                                </a>
+                            </div>
                         </div>
                         <div class="col-lg-6 menu-right">
                             <a href="{{ route('user.daily.fortune.show') }}" class="menu-btn menu-fortune text-decoration-none"></a>
                         </div>
                     </div>
+                    </div>
                 </div>
+            </div>
+            </div>
 
+        </div>
+
+        <div class="pt-3" style="background-color: #d5e6f9; position: relative;">
+            <div style="position: absolute; top: 0; left: 0; width: 100%; overflow: hidden; line-height: 0; z-index: 1;">
+            <svg viewBox="0 0 1000 120" preserveAspectRatio="none"
+                 style="display: block; width: 100%; height: 120px;">
+                <path d="M1000,0 C920,115 660,115 500,60 C340,5 100,5 0,60 L0,0 Z"
+                      fill="#f8fafc"/>
+            </svg>
+        </div>
+    <div style="position: relative; z-index: 2;">
+            <div class="row justify-content-center pt-5">
+            <div class="main-card col-10 pt-5">
+                <div class="ranking-heading">Top Rated</div>
                 {{-- ---------------ホテル ランキング--------------- --}}
-                <div class="container pt-5 pb-2">
+                <div class="container pb-2">
                     <h3 class="section-title mb-2">
                         <span class="title-decor">Recommended</span>
                         Top Rated Hotels
@@ -400,7 +429,7 @@
                         <h3 class="section-title">{{ $city }}</h3>
                     </div>
 
-                    <div class="row justify-content-center g-2 mb-3">
+                    <div class="row justify-content-center g-2 pb-5">
                         @foreach ($hotels as $index => $hotel)
                             <div class="col-6 col-md-3 col-sm-4 col-lg-2 d-flex justify-content-center">
                                 <div class="card rank-card">
@@ -443,9 +472,20 @@
                         @endforeach
                     </div>
                 @endforeach
-
-                {{-- ---------------ポスト--------------- --}}
-                <div>
+            </div>
+            </div>
+            </div>
+        </div>
+        {{-- ---------------ポスト--------------- --}}
+        <div class="pt-5" style="background-color: #f8fafc; position: relative;">
+            <div style="position: absolute; top: 0; left: 0; width: 100%; overflow: hidden; line-height: 0; z-index: 1;">
+            <svg viewBox="0 0 1000 120" preserveAspectRatio="none"
+                 style="display: block; width: 100%; height: 120px;">
+                <path d="M1000,0 C920,115 660,115 500,60 C340,5 100,5 0,60 L0,0 Z"
+                      fill="#d5e6f9"/>
+            </svg>
+        </div>
+        <div class="pt-5">
                     <h3 class="recent-posts mb-2">Recent Posts</h3>
                 </div>
 
@@ -469,10 +509,8 @@
                         @endforeach
                     </div>
                 </div>
-            </div>
-            </div>
         </div>
-    </div>
+                
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -590,6 +628,32 @@
 
     {{-- CSS --}}
     <style>
+        .main-card{
+    position: relative;
+    z-index: 1; /* ← これ追加 */
+}
+        .menu-wrapper{
+    position: relative;
+    z-index: 0;
+    padding: 20px 10px 30px 10px;
+}
+
+.menu-heading{
+    position: absolute;
+    top: -65px;
+    left: -90px;
+    font-size: 100px;
+    font-weight: 700;
+    line-height: 0.9;
+    color: rgba(0,0,0,0.2);;
+    z-index: -1;
+}
+        .top-video {
+            background: linear-gradient(180deg,
+            #9eebf7 0%,
+            #cff4fa 50%,
+            #f8fafc 100%);
+        }
         .hero-video {
             position: relative;
             width: 100%;
@@ -623,7 +687,7 @@
             color: #fff;
             text-align: left;
             /* テキストも左揃え */
-            padding-left: 10%;
+            padding-left: 5%;
             /* 左端から少し離す（おしゃれに見えるポイント） */
         }
 
@@ -644,7 +708,8 @@
 
         .hero-title {
             font-size: 65px;
-            font-weight: 900;
+            font-weight: 600;
+            letter-spacing:2px;
             line-height: 1.1;
             text-transform: uppercase;
             text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
@@ -663,7 +728,7 @@
 
         .hero-wrapper {
             position: relative;
-            margin-bottom: 150px;
+            padding-bottom: 200px;
         }
 
         .wave-line {
@@ -683,7 +748,7 @@
 
         .hero-circles{
             position:absolute;
-            bottom:-120px;
+            bottom: 80px;
             right:3%;
             display:flex;
             gap:15px;
@@ -762,7 +827,7 @@
         .menu-btn {
             width: 100%;
             height: 100%;
-            min-height: 350px;
+            min-height: 330px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -818,15 +883,21 @@
         }
 
         .menu-section{
-            min-height:350px;
+            min-height:330px;
             align-items: stretch;
         }
 
+        .menu-section > [class*="col"] {
+            display: flex;
+            flex-direction: column;
+        }
+
         .menu-left{
-            height: 100%;
+            flex: 1;
             display: flex;
             flex-direction: column;
             justify-content: center;
+            background-color: white;
         }
 
         .menu-right {
@@ -834,20 +905,20 @@
         }
 
         .menu-title{
-            font-size:48px;
+            font-size:35px;
             font-weight:700;
             color:#2c2c2c;
             margin-bottom:15px;
         }
 
         .menu-subtitle{
-            font-size:22px;
+            font-size:20px;
             color:#666;
             margin-bottom:20px;
         }
 
         .menu-text{
-            font-size:16px;
+            font-size:14px;
             line-height:1.8;
             color:#555;
             max-width:520px;
@@ -907,7 +978,7 @@
             transform: translateX(-100px);
             width: 100%;
             height: 100%;
-            min-height: 350px;
+            min-height: 330px;
             will-change: transform;
         }
 
@@ -917,7 +988,7 @@
             transform: translateX(100px);
             width: 100%;
             height: 100%;
-            min-height: 350px;
+            min-height: 330px;
             will-change: transform; 
         }
 
@@ -1198,6 +1269,18 @@
                 left: 125%;
             }
         }
+
+        .ranking-heading {
+    position: relative;
+    text-align: right;
+    font-size: 100px;
+    font-weight: 700;
+    line-height: 0.9;
+    color: rgba(255, 255, 255, 0.15);
+    z-index: 0;
+    pointer-events: none;
+    margin-bottom: -60px; /* 下のコンテンツと重なるように */
+}
 
         /* POST */
         .post-card {

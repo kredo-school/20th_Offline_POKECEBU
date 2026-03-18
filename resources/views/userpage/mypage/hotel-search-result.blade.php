@@ -231,17 +231,18 @@
 
                                         <div class="text-end">
                                             @php
-
-                                                // コントローラで計算した min_price があれば優先して使う
-                                                // なければ rooms の最小料金をフォールバック（null 安全）
                                                 $rooms = $hotel->rooms ?? collect();
-                                                $minPriceRaw =
-                                                    $hotel->min_price ??
-                                                    ($rooms->count() ? $rooms->min('charges') : null);
+                                                
+                                                if (request('sort') === 'price_desc') {
+                                                    $priceRaw = $hotel->max_price ?? ($rooms->count() ? $rooms->max('charges') : null);
+                                                } else {
+                                                    $priceRaw = $hotel->min_price ?? ($rooms->count() ? $rooms->min('charges') : null);
+                                                }
+
                                                 // 表示用にフォーマット（小数点2桁）
-                                                $minPrice =
-                                                    $minPriceRaw !== null
-                                                        ? number_format((float) $minPriceRaw, 2)
+                                                $displayPrice =
+                                                    $priceRaw !== null
+                                                        ? number_format((float) $priceRaw, 2)
                                                         : null;
 
                                                 // コントローラで available_rooms_count を付与しているならそれを使う
@@ -249,33 +250,19 @@
                                                 $available = $hotel->available_rooms_count ?? null;
                                             @endphp
 
-
                                             {{-- 部屋が無い場合は明示的メッセージを出す --}}
                                             @if ($rooms->count() === 0)
                                                 <div class="h6 mb-0 text-muted">No rooms</div>
-                                                <div class="small text-muted">Room information has not yet been registered.
-                                                </div>
+                                                <div class="small text-muted">Room information has not yet been registered.</div>
                                             @else
-                                                {{-- available_rooms_count がセットされている場合は在庫0なら Sold out 表示 --}}
-                                                @if ($available !== null)
-                                                    @if ((int) $available <= 0)
-                                                        <div class="h5 mb-0 text-danger">Sold out</div>
-                                                        <div class="small text-muted">No available rooms for selected dates
-                                                        </div>
-                                                    @elseif ($minPrice !== null)
-                                                        <div class="h5 mb-0">₱{{ $minPrice }}~</div>
-                                                        <div class="small text-muted">per night</div>
-                                                    @else
-                                                        <div class="h6 mb-0 text-muted">Price unavailable</div>
-                                                    @endif
+                                                @if ($available !== null && (int) $available <= 0)
+                                                    <div class="h5 mb-0 text-danger">Sold out</div>
+                                                    <div class="small text-muted">No available rooms for selected dates</div>
+                                                @elseif ($displayPrice !== null)
+                                                    <div class="h5 mb-0">₱{{ $displayPrice }}~</div>
+                                                    <div class="small text-muted">per night</div>
                                                 @else
-                                                    {{-- available_rooms_count が無ければ日付未指定の表示（従来どおり） --}}
-                                                    @if ($minPrice !== null)
-                                                        <div class="h5 mb-0">₱{{ $minPrice }}~</div>
-                                                        <div class="small text-muted">per night</div>
-                                                    @else
-                                                        <div class="h6 mb-0 text-muted">Price unavailable</div>
-                                                    @endif
+                                                    <div class="h6 mb-0 text-muted">Price unavailable</div>
                                                 @endif
                                             @endif
                                         </div>

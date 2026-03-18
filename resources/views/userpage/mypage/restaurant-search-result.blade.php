@@ -211,33 +211,29 @@
 
                                                 <div class="text-end">
                                                     @php
-                                                        $minPriceRaw =
-                                                            $restaurant->min_price ??
-                                                            ($restaurant->tables->count()
-                                                                ? $restaurant->tables->min('charges')
-                                                                : null);
-                                                        $minPrice =
-                                                            $minPriceRaw !== null
-                                                                ? number_format((float) $minPriceRaw, 2)
+                                                        $tables = $restaurant->tables ?? collect();
+                                                        if (request('sort') === 'price_desc') {
+                                                            $priceRaw = $restaurant->max_price ?? ($tables->count() ? $tables->max('charges') : null);
+                                                        } else {
+                                                            $priceRaw = $restaurant->min_price ?? ($tables->count() ? $tables->min('charges') : null);
+                                                        }
+
+                                                        $displayPrice =
+                                                            $priceRaw !== null
+                                                                ? number_format((float) $priceRaw, 2)
                                                                 : null;
                                                         $available = $restaurant->available_tables_count ?? null;
                                                     @endphp
 
-
-                                                    @if ($available !== null)
-                                                        @if ((int) $available <= 0)
-                                                            <div class="h6 mb-0 text-danger">Sold out</div>
-                                                            <div class="small text-muted">No available tables for selected
-                                                                time</div>
-                                                        @elseif ($minPrice !== null)
-                                                            <div class="h5 mb-0">₱{{ $minPrice }}~</div>
-                                                            <div class="small text-muted">per booking</div>
-                                                        @else
-                                                            <div class="h6 mb-0 text-muted">Price unavailable</div>
-                                                        @endif
+                                                    @if ($tables->count() === 0)
+                                                        <div class="h6 mb-0 text-muted">No tables</div>
+                                                        <div class="small text-muted">Table information has not yet been registered.</div>
                                                     @else
-                                                        @if ($minPrice !== null)
-                                                            <div class="h5 mb-0">₱{{ $minPrice }}~</div>
+                                                        @if ($available !== null && (int) $available <= 0)
+                                                            <div class="h6 mb-0 text-danger">Sold out</div>
+                                                            <div class="small text-muted">No available tables for selected time</div>
+                                                        @elseif ($displayPrice !== null)
+                                                            <div class="h5 mb-0">₱{{ $displayPrice }}~</div>
                                                             <div class="small text-muted">per booking</div>
                                                         @else
                                                             <div class="h6 mb-0 text-muted">Price unavailable</div>

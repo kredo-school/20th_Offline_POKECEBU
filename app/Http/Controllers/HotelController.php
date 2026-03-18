@@ -165,8 +165,22 @@ class HotelController extends Controller
                       )
                 )";
 
-                    // addSelect で min_price を追加（select を上書きしない）
+                    // max_price サブクエリ
+                    $maxPriceSub = "(
+                    SELECT MAX(hr2.charges)
+                    FROM hotel_rooms hr2
+                    WHERE hr2.hotel_id = hotels.id
+                      AND NOT EXISTS (
+                        SELECT 1 FROM hotel_reservations r2
+                        WHERE r2.room_id = hr2.id
+                          AND r2.status_id = {$bookedId}
+                          AND NOT (r2.end_at < '{$ciStr}' OR r2.start_at > '{$coStr}')
+                      )
+                )";
+
+                    // addSelect で追加
                     $query->addSelect(DB::raw("({$minPriceSub}) as min_price"));
+                    $query->addSelect(DB::raw("({$maxPriceSub}) as max_price"));
                 }
             } else {
                 // 片方しか日付がない場合は検索を空にする（要件に応じて緩和可）
@@ -189,22 +203,25 @@ class HotelController extends Controller
         // 重複行を防ぐ（JOIN による膨張対策）
         $query->distinct();
 
-        // 期間がない場合の min_price（まだ付与されていなければ付与）
+        // 期間がない場合の min_price / max_price（まだ付与されていなければ付与）
         if (!isset($minPriceSub)) {
             $minPriceSub = "(SELECT MIN(hr.charges) FROM hotel_rooms hr WHERE hr.hotel_id = hotels.id)";
+            $maxPriceSub = "(SELECT MAX(hr.charges) FROM hotel_rooms hr WHERE hr.hotel_id = hotels.id)";
             $query->addSelect(DB::raw("({$minPriceSub}) as min_price"));
+            $query->addSelect(DB::raw("({$maxPriceSub}) as max_price"));
         }
 
         // ソート
         switch ($request->input('sort')) {
             case 'price_asc':
-                $query->orderByRaw("{$minPriceSub} ASC");
+                $query->orderByRaw("({$minPriceSub}) IS NULL, ({$minPriceSub}) ASC");
                 break;
             case 'price_desc':
-                $query->orderByRaw("{$minPriceSub} DESC");
+                // ソートロジック：金額高い順の場合は max_price を使う
+                $query->orderByRaw("({$maxPriceSub}) IS NULL, ({$maxPriceSub}) DESC");
                 break;
             case 'rating':
-                $query->orderByDesc('star_rating');
+                $query->orderByRaw('reviews_avg_rating IS NULL, reviews_avg_rating DESC');
                 break;
             default:
                 $query->latest('id');

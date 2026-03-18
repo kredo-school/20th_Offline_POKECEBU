@@ -117,6 +117,17 @@ class RestaurantController extends Controller
                           AND NOT (r2.end_at < '{$sStr}' OR r2.start_at > '{$eStr}')
                       )
                 )";
+                    $maxPriceSub = "(
+                    SELECT MAX(rt2.charges)
+                    FROM restaurant_tables rt2
+                    WHERE rt2.restaurant_id = restaurants.id
+                      AND NOT EXISTS (
+                        SELECT 1 FROM restaurant_reservations r2
+                        WHERE r2.table_id = rt2.id
+                          AND r2.status_id = {$bookedId}
+                          AND NOT (r2.end_at < '{$sStr}' OR r2.start_at > '{$eStr}')
+                      )
+                )";
                 }
             } else {
                 session()->flash('error', 'Please specify both the date and time.');
@@ -135,31 +146,40 @@ class RestaurantController extends Controller
             });
         }
 
-        // --- デフォルトの minPrice サブクエリ（必ず定義しておく） ---
+        // --- デフォルトの minPrice / maxPrice サブクエリ（必ず定義しておく） ---
         $defaultMinPriceSub = "(
         SELECT MIN(rt.charges)
          FROM restaurant_tables rt
          WHERE rt.restaurant_id = restaurants.id
     )";
+        $defaultMaxPriceSub = "(
+        SELECT MAX(rt.charges)
+         FROM restaurant_tables rt
+         WHERE rt.restaurant_id = restaurants.id
+    )";
 
-        // ここで select を明示し、min_price を付与する
+        // ここで select を明示し、min_price / max_price を付与する
         $query->select('restaurants.*');
         if (isset($minPriceSub) && !empty($minPriceSub)) {
             $query->addSelect(DB::raw("({$minPriceSub}) as min_price"));
+            $query->addSelect(DB::raw("({$maxPriceSub}) as max_price"));
         } else {
             $query->addSelect(DB::raw("({$defaultMinPriceSub}) as min_price"));
+            $query->addSelect(DB::raw("({$defaultMaxPriceSub}) as max_price"));
+            $minPriceSub = $defaultMinPriceSub;
+            $maxPriceSub = $defaultMaxPriceSub;
         }
 
         // ソート
         switch ($sort) {
             case 'price_asc':
-                $query->orderByRaw("({$defaultMinPriceSub}) ASC");
+                $query->orderByRaw("({$minPriceSub}) IS NULL, ({$minPriceSub}) ASC");
                 break;
             case 'price_desc':
-                $query->orderByRaw("({$defaultMinPriceSub}) DESC");
+                $query->orderByRaw("({$maxPriceSub}) IS NULL, ({$maxPriceSub}) DESC");
                 break;
             case 'rating':
-                $query->orderByDesc('star_rating');
+                $query->orderByRaw('reviews_avg_rating IS NULL, reviews_avg_rating DESC');
                 break;
             default:
                 $query->latest('id');

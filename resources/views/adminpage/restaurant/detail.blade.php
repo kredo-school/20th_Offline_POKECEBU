@@ -1,50 +1,56 @@
 @extends('layouts.admin')
 
 @section('content')
-    <div class="container-fluid py-4">
-        <div class="row">
-            <div class="mb-2"><a href="{{ route('admin.showList', 'restaurant') }}">◀︎ List of Restaurants</a></div>
-            {{-- ホテル詳細（右側） --}}
-            <div class="col-lg-9">
-                <div class="mb-3">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h2 class="mb-0">{{ $restaurant->name }}</h2>
-                            <div class="text-warning fs-5">
-                                @for ($i = 0; $i < floor($restaurant->star_rating ?? 0); $i++)
-                                    <i class="fa-solid fa-star"></i>
-                                @endfor
-                                @if (isset($restaurant->star_rating) && $restaurant->star_rating - floor($restaurant->star_rating) >= 0.5)
-                                    <i class="fa-regular fa-star-half-stroke"></i>
-                                @endif
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+
+                <div class="mb-2"><a href="{{ route('admin.showList', 'restaurant') }}">◀︎ List of Restaurants</a></div>
+                {{-- 1. Restaurant Info Section --}}
+                <div class="card bg-white border-0 shadow-sm mb-5 rounded-4 overflow-hidden">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-start mb-4">
+                            <div>
+                                <h1 class="fw-bold mb-2">{{ $restaurant->name }}</h1>
+                                <div class="d-flex align-items-center flex-wrap gap-3">
+                                    <p class="text-muted mb-0">
+                                        <i class="fa-solid fa-location-dot me-1 text-danger"></i>
+                                        {{ $restaurant->address }}
+                                    </p>
+
+                                    {{-- Star Rating --}}
+                                    @php
+                                        $rating = $restaurant->star_rating;
+                                        $fullStars = floor($rating);
+                                        $halfStar = $rating - $fullStars >= 0.5;
+                                    @endphp
+                                    <div class="text-warning">
+                                        @for ($i = 1; $i <= $fullStars; $i++)
+                                            <i class="fa-solid fa-star"></i>
+                                        @endfor
+                                        @if ($halfStar)
+                                            <i class="fa-solid fa-star-half-stroke"></i>
+                                        @endif
+                                        <span class="text-muted ms-1 fw-bold">{{ number_format($rating, 1) }}</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <p class="mt-2"><i class="fa-solid fa-location-dot me-1"></i> {{ $restaurant->city ?? '—' }}</p>
-
-                    <div class="row mb-3">
-                        @if ($restaurant->images && $restaurant->images->isNotEmpty())
-                            @foreach ($restaurant->images as $img)
-                                <div class="col-md-6">
-                                    <img src="{{ $img->image }}" class="img-fluid rounded mb-2"
-                                        alt="Restaurant Image">
-                                </div>
+                        {{-- Restaurant Gallery --}}
+                        <div class="restaurant-images mb-4 hide-scrollbar">
+                            @foreach ($restaurant->restaurantImages as $image)
+                                <img src="{{ asset('storage/' . $image->image) }}" alt="restaurant image">
                             @endforeach
-                        @else
-                            <div class="col-12">
-                                <p class="text-muted">No images uploaded.</p>
-                            </div>
-                        @endif
-                    </div>
+                        </div>
 
-                    <div class="mb-3">
-                        {{-- ここにタグやバッジがあれば表示 --}}
-                        {{-- 例: カテゴリや設備があればループで表示 --}}
+                        <div class="border-top pt-4">
+                            <h5 class="fw-bold mb-3">About this restaurant</h5>
+                            <p class="text-secondary lh-lg mb-0">
+                                {{ $restaurant->description }}
+                            </p>
+                        </div>
                     </div>
-
-                    <h4 class="mt-3"><i class="fa-solid fa-circle-info me-2"></i>Restaurant Details</h4>
-                    <p>{{ $restaurant->description ?? 'No description provided.' }}</p>
                 </div>
             </div>
         </div>

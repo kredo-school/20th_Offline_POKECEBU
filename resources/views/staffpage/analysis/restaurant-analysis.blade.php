@@ -6,23 +6,21 @@
 
     <div class="container py-4">
         {{-- KPI Section --}}
-        <div class="analysis-container shadow-sm">
-            <div class="d-flex justify-content-center gap-3 flex-wrap">
-                <div class="kpi-box shadow-sm border-0">
-                    <div class="text-muted small fw-bold mb-1 text-uppercase">Total Reservations</div>
-                    <div class="h2 fw-bold text-dark">{{ number_format($kpi->total_bookings ?? 0) }}</div>
-                    <div class="text-muted small">Current Month</div>
-                </div>
-                <div class="kpi-box shadow-sm border-0">
-                    <div class="text-muted small fw-bold mb-1 text-uppercase">Total Guests</div>
-                    <div class="h2 fw-bold text-warning">{{ number_format($kpi->total_guests ?? 0) }}</div>
-                    <div class="text-muted small">Current Month</div>
-                </div>
-                <div class="kpi-box shadow-sm border-0">
-                    <div class="text-muted small fw-bold mb-1 text-uppercase">Avg. Dining Time</div>
-                    <div class="h2 fw-bold text-success">{{ number_format($avgStayTime ?? 0) }} min</div>
-                    <div class="text-muted small">Per Table</div>
-                </div>
+        <div class="d-flex justify-content-center gap-3 flex-wrap">
+            <div class="kpi-box shadow-sm border-0">
+                <div class="text-muted small fw-bold mb-1 text-uppercase">Total Reservations</div>
+                <div class="h2 fw-bold text-dark">{{ number_format($kpi->total_bookings ?? 0) }}</div>
+                <div class="text-muted small">Current Month</div>
+            </div>
+            <div class="kpi-box shadow-sm border-0">
+                <div class="text-muted small fw-bold mb-1 text-uppercase">Total Guests</div>
+                <div class="h2 fw-bold text-warning">{{ number_format($kpi->total_guests ?? 0) }}</div>
+                <div class="text-muted small">Current Month</div>
+            </div>
+            <div class="kpi-box shadow-sm border-0">
+                <div class="text-muted small fw-bold mb-1 text-uppercase">Avg. Dining Time</div>
+                <div class="h2 fw-bold text-success">{{ number_format($avgStayTime ?? 0) }} min</div>
+                <div class="text-muted small">Per Table</div>
             </div>
         </div>
 

@@ -280,7 +280,7 @@ class HotelReservationController extends Controller
         $canceledId = DB::table('statuses')->where('name', 'Canceled')->value('id');
         if ($reservation->status_id === $canceledId) {
             return redirect()->route('user.mypage')
-                ->with('error', 'この予約はすでにキャンセル済みです。');
+                ->with('error', 'This reservation has already been cancelled.');
         }
 
         return view('userpage.booking.hotel.cancel-confirm', compact('reservation'));
@@ -300,13 +300,13 @@ class HotelReservationController extends Controller
 
         if (!$canceledId) {
             return redirect()->route('user.mypage')
-                ->with('error', 'キャンセル処理に失敗しました。管理者にお問い合わせください。');
+                ->with('error', 'Cancellation failed. Please contact administrator.');
         }
 
         // すでにキャンセル済みなら何もしない
         if ($reservation->status_id === $canceledId) {
             return redirect()->route('user.mypage')
-                ->with('error', 'この予約はすでにキャンセル済みです。');
+                ->with('error', 'This reservation has already been cancelled.');
         }
 
         DB::beginTransaction();
@@ -317,12 +317,12 @@ class HotelReservationController extends Controller
             DB::commit();
 
             return redirect()->route('user.mypage')
-                ->with('success', '予約をキャンセルしました。');
+                ->with('success', 'Your reservation has been canceled.');
         } catch (\Throwable $e) {
             DB::rollBack();
             \Log::error('Reservation cancel failed: ' . $e->getMessage());
             return redirect()->route('user.mypage')
-                ->with('error', 'キャンセルに失敗しました。もう一度お試しください。');
+                ->with('error', 'Failed to cancel the reservation. Please try again.');
         }
     }
 }

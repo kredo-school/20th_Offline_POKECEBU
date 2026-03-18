@@ -22,7 +22,7 @@
                 </div>
             </div>
             <div class="ig-sidebar-name">
-                {{ $user->detail?->first_name ?? '' }} {{ $user->detail?->last_name ?? 'ユーザー' }}
+                {{ $user->detail?->first_name ?? '' }} {{ $user->detail?->last_name ?? 'User' }}
             </div>
             <div class="ig-sidebar-email">{{ $user->email }}</div>
         </div>
@@ -59,7 +59,7 @@
             </div>
             <div class="ig-profile-info">
                 <div class="ig-username">
-                    <span>{{ $user->detail?->first_name ?? '' }} {{ $user->detail?->last_name ?? 'ユーザー' }}</span>
+                    <span>{{ $user->detail?->first_name ?? '' }} {{ $user->detail?->last_name ?? 'User' }}</span>
                 </div>
                 <div class="ig-email">{{ $user->email }}</div>
             </div>

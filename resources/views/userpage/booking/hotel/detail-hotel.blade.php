@@ -63,7 +63,7 @@
                         {{-- Hotel Gallery --}}
                         <div class="hotel-images mb-4 hide-scrollbar" style="display: flex; overflow-x: auto; gap: 15px;">
                             @foreach ($hotel->hotelImages as $image)
-                                <img src="{{ asset('storage/' . $image->image) }}" alt="hotel image" class="rounded-3"
+                                <img src="{{ $image->image }}" alt="hotel image" class="rounded-3"
                                     style="height: 250px; object-fit: cover;">
                             @endforeach
                         </div>
@@ -181,7 +181,7 @@
                                             <div class="room-gallery hide-scrollbar mb-3"
                                                 style="display: flex; overflow-x: auto; gap: 10px; scroll-snap-type: x mandatory;">
                                                 @foreach ($room->images as $image)
-                                                    <img src="{{ asset('storage/' . $image->image) }}"
+                                                    <img src="{{ $image->image }}"
                                                         class="rounded-3 shadow-sm" alt="Room Image"
                                                         style="width: 100%; height: 280px; object-fit: cover; flex-shrink: 0; scroll-snap-align: start;">
                                                 @endforeach

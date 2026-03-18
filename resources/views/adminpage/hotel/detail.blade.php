@@ -40,7 +40,7 @@
                          {{-- Hotel Gallery --}}
                          <div class="hotel-images mb-4 hide-scrollbar" style="display: flex; overflow-x: auto; gap: 15px;">
                              @foreach ($hotel->hotelImages as $image)
-                                 <img src="{{ asset('storage/' . $image->image) }}" alt="hotel image" class="rounded-3"
+                                 <img src="{{ $image->image }}" alt="hotel image" class="rounded-3"
                                      style="height: 250px; object-fit: cover;">
                              @endforeach
                          </div>

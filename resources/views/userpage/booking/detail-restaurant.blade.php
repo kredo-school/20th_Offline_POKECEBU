@@ -64,7 +64,7 @@
                         {{-- Restaurant Gallery --}}
                         <div class="restaurant-images mb-4 hide-scrollbar">
                             @foreach ($restaurant->restaurantImages as $image)
-                                <img src="{{ asset('storage/' . $image->image) }}" alt="restaurant image">
+                                <img src="{{ $image->image }}" alt="restaurant image">
                             @endforeach
                         </div>
 
@@ -185,7 +185,7 @@
                                             <div class="table-images hide-scrollbar mb-3"
                                                 style="display: flex; overflow-x: auto; gap: 10px; scroll-snap-type: x mandatory;">
                                                 @foreach ($table->images as $image)
-                                                    <img src="{{ asset('storage/' . $image->image) }}"
+                                                    <img src="{{ $image->image }}"
                                                         class="rounded-3 shadow-sm" alt="Table Image"
                                                         style="width: 100%; height: 280px; object-fit: cover; flex-shrink: 0; scroll-snap-align: start;">
                                                 @endforeach

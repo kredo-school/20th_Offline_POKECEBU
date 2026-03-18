@@ -40,7 +40,7 @@
                         {{-- Restaurant Gallery --}}
                         <div class="restaurant-images mb-4 hide-scrollbar">
                             @foreach ($restaurant->restaurantImages as $image)
-                                <img src="{{ asset('storage/' . $image->image) }}" alt="restaurant image">
+                                <img src="{{ $image->image }}" alt="restaurant image">
                             @endforeach
                         </div>
 

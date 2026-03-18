@@ -16,60 +16,96 @@ class ReviewController extends Controller
     public function store(Request $request) {
        $request->validate([
             'rating'        => 'required|numeric|min:0|max:5',
-            'target_type'   => 'required',
-            'target_id'     => 'required'
+            
        ]);
 
         //予約済かチェック
-        if ($request->target_type == 'hotel') {
-            $allowed = HotelReservation::where('user_id',Auth::id())
-                ->where('hotel_id',$request->target_id)
+        if ($request->hotel_reservation_id) {
+            $reservation = HotelReservation::where('id',$request->hotel_reservation_id)
+                ->where('user_id',Auth::id())
                 ->whereDate('end_at','<',now())
-                ->exists();
-        } else {
-            $allowed = RestaurantReservation::where('user_id',Auth::id())
-                ->where('restaurant_id',$request->target_id)
-                ->whereDate('start_at','<',now())
-                ->exists();
+                ->firstOrFail();
+
+            if (Review::where('hotel_reservation_id', $reservation->id)->exists()) {
+                return back()->with('error', 'You have already reviewed this stay.');
+            }
+
+            Review::create([
+              'user_id'              => Auth::id(),
+              'hotel_reservation_id' => $request->hotel_reservation_id,
+              'rating'               => $request->rating,
+              'comment'              => $request->comment
+            ]);
+
+            $this->updateHotelAverage($reservation->hotel_id);
+
+        } elseif ($request->restaurant_reservation_id) {
+            $reservation = RestaurantReservation::where('id', $request->restaurant_reservation_id)
+                ->where('user_id', Auth::id())
+                ->whereDate('start_at', '<', now())
+                ->firstOrFail();
+                
+            if (Review::where('restaurant_reservation_id', $reservation->id)->exists())  {
+                return back()->with('error', 'You have already reviewed this visit.');
+            }
+
+            Review::create([
+                'user_id'                   => Auth::id(),
+                'restaurant_reservation_id' => $request->restaurant_reservation_id,
+                'rating'                    => $request->rating,
+                'comment'                   => $request->comment
+
+            ]);
+            $this->updateRestaurantAverage($reservation->restaurant_id);
         }
-
-        if(!$allowed) abort(403);
-
-       Review::create([
-         'user_id'          => Auth::id(),
-         'target_type'      => $request->target_type,
-         'target_id'        => $request->target_id,
-         'rating'           => $request->rating,
-         'comment'          => $request->comment
-       ]);
-
-       $this->updateAverage($request->target_type, $request->target_id);
-       return back();
+       
+       return back()->with('success', 'Your review has been submitted.');
     }
 
+    // レビュー削除
     public function destroy($id) {
        $review = Review::findOrFail($id);
+
        if($review->user_id !== Auth::id()) {
         abort(403);
        }
+
+      if ($review->hotel_reservation_id) {
+        $reservation = HotelReservation::find($review->hotel_reservation_id);
+        $hotelId = $reservation->hotel_id;
+      } else {
+        $reservation = RestaurantReservation::find($review->restaurant_reservation_id);
+        $restaurantId =$reservation->restaurant_id;
+      }
+
        $review->delete();
-       return back()->with('success', 'レビューを削除しました');
+       if (isset($hotelId)) {
+        $this->updateHotelAverage($hotelId);
+       } else {
+        $this->updateRestaurantAverage($restaurantId);
+       }
+
+       return back()->with('success', 'Your review has been deleted.');
     }
 
     // 平均評価の更新
-    private function updateAverage($type, $id) {
-        $average = Review::where('target_type', $type)
-            ->where('target_id',$id)
-            ->avg('rating');
-        
-        if ($type == 'hotel') {
-            Hotel::where('id',$id)->update([
-                'star_rating' => $average
-            ]);
-        } else {
-            Restaurant::where('id',$id)->update([
-                'star_rating' => $average
-            ]);
-        }
-    }
+   private function updateHotelAverage($hotelId) {
+    $average = Review::whereHas('hotelReservation', function($q) use ($hotelId) {
+        $q->where('hotel_id', $hotelId);
+    })->avg('rating');
+
+    Hotel::where('id', $hotelId)->update([
+        'star_rating' => $average
+    ]);
+}
+
+private function updateRestaurantAverage($restaurantId) {
+    $average = Review::whereHas('restaurantReservation', function($q) use ($restaurantId) {
+        $q->where('restaurant_id', $restaurantId);
+    })->avg('rating');
+
+    Restaurant::where('id', $restaurantId)->update([
+        'star_rating' => $average
+    ]);
+}
 }

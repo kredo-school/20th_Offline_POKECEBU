@@ -40,6 +40,10 @@ class RestaurantReservation extends Model
         return $this->belongsTo(Restaurant::class);
     }
 
+    public function review() {
+       return $this->hasOne(Review::class, 'restaurant_reservation_id');
+    }
+
     public function table() {
         return $this->belongsTo(RestaurantTable::class,'table_id');
        

@@ -1,17 +1,23 @@
-<div class="modal fade" id="reviewModal{{ $target->id }}">
+<div class="modal fade" id="reviewModal{{ $reservation->id }}">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form method="POST"
+            <form id="reviewForm{{ $reservation->id }}" method="POST"
                 action="{{ $review ? route('user.reviews.update', $review->id) : route('user.reviews.store') }}">
                 @csrf
                 @if ($review)
                     @method('PUT')
                 @endif
 
-                <input type="hidden" name="target_type" value="{{ $type }}">
-                <input type="hidden" name="target_id" value="{{ $target->id }}">
+                @if ($type === 'hotel')
+                    <input type="hidden" name="hotel_reservation_id" value="{{ $reservation->id }}">
+                @else
+                    <input type="hidden" name="restaurant_reservation_id" value="{{ $reservation->id }}">
+                @endif
                 <div class="modal-header">
-                    <h5>{{ $review ? 'Edit Review' : 'Write a Review' }}</h5>
+                    <h5 class="modal-title">
+                        {{ $review ? 'Edit Review' : 'Write Review' }}
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
 
@@ -22,25 +28,26 @@
 
                     {{-- コメント --}}
                     <label class="mt-3" for="">Comment</label>
-                    <textarea class="form-control" name="comment" id="comment">{{ $review->comment ?? '' }}</textarea>
+                    <textarea class="form-control" name="comment" id="comment{{ $reservation->id }}">{{ $review->comment ?? '' }}</textarea>
                 </div>
-
-                <div class="modal-footer">
-                    @if ($review)
-                        <form method="POST" action="{{ route('user.reviews.destroy', $review->id) }}" class="mt-2">
-                            @csrf
-                            @method('DELETE')
-
-                            <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this review?')">
-                                Delete
-                            </button>
-                        </form>
-                    @endif
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button class="btn btn-primary" type="submit">{{ $review ? 'Update' : 'Submit' }}</button>
-                </div>
-
             </form>
+
+            <div class="modal-footer">
+                @if ($review)
+                    <form method="POST" action="{{ route('user.reviews.destroy', $review->id) }}" class="mt-2">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-danger"
+                            onclick="return confirm('Are you sure you want to delete this review?')">
+                            Delete
+                        </button>
+                    </form>
+                @endif
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button class="btn btn-primary" type="submit"
+                    form="reviewForm{{ $reservation->id }}">{{ $review ? 'Update' : 'Submit' }}</button>
+            </div>
+
 
 
         </div>

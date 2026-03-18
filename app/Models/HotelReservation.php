@@ -52,6 +52,10 @@ class HotelReservation extends Model
         return $this->belongsTo(HotelRoom::class, 'room_id');
     }
 
+    public function review() {
+       return $this->hasOne(Review::class, 'hotel_reservation_id');
+    }
+
    public static function getMonthlyKpiStats($hotelId = null)
 {
     return self::query()
@@ -195,6 +199,6 @@ class HotelReservation extends Model
 
     // キャンセル料の計算
     public function getCancellationFeeAttribute() {
-       return ($this->price * $this->cancellation_rate) / 100;
+       return ($this->total_price * $this->cancellation_rate) / 100;
     }
 }

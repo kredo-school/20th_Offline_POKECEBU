@@ -22,6 +22,7 @@ use App\Models\TmpHotelImage;
 use App\Models\HotelImage;
 use App\Models\ApprovalHistory;
 use App\Models\RestaurantImage;
+use App\Models\RestaurantTable;
 use App\Models\TmpRestaurant;
 use App\Models\TmpRestaurantImage;
 
@@ -1182,7 +1183,7 @@ class AdminController extends Controller
     }
 
     public function showDetailRestaurant($id) {
-        $restaurant = Restaurant::with('images')->findOrFail($id);
+        $restaurant = Restaurant::with('restaurantImages')->findOrFail($id);
 
         return view('adminpage.restaurant.detail', compact('restaurant'));
     }

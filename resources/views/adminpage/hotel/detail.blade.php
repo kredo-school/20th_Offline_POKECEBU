@@ -1,52 +1,59 @@
-@extends('layouts.admin')
+ @extends('layouts.admin')
 
-@section('content')
-    <div class="container-fluid py-4">
-        <div class="row">
-            <div class="mb-2"><a href="{{ route('admin.showList', 'hotel') }}">◀︎ List of Hotels</a></div>
-            {{-- ホテル詳細（右側） --}}
-            <div class="col-lg-9">
-                <div class="mb-3">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h2 class="mb-0">{{ $hotel->name }}</h2>
-                            <div class="text-warning fs-5">
-                                @for ($i = 0; $i < floor($hotel->star_rating ?? 0); $i++)
-                                    <i class="fa-solid fa-star"></i>
-                                @endfor
-                                @if (isset($hotel->star_rating) && $hotel->star_rating - floor($hotel->star_rating) >= 0.5)
-                                    <i class="fa-regular fa-star-half-stroke"></i>
-                                @endif
-                            </div>
-                        </div>
-                    </div>
+ @section('content')
+     <div class="container py-5">
+         <div class="row justify-content-center">
+             <div class="col-lg-10">
 
-                    <p class="mt-2"><i class="fa-solid fa-location-dot me-1"></i> {{ $hotel->city ?? '—' }}</p>
+                 <div class="mb-2"><a href="{{ route('admin.showList', 'hotel') }}">◀︎ List of Hotels</a></div>
+                 {{-- 1. Hotel Info Section --}}
+                 <div class="card bg-white border-0 shadow-sm mb-5 rounded-4 overflow-hidden">
+                     <div class="card-body p-4">
+                         <div class="d-flex justify-content-between align-items-start mb-4">
+                             <div>
+                                 <h1 class="fw-bold mb-2">{{ $hotel->name }}</h1>
+                                 <div class="d-flex align-items-center flex-wrap gap-3">
+                                     <p class="text-muted mb-0">
+                                         <i class="fa-solid fa-location-dot me-1 text-danger"></i>
+                                         {{ $hotel->address }}
+                                     </p>
 
-                    <div class="row mb-3">
-                        @if ($hotel->images && $hotel->images->isNotEmpty())
-                            @foreach ($hotel->images as $img)
-                                <div class="col-md-6">
-                                    <img src="{{ $img->image }}" class="img-fluid rounded mb-2"
-                                        alt="Hotel Image">
-                                </div>
-                            @endforeach
-                        @else
-                            <div class="col-12">
-                                <p class="text-muted">No images uploaded.</p>
-                            </div>
-                        @endif
-                    </div>
+                                     {{-- Star Rating --}}
+                                     @php
+                                         $rating = $hotel->star_rating;
+                                         $fullStars = floor($rating);
+                                         $halfStar = $rating - $fullStars >= 0.5;
+                                     @endphp
+                                     <div class="text-warning">
+                                         @for ($i = 1; $i <= $fullStars; $i++)
+                                             <i class="fa-solid fa-star"></i>
+                                         @endfor
+                                         @if ($halfStar)
+                                             <i class="fa-solid fa-star-half-stroke"></i>
+                                         @endif
+                                         <span class="text-muted ms-1 fw-bold">{{ number_format($rating, 1) }}</span>
+                                     </div>
+                                 </div>
+                             </div>
+                         </div>
 
-                    <div class="mb-3">
-                        {{-- ここにタグやバッジがあれば表示 --}}
-                        {{-- 例: カテゴリや設備があればループで表示 --}}
-                    </div>
+                         {{-- Hotel Gallery --}}
+                         <div class="hotel-images mb-4 hide-scrollbar" style="display: flex; overflow-x: auto; gap: 15px;">
+                             @foreach ($hotel->hotelImages as $image)
+                                 <img src="{{ asset('storage/' . $image->image) }}" alt="hotel image" class="rounded-3"
+                                     style="height: 250px; object-fit: cover;">
+                             @endforeach
+                         </div>
 
-                    <h4 class="mt-3"><i class="fa-solid fa-circle-info me-2"></i>Hotel Details</h4>
-                    <p>{{ $hotel->description ?? 'No description provided.' }}</p>
-                </div>
-            </div>
-        </div>
-    </div>
-@endsection
+                         <div class="border-top pt-4">
+                             <h5 class="fw-bold mb-3">About this hotel</h5>
+                             <p class="text-secondary lh-lg mb-0">
+                                 {{ $hotel->description }}
+                             </p>
+                         </div>
+                     </div>
+                 </div>
+             </div>
+         </div>
+     </div>
+ @endsection

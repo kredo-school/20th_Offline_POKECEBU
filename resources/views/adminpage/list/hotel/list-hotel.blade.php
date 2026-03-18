@@ -1,167 +1,214 @@
 @extends('layouts.admin')
 
+@section('title', 'Hotel List')
+
 @section('content')
-<div class="container-fluid">
-    <div class="mt-3 mb-2">
-        <div class="mb-1"><a href="{{ route('admin.hotels') }}">◀︎ All Users</a></div>
-        <h2>List of Hotels</h2>
-    </div>
-    {{-- フラッシュメッセージ表示（追加） --}}
-        @if (session('status'))
-            <div class="alert alert-success">
-                {{ session('status') }}
+
+    <style>
+        #admin-hotel-list-root {
+            --primary-blue: #4f46e5;
+            --soft-bg: #f8fafc;
+            --card-border: #e2e8f0;
+            --text-dark: #1e293b;
+            --text-light: #64748b;
+            --success-green: #10b981;
+            --danger-red: #ef4444;
+            --pending-orange: #f59e0b;
+            
+            background-color: var(--soft-bg);
+            padding: 40px 20px;
+            min-height: 100vh;
+            color: var(--text-dark);
+            font-family: 'Inter', system-ui, sans-serif;
+        }
+
+
+        /* Header Style */
+        #admin-hotel-list-root .back-link {
+            text-decoration: none;
+            color: var(--primary-blue);
+            font-size: 0.875rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        #admin-hotel-list-root .page-title {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 30px;
+        }
+
+        /* Table Card & Scroll */
+        #admin-hotel-list-root .table-section {
+            background: #ffffff;
+            border-radius: 20px;
+            border: 1px solid var(--card-border);
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            /* 横長になってもレイアウトを壊さない設定 */
+            overflow-x: auto; 
+            -webkit-overflow-scrolling: touch;
+        }
+
+        #admin-hotel-list-root .table {
+            margin-bottom: 0;
+            width: 100%;
+            min-width: 1100px; /* 項目を一行で維持するための最低幅 */
+        }
+
+        #admin-hotel-list-root .table thead th {
+            background: #fcfcfd;
+            border-bottom: 1px solid var(--card-border);
+            color: var(--text-light);
+            font-weight: 700;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            padding: 18px 24px;
+            white-space: nowrap; /* ヘッダーも一行 */
+        }
+
+        #admin-hotel-list-root .table tbody td {
+            padding: 20px 24px;
+            border-bottom: 1px solid #f1f5f9;
+            color: var(--text-dark);
+            font-size: 0.875rem;
+            vertical-align: middle;
+            /* ここが重要：セル内のテキストを絶対に改行させない */
+            white-space: nowrap; 
+        }
+
+        #admin-hotel-list-root .table tbody tr:hover {
+            background-color: #f8fafc;
+        }
+
+        /* Badges */
+        #admin-hotel-list-root .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px;
+            border-radius: 100px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            gap: 5px;
+        }
+
+        #admin-hotel-list-root .badge-approved { background: #ecfdf5; color: var(--success-green); }
+        #admin-hotel-list-root .badge-pending { background: #fffbeb; color: var(--pending-orange); }
+        #admin-hotel-list-root .badge-new { background: #eef2ff; color: var(--primary-blue); }
+
+        /* Actions */
+        #admin-hotel-list-root .btn-action {
+            background: transparent;
+            border: none;
+            color: var(--text-light);
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+        }
+
+        #admin-hotel-list-root .dropdown-menu {
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 8px;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+        }
+    </style>
+
+    <div id="admin-hotel-list-root">
+        <div class="list-container">
+
+            <a href="{{ route('admin.hotels') }}" class="back-link">
+                <i class="fa-solid fa-arrow-left me-2"></i> All Users
+            </a>
+            <h1 class="page-title">List of Hotels</h1>
+
+            @if (session('status'))
+                <div class="alert alert-success border-0 shadow-sm rounded-3 mb-4">
+                    {{ session('status') }}
+                </div>
+            @endif
+
+            <div class="table-section">
+                <table class="table align-middle">
+                    <thead>
+                        <tr>
+                            <th>User ID</th>
+                            <th>Hotel Information</th>
+                            <th>Phone Number</th>
+                            <th>Address</th>
+                            <th>Registered Date</th>
+                            <th>Status</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($hotels as $hotel)
+                            <tr>
+                                <td>
+                                    @if($hotel->type === 'tmp')
+                                        <span class="status-badge badge-new">New Account</span>
+                                    @else
+                                        <span class="fw-bold text-muted">#{{ optional($hotel->user)->id }}</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    <div class="fw-bold text-dark">{{ $hotel->name ?? optional($hotel->user)->name }}</div>
+                                    <div class="text-muted ms-2">({{ optional($hotel->user)->email }})</div>
+                                </td>
+                                <td>{{ $hotel->phone }}</td>
+                                <td>{{ $hotel->address }}</td>
+                                <td>
+                                    <span class="fw-medium">{{ optional($hotel->created_at)->format('Y-m-d H:i') }}</span>
+                                </td>
+                                <td>
+                                    @if ($hotel->status === 'approved')
+                                        <span class="status-badge badge-approved">
+                                            <i class="fa-solid fa-circle-check"></i> Approved
+                                        </span>
+                                    @else
+                                        <span class="status-badge badge-pending">
+                                            <i class="fa-solid fa-clock"></i> Pending Review
+                                        </span>
+                                    @endif
+                                </td>
+                                <td class="text-end">
+                                    <div class="dropdown">
+                                        <button class="btn-action" data-bs-toggle="dropdown">
+                                            <i class="fa-solid fa-ellipsis-vertical"></i>
+                                        </button>
+                                        <div class="dropdown-menu dropdown-menu-end">
+                                            @if ($hotel->status === 'pending')
+                                                <button class="dropdown-item text-success" data-bs-toggle="modal"
+                                                    data-bs-target="#approveModal-{{ $hotel->id }}">
+                                                    <i class="fa-regular fa-circle-check"></i> Approve
+                                                </button>
+                                                <button class="dropdown-item text-danger" data-bs-toggle="modal"
+                                                    data-bs-target="#rejectModal-{{ $hotel->id }}">
+                                                    <i class="fa-regular fa-circle-xmark"></i> Reject
+                                                </button>
+                                            @else
+                                                <a href="{{ route('admin.showDetailHotel', $hotel->id) }}"
+                                                    class="dropdown-item">
+                                                    <i class="fa-solid fa-eye"></i> View details
+                                                </a>
+                                            @endif
+                                        </div>
+                                    </div>
+                                    @include('adminpage.list.hotel.modals.approve')
+                                    @include('adminpage.list.hotel.modals.reject')
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="7" class="text-center py-5">No hotels found.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
             </div>
-        @endif
-
-        @if ($errors->any())
-            <div class="alert alert-danger">
-                {{ $errors->first() }}
-            </div>
-        @endif
-    <!-- Search Area -->
-    {{-- 
-    <div class="card mb-3">
-        <div class="card-body">
-            <form method="GET">
-                <div class="row g-3 align-items-end">
-                    <div class="col-md-3">
-                        <label class="form-label small">USER ID</label>
-                        <div class="input-group">
-                            <input type="number" name="user_id_from" class="form-control">
-                            <span class="input-group-text">〜</span>
-                            <input type="number" name="user_id_to" class="form-control">
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label small">USER NAME</label>
-                        <input type="text" name="user_name" class="form-control">
-                    </div>
-                    <div class="col-md-2">
-                        <label class="form-label small">PHONE NUMBER</label>
-                        <input type="text" name="phone_no" class="form-control">
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label small">ADDRESS</label>
-                        <input type="text" name="address" class="form-control">
-                    </div>
-                </div>
-
-                <div class="row g-3 align-items-end mt-1">
-                    <div class="col-md-4">
-                        <label class="form-label small">CREATED AT</label>
-                        <div class="input-group">
-                            <input type="date" name="created_from" class="form-control">
-                            <span class="input-group-text">〜</span>
-                            <input type="date" name="created_to" class="form-control">
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label small">UPDATED AT</label>
-                        <div class="input-group">
-                            <input type="date" name="updated_from" class="form-control">
-                            <span class="input-group-text">〜</span>
-                            <input type="date" name="updated_to" class="form-control">
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label small d-block">STATUS</label>
-                        <div class="d-flex gap-3">
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="status" value="" checked>
-                                <label class="form-check-label">All</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="status" value="Pending">
-                                <label class="form-check-label">Pending</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="status" value="Approval">
-                                <label class="form-check-label">Approval</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="status" value="Rejection">
-                                <label class="form-check-label">Rejection</label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="text-end mt-3">
-                    <button type="submit" class="btn btn-primary px-4">
-                        <i class="fa-solid fa-magnifying-glass"></i> Search
-                    </button>
-                </div>
-            </form>
         </div>
     </div>
-    --}}
 
-    <div class="small text-secondary mb-2">
-        {{-- @if ($targetList)
-            Showing {{ $targetList->firstItem() }}-{{ $targetList->lastItem() }}
-            of {{ $targetList->total() }} records
-        @else
-            Showing 0-0 of 0 records
-        @endif --}}
-    </div>
-    <table class="table table-hover align-middle bg-white text-secondary">
-        <thead class="small table-primary text-secondary">
-            <tr>
-                <th>USER ID</th>
-                <th>USER NAME</th>
-                <th>PHONE NUMBER</th>
-                <th>ADDRESS</th>
-                <th>CREATED AT</th>
-                <th>UPDATED AT</th>
-                <th>STATUS</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @if ($hotels)
-                @foreach ($hotels as $hotel)
-                    <tr>
-                        <td>{{ $hotel->type === 'tmp' ? 'New' : optional($hotel->user)->id }}</td>
-                        <td>{{ $hotel->name ?? optional($hotel->user)->name }}</td>
-                        <td>{{ $hotel->phone }}</td>
-                        <td>{{ $hotel->address }}</td>
-                        <td>{{ optional($hotel->created_at)->format('Y-m-d H:i') }}</td>
-                        <td>{{ optional($hotel->updated_at)->format('Y-m-d H:i') }}</td>
-                        <td>
-                            @if($hotel->status === 'approved')
-                                <i class="fa-solid fa-check text-success me-1"></i> Approved
-                            @else
-                                <i class="fa-solid fa-circle-exclamation text-danger me-1"></i> Pending
-                            @endif
-                        </td>
-                        <td>
-                            <div class="dropdown">
-                                <button class="btn btn-sm" data-bs-toggle="dropdown">
-                                    <i class="fa-solid fa-ellipsis"></i>
-                                </button>
-                                <div class="dropdown-menu">
-                                    @if($hotel->status === 'pending')
-                                        <button class="dropdown-item" data-bs-toggle="modal" data-bs-target="#approveModal-{{ $hotel->id }}">
-                                            <i class="fa-regular fa-circle-check"></i> Approve
-                                        </button>
-                                        <button class="dropdown-item text-danger" data-bs-toggle="modal" data-bs-target="#rejectModal-{{ $hotel->id }}">
-                                            <i class="fa-regular fa-circle-xmark"></i> Reject
-                                        </button>
-                                    @else
-                                        <a href="{{ route('admin.showDetailHotel', $hotel->id) }}" class="dropdown-item">
-                                            <i class="fa-solid fa-eye"></i> View details
-                                        </a>
-                                    @endif
-                                </div>
-                            </div>
-                            
-                            @include('adminpage.list.hotel.modals.approve')
-                            @include('adminpage.list.hotel.modals.reject')
-                        </td>
-                    </tr>
-                @endforeach
-            @endif
-        </tbody>
-    </table>
-</div>
 @endsection

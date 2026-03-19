@@ -34,6 +34,10 @@
                                             <i class="fa-solid fa-star-half-stroke"></i>
                                         @endif
                                         <span class="text-muted ms-1 fw-bold">{{ number_format($rating, 1) }}</span>
+                                        <a href="{{ route('user.restaurant.reviews', $restaurant->id) }}"
+                                            class="text-primary text-decoration-none small fw-bold">
+                                            Read all reviews <i class="fa-solid fa-chevron-right small"></i>
+                                        </a>
                                     </div>
                                 </div>
                             </div>
@@ -185,8 +189,8 @@
                                             <div class="table-images hide-scrollbar mb-3"
                                                 style="display: flex; overflow-x: auto; gap: 10px; scroll-snap-type: x mandatory;">
                                                 @foreach ($table->images as $image)
-                                                    <img src="{{ $image->image }}"
-                                                        class="rounded-3 shadow-sm" alt="Table Image"
+                                                    <img src="{{ $image->image }}" class="rounded-3 shadow-sm"
+                                                        alt="Table Image"
                                                         style="width: 100%; height: 280px; object-fit: cover; flex-shrink: 0; scroll-snap-align: start;">
                                                 @endforeach
                                             </div>

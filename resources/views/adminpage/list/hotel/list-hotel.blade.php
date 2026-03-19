@@ -47,7 +47,6 @@
             border-radius: 20px;
             border: 1px solid var(--card-border);
             box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
-            /* 横長になってもレイアウトを壊さない設定 */
             overflow-x: auto; 
             -webkit-overflow-scrolling: touch;
         }
@@ -55,7 +54,7 @@
         #admin-hotel-list-root .table {
             margin-bottom: 0;
             width: 100%;
-            min-width: 1100px; /* 項目を一行で維持するための最低幅 */
+            min-width: 1100px; 
         }
 
         #admin-hotel-list-root .table thead th {
@@ -154,11 +153,17 @@
                                     @endif
                                 </td>
                                 <td>
-                                    <div class="fw-bold text-dark">{{ $hotel->name ?? optional($hotel->user)->name }}</div>
-                                    <div class="text-muted ms-2">({{ optional($hotel->user)->email }})</div>
+                                    <div class="small text-muted">
+                                        <i class="fa-regular fa-envelope me-1"></i>
+                                        @if ($hotel->type === 'tmp')
+                                            {{ $hotel->representative_email }}
+                                        @else
+                                            {{ optional($hotel->user)->email ?? 'No Email' }}
+                                        @endif
+                                    </div>
                                 </td>
-                                <td>{{ $hotel->phone }}</td>
-                                <td>{{ $hotel->address }}</td>
+                                <td>{{ $hotel->phone ?? 'N/A'}}</td>
+                                <td>{{ $hotel->address ?? 'No address'}}</td>
                                 <td>
                                     <span class="fw-medium">{{ optional($hotel->created_at)->format('Y-m-d H:i') }}</span>
                                 </td>

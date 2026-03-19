@@ -151,12 +151,12 @@ class RestaurantController extends Controller
         SELECT MIN(rt.charges)
          FROM restaurant_tables rt
          WHERE rt.restaurant_id = restaurants.id
-    )";
+         )";
         $defaultMaxPriceSub = "(
         SELECT MAX(rt.charges)
          FROM restaurant_tables rt
          WHERE rt.restaurant_id = restaurants.id
-    )";
+         )";
 
         // ここで select を明示し、min_price / max_price を付与する
         $query->select('restaurants.*');
@@ -186,10 +186,12 @@ class RestaurantController extends Controller
         }
 
         // 必要なリレーションを eager load、合計いいね数を付与、現在ユーザー分の favorites を絞ってロード
-        $query->with(['restaurantImages', 'tables', 'reviews'])
+        $query->with(['restaurantImages', 'tables'])
             ->withCount('favorites')
-            ->withCount('reviews')
-            ->withAvg('reviews', 'rating') 
+            // reviews を reservation 経由で集計する相関サブクエリを追加
+            ->select('restaurants.*')
+            ->selectRaw('(SELECT COUNT(*) FROM reviews r JOIN restaurant_reservations rr ON r.restaurant_reservation_id = rr.id WHERE rr.restaurant_id = restaurants.id) as reviews_count')
+            ->selectRaw('(SELECT AVG(r.rating) FROM reviews r JOIN restaurant_reservations rr ON r.restaurant_reservation_id = rr.id WHERE rr.restaurant_id = restaurants.id) as reviews_avg_rating')
             ->with(['favorites' => function ($q) {
                 if ($userId = Auth::id()) {
                     $q->where('user_id', $userId);
@@ -197,6 +199,7 @@ class RestaurantController extends Controller
                     $q->whereRaw('0 = 1');
                 }
             }]);
+
 
         // 重複削除（必要なら）
         $query->distinct();

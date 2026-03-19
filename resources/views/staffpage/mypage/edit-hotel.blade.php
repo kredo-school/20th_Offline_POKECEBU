@@ -64,8 +64,6 @@
                     </div>
                 </div>
 
-
-
                 {{-- Representative Information --}}
                 <div class="ig-grid-row">
                     <div class="ig-form-group">
@@ -80,24 +78,35 @@
                     </div>
                 </div>
 
-                {{-- Image Upload --}}
+                {{-- 現在の画像表示 --}}
                 <div class="ig-form-group">
-                    <label>Hotel Image</label>
+                    <label>Current Image</label>
+                    @if ($hotel->images->isNotEmpty())
+                        <div class="mb-2">
+                            @foreach ($hotel->images as $image)
+                                    <img src="{{ $image->image }}" alt="Current Hotel Image"
+                                        style="width:150px; height:120px; object-fit:cover; border-radius:6px; border:1px solid #ddd;">
+                            @endforeach
+                        </div>
+                    @else
+                        <p class="text-muted" style="font-size:13px;">No image registered.</p>
+                    @endif
+                </div>
+
+                {{-- 複数画像アップロード --}}
+                <div class="ig-form-group">
+                    <label>Upload New Images <span class="text-muted" style="font-size:12px;">（Multiple selections allowed）</span></label>
                     <div class="ig-file-upload">
-                        <input type="file" name="image_path" id="hotel_image" class="ig-input-file">
-                        @if ($hotel->image_path)
-                            <div class="ig-current-image">
-                                Current file: <strong>{{ $hotel->image_path }}</strong>
-                            </div>
-                        @endif
+                        <input type="file" name="images[]" id="hotel_images" class="ig-input-file" multiple accept="image/*">
+                        <p class="text-muted mt-1" style="font-size:12px;">You can select multiple images. They will replace existing ones after approval.</p>
                     </div>
+                    {{-- プレビュー --}}
+                    <div id="image-preview-container" class="d-flex flex-wrap gap-2 mt-3"></div>
                 </div>
 
                 {{-- Footer Buttons --}}
                 <div class="ig-form-footer">
-                    {{-- 特定のマイページへ飛ばす設定 --}}
                     <a href="{{ route('hotel.staff.mypage.hotel') }}" class="ig-btn-secondary">Back</a>
-
                     <button type="submit" class="ig-btn-primary">Save Changes</button>
                 </div>
             </form>
@@ -114,4 +123,22 @@
             @endif
         </div>
     </div>
+
+    {{-- 画像プレビュー用JS --}}
+    <script>
+        document.getElementById('hotel_images').addEventListener('change', function(e) {
+            const container = document.getElementById('image-preview-container');
+            container.innerHTML = '';
+            Array.from(e.target.files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(ev) {
+                    const img = document.createElement('img');
+                    img.src = ev.target.result;
+                    img.style = 'width:100px; height:80px; object-fit:cover; border-radius:6px; border:2px solid #4F8EF7;';
+                    container.appendChild(img);
+                };
+                reader.readAsDataURL(file);
+            });
+        });
+    </script>
 @endsection

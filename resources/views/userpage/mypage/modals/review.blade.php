@@ -1,7 +1,7 @@
-<div class="modal fade" id="reviewModal{{ $reservation->id }}">
+<div class="modal fade" id="reviewModal-{{ $type }}-{{ $reservation->id }}">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form id="reviewForm{{ $reservation->id }}" method="POST"
+            <form id="reviewForm-{{ $type }}-{{ $reservation->id }}" method="POST"
                 action="{{ $review ? route('user.reviews.update', $review->id) : route('user.reviews.store') }}">
                 @csrf
                 @if ($review)
@@ -22,7 +22,7 @@
                 <div class="modal-body">
 
                     {{-- 星評価 --}}
-                    <label for="">Review(0.0〜5.0)</label>
+                    <label for="">Raiting(0.0〜5.0)</label>
                     <input type="number" name="rating" min="0" max="5" step="0.1"
                         class="form-control" value="{{ $review->rating ?? '' }}" required>
 
@@ -43,9 +43,10 @@
                         </button>
                     </form>
                 @endif
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                
                 <button class="btn btn-primary" type="submit"
-                    form="reviewForm{{ $reservation->id }}">{{ $review ? 'Update' : 'Submit' }}</button>
+                    form="reviewForm-{{ $type }}-{{ $reservation->id }}">{{ $review ? 'Update' : 'Submit' }}</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
 
 

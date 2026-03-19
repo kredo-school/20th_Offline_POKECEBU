@@ -201,13 +201,11 @@
                                 <div class="bk-price">₱{{ number_format($res->total_price, 2) }}</div>
                                 <span class="bk-badge completed"><i class="fa-solid fa-check" style="font-size:9px;"></i>
                                     Completed</span>
-                                <button class="bk-review-btn {{ $review ? 'done' : '' }}"
-    data-bs-toggle="modal"
-    data-bs-target="#reviewModal{{ $res->id }}"
->
-    <i class="fa-{{ $review ? 'solid' : 'regular' }} fa-star"></i>
-    {{ $review ? '投稿済み' : 'Write Review' }}
-</button>
+                                <button class="bk-review-btn {{ $review ? 'done' : '' }}" data-bs-toggle="modal"
+                                    data-bs-target="#reviewModal-hotel-{{ $res->id }}">
+                                    <i class="fa-{{ $review ? 'solid' : 'regular' }} fa-star"></i>
+                                    {{ $review ? 'Posted' : 'Write Review' }}
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -303,21 +301,19 @@
                                 <div class="bk-price">₱{{ number_format($res->total_price, 2) }}</div>
                                 <span class="bk-badge completed"><i class="fa-solid fa-check" style="font-size:9px;"></i>
                                     Completed</span>
-                                <button class="bk-review-btn {{ $review ? 'done' : '' }}"
-    data-bs-toggle="modal"
-    data-bs-target="#reviewModal{{ $res->id }}"
->
-    <i class="fa-{{ $review ? 'solid' : 'regular' }} fa-star"></i>
-    {{ $review ? '投稿済み' : 'Write Review' }}
-</button>
+                                <button class="bk-review-btn {{ $review ? 'done' : '' }}" data-bs-toggle="modal"
+                                    data-bs-target="#reviewModal-restaurant-{{ $res->id }}">
+                                    <i class="fa-{{ $review ? 'solid' : 'regular' }} fa-star"></i>
+                                    {{ $review ? 'Posted' : 'Write Review' }}
+                                </button>
                             </div>
                         </div>
                     </div>
                     @include('userpage.mypage.modals.review', [
-                        'target'        => $res->restaurant,
-                        'type'          => 'restaurant',
-                        'review'        => $review,
-                        'reservation'   => $res,
+                        'target' => $res->restaurant,
+                        'type' => 'restaurant',
+                        'review' => $review,
+                        'reservation' => $res,
                     ])
                 @empty
                     <div class="bk-empty"><i class="fa-regular fa-calendar-xmark"></i>No past restaurant reservations.

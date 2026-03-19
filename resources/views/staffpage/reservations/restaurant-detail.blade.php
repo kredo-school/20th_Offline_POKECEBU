@@ -4,7 +4,7 @@
 
   @section('content')
 
-      <div class="container">
+      <div class="container  mt-4">
           <a href="{{ route('restaurant.reservations.date', $reservation->start_at->format('Y-m-d')) }}"
               class="btnbtn-sm mt-4 text-decoration-none text-dark">
               <i class="fa-solid fa-arrow-left"></i> Reservation List

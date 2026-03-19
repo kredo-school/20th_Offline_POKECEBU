@@ -4,7 +4,7 @@
 
 @section('content')
 
-    <div class="container">
+    <div class="container  mt-4">
 
 
         <a href="{{ route('hotel.calendar') }}" class="btnbtn-sm mt-4 text-decoration-none text-dark">

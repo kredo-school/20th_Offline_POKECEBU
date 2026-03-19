@@ -201,28 +201,41 @@
                                             @endphp
 
                                             @if ($reviewsCount > 0)
-                                                <div class="d-flex align-items-center mt-1" aria-label="{{ $reviewsCount }} reviews">
+                                                <div class="d-flex align-items-center mt-1"
+                                                    aria-label="{{ $reviewsCount }} reviews">
                                                     @if ($avg)
-                                                        <span class="me-1 text-dark" style="font-size: 0.8rem;">{{ $avg }}</span>
-                                                        <div class="me-1" style="font-size: 0.8rem;">
-                                                            @php
-                                                                $rating = (float)$avg;
-                                                                $fullStars = floor($rating);
-                                                                $halfStar = ($rating - $fullStars >= 0.5) ? 1 : 0;
-                                                                $emptyStars = 5 - $fullStars - $halfStar;
-                                                            @endphp
-                                                            @for($i=0; $i<$fullStars; $i++)
-                                                                <i class="fa-solid fa-star text-warning"></i>
-                                                            @endfor
-                                                            @if($halfStar)
-                                                                <i class="fa-solid fa-star-half-stroke text-warning"></i>
-                                                            @endif
-                                                            @for($i=0; $i<$emptyStars; $i++)
-                                                                <i class="fa-solid fa-star" style="color: #d3d3d3;"></i>
-                                                            @endfor
-                                                        </div>
+                                                        <span class="me-1 text-dark"
+                                                            style="font-size: 0.8rem;">{{ $avg }}</span>
+
+                                                        {{-- 星アイコン全体をリンクにする --}}
+                                                        <a href="{{ route('user.hotel.reviews', $hotel->id) }}"
+                                                            class="d-inline-flex align-items-center text-decoration-none me-2"
+                                                            aria-label="Read all reviews for {{ $hotel->name }}">
+                                                            <div class="me-1"
+                                                                style="font-size: 0.8rem; line-height: 1;">
+                                                                @php
+                                                                    $rating = (float) $avg;
+                                                                    $fullStars = floor($rating);
+                                                                    $halfStar = $rating - $fullStars >= 0.5 ? 1 : 0;
+                                                                    $emptyStars = 5 - $fullStars - $halfStar;
+                                                                @endphp
+
+                                                                @for ($i = 0; $i < $fullStars; $i++)
+                                                                    <i class="fa-solid fa-star text-warning"></i>
+                                                                @endfor
+                                                                @if ($halfStar)
+                                                                    <i
+                                                                        class="fa-solid fa-star-half-stroke text-warning"></i>
+                                                                @endif
+                                                                @for ($i = 0; $i < $emptyStars; $i++)
+                                                                    <i class="fa-solid fa-star"
+                                                                        style="color: #d3d3d3;"></i>
+                                                                @endfor
+                                                            </div>
+                                                            <span class="text-secondary"
+                                                                style="font-size: 0.9rem;">({{ $reviewsCount }})</span>
                                                     @endif
-                                                    <span class="text-secondary" style="font-size: 0.9rem;">({{ $reviewsCount }})</span>
+                                                    </a>
                                                 </div>
                                             @else
                                                 <div class="small text-muted mt-1">No reviews</div>
@@ -232,18 +245,20 @@
                                         <div class="text-end">
                                             @php
                                                 $rooms = $hotel->rooms ?? collect();
-                                                
+
                                                 if (request('sort') === 'price_desc') {
-                                                    $priceRaw = $hotel->max_price ?? ($rooms->count() ? $rooms->max('charges') : null);
+                                                    $priceRaw =
+                                                        $hotel->max_price ??
+                                                        ($rooms->count() ? $rooms->max('charges') : null);
                                                 } else {
-                                                    $priceRaw = $hotel->min_price ?? ($rooms->count() ? $rooms->min('charges') : null);
+                                                    $priceRaw =
+                                                        $hotel->min_price ??
+                                                        ($rooms->count() ? $rooms->min('charges') : null);
                                                 }
 
                                                 // 表示用にフォーマット（小数点2桁）
                                                 $displayPrice =
-                                                    $priceRaw !== null
-                                                        ? number_format((float) $priceRaw, 2)
-                                                        : null;
+                                                    $priceRaw !== null ? number_format((float) $priceRaw, 2) : null;
 
                                                 // コントローラで available_rooms_count を付与しているならそれを使う
                                                 // 付与していない場合は null（ビューでは rooms の有無で判断）
@@ -253,11 +268,13 @@
                                             {{-- 部屋が無い場合は明示的メッセージを出す --}}
                                             @if ($rooms->count() === 0)
                                                 <div class="h6 mb-0 text-muted">No rooms</div>
-                                                <div class="small text-muted">Room information has not yet been registered.</div>
+                                                <div class="small text-muted">Room information has not yet been registered.
+                                                </div>
                                             @else
                                                 @if ($available !== null && (int) $available <= 0)
                                                     <div class="h5 mb-0 text-danger">Sold out</div>
-                                                    <div class="small text-muted">No available rooms for selected dates</div>
+                                                    <div class="small text-muted">No available rooms for selected dates
+                                                    </div>
                                                 @elseif ($displayPrice !== null)
                                                     <div class="h5 mb-0">₱{{ $displayPrice }}~</div>
                                                     <div class="small text-muted">per night</div>
@@ -365,7 +382,7 @@
     </div>
 
 
-    
+
 
     <style>
         .top-photo {

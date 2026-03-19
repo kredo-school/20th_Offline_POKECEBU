@@ -157,9 +157,8 @@
                                 <div class="row g-0">
                                     <div class="col-md-4">
                                         {{-- 画像を左に --}}
-                                        <img src="{{ $restaurant->image_path }}"
-                                            class="img-fluid rounded-start w-100" alt="{{ $restaurant->name }}"
-                                            style="height:220px; object-fit:cover;">
+                                        <img src="{{ $restaurant->image_path }}" class="img-fluid rounded-start w-100"
+                                            alt="{{ $restaurant->name }}" style="height:220px; object-fit:cover;">
                                     </div>
                                     <div class="col-md-8">
                                         <div class="card-body">
@@ -181,28 +180,43 @@
                                                     @endphp
 
                                                     @if ($reviewsCount > 0)
-                                                        <div class="d-flex align-items-center mt-1" aria-label="{{ $reviewsCount }} reviews">
+                                                        <div class="d-flex align-items-center mt-1"
+                                                            aria-label="{{ $reviewsCount }} reviews">
                                                             @if ($avg)
-                                                                <span class="me-1 text-dark" style="font-size: 0.8rem;">{{ $avg }}</span>
-                                                                <div class="me-1" style="font-size: 0.8rem;">
-                                                                    @php
-                                                                        $rating = (float)$avg;
-                                                                        $fullStars = floor($rating);
-                                                                        $halfStar = ($rating - $fullStars >= 0.5) ? 1 : 0;
-                                                                        $emptyStars = 5 - $fullStars - $halfStar;
-                                                                    @endphp
-                                                                    @for($i=0; $i<$fullStars; $i++)
-                                                                        <i class="fa-solid fa-star text-warning"></i>
-                                                                    @endfor
-                                                                    @if($halfStar)
-                                                                        <i class="fa-solid fa-star-half-stroke text-warning"></i>
+                                                                <span class="me-1 text-dark"
+                                                                    style="font-size: 0.8rem;">{{ $avg }}</span>
+
+                                                                {{-- 星アイコン全体をリンクにする --}}
+                                                                <a href="{{ route('user.restaurant.reviews', $restaurant->id) }}"
+                                                                    class="d-inline-flex align-items-center text-decoration-none me-2"
+                                                                    aria-label="Read all reviews for {{ $restaurant->name }}">
+                                                                    <div class="me-1"
+                                                                        style="font-size: 0.8rem; line-height: 1;">
+                                                                        @php
+                                                                            $rating = (float) $avg;
+                                                                            $fullStars = floor($rating);
+                                                                            $halfStar =
+                                                                                $rating - $fullStars >= 0.5 ? 1 : 0;
+                                                                            $emptyStars = 5 - $fullStars - $halfStar;
+                                                                        @endphp
+
+                                                                        @for ($i = 0; $i < $fullStars; $i++)
+                                                                            <i class="fa-solid fa-star text-warning"></i>
+                                                                        @endfor
+                                                                        @if ($halfStar)
+                                                                            <i
+                                                                                class="fa-solid fa-star-half-stroke text-warning"></i>
+                                                                        @endif
+                                                                        @for ($i = 0; $i < $emptyStars; $i++)
+                                                                            <i class="fa-solid fa-star"
+                                                                                style="color: #d3d3d3;"></i>
+                                                                        @endfor
+                                                                    </div>
                                                                     @endif
-                                                                    @for($i=0; $i<$emptyStars; $i++)
-                                                                        <i class="fa-solid fa-star" style="color: #d3d3d3;"></i>
-                                                                    @endfor
-                                                                </div>
-                                                            @endif
-                                                            <span class="text-secondary" style="font-size: 0.9rem;">({{ $reviewsCount }})</span>
+                                                                    
+                                                                    <span class="text-secondary"
+                                                                    style="font-size: 0.9rem;">({{ $reviewsCount }})</span>
+                                                                </a>
                                                         </div>
                                                     @else
                                                         <div class="small text-muted mt-1">No reviews</div>
@@ -213,9 +227,13 @@
                                                     @php
                                                         $tables = $restaurant->tables ?? collect();
                                                         if (request('sort') === 'price_desc') {
-                                                            $priceRaw = $restaurant->max_price ?? ($tables->count() ? $tables->max('charges') : null);
+                                                            $priceRaw =
+                                                                $restaurant->max_price ??
+                                                                ($tables->count() ? $tables->max('charges') : null);
                                                         } else {
-                                                            $priceRaw = $restaurant->min_price ?? ($tables->count() ? $tables->min('charges') : null);
+                                                            $priceRaw =
+                                                                $restaurant->min_price ??
+                                                                ($tables->count() ? $tables->min('charges') : null);
                                                         }
 
                                                         $displayPrice =
@@ -227,11 +245,13 @@
 
                                                     @if ($tables->count() === 0)
                                                         <div class="h6 mb-0 text-muted">No tables</div>
-                                                        <div class="small text-muted">Table information has not yet been registered.</div>
+                                                        <div class="small text-muted">Table information has not yet been
+                                                            registered.</div>
                                                     @else
                                                         @if ($available !== null && (int) $available <= 0)
                                                             <div class="h6 mb-0 text-danger">Sold out</div>
-                                                            <div class="small text-muted">No available tables for selected time</div>
+                                                            <div class="small text-muted">No available tables for selected
+                                                                time</div>
                                                         @elseif ($displayPrice !== null)
                                                             <div class="h5 mb-0">₱{{ $displayPrice }}~</div>
                                                             <div class="small text-muted">per booking</div>

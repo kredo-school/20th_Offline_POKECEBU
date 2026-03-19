@@ -14,7 +14,7 @@
 
                 <div class="card shadow-sm rounded-4">
                     <div class="card-header fw-semibold">
-                        Personal Informationjjjj
+                        Personal Information
                     </div>
 
                     <div class="card-body">
@@ -29,7 +29,7 @@
                             </div>
                         @endif
 
-                        <form action="{{ route('mypage.updateProfile') }}" method="POST">
+                        <form action="{{ route('user.mypage.updateProfile') }}" method="POST">
                             @csrf
 
                             <div class="row mb-3">

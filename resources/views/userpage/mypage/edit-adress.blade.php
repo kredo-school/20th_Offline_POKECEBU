@@ -18,7 +18,7 @@
 
                 <div class="card-body">
                     {{-- フォームの開始 📝 --}}
-                    <form action="{{ route('update.adress') }}" method="POST">
+                    <form action="{{ route('user.update.adress') }}" method="POST">
                         @csrf
 
                         <div class="mb-3">

@@ -190,14 +190,41 @@
                                     @endif
                                 </td>
                                 <td>
-                                    <div class="fw-bold text-dark">{{ $restaurant->name ?? optional($restaurant->user)->name }}</div>
-                                    <div class="text-muted ms-2">({{ optional($restaurant->user)->email }})</div>
+                                    <div class="fw-bold text-dark">
+                                            {{ $restaurant->name ?? (optional($restaurant->user)->name ?? 'Unknown') }}
+                                    </div>
+
+                                    {{-- メールの表示ロジック --}}
+                                    <div class="small text-muted">
+                                        <i class="fa-regular fa-envelope me-1"></i>
+                                        @if ($restaurant->type === 'tmp')
+                                            {{ $restaurant->representative_email }}
+                                        @else
+                                            {{ optional($restaurant->user)->email ?? 'No Email' }}
+                                        @endif
+                                    </div>
                                 </td>
-                                <td>{{ $restaurant->phone }}</td>
-                                <td>{{ $restaurant->address }}</td>
+
+                                {{-- 電話番号 --}}
                                 <td>
-                                    <span
-                                        class="fw-medium">{{ optional($restaurant->created_at)->format('Y-m-d H:i') }}</span>
+                                    <div class="small">
+                                        <i class="fa-solid fa-phone me-1 text-muted"></i>
+                                        {{ $restaurant->phone ?? 'N/A' }}
+                                    </div>
+                                </td>
+
+                                {{-- 住所 --}}
+                                <td style="white-space: normal !important; min-width: 180px;">
+                                    <div class="small text-secondary">
+                                        <i class="fa-solid fa-location-dot me-1 text-muted"></i>
+                                        {{ $restaurant->address ?? 'No address' }}
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <span class="fw-medium small">
+                                        {{ optional($restaurant->created_at)->format('Y-m-d H:i') }}
+                                    </span>
                                 </td>
                                 <td>
                                     @if ($restaurant->status === 'approved')
@@ -215,20 +242,20 @@
                                         <button class="btn-action" data-bs-toggle="dropdown">
                                             <i class="fa-solid fa-ellipsis-vertical"></i>
                                         </button>
-                                        <div class="dropdown-menu dropdown-menu-end shadow">
+                                        <div class="dropdown-menu dropdown-menu-end shadow border-0">
                                             @if ($restaurant->status === 'pending')
-                                                <button class="dropdown-item text-success" data-bs-toggle="modal"
+                                                <button class="dropdown-item text-success fw-bold" data-bs-toggle="modal"
                                                     data-bs-target="#approveModal-{{ $restaurant->id }}">
-                                                    <i class="fa-regular fa-circle-check"></i> Approve
+                                                    <i class="fa-regular fa-circle-check me-2"></i>Approve
                                                 </button>
-                                                <button class="dropdown-item text-danger" data-bs-toggle="modal"
+                                                <button class="dropdown-item text-danger fw-bold" data-bs-toggle="modal"
                                                     data-bs-target="#rejectModal-{{ $restaurant->id }}">
-                                                    <i class="fa-regular fa-circle-xmark"></i> Reject
+                                                    <i class="fa-regular fa-circle-xmark me-2"></i>Reject
                                                 </button>
                                             @else
                                                 <a href="{{ route('admin.showDetailRestaurant', $restaurant->id) }}"
                                                     class="dropdown-item">
-                                                    <i class="fa-solid fa-eye"></i> View details
+                                                    <i class="fa-solid fa-eye me-2"></i>View details
                                                 </a>
                                             @endif
                                         </div>
@@ -242,7 +269,7 @@
                             <tr>
                                 <td colspan="7" class="text-center py-5 text-muted">
                                     <i class="fa-solid fa-inbox d-block fs-2 mb-3 opacity-25"></i>
-                                    No restaurants found in the database.
+                                    No restaurants found.
                                 </td>
                             </tr>
                         @endforelse

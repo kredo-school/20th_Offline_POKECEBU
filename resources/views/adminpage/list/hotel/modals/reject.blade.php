@@ -1,36 +1,56 @@
-<div class="modal fade" id="rejectModal-{{ $hotel->id }}" tabindex="-1">
+<div class="modal fade" id="rejectModal-{{ $hotel->id }}" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
+        <div class="modal-content border-0 shadow-lg text-start" style="border-radius: 24px; white-space: normal !important;">
 
-            <div class="modal-header">
-                <h5 class="modal-title">Confirmation</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            <div class="modal-header border-bottom-0 pb-0 mt-2">
+                <h5 class="modal-title fw-bold text-dark px-3">
+                    <i class="fa-solid fa-triangle-exclamation text-danger me-2"></i>Reject Application
+                </h5>
+                <button type="button" class="btn-close me-2" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
-            @if (!is_null($hotel->approval_id))
-                <?php $id = $hotel->approval_id; ?>
-            @else
-                <?php $id = $hotel->id; ?>
-            @endif
+            @php
+                $id = !is_null($hotel->approval_id) ? $hotel->approval_id : $hotel->id;
+            @endphp
 
-            <div class="modal-body">
+            <div class="modal-body py-4 px-4">
                 <form method="post" action="{{ route('admin.hotel.reject', $id) }}">
                     @csrf
-                    <p>
-                        Are you sure you want to reject<br>
-                        <strong>
-                            {{ $hotel->type === 'tmp' ? $hotel->name : optional($hotel->user)->name }}
-                        </strong>?
+                    
+                    <p class="text-secondary mb-3">
+                        Are you sure you want to reject this hotel? Please provide a reason to help the applicant understand the decision.
                     </p>
-                    
-                    <a href="{{ route('admin.hotel.approval.show', $id) }}">View details</a>
-                    
-                    <div>
-                        <textarea name="reject_reason" placeholder="Reasons for reject" class="form-control mt-2 mb-3"></textarea>
+
+                    <div class="p-3 bg-light rounded-3 mb-3">
+                        <div class="small text-muted mb-1">Target Hotel</div>
+                        <strong class="text-dark fs-5">
+                            {{ $hotel->type === 'tmp' ? $hotel->name : optional($hotel->user)->name }}
+                        </strong>
+                        <div class="mt-2 text-center">
+                            <a href="{{ route('admin.hotel.approval.show', $id) }}" class="small text-decoration-none fw-bold">
+                                <i class="fa-solid fa-file-circle-exclamation me-1"></i> Review full application
+                            </a>
+                        </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-danger ms-2">Reject</button>
+
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold text-muted">Reason for Rejection</label>
+                        <textarea name="reject_reason" 
+                                  placeholder="Explain why this application was rejected..." 
+                                  class="form-control border-1 shadow-sm p-3" 
+                                  rows="3"
+                                  style="border-radius: 12px; resize: none;" required></textarea>
+                    </div>
+
+                    <div class="modal-footer border-top-0 pt-0 pb-2 px-0 d-flex justify-content-center">
+                        <button type="button" class="btn btn-light fw-bold px-4 py-2 me-2" data-bs-dismiss="modal" 
+                                style="border-radius: 12px; border: 1px solid #e2e8f0;">
+                            Keep Pending
+                        </button>
+                        <button type="submit" class="btn btn-danger fw-bold px-4 py-2 shadow-sm" 
+                                style="border-radius: 12px; background-color: #ef4444;">
+                            Confirm Rejection
+                        </button>
                     </div>
                 </form>
             </div>

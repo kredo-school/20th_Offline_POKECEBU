@@ -108,8 +108,8 @@ class StaffMypageController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('ホテル保存エラー: ' . $e->getMessage());
-            return back()->withInput()->withErrors(['error' => '保存に失敗しました：' . $e->getMessage()]);
+            Log::error('Failed to save: ' . $e->getMessage());
+            return back()->withInput()->withErrors(['error' => 'Failed to save:' . $e->getMessage()]);
         }
     }
 
@@ -130,13 +130,16 @@ class StaffMypageController extends Controller
     // レストラン
     public function indexRestaurant()
     {
-        $restaurant = Restaurant::first();
+        // ★変更: emailでログインユーザーのレストランを取得
+        $restaurant = Restaurant::where('id', Auth::user()->id)->first();
 
-        // ログイン中のユーザーが申請した履歴を、新しい順に取得（例えば最新5件）
-        $history = TmpRestaurant::where('restaurant_id', $restaurant->id)
-            ->latest()
-            ->take(5)
-            ->get();
+        $history = [];
+        if ($restaurant) {
+            $history = TmpRestaurant::where('restaurant_id', $restaurant->id)
+                ->latest()
+                ->take(5)
+                ->get();
+        }
 
         return view('staffpage.mypage.mypage-restaurant', compact('restaurant', 'history'));
     }
@@ -144,56 +147,49 @@ class StaffMypageController extends Controller
     // 編集ページ表示
     public function updateStaffMypagerestaurant(Request $request)
     {
-        // 1. バリデーション（緯度経度の数字チェックも追加）
         $request->validate([
-            'name' => 'required|string|max:255',
-            'latitude' => 'nullable|numeric',
+            'name'      => 'required|string|max:255',
+            'latitude'  => 'nullable|numeric',
             'longitude' => 'nullable|numeric',
-            'image_path' => 'nullable|image|max:2048',
+            // ★変更: 複数画像対応
+            'images'    => 'nullable|array',
+            'images.*'  => 'image|max:2048',
         ]);
 
         DB::beginTransaction();
         try {
-            $restaurant = Restaurant::first();
+            // ★変更: emailでログインユーザーのレストランを取得
+            $restaurant = Restaurant::where('id', Auth::user()->id)->first();
             if (!$restaurant) {
                 return redirect()->back()->with('error', 'Restaurant not found.');
             }
 
-            // 2. データの準備
             $data = $request->only([
-                'name',
-                'description',
-                'address',
-                'city',
-                'latitude',
-                'longitude',
-                'star_rating',
-                'phone',
-                'website',
-                'representative_name',
-                'representative_email',
-                'email'
+                'name', 'description', 'address', 'city', 'latitude', 'longitude',
+                'star_rating', 'phone', 'website', 'representative_name',
+                'representative_email', 'email'
             ]);
             $data['restaurant_id'] = $restaurant->id;
             $data['status'] = 'pending';
 
-            // 基本情報を保存
             $tmpRestaurant = TmpRestaurant::create($data);
 
-            // 3. 画像がある場合
-            if ($request->hasFile('image_path')) {
-                $imageFile = $request->file('image_path');
-                $imageData = base64_encode(file_get_contents($imageFile->getRealPath()));
-                $base64String = 'data:' . $imageFile->getMimeType() . ';base64,' . $imageData;
+            // ★変更: 複数画像をループしてbase64で保存（保存先・形式は変更なし）
+            if ($request->hasFile('images')) {
+                foreach ($request->file('images') as $imageFile) {
+                    $imageData    = base64_encode(file_get_contents($imageFile->getRealPath()));
+                    $base64String = 'data:' . $imageFile->getMimeType() . ';base64,' . $imageData;
 
-                TmpRestaurantImage::create([
-                    'tmp_restaurant_id' => $tmpRestaurant->id,
-                    'image' => $base64String,
-                ]);
+                    TmpRestaurantImage::create([
+                        'tmp_restaurant_id' => $tmpRestaurant->id,
+                        'image'             => $base64String,
+                    ]);
+                }
             }
 
             DB::commit();
             return redirect()->route('restaurant.restaurant.complete');
+
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Restaurant Save Error: ' . $e->getMessage());
@@ -203,24 +199,21 @@ class StaffMypageController extends Controller
 
     public function restaurantcomplete()
     {
-        // 完了画面に表示するための最新の申請データを取得
-        // hotel版と同様、カラム名に合わせて調整してください
         $tmpRestaurant = TmpRestaurant::latest()->first();
-
         return view('staffpage.mypage.restaurant-complete', compact('tmpRestaurant'));
     }
-    // --- 追加分: レストラン編集画面を表示する ---
+
+    // レストラン編集画面表示
     public function editStaffMypagerestaurant()
     {
-        // 1. レストラン情報を取得（1件目を取得）
-        $restaurant = Restaurant::first();
+        // ★変更: emailでログインユーザーのレストランを取得
+        $restaurant = Restaurant::where('id', Auth::user()->id)->first();
 
-        // 2. もしデータがなければエラーを回避するために空のモデルを渡すか、チェックを行う
         if (!$restaurant) {
-            // 必要に応じてエラー処理
+            return redirect()->route('restaurant.staff.mypage.restaurant')
+                ->withErrors(['error' => 'No restaurant information.']);
         }
 
-        // 3. 編集画面を表示
         return view('staffpage.mypage.edit-restaurant', compact('restaurant'));
     }
 }

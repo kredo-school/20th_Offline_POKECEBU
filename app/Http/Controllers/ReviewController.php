@@ -12,6 +12,36 @@ use App\Models\Restaurant;
 
 class ReviewController extends Controller
 {
+    // ホテルのレビュー一覧を表示
+public function showHotelReviews($id)
+{
+    $hotel = Hotel::findOrFail($id);
+    $reviews = Review::whereHas('hotelReservation', function($q) use ($id) {
+        $q->where('hotel_id', $id);
+    })->with('user')->latest()->paginate(10); // ページネーションを追加
+
+    return view('userpage.booking.reviews.hotel', [
+        'target' => $hotel,
+        'reviews' => $reviews,
+        'type' => 'hotel'
+    ]);
+}
+
+// レストランのレビュー一覧を表示
+public function showRestaurantReviews($id)
+{
+    $restaurant = Restaurant::findOrFail($id);
+    $reviews = Review::whereHas('restaurantReservation', function($q) use ($id) {
+        $q->where('restaurant_id', $id);
+    })->with('user')->latest()->paginate(10);
+
+    return view('userpage.booking.reviews.restaurant', [
+        'target' => $restaurant,
+        'reviews' => $reviews,
+        'type' => 'restaurant'
+    ]);
+}
+
     // レビュー保存
     public function store(Request $request) {
        $request->validate([

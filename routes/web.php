@@ -301,6 +301,9 @@ Route::group(['middleware' => 'auth'], function () {
         //game
         Route::get('/daily-fortune', [DailyFortuneController::class, 'show'])->name('daily.fortune.show');
         Route::post('/daily-fortune/draw', [DailyFortuneController::class, 'draw'])->name('daily.fortune.draw');
+
+        Route::get('/hotel/{id}/reviews', [ReviewController::class, 'showHotelReviews'])->name('hotel.reviews');
+        Route::get('/restaurant/{id}/reviews', [ReviewController::class, 'showRestaurantReviews'])->name('restaurant.reviews');
     });
 });
 

@@ -18,46 +18,56 @@
                 </a>
             </div>
 
-            {{-- Hotel Visual Section --}}
-            <div class="ig-profile-header mb-5">
-                @if ($hotel->images->isNotEmpty())
-                    <img src="{{ Storage::url($hotel->images->first()->image) }}" class="ig-hotel-img">
-                @else
-                    <img src="https://via.placeholder.com/150" class="ig-hotel-img">
-                @endif
-            </div>
-            dd($hotel->images->first()->image);
+            {{-- $hotel が null の場合、以下すべてをスキップ --}}
+            @if ($hotel)
 
-            {{-- Information Grid --}}
-            <div class="ig-info-grid">
-                <div class="ig-info-item">
-                    <span class="ig-info-label">Representative</span>
-                    <span class="ig-info-value">{{ $hotel->representative_name ?? 'Not set' }}</span>
+                {{-- Hotel Visual Section --}}
+                <div class="ig-profile-header mb-5">
+                    @if ($hotel->images->isNotEmpty())
+                        @foreach ($hotel->images as $image)
+                            <img src="{{ $image->image }}"  class="ig-hotel-img" alt="Hotel Image">
+                        @endforeach
+                    @else
+                        <img src="https://via.placeholder.com/150" class="ig-hotel-img" alt="No Image">
+                    @endif
                 </div>
-                <div class="ig-info-item">
-                    <span class="ig-info-label">Email</span>
-                    <span class="ig-info-value">{{ $hotel->representative_email ?? 'Not set' }}</span>
+
+                {{-- Information Grid --}}
+                <div class="ig-info-grid">
+                    <div class="ig-info-item">
+                        <span class="ig-info-label">Representative</span>
+                        <span class="ig-info-value">{{ $hotel->representative_name ?? 'Not set' }}</span>
+                    </div>
+                    <div class="ig-info-item">
+                        <span class="ig-info-label">Email</span>
+                        <span class="ig-info-value">{{ $hotel->representative_email ?? 'Not set' }}</span>
+                    </div>
+                    <div class="ig-info-item">
+                        <span class="ig-info-label">Phone</span>
+                        <span class="ig-info-value">{{ $hotel->phone ?? 'Not set' }}</span>
+                    </div>
+                    <div class="ig-info-item">
+                        <span class="ig-info-label">Website</span>
+                        <span class="ig-info-value">
+                            @if ($hotel->website)
+                                <a href="{{ $hotel->website }}" target="_blank" class="ig-link">{{ $hotel->website }}</a>
+                            @else
+                                Not set
+                            @endif
+                        </span>
+                    </div>
+                    <div class="ig-info-item full-width">
+                        <span class="ig-info-label">Address</span>
+                        <span class="ig-info-value">{{ $hotel->address ?? 'Not set' }}, {{ $hotel->city ?? '' }}</span>
+                    </div>
                 </div>
-                <div class="ig-info-item">
-                    <span class="ig-info-label">Phone</span>
-                    <span class="ig-info-value">{{ $hotel->phone ?? 'Not set' }}</span>
-                </div>
-                <div class="ig-info-item">
-                    <span class="ig-info-label">Website</span>
-                    <span class="ig-info-value">
-                        @if ($hotel->website)
-                            <a href="{{ $hotel->website }}" target="_blank" class="ig-link">{{ $hotel->website }}</a>
-                        @else
-                            Not set
-                        @endif
-                    </span>
-                </div>
-                <div class="ig-info-item full-width">
-                    <span class="ig-info-label">Address</span>
-                    <span class="ig-info-value">{{ $hotel->address ?? 'Not set' }}, {{ $hotel->city ?? '' }}</span>
-                </div>
-            </div>
+
+            @else
+                <p class="text-muted text-center py-4">No hotel information.</p>
+            @endif
+
         </div>
+
         <div class="ig-history-card">
             <h4 class="ig-summary-title mb-4" style="font-size: 18px; font-weight: 700;">Application History</h4>
             <div class="table-responsive">

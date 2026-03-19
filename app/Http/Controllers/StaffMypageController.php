@@ -21,7 +21,7 @@ class StaffMypageController extends Controller
     public function index()
     {
         // ログインユーザーのホテル情報を取得
-        $hotel = Hotel::with('images')->where('id', Auth::id())->first();
+        $hotel = Hotel::with('images')->where('id', Auth::user()->id)->first();
 
         $history = [];
         if ($hotel) {
@@ -38,11 +38,12 @@ class StaffMypageController extends Controller
     // 編集ページ表示
     public function editStaffMypage()
     {
-        $hotel = Hotel::where('id', Auth::id())->first();
+        // ★変更: with('images') を追加
+        $hotel = Hotel::with('images')->where('id', Auth::user()->id)->first();
 
         if (!$hotel) {
             return redirect()->route('hotel.staff.mypage.hotel')
-                ->withErrors(['error' => 'ホテル情報が見つかりません。']);
+                ->withErrors(['error' => 'No hotel information.']);
         }
 
         return view('staffpage.mypage.edit-hotel', compact('hotel'));
@@ -52,16 +53,19 @@ class StaffMypageController extends Controller
     public function storeHotel(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
+            'name'  => 'required|string|max:255',
             'email' => 'required|email',
-            'image_path' => 'nullable|image|max:2048',
+            // ★変更: image_path → images[] で複数対応
+            'images'   => 'nullable|array',
+            'images.*' => 'image|max:2048',
         ]);
 
         DB::beginTransaction();
         try {
-            $hotel = Hotel::where('id', Auth::id())->first();
+           // これに変える
+            $hotel = Hotel::where('id', Auth::user()->id)->first();
             if (!$hotel) {
-                throw new \Exception('元となるホテルデータが存在しません。');
+                throw new \Exception('The original hotel data does not exist.');
             }
 
             $data = $request->only([
@@ -84,20 +88,22 @@ class StaffMypageController extends Controller
 
             $tmpHotel = TmpHotel::create($data);
 
-            if ($request->hasFile('image_path')) {
-                $imageFile = $request->file('image_path');
-                $imageData = base64_encode(file_get_contents($imageFile->getRealPath()));
-                $base64String = 'data:' . $imageFile->getMimeType() . ';base64,' . $imageData;
+            // ★変更: 複数画像をループしてbase64で保存
+            if ($request->hasFile('images')) {
+                foreach ($request->file('images') as $imageFile) {
+                    $imageData    = base64_encode(file_get_contents($imageFile->getRealPath()));
+                    $base64String = 'data:' . $imageFile->getMimeType() . ';base64,' . $imageData;
 
-                TmpHotelImage::create([
-                    'tmp_hotel_id' => $tmpHotel->id,
-                    'image' => $base64String,
-                ]);
+                    TmpHotelImage::create([
+                        'tmp_hotel_id' => $tmpHotel->id,
+                        'image'        => $base64String,
+                    ]);
+                }
             }
 
             DB::commit();
 
-            // ✅ 完了画面へリダイレクト
+            // 完了画面へリダイレクト
             return redirect()->route('hotel.staff.mypage.hotel.complete');
 
         } catch (\Exception $e) {

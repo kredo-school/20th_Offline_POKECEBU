@@ -187,9 +187,9 @@ class RestaurantController extends Controller
 
         // 必要なリレーションを eager load、合計いいね数を付与、現在ユーザー分の favorites を絞ってロード
         $query->with(['restaurantImages', 'tables'])
+            ->select('restaurants.*')
             ->withCount('favorites')
             // reviews を reservation 経由で集計する相関サブクエリを追加
-            ->select('restaurants.*')
             ->selectRaw('(SELECT COUNT(*) FROM reviews r JOIN restaurant_reservations rr ON r.restaurant_reservation_id = rr.id WHERE rr.restaurant_id = restaurants.id) as reviews_count')
             ->selectRaw('(SELECT AVG(r.rating) FROM reviews r JOIN restaurant_reservations rr ON r.restaurant_reservation_id = rr.id WHERE rr.restaurant_id = restaurants.id) as reviews_avg_rating')
             ->with(['favorites' => function ($q) {

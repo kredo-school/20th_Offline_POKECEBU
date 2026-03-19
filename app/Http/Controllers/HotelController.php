@@ -75,10 +75,10 @@ class HotelController extends Controller
 
         // ベースクエリ（withCount は残す）
         $query = Hotel::query()
-            ->with(['hotelImages', 'rooms.categories', 'rooms.reservations']) // reviews は不要なので外す
-            ->withCount('favorites')
-            // reviews を target_id で参照していた既存クエリの代替：reservation 経由で集計
             ->select('hotels.*')
+            ->withCount('favorites')
+            ->with(['hotelImages', 'rooms.categories', 'rooms.reservations']) // reviews は不要なので外す
+            // reviews を target_id で参照していた既存クエリの代替：reservation 経由で集計
             ->selectRaw('(SELECT COUNT(*) FROM reviews r JOIN hotel_reservations hr ON r.hotel_reservation_id = hr.id WHERE hr.hotel_id = hotels.id) as reviews_count')
             ->selectRaw('(SELECT AVG(r.rating) FROM reviews r JOIN hotel_reservations hr ON r.hotel_reservation_id = hr.id WHERE hr.hotel_id = hotels.id) as reviews_avg_rating');
 

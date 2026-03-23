@@ -138,7 +138,7 @@
                     </div>
 
                     <p class="fw-semibold mt-3 text-end text-primary">
-                        Average Price: ¥{{ number_format($restaurant->price ?? 0) }} / person
+                        Average Price: ₱{{ number_format($restaurant->price ?? 0) }} / person
                     </p>
                 </div>
             </div>

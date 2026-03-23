@@ -263,6 +263,7 @@
                                         <form method="GET"
                                             action="{{ route('user.hotels.show', ['hotel' => $hotel->id]) }}">
                                             <input type="hidden" name="clear_reservation_session" value="1">
+                                            <input type="hidden" name="room_type_id" value="{{ $room->type_id }}">
                                             <input type="hidden" name="guests" value="{{ request('guests', 1) }}">
                                             <input type="hidden" name="checkin" value="{{ request('checkin') }}">
                                             <input type="hidden" name="checkout" value="{{ request('checkout') }}">

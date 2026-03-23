@@ -6,10 +6,13 @@
 
     <div class="container  mt-4">
 
-
-        <a href="{{ route('hotel.calendar') }}" class="btnbtn-sm mt-4 text-decoration-none text-dark">
+        
+        <a href="{{ route('hotel.calendar') }}" class="btn btn-sm text-decoration-none text-dark">
             <i class="fa-solid fa-arrow-left"></i> calendar
         </a>
+     
+
+       
 
         {{-- Header --}}
         <div class="table-wrapper">
@@ -24,16 +27,13 @@
             <div class="card shadow-sm mb-3">
 
                 <div class="card-body d-flex justify-content-between align-items-center">
-
-                    <div>
-                        <h3 class="mb-1">
-                            <i class="fa-regular fa-calendar-check"></i>
-                            Reservation: <span class="fw-bold">{{ $date->format('Y/m/d') }}</span>
-                        </h3>
-                    </div>
+                    <h3 class="mb-1">
+                        <i class="fa-regular fa-calendar-check"></i>
+                        Reservation: <span class="fw-bold">{{ $date->format('Y/m/d') }}</span>
+                    </h3>
                 </div>
-                <div class="row text-center m-4">
 
+                <div class="row text-center m-4">
                     <div class="col-md-3">
                         <div class="card shadow-sm">
                             <div class="card-body">
@@ -61,8 +61,6 @@
                         </div>
                     </div>
 
-
-
                     <div class="col-md-3">
                         <div class="card shadow-sm">
                             <div class="card-body">
@@ -71,9 +69,7 @@
                             </div>
                         </div>
                     </div>
-
                 </div>
-
             </div>
         </div>
 

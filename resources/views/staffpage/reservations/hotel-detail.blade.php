@@ -27,10 +27,6 @@
 
                       </small>
                   </div>
-
-                  <button class="btn btn-danger">
-                      Cancel Reservation
-                  </button>
               </div>
           </div>
 

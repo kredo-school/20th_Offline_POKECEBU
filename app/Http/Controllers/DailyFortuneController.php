@@ -17,6 +17,7 @@ class DailyFortuneController extends Controller
         $fortuneLog = DailyFortuneLog::with('fortuneSpot')
             ->where('user_id', $user->id)
             ->where('fortune_date', $today)
+            ->orderBy('id', 'desc')
             ->first();
 
         return view('daily_fortune', compact('fortuneLog'));
@@ -27,32 +28,25 @@ class DailyFortuneController extends Controller
         $user = Auth::user();
         $today = now()->toDateString();
 
-        $existingLog = DailyFortuneLog::with('fortuneSpot')
-            ->where('user_id', $user->id)
-            ->where('fortune_date', $today)
-            ->first();
-
-        if ($existingLog) {
-            return redirect()->route('user.daily.fortune.show')
-                ->with('message', '今日はすでにおみくじを引いています。');
-        }
-
         $spot = FortuneSpot::where('is_active', true)
             ->inRandomOrder()
             ->first();
 
         if (!$spot) {
             return redirect()->route('home')
-                ->with('error', 'おすすめスポットが登録されていません。');
+                ->with('error', 'No recommended spots are registered.');
         }
 
-        DailyFortuneLog::create([
-            'user_id' => $user->id,
-            'fortune_spot_id' => $spot->id,
-            'fortune_date' => $today,
-        ]);
+        DailyFortuneLog::updateOrCreate(
+            ['user_id' => $user->id, 'fortune_date' => $today],
+            ['fortune_spot_id' => $spot->id]
+        );
+
+        if (request()->wantsJson()) {
+            return response()->json(['spot' => $spot]);
+        }
 
         return redirect()->route('user.daily.fortune.show')
-            ->with('success', '今日のおすすめスポットが決まりました。');
+            ->with('success', 'Your fortune has been drawn!');
     }
 }

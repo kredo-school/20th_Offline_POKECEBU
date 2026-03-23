@@ -461,7 +461,7 @@
                                         </p>
                                         <p class="card-price">
                                             @if ($hotel->rooms->isNotEmpty())
-                                                ¥{{ $hotel->rooms->min('charge') }}〜
+                                                ₱{{ $hotel->rooms->min('charge') }}〜
                                             @else
                                                 <span class="text-muted">The price has not been set.</span>
                                             @endif

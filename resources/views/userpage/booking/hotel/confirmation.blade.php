@@ -68,7 +68,7 @@
                 
                 <div class="total-price-box mt-3 d-flex justify-content-between align-items-center">
                     <span class="label-en mb-0">Total Amount</span>
-                    <span class="fs-2 fw-bold text-primary">¥{{ number_format($price * $guestsCount) }}</span>
+                    <span class="fs-2 fw-bold text-primary">{{ number_format($price * $guestsCount) }}</span>
                 </div>
             </div>
         </div>
@@ -97,8 +97,8 @@
         
         <div class="p-3 bg-light rounded-4 mb-4">
             <label class="label-en">Main Guest</label>
-            <p class="fw-bold fs-5 mb-1">{{ $userDetail->first_name }} {{ $userDetail->last_name }}</p>
-            <p class="text-muted small mb-0">{{ $userDetail->phone }}</p>
+            <p class="fw-bold fs-5 mb-1">{{ optional($userDetail)->first_name ?? Auth::user()->name ?? 'Guest' }} {{ optional($userDetail)->last_name }}</p>
+            <p class="text-muted small mb-0">{{ optional($userDetail)->phone ?? Auth::user()->email ?? 'No contact info' }}</p>
         </div>
 
         @if (!empty($otherGuests))

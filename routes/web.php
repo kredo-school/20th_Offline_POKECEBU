@@ -278,8 +278,9 @@ Route::group(['middleware' => 'auth'], function () {
 
 
         // レストラン予約
-        Route::get('/restaurant/reservation', [RestaurantReservationController::class, 'showInfo'])->name('restaurant.show');
+        Route::get('/restaurant/{restaurant}/reservation', [RestaurantReservationController::class, 'showInfo'])->name('restaurant.show');
         Route::post('/restaurant/reserve', [RestaurantReservationController::class, 'store'])->name('restaurant.reserve');
+        Route::post('/restaurant/reservation/{reservation_id}/cancel', [RestaurantReservationController::class, 'cancel'])->name('restaurant.reservation.cancel');
 
         // 支払
         Route::post('/reservation/pay', [HotelReservationController::class, 'confirmReservation'])->name('reservation.pay');

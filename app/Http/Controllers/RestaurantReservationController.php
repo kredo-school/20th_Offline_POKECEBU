@@ -16,11 +16,8 @@ class RestaurantReservationController extends Controller
     /**
      * 特定のレストランを表示（ホテルと同じ ID固定方式）
       */
-     public function showInfo()
+     public function showInfo($id)
      {
-    //  テストしたいレストランIDをここで指定（3や4など、DBにあるIDに変えてね）
-         $id = 5; 
-        
          $restaurant = Restaurant::findOrFail($id);
 
         return view('userpage.booking.restaurant', compact('restaurant'));
@@ -57,6 +54,32 @@ class RestaurantReservationController extends Controller
         ]);
 
         return view('userpage.booking.restaurant.reservation-success');
+    }
+
+    public function cancel(Request $request, string $reservationId)
+    {
+        $reservation = RestaurantReservation::where('reservation_id', $reservationId)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
+
+        $canceledId = \Illuminate\Support\Facades\DB::table('statuses')->where('name', 'Cancelled')->value('id') ?? 5;
+
+        if ($reservation->status_id === $canceledId) {
+            return redirect()->route('user.booking')
+                ->with('error', 'This reservation has already been cancelled.');
+        }
+
+        try {
+            $reservation->status_id = $canceledId;
+            $reservation->save();
+
+            return redirect()->route('user.booking')
+                ->with('success', 'Your restaurant reservation has been canceled.');
+        } catch (\Throwable $e) {
+            \Log::error('Restaurant reservation cancel failed: ' . $e->getMessage());
+            return redirect()->route('user.booking')
+                ->with('error', 'Failed to cancel the reservation. Please try again.');
+        }
     }
 
 }

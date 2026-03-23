@@ -65,7 +65,7 @@
 
                 <div class="col-md-1 d-grid">
                     <button type="submit" class="btn btn-primary" aria-label="Search">
-                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <i class="fa-solid fa-utensils"></i>
                     </button>
                 </div>
             </form>
@@ -82,7 +82,7 @@
             <aside class="col-md-3 mb-4">
                 <div class="card shadow-sm">
                     <div class="card-body">
-                        <h6 class="fw-bold mb-3"><i class="fa-solid fa-filter me-2"></i>Filters</h6>
+                        <h6 class="fw-bold mb-3"><i class="fa-solid fa-utensils"></i>Filters</h6>
 
                         <form id="filters-form" method="get" action="{{ route('user.restaurants.search') }}">
                             <input type="hidden" name="destination" value="{{ request('destination') }}">

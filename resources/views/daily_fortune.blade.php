@@ -26,14 +26,6 @@
             box-shadow: 0 10px 30px rgba(0, 105, 137, 0.2);
         }
 
-        .top-photo::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: linear-gradient(to bottom, rgba(0, 50, 80, 0.4), rgba(0, 105, 140, 0.7));
-            z-index: 1;
-        }
-
         .top-photo h1 {
             font-size: 3.5rem;
             font-weight: 800;
@@ -43,9 +35,6 @@
             letter-spacing: 1px;
             text-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
         }
-
-
-
 
         .fortune-card {
             border-radius: 30px;
@@ -191,12 +180,6 @@
         }
     </style>
 @endpush
-
-@section('navbar')
-    <nav class="navbar navbar-expand-md" style=" height:80px;">
-        @include('layouts.partials.nav-user')
-    </nav>
-@endsection
 
 @section('content')
     <div class="container fortune-wrapper">

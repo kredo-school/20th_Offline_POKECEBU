@@ -1,37 +1,29 @@
-@extends('layouts.app')
+@extends('layouts.user')
 
 @push('styles')
     <style>
         body {
-            /* Sea gradient */
-            background: linear-gradient(135deg, #e0f7fa 0%, #80deea 100%);
-            font-family: 'Inter', 'Segoe UI', sans-serif;
-            background-attachment: fixed;
-            min-height: 100vh;
+            font-family: 'Segoe UI', sans-serif;
         }
 
         .top-photo {
             width: 100%;
-            height: 280px;
+            height: 200px;
+            /* FAQと同じ高さに統一 */
             margin-bottom: 20px;
-            background-image: url("{{ asset('images/fortune/hero-fortune.jpg') }}");
+            background-image: url("{{ asset('images/home-fortune.jpg') }}");
+            /* 好きな画像に差し替え */
             background-size: cover;
             background-position: center;
             display: flex;
             align-items: center;
             justify-content: center;
-            position: relative;
-            border-radius: 24px;
+            color: white;
+            text-align: center;
+            background-color: rgba(0, 0, 0, 0.1);
+            background-blend-mode: multiply;
             overflow: hidden;
             box-shadow: 0 10px 30px rgba(0, 105, 137, 0.2);
-        }
-
-        .top-photo::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: linear-gradient(to bottom, rgba(0, 50, 80, 0.4), rgba(0, 105, 140, 0.7));
-            z-index: 1;
         }
 
         .top-photo h1 {
@@ -44,12 +36,6 @@
             text-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
         }
 
-        .fortune-wrapper {
-            max-width: 850px;
-            margin: 50px auto;
-            padding: 0 20px;
-        }
-
         .fortune-card {
             border-radius: 30px;
             background: rgba(255, 255, 255, 0.9);
@@ -58,6 +44,7 @@
             padding: 10px;
             border: 1px solid rgba(255, 255, 255, 0.6);
             overflow: hidden;
+            margin-bottom: 200px;
         }
 
         .fortune-body {
@@ -194,20 +181,12 @@
     </style>
 @endpush
 
-@section('navbar')
-    <nav class="navbar navbar-expand-md" style=" height:80px;">
-        @include('layouts.partials.nav-user')
-    </nav>
-@endsection
-
 @section('content')
     <div class="container fortune-wrapper">
-        <div class="fortune-card animate-fade-in-up">
-            <div class="top-photo">
-                <h1>Today's Cebu Fortune</h1>
-            </div>
-
-
+        <div class="top-photo">
+            <h1>Today's Cebu Fortune</h1>
+        </div>
+        <div class="fortune-card">
             <div class="fortune-body">
                 @if (session('success'))
                     <div class="alert alert-success">{{ session('success') }}</div>

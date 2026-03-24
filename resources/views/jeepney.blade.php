@@ -1,10 +1,4 @@
-@extends('layouts.app')
-
-@section('navbar')
-    <nav class="navbar navbar-expand-md" style="height:80px;">
-        @include('layouts.partials.nav-user')
-    </nav>
-@endsection
+@extends('layouts.user')
 
 @section('content')
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -16,32 +10,22 @@
             font-family: 'Segoe UI', sans-serif;
         }
 
-        .jeepney-page {
-            max-width: 1460px;
-            margin: 0 auto;
-            padding: 20px 24px 60px;
-        }
-
-        /* ===== ここは送ってくれたコードをベースにそのまま採用 ===== */
         .top-photo {
             width: 100%;
-            max-width: 1200px;
-            /* 共通の横幅に制限 */
             height: 200px;
             margin: 0 auto 20px;
             /* 中央寄せ */
             background-size: cover;
-            background-position: center;
+            background-position: center 60%;
             background-repeat: no-repeat;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
             text-align: center;
-            background-image: url("{{ asset('images/jeepney/hero-jeepney.jpg') }}");
+            background-image: url("{{ asset('images/home-jeepney.png') }}");
             background-color: rgba(0, 0, 0, 0.1);
             background-blend-mode: multiply;
-            border-radius: 10px;
             overflow: hidden;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
         }
@@ -378,7 +362,7 @@
             : null;
     @endphp
 
-    <div class="jeepney-page">
+    <div class="container mb-5">
 
         <div class="top-photo">
             <h1>Find Your Jeepney Route</h1>
@@ -507,7 +491,7 @@
                                             </div>
                                             <div class="route-meta">
                                                 {{ $fromStop->name }} → {{ $option['firstRoute']->name }} →
-                                                {{ $option['transferStop']->name }} (乗り換え) → {{ $option['secondRoute']->name }} →
+                                                {{ $option['transferStop']->name }} (Transfer) → {{ $option['secondRoute']->name }} →
                                                 {{ $toStop->name }}
                                             </div>
                                         </div>

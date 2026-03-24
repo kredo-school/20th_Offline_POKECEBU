@@ -140,7 +140,7 @@
       </script>
 
 
-  @endsection
+
 
   <style>
       /* 印刷機能 */
@@ -171,3 +171,4 @@
           }
       }
   </style>
+   @endsection

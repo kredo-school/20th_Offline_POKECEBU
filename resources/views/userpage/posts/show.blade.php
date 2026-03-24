@@ -202,7 +202,7 @@
         </div>
     </div>
 </div>
-@endsection
+
 
 @push('scripts')
 <script>
@@ -304,3 +304,4 @@
         #ffffff 100%);
     }
 </style>
+@endsection

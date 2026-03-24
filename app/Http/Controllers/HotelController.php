@@ -105,16 +105,16 @@ class HotelController extends Controller
                 $ciCarbon = $ci ? Carbon::parse($ci)->startOfDay() : null;
                 $coCarbon = $co ? Carbon::parse($co)->endOfDay() : null;
             } catch (\Exception $e) {
-                session()->flash('error', '日付の形式が正しくありません。');
+                session()->flash('error', 'The date format is incorrect.');
                 $query->whereRaw('0 = 1'); // 空結果
             }
 
             if (!empty($ciCarbon) && !empty($coCarbon)) {
                 if ($ciCarbon->gt($coCarbon)) {
-                    session()->flash('error', 'チェックインはチェックアウト以前の日付を指定してください。');
+                    session()->flash('error', 'Please select a check-in date that is earlier than your check-out date.');
                     $query->whereRaw('0 = 1');
                 } elseif ($coCarbon->lt(now()->startOfDay())) {
-                    session()->flash('error', '過去の日付での検索はできません。');
+                    session()->flash('error', 'You cannot search for past dates.');
                     $query->whereRaw('0 = 1');
                 } else {
                     // Booked の status_id を動的に取得
@@ -186,7 +186,7 @@ class HotelController extends Controller
                 }
             } else {
                 // 片方しか日付がない場合は検索を空にする（要件に応じて緩和可）
-                session()->flash('error', 'チェックインとチェックアウトの両方を指定してください。');
+                session()->flash('error', 'Please specify both your check-in and check-out dates.');
                 $query->whereRaw('0 = 1');
             }
         }

@@ -18,14 +18,14 @@ class HotelReservation extends Model
 
 
 
-        
+
         'user_phone',
         'checkin_date',
         'checkout_date',
         'guests',
         'status',        // 未払い, 確定
         'price_total',
-            'other', 
+        'other',
     ];
 
     protected $casts = [
@@ -46,36 +46,43 @@ class HotelReservation extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    // ステータスとの関係
+    public function status()
+    {
+        return $this->belongsTo(Status::class);
+    }
     // どの部屋の予約か（必要に応じて）
     public function room()
     {
         return $this->belongsTo(HotelRoom::class, 'room_id');
     }
 
-    public function review() {
-       return $this->hasOne(Review::class, 'hotel_reservation_id');
+    public function review()
+    {
+        return $this->hasOne(Review::class, 'hotel_reservation_id');
     }
 
-   public static function getMonthlyKpiStats($hotelId = null)
-{
-    return self::query()
-        ->join('statuses', 'hotel_reservations.status_id', '=', 'statuses.id')
-        ->when($hotelId, function ($query, $hotelId) {
-            return $query->where('hotel_reservations.hotel_id', $hotelId);
-        })
-        ->whereYear('hotel_reservations.end_at', now()->year)
-        ->where('statuses.name', 'Booked')
-        ->selectRaw('
+    public static function getMonthlyKpiStats($hotelId = null)
+    {
+        return self::query()
+            ->join('statuses', 'hotel_reservations.status_id', '=', 'statuses.id')
+            ->when($hotelId, function ($query, $hotelId) {
+                return $query->where('hotel_reservations.hotel_id', $hotelId);
+            })
+            ->whereYear('hotel_reservations.end_at', now()->year)
+            ->where('statuses.name', 'Booked')
+            ->selectRaw('
             MONTH(hotel_reservations.end_at) as month,
             COUNT(hotel_reservations.id) as total_bookings, 
             SUM(hotel_reservations.guests) as total_guests,
             AVG(DATEDIFF(hotel_reservations.end_at, hotel_reservations.start_at)) as avg_stay
-        ') 
-        ->groupBy('month')
-        ->orderBy('month')
-        ->get()
-        ->keyBy('month');
-}
+        ')
+            ->groupBy('month')
+            ->orderBy('month')
+            ->get()
+            ->keyBy('month');
+    }
     public static function getAverageStay($hotelId = null)
     {
         return self::query()
@@ -155,50 +162,56 @@ class HotelReservation extends Model
     }
 
     public static function getMonthlyStatsByYear($hotelId = null)
-{
-    $year = now()->year;
-    $monthlyBookings = array_fill(0, 12, 0);
-    $monthlyRevenue = array_fill(0, 12, 0);
+    {
+        $year = now()->year;
+        $monthlyBookings = array_fill(0, 12, 0);
+        $monthlyRevenue = array_fill(0, 12, 0);
 
-    $results = self::select(
-        DB::raw('MONTH(hotel_reservations.end_at) as month'),
-        DB::raw('COUNT(*) as count'),
-        DB::raw('SUM(total_price) as revenue')
-    )
-    ->join('statuses', 'hotel_reservations.status_id', '=', 'statuses.id')
-    ->whereYear('hotel_reservations.end_at', $year)
-    ->where('statuses.name', 'Booked')
-    ->when($hotelId, function($query) use ($hotelId) {
-        return $query->where('hotel_id', $hotelId);
-    })
-    ->groupBy('month')
-    ->get();
+        $results = self::select(
+            DB::raw('MONTH(hotel_reservations.end_at) as month'),
+            DB::raw('COUNT(*) as count'),
+            DB::raw('SUM(total_price) as revenue')
+        )
+            ->join('statuses', 'hotel_reservations.status_id', '=', 'statuses.id')
+            ->whereYear('hotel_reservations.end_at', $year)
+            ->where('statuses.name', 'Booked')
+            ->when($hotelId, function ($query) use ($hotelId) {
+                return $query->where('hotel_id', $hotelId);
+            })
+            ->groupBy('month')
+            ->get();
 
-    foreach ($results as $result) {
-        $monthlyBookings[$result->month - 1] = $result->count;
-        $monthlyRevenue[$result->month - 1] = $result->revenue;
+        foreach ($results as $result) {
+            $monthlyBookings[$result->month - 1] = $result->count;
+            $monthlyRevenue[$result->month - 1] = $result->revenue;
+        }
+
+        return [
+            'bookings' => $monthlyBookings,
+            'revenue' => $monthlyRevenue
+        ];
     }
 
-    return [
-        'bookings' => $monthlyBookings,
-        'revenue' => $monthlyRevenue
-    ];
-}
+    // キャンセル料の設定
+    public function getCancellationRateAttribute()
+    {
+        $today = now()->startOfDay();
+        $checkIn = $this->start_at->startOfDay();
+        $daysBefore = $today->diffInDays($checkIn, false);
 
-  // キャンセル料の設定
-    public function getCancellationRateAttribute() {
-       $today = now()->startOfDay();
-       $checkIn = $this->start_at->startOfDay();
-       $daysBefore = $today->diffInDays($checkIn,false);
-
-       if($daysBefore <= 0) return 100; // 当日キャンセルは全額
-       if($daysBefore <= 1) return 80; // 前日キャンセルは80%
-       if($daysBefore <= 3) return 50; // 3日前までは50%
-       return 0; // それ以外は無料
+        if ($daysBefore <= 0) return 100; // 当日キャンセルは全額
+        if ($daysBefore <= 1) return 80; // 前日キャンセルは80%
+        if ($daysBefore <= 3) return 50; // 3日前までは50%
+        return 0; // それ以外は無料
     }
 
     // キャンセル料の計算
-    public function getCancellationFeeAttribute() {
-       return ($this->total_price * $this->cancellation_rate) / 100;
+    public function getCancellationFeeAttribute()
+    {
+        return ($this->total_price * $this->cancellation_rate) / 100;
+    }
+    public function roomType()
+    {
+        return $this->belongsTo(HotelRoomType::class, 'room_type_id');
     }
 }

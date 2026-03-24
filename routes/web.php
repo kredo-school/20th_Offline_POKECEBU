@@ -146,6 +146,8 @@ Route::group(['middleware' => 'auth'], function () {
 
         #For Analysis
         Route::get('/analysis/hotel/{id?}', [AnalysisController::class, 'hotelAnalysis'])->name('analysis.hotel');
+        // Cancellation Mark Read Route
+        
         Route::get('/analysis/restaurant/{id?}', [AnalysisController::class, 'restaurantAnalysis'])->name('analysis.restaurant');
         Route::get('/analysis/user', [AnalysisController::class, 'userAnalysis'])->name('analysis.user');
     });
@@ -180,6 +182,9 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/calendar/data', [HotelStaffController::class, 'calendarData'])->name('calendar.data');
         Route::get('/reservations/{date}', [HotelStaffController::class, 'daily'])->name('reservations.date');
         Route::get('/reservations/detail/{id}', [HotelStaffController::class, 'show'])->name('reservations.show');
+
+        //  キャンセル
+        Route::get('/cancellations/mark-read', [StaffAnalysisController::class, 'markCancellationsRead'])->name('cancellation.markRead');
     });
 
     #################### Restaurant ####################

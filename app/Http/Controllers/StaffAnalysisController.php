@@ -61,6 +61,12 @@ class StaffAnalysisController extends Controller
         $hotels = Hotel::where('id', $hotelId)->get();
         $currentKpi = $monthlyKpis->get(now()->month);
 
+        $cancelledReservations = HotelReservation::with(['user', 'roomType'])
+            ->where('hotel_id', $hotelId)
+            ->where('status_id', 5)
+            ->orderBy('updated_at', 'desc')
+            ->get();
+
         return view('staffpage.analysis.hotel-analysis', compact(
             'currentKpi', 
             'monthlyBookings', 
@@ -74,8 +80,15 @@ class StaffAnalysisController extends Controller
             'typeBookingStatsYear', 
             'hotelId', 
             'hotels', 
-            'allDailyData'
+            'allDailyData',
+            'cancelledReservations'
         ));
+    }
+
+    public function markCancellationsRead()
+    {
+        session(['last_cancellation_check' => now()]);
+        return redirect()->back();
     }
     /**
      * RESTAURANT ANALYSIS (Staff Side)

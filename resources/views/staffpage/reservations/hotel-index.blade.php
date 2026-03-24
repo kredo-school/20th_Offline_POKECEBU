@@ -126,7 +126,7 @@
 
 
 
-@endsection
+
 
 <style>
     .table-wrapper {
@@ -163,3 +163,4 @@
         right: -25px;
     }
 </style>
+@endsection

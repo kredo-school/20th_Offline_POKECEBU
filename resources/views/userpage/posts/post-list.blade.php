@@ -27,7 +27,7 @@
     </div>
 
     {{-- 検索エリア & ヘッダーナビ --}}
-    <div class="search-container mb-4">
+    <div class="search-1 mb-4">
       <div class="d-flex justify-content-between align-items-center">
 
         {{-- 左側：タイトルエリア（可変） --}}
@@ -105,9 +105,6 @@
     </div>
   </div>
 </div>
-@endsection
-
-
 
 {{-- CSS --}}
 <style>
@@ -223,7 +220,7 @@
     margin-bottom: 20px;
     background-image: url("{{ asset('images/home-post.jpg') }}");
     background-size: cover;
-    background-position: center 10%;
+    background-position: center 70%;
     background-repeat: no-repeat;
     display: flex;
     align-items: center;
@@ -278,7 +275,7 @@
     flex-wrap: wrap;
     justify-content: center;
     gap: 12px 16px;
-
+    align-items: flex-start;
     height: 97px;
     overflow: hidden;
   }
@@ -332,5 +329,6 @@
       /* スマホ時は検索ボックスを一番下に */
       width: 100%;
     }
-  }
+}
 </style>
+@endsection

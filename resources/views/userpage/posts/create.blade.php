@@ -60,12 +60,8 @@
             </form>
         </div>
     </div>
-@endsection
-
 
 {{-- CSS --}}
-
-
 <style>
     /* ページ全体 */
     .create-post-page {
@@ -262,3 +258,5 @@
         });
     </script>
 @endpush
+
+@endsection

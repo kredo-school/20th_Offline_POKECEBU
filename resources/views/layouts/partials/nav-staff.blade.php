@@ -58,6 +58,47 @@
                     </a>
                 @endif
             </li>
+
+            <li class="nav-item dropdown me-3">
+                @if (Auth::user()->role_id == $role_hotel)
+                    @php
+                        $lastCheck = session('last_cancellation_check', \Carbon\Carbon::parse('2000-01-01'));
+                        $unreadCancellations = \App\Models\HotelReservation::where('hotel_id', Auth::id())
+                            ->where('status_id', 5)
+                            ->where('updated_at', '>', $lastCheck)
+                            ->count();
+                    @endphp
+                    <a class="nav-link position-relative" href="#" id="cancellationDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="margin-top:2px;">
+                        <i class="fa-solid fa-bell fs-5 text-dark"></i>
+                        @if($unreadCancellations > 0)
+                            <span class="position-absolute top-25 start-75 translate-middle badge rounded-pill bg-danger" style="font-size: 0.65rem;">
+                                {{ $unreadCancellations }}
+                            </span>
+                        @endif
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 rounded-3 mt-2" aria-labelledby="cancellationDropdown" style="width: 320px;">
+                        <li><h6 class="dropdown-header fw-bold text-uppercase" style="font-size:0.7rem;">Notifications</h6></li>
+                        @if($unreadCancellations > 0)
+                            <li>
+                                <a class="dropdown-item py-3 text-wrap" href="{{ route('hotel.cancellation.markRead') }}">
+                                    <div class="d-flex align-items-center">
+                                        <div class="bg-danger bg-opacity-10 text-danger rounded-circle p-2 me-3 d-flex justify-content-center align-items-center" style="width:40px; height:40px;">
+                                            <i class="fa-solid fa-ban fs-6"></i>
+                                        </div>
+                                        <div>
+                                            <strong class="d-block text-dark">{{ $unreadCancellations }} New Cancellation(s)</strong>
+                                            <small class="text-muted" style="font-size:0.75rem;">Click to mark as read and view details</small>
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+                        @else
+                            <li><span class="dropdown-item text-muted py-3"><i class="fa-regular fa-bell-slash me-2"></i>No new notifications</span></li>
+                        @endif
+                    </ul>
+                @endif
+            </li>
+
             <li class="nav-item dropdown me-4">
                 <a class="nav-link dropdown-toggle fw-bold text-dark px-3" data-bs-toggle="dropdown" href="#"
                     role="button" aria-expanded="false"></i> {{ Auth::user()->name }}

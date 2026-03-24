@@ -65,8 +65,18 @@ class HotelReservationController extends Controller
         $hotel = Hotel::findOrFail($hotelId);
         $roomType = HotelRoomType::findOrFail($roomTypeId);
 
-        $roomData = HotelRoom::where('hotel_id', $hotelId)
+        $roomData = HotelRoom::where('hotel_id', $hotel->id)
             ->where('type_id', $roomType->type_id)
+            ->whereDoesntHave('reservations', function ($query) use ($checkin, $checkout) {
+                $query->where(function ($q) use ($checkin, $checkout) {
+                    $q->whereBetween('start_at', [$checkin, $checkout])
+                        ->orWhereBetween('end_at', [$checkin, $checkout])
+                        ->orWhere(function ($q2) use ($checkin, $checkout) {
+                            $q2->where('start_at', '<=', $checkin)
+                                ->where('end_at', '>=', $checkout);
+                        });
+                });
+            })
             ->first();
 
         $price = $roomData ? $roomData->charges : 0;

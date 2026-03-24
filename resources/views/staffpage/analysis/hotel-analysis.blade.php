@@ -162,6 +162,56 @@
                         </div>
                     </div>
                 </div>
+
+                {{-- Cancelled Reservations --}}
+                <div class="analysis-container shadow-sm rounded-4 mt-4">
+                    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
+                        <h6 class="chart-title m-0"><i class="fa-solid fa-ban me-2 text-danger"></i>Cancelled Reservations</h6>
+                    </div>
+                    
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Guest Name</th>
+                                    <th>Room Type</th>
+                                    <th>Check-in</th>
+                                    <th>Check-out</th>
+                                    <th>Cancelled At</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($cancelledReservations as $res)
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center me-2 shadow-sm" style="width: 32px; height: 32px; font-weight: bold; font-size: 0.85rem;">
+                                                    {{ strtoupper(substr($res->user->name ?? 'G', 0, 1)) }}
+                                                </div>
+                                                <span class="fw-bold">{{ $res->user->name ?? 'Unknown Guest' }}</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-info bg-opacity-10 border border-info text-info rounded-pill px-3">{{ $res->roomType->name ?? 'N/A' }}</span>
+                                        </td>
+                                        <td>{{ \Carbon\Carbon::parse($res->start_at)->format('Y-m-d') }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($res->end_at)->format('Y-m-d') }}</td>
+                                        <td>
+                                            <span class="text-danger fw-bold"><i class="fa-regular fa-clock me-1"></i>{{ $res->updated_at->diffForHumans() }}</span>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="5" class="text-center text-muted py-5">
+                                            <i class="fa-regular fa-face-smile fs-3 mb-2 d-block"></i>
+                                            No cancelled reservations found.
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

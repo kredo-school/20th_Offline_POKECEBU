@@ -1,21 +1,17 @@
-@extends('layouts.app')
+@extends('layouts.user')
 
 @push('styles')
     <style>
         body {
-            background: linear-gradient(180deg, #fffef7 0%, #fff8ee 100%);
             font-family: 'Segoe UI', sans-serif;
-            background-image: url("https://www.transparenttextures.com/patterns/cubes.png");
-            background-repeat: repeat;
-            background-size: auto;
         }
 
         .top-photo {
             width: 100%;
-            height: 240px;
+            height: 200px;
             /* FAQと同じ高さに統一 */
             margin-bottom: 20px;
-            background-image: url("{{ asset('images/fortune/hero-fortune.jpg') }}");
+            background-image: url("{{ asset('images/home-fortune.jpg') }}");
             /* 好きな画像に差し替え */
             background-size: cover;
             background-position: center;
@@ -27,7 +23,6 @@
             text-align: center;
             background-color: rgba(0, 0, 0, 0.1);
             background-blend-mode: multiply;
-            border-radius: 10px;
             overflow: hidden;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
         }
@@ -42,17 +37,14 @@
         }
 
 
-        .fortune-wrapper {
-            max-width: 800px;
-            margin: 40px auto;
-            padding: 0 20px;
-        }
+
 
         .fortune-card {
             border-radius: 20px;
             background: #ffffff;
             box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
             overflow: hidden;
+            margin-bottom: 200px;
         }
 
         .fortune-header {
@@ -157,12 +149,10 @@
 
 @section('content')
     <div class="container fortune-wrapper">
+        <div class="top-photo">
+            <h1>Today's Cebu Fortune</h1>
+        </div>
         <div class="fortune-card">
-            <div class="top-photo">
-                <h1>Today's Cebu Fortune</h1>
-            </div>
-
-
             <div class="fortune-body">
                 @if (session('success'))
                     <div class="alert alert-success">{{ session('success') }}</div>

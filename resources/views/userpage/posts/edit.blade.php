@@ -80,8 +80,6 @@
             </div>
         </div>
     </form>
-@endsection
-
 
 {{-- CSS --}}
 
@@ -281,3 +279,4 @@
         });
     </script>
 @endpush
+@endsection

@@ -33,7 +33,6 @@
             /* フッター */
             .site-footer {
                 background: #e7e9ec;
-                margin: 40px;
                 padding: 60px 0 30px;
             }
 

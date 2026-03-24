@@ -507,7 +507,7 @@
                                             </div>
                                             <div class="route-meta">
                                                 {{ $fromStop->name }} → {{ $option['firstRoute']->name }} →
-                                                {{ $option['transferStop']->name }} (乗り換え) → {{ $option['secondRoute']->name }} →
+                                                {{ $option['transferStop']->name }} (Transfer) → {{ $option['secondRoute']->name }} →
                                                 {{ $toStop->name }}
                                             </div>
                                         </div>

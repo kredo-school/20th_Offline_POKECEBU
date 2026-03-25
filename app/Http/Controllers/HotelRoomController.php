@@ -149,7 +149,7 @@ class HotelRoomController extends Controller
             'charges' => 'required', 
             'detail' => 'required',
 
-            'images.*' => 'nullable|mimes:jpeg,jpg,png,gif|max:1048'
+            'images.*' => 'nullable|mimes:jpeg,jpg,png,gif|max:2048'
         ]);
 
         $this->hotelRoom->hotel_id = $hotel_id;
@@ -204,7 +204,7 @@ class HotelRoomController extends Controller
             'charges' => 'required',
             'detail' => 'required',
 
-            'images.*' => 'nullable|mimes:jpeg,jpg,png,gif|max:1048'
+            'images.*' => 'nullable|mimes:jpeg,jpg,png,gif|max:2048'
         ]);
 
         $room = $this->hotelRoom->findOrFail($id);

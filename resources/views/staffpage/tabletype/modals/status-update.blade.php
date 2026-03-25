@@ -21,7 +21,9 @@
                             <label class="form-label" for="Update">Update</label>
                             <select class="form-select" name="status" id="status">
                                 @foreach ($all_statuses as $status)
-                                    <option value="{{$status->id}}">{{ $status->name }}</option>
+                                    @if ($status->id != 3 && $status->id != 5)
+                                        <option value="{{$status->id}}">{{ $status->name }}</option>
+                                    @endif
                                 @endforeach
                             </select>
                         </div>

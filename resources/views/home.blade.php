@@ -45,22 +45,22 @@
                 <div class="hero-circle circle-3">
                     <div class="circle-content">
                         <span class="circle-label">WEATHER</span>
-                        <!-- @if (isset($weather['weather'][0]['icon']))
+                        @if (isset($weather['weather'][0]['icon']))
                             <img class="weather-icon"
                                 src="https://openweathermap.org/img/wn/{{ $weather['weather'][0]['icon'] }}@2x.png">
                         @endif
-                        <div class="temp">{{ round($weather['main']['temp']) }}°C</div> -->
+                        <div class="temp">{{ round($weather['main']['temp']) }}°C</div>
                     </div>
                 </div>
                 <div class="hero-circle circle-4">
                     <div class="circle-content">
                         <span class="circle-label">RATE</span>
-                        <!-- @if ($rate && $rate > 0)
+                        @if ($rate && $rate > 0)
                             <div class="rate-text">¥1 = ₱{{ number_format($rate, 2) }}</div>
                             <div class="rate-text">₱1 = ¥{{ number_format(1 / $rate, 2) }}</div>
                         @else
                             <div class="rate-text">Loading</div>
-                        @endif -->
+                        @endif
                     </div>
                 </div>
             </div>
@@ -233,9 +233,11 @@
                     <div class="container">
                         <div class="ranking-circle-wrapper hotel-ranking">
                             <div class="ranking-bg-circle"></div>
-                            <div class="ranking-title-overlay ranking-title-right">
+                            <div class="ranking-title-overlay ranking-title-right" data-title="Hotels" style="color: #2c2c2c;">
                                 Hotels
                             </div>
+
+                            <img src="{{ asset('images/home-leaves-2.png') }}" class="ranking-leaves-deco-hotel" alt="">
 
                             @php $top3 = $hotelRankings->take(3); @endphp
 
@@ -306,9 +308,11 @@
                     <div class="container py-2">
                         <div class="ranking-circle-wrapper restaurant-ranking">
                             <div class="ranking-bg-circle"></div>
-                            <div class="ranking-title-overlay ranking-title-left">
+                            <div class="ranking-title-overlay ranking-title-left" data-title="Restaurants" style="color: #2c2c2c;">
                                 Restaurants
                             </div>
+
+                            <img src="{{ asset('images/home-leaves.png') }}" class="ranking-leaves-deco-restaurant" alt="">
 
                             @php $top3 = $restaurantRankings->take(3); @endphp
 
@@ -794,7 +798,7 @@
             align-items: center;
             gap: 10px;
             padding: 14px 30px;
-            background: #0d6efd;
+            background: #4f93d3;
             color: white;
             border-radius: 40px;
             font-weight: 600;
@@ -901,7 +905,7 @@
             font-size: 100px;
             font-weight: 700;
             line-height: 0.9;
-            color: rgba(102, 102, 102, 0.7);
+            color: rgba(102, 102, 102, 0.8);
             z-index: 0;
             pointer-events: none;
         }
@@ -913,7 +917,7 @@
             margin-top: 50px;
             font-size: 20px;
             line-height: 1.8;
-            color: rgb(102, 102, 102);
+            color: rgb(0, 0, 0);
             letter-spacing: 0.5px;
             margin-bottom: -150px;
         }
@@ -951,7 +955,7 @@
         .hotel-ranking .rank-pos-3 { top: 380px; left: 280px; }
 
         .hotel-ranking .ranking-title-overlay {
-            top: 280px;
+            top: 260px;
             left: 430px;
             transform: none;
             text-align: left;
@@ -969,23 +973,46 @@
         .restaurant-ranking .rank-pos-3 { top: 280px;  right: -40px; }
 
         .restaurant-ranking .ranking-title-overlay {
-            top: 180px;
-            right: 660px;
-            left: auto;
-            transform: none;
-            text-align: right;
+            top: 160px;
+            left: 290px;
+            text-align: left;
         }
 
         .ranking-title-overlay {
             position: absolute;
-            font-size: 3.6rem;
+            font-size: 3.8rem;
             font-weight: 800;
-            color: #333;
             letter-spacing: 2px;
-            line-height: 1.4;
+            line-height: 1.2;
             z-index: 1;
             pointer-events: none;
-            width: 180px;
+            width: fit-content;
+        }
+
+        .ranking-title-overlay::before {
+            content: attr(data-title);
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            color: transparent;
+            -webkit-text-stroke: 2px rgba(91, 168, 212, 0.4);
+            font-size: inherit;
+            font-weight: inherit;
+            letter-spacing: inherit;
+            pointer-events: none;
+            white-space: nowrap;
+            z-index: -1;
+        }
+
+        .hotel-ranking .ranking-title-overlay::after,
+        .restaurant-ranking .ranking-title-overlay::after {
+            content: '';
+            display: block;
+            height: 4px;
+            background: rgba(100, 160, 210, 0.5);
+            border-radius: 2px;
+            margin-top: 8px;
+            width: 100%;
         }
 
         /* ===== ランキングカード ===== */
@@ -1071,6 +1098,30 @@
         .rank-2 .rank-num { color: #8a8a8a; }
         .rank-3 .rank-num { color: #b08d57; }
 
+        .ranking-leaves-deco-hotel {
+            position: absolute;
+            top: 40px;
+            right: -170px;
+            width: 700px;
+            opacity: 0.35;
+            pointer-events: none;
+            z-index: 0;
+            filter: drop-shadow(0 4px 12px rgba(80, 180, 140, 0.15));
+            animation: float 7s ease-in-out infinite;
+        }
+        .ranking-leaves-deco-restaurant {
+            position: absolute;
+            top: -100px;
+            left: -170px;
+            width: 700px;
+            opacity: 0.35;
+            pointer-events: none;
+            z-index: 0;
+            transform: rotate(-15deg);
+            filter: drop-shadow(0 4px 12px rgba(80, 180, 140, 0.15));
+            animation: float 7s ease-in-out infinite;
+        }
+
         .card-city-premium {
             color: rgba(255, 255, 255, 0.9);
             font-size: 13px;
@@ -1142,7 +1193,7 @@
             font-size: 100px;
             font-weight: 700;
             line-height: 0.9;
-            color: rgba(102, 102, 102, 0.7);
+            color: rgba(102, 102, 102, 0.8);
             z-index: 0;
             pointer-events: none;
             margin-left: 5%;

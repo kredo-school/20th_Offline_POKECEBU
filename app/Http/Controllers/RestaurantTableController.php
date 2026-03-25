@@ -149,7 +149,7 @@ class RestaurantTableController extends Controller
             'charges' => 'required',
             'detail' => 'required',
 
-            'images.*' => 'nullable|mimes:jpeg,jpg,png,gif|max:1048'
+            'images.*' => 'nullable|mimes:jpeg,jpg,png,gif|max:2048'
         ]);
 
         $this->restaurantTable->restaurant_id = $restaurant_id;
@@ -202,7 +202,7 @@ class RestaurantTableController extends Controller
             'charges' => 'required',
             'detail' => 'required',
 
-            'images.*' => 'nullable|mimes:jpeg,jpg,png,gif|max:1048'
+            'images.*' => 'nullable|mimes:jpeg,jpg,png,gif|max:2048'
         ]);
 
         $table = $this->restaurantTable->findOrFail($id);
